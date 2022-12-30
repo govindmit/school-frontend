@@ -15,7 +15,7 @@ import Link from "@mui/material/Link";
 import GlobalStyles from "@mui/material/GlobalStyles";
 import Container from "@mui/material/Container";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import  {Carousel}  from "react-responsive-carousel";
+import { Carousel } from "react-responsive-carousel";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 
@@ -124,9 +124,9 @@ function Navbar(props: IAppProps) {
             </div>
             <div className="image">
               <Image
-                src="/img.png"
+                src="/slider.png"
                 alt="Picture of the author"
-                width={500}
+                width={350}
                 height={350}
               />
             </div>

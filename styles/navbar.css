@@ -43,10 +43,10 @@
   margin-top: 100px;
 }
 .image {
-  width: 54%;
-  margin-top: 60px;
-
+  width: 37%;
+  margin-top: 52px;
   float: right;
+  margin-right: 88px;
 }
 .heading {
   font-size: 46px;
@@ -291,4 +291,14 @@ h6.MuiTypography-root.MuiTypography-h6.MuiTypography-noWrap.css-uh02xs-MuiTypogr
   font-size: 28px;
   line-height: 33px;
   color: #0c140f;
+}
+.MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-formControl.css-1v4ccyo {
+  height: 37px;
+}
+button.MuiButtonBase-root.MuiButton-root.MuiButton-contained.MuiButton-containedPrimary.MuiButton-sizeMedium.MuiButton-containedSizeMedium.MuiButton-root.MuiButton-contained.MuiButton-containedPrimary.MuiButton-sizeMedium.MuiButton-containedSizeMedium.css-1hw9j7s {
+  margin-top: 10px;
+}
+
+a.MuiTypography-root.MuiTypography-button.MuiLink-root.MuiLink-underlineAlways.css-16uepnf {
+  text-decoration: none;
 }
