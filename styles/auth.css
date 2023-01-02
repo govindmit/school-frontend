@@ -3,6 +3,13 @@ header {
   justify-content: space-between;
   margin-top: 30px;
 }
+
+body {
+  background: url("../public/circle-img.png");
+  background-repeat: no-repeat;
+  background-position: right top;
+}
+
 .nav-bar button {
   background-color: "#26ceb3";
   color: white;
@@ -16,7 +23,7 @@ header {
 .productive img {
   width: 100%;
   max-width: 600px;
-  height: auto;
+  height: 700px;
 }
 
 button {
@@ -38,7 +45,8 @@ button {
 }
 
 .productive-content {
-  padding-left: 7rem;
+  padding-left: 12rem;
+  max-width: 450px;
 }
 
 @media (max-width: 1000px) {
@@ -62,8 +70,51 @@ button {
     color: white;
     font-size: 8px;
     font-weight: 700;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+  .productive-content {
+    padding-left: 0rem;
+    padding: 10px;
+    max-width: 450px;
+  }
+}
+
+@media (max-width: 675px) {
+  .nav-bar button {
+    background-color: "#26ceb3";
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+  .productive-content {
+    padding-left: 0rem;
+    padding: 10px;
+    max-width: 450px;
+  }
+}
+
+@media (max-width: 900px) {
+  .nav-bar button {
+    background-color: "#26ceb3";
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+  .productive-content {
+    padding-left: 0rem;
+    padding: 10px;
+    max-width: 450px;
   }
 }
 

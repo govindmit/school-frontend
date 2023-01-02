@@ -61,9 +61,9 @@ export default function forgotpassword() {
           <Container
             component="main"
             style={{
-              boxShadow: "1px 1px 12px 0px",
-              borderRadius: "25px",
-              padding: "30px",
+              boxShadow: "1px 1px 10px 0px",
+              borderRadius: "20px",
+              padding: "25px",
             }}
           >
             <Box>
@@ -73,7 +73,7 @@ export default function forgotpassword() {
                 </span>{" "}
                 Your Password
               </Typography>
-              <Typography variant="body2">
+              <Typography variant="body2" style={{ color: "#5F6160" }}>
                 Lorem Ipsum is simply dummy text of the printing and typesetting
                 industry.
               </Typography>
@@ -81,18 +81,15 @@ export default function forgotpassword() {
                 component="form"
                 onSubmit={handleSubmit}
                 noValidate
-                sx={{ mt: 1 }}
+                sx={{ mt: 2 }}
               >
                 <Typography>Email Address</Typography>
                 <TextField
-                  margin="normal"
-                  required
+                  style={{ marginTop: "8px" }}
                   fullWidth
-                  id="email"
-                  label="Email Address"
+                  size="small"
                   name="email"
-                  autoComplete="email"
-                  autoFocus
+                  placeholder="Type here..."
                 />
                 <Button
                   style={{ backgroundColor: "#26CEB3" }}
@@ -107,7 +104,7 @@ export default function forgotpassword() {
             </Box>
           </Container>
           <footer>
-            <p>
+            <Typography>
               © 2022 Educorp. All Rights Reserved{" "}
               <a
                 href="http://www.polymer-project.org/"
@@ -145,7 +142,7 @@ export default function forgotpassword() {
               >
                 <RxInstagramLogo />
               </a>
-            </p>
+            </Typography>
           </footer>
         </div>
       </section>
