@@ -47,6 +47,7 @@ button {
 .productive-content {
   padding-left: 12rem;
   max-width: 450px;
+  background-color: white;
 }
 
 @media (max-width: 1000px) {

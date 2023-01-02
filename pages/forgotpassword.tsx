@@ -5,13 +5,11 @@ import { IconButton } from "@mui/material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { createTheme } from "@mui/material/styles";
-import { Inter } from "@next/font/google";
 import { BiArrowBack } from "react-icons/bi";
 import { SlSocialFacebook } from "react-icons/sl";
 import { RiTwitterLine } from "react-icons/ri";
 import { RxInstagramLogo } from "react-icons/rx";
-const inter = Inter({ subsets: ["latin"] });
+import Link from "next/link";
 export default function forgotpassword() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -42,13 +40,15 @@ export default function forgotpassword() {
             Educorp
           </Typography>
           <nav className="nav-bar">
-            <Button
-              style={{
-                backgroundColor: "#26CEB3",
-              }}
-            >
-              <BiArrowBack /> Back to Home
-            </Button>
+            <Link href="/" style={{ textDecoration: "none" }}>
+              <Button
+                style={{
+                  backgroundColor: "#26CEB3",
+                }}
+              >
+                <BiArrowBack /> Back to Home
+              </Button>
+            </Link>
           </nav>
         </header>
       </Container>
@@ -89,10 +89,10 @@ export default function forgotpassword() {
                   fullWidth
                   size="small"
                   name="email"
-                  placeholder="Type here..."
+                  placeholder="Email Address..."
                 />
                 <Button
-                  style={{ backgroundColor: "#26CEB3" }}
+                  style={{ backgroundColor: "#26CEB3", fontWeight: "900" }}
                   type="submit"
                   fullWidth
                   variant="contained"

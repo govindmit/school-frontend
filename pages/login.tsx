@@ -3,19 +3,16 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Inter } from "@next/font/google";
 import { IconButton } from "@mui/material";
 import { BiArrowBack } from "react-icons/bi";
 import { SlSocialFacebook } from "react-icons/sl";
 import { RiTwitterLine } from "react-icons/ri";
 import { RxInstagramLogo } from "react-icons/rx";
-const inter = Inter({ subsets: ["latin"] });
+import Link from "next/link";
 export default function login() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -46,16 +43,20 @@ export default function login() {
             Educorp
           </Typography>
           <nav className="nav-bar">
-            <Button
-              style={{
-                backgroundColor: "#26CEB3",
-              }}
-            >
-              <BiArrowBack /> Back to Home
-            </Button>
+            <Link href="/" style={{ textDecoration: "none" }}>
+              <Button
+                style={{
+                  backgroundColor: "#26CEB3",
+                  textDecoration: "none",
+                }}
+              >
+                <BiArrowBack /> Back to Home
+              </Button>
+            </Link>
           </nav>
         </header>
       </Container>
+
       <section className="productive">
         <div className="productive-img">
           <img src="/loginimg.png" alt="" />{" "}
@@ -93,7 +94,7 @@ export default function login() {
                   fullWidth
                   size="small"
                   name="email"
-                  placeholder="Type here..."
+                  placeholder="Email Address..."
                 />
                 <Typography style={{ marginTop: "15px" }}>Password</Typography>
                 <TextField
@@ -112,7 +113,9 @@ export default function login() {
                   <Grid item>
                     <Typography style={{ marginTop: "9px" }}>
                       Forgot Password?{" "}
-                      <Link style={{ color: "#26CEB3" }}>Click here</Link>{" "}
+                      <Link href="/forgotpassword" style={{ color: "#26CEB3" }}>
+                        Click here
+                      </Link>{" "}
                     </Typography>
                   </Grid>
                 </Grid>
