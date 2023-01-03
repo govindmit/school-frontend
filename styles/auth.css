@@ -50,75 +50,6 @@ button {
   background-color: white;
 }
 
-@media (max-width: 1000px) {
-  header img,
-  footer img {
-    width: 117px;
-    height: auto;
-  }
-  .intro > div,
-  .features-item {
-    width: 100%;
-  }
-  .productive {
-    flex-direction: column;
-  }
-}
-
-@media (max-width: 375px) {
-  .nav-bar button {
-    background-color: "#26ceb3";
-    color: white;
-    font-size: 8px;
-    font-weight: 700;
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-top: 5px;
-    margin-bottom: 5px;
-  }
-  .productive-content {
-    padding-left: 0rem;
-    padding: 10px;
-    max-width: 450px;
-  }
-}
-
-@media (max-width: 675px) {
-  .nav-bar button {
-    background-color: "#26ceb3";
-    color: white;
-    font-size: 15px;
-    font-weight: 700;
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-top: 5px;
-    margin-bottom: 5px;
-  }
-  .productive-content {
-    padding-left: 0rem;
-    padding: 10px;
-    max-width: 450px;
-  }
-}
-
-@media (max-width: 900px) {
-  .nav-bar button {
-    background-color: "#26ceb3";
-    color: white;
-    font-size: 15px;
-    font-weight: 700;
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-top: 5px;
-    margin-bottom: 5px;
-  }
-  .productive-content {
-    padding-left: 0rem;
-    padding: 10px;
-    max-width: 450px;
-  }
-}
-
 footer {
   text-align: left;
   margin-top: 70px;
@@ -134,4 +65,66 @@ footer a {
   color: #4b4d50;
   text-decoration: none;
   transition: all 0.2s ease;
+}
+
+@media (max-width: 480px) {
+  .nav-bar button {
+    background-color: "#26ceb3";
+    color: white;
+    font-size: 8px;
+    font-weight: 700;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+  .productive-content {
+    padding-left: 0rem;
+    padding: 10px;
+    max-width: auto;
+  }
+
+  .intro img,
+  .productive img {
+    width: 100%;
+    max-width: 200px;
+    height: 300px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 767px) {
+  .productive-content {
+    padding-left: 0rem;
+    padding: 10px;
+    max-width: 450px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .productive-content {
+    padding-left: 0rem;
+    padding: 10px;
+    max-width: 450px;
+  }
+}
+
+@media (min-width: 1025px) and (max-width: 1280px) {
+}
+/* Media Query for Large screens */
+@media (min-width: 1281px) {
+}
+
+@media (max-width: 1000px) {
+  header img,
+  footer img {
+    width: 117px;
+    height: auto;
+  }
+  .intro > div,
+  .features-item {
+    width: 100%;
+  }
+  .productive {
+    flex-direction: column;
+  }
 }

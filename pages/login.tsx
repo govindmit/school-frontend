@@ -115,7 +115,7 @@ export default function login() {
                       Forgot Password?{" "}
                       <Link href="/forgotpassword" style={{ color: "#26CEB3" }}>
                         Click here
-                      </Link>{" "}
+                      </Link>
                     </Typography>
                   </Grid>
                 </Grid>
