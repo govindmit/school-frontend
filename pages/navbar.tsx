@@ -220,132 +220,140 @@ function Navbar(props: IAppProps) {
         </div>
       </div>
       <div className="upcomingEvent">
-        <span>
-          <p className="event">Fetured Events</p>
-          <h2 className="eventHeading"> Join our upcoming event</h2>
-        </span>
-        <div className="eventList">
-          <div className="mainList">
-            <span className="date" style={{ margin: "0px" }}>
-              <h2 style={{ margin: "0px" }}>02</h2>
-              <p style={{ margin: "0px" }}>October 2022</p>
-            </span>
-            <span className="location" style={{ margin: "0px" }}>
-              <h5 style={{ margin: "0px" }}>
-                <Image
-                  src="/location.png"
-                  alt="Picture of the author"
-                  width={10}
-                  height={10}
-                />
-                &nbsp; New York, US
-              </h5>
-              <p className="midText" style={{ margin: "0px" }}>
-                Global education fall meeting for everyone{" "}
-              </p>
-            </span>
-            <span className="time" style={{ margin: "0px" }}>
-              <h5 className="timeSlot" style={{ margin: "0px" }}>
-                10:30am - 12:30pm
-              </h5>
-              <button style={{ margin: "0px", border: "none" }}>
-                View Events
-              </button>
-              {/* <p style={{ margin: "0px" }}>View Events</p> */}
-            </span>
-            .
-          </div>
-          <div>
-            <span className="date" style={{ margin: "0px" }}>
-              <h2 style={{ margin: "0px" }}>02</h2>
-              <p style={{ margin: "0px" }}>October 2022</p>
-            </span>
-            <span className="location" style={{ margin: "0px" }}>
-              <h5 style={{ margin: "0px" }}>
-                {" "}
-                <Image
-                  src="/location.png"
-                  alt="Picture of the author"
-                  width={10}
-                  height={10}
-                />
-                &nbsp;New York, US
-              </h5>
-              <p className="midText" style={{ margin: "0px" }}>
-                Global education fall meeting for everyone{" "}
-              </p>
-            </span>
-            <span className="time" style={{ margin: "0px" }}>
-              <h5 className="timeSlot" style={{ margin: "0px" }}>
-                10:30am - 12:30pm
-              </h5>
-              <button style={{ margin: "0px", border: "none" }}>
-                View Events
-              </button>
-            </span>
-            .
-          </div>
-          <div>
-            <span className="date" style={{ margin: "0px" }}>
-              <h2 style={{ margin: "0px" }}>02</h2>
-              <p style={{ margin: "0px" }}>October 2022</p>
-            </span>
-            <span className="location" style={{ margin: "0px" }}>
-              <h5 style={{ margin: "0px" }}>
-                {" "}
-                <Image
-                  src="/location.png"
-                  alt="Picture of the author"
-                  width={10}
-                  height={10}
-                />
-                &nbsp;New York, US
-              </h5>
-              <p className="midText" style={{ margin: "0px" }}>
-                Global education fall meeting for everyone{" "}
-              </p>
-            </span>
-            <span className="time" style={{ margin: "0px" }}>
-              <h5 className="timeSlot" style={{ margin: "0px" }}>
-                10:30am - 12:30pm
-              </h5>
-              <button style={{ margin: "0px", border: "none" }}>
-                View Events
-              </button>
-            </span>
-            .
-          </div>
-          <div>
-            <span className="date" style={{ margin: "0px" }}>
-              <h2 style={{ margin: "0px" }}>02</h2>
-              <p style={{ margin: "0px" }}>October 2022</p>
-            </span>
-            <span className="location" style={{ margin: "0px" }}>
-              <h5 style={{ margin: "0px" }}>
-                {" "}
-                <Image
-                  src="/location.png"
-                  alt="Picture of the author"
-                  width={10}
-                  height={10}
-                />
-                &nbsp;New York, US
-              </h5>
-              <p className="midText" style={{ margin: "0px" }}>
-                Global education fall meeting for everyone{" "}
-              </p>
-            </span>
-            <span className="time" style={{ margin: "0px" }}>
-              <h5 className="timeSlot" style={{ margin: "0px" }}>
-                10:30am - 12:30pm
-              </h5>
-              <button style={{ margin: "0px", border: "none" }}>
-                View Events
-              </button>
-            </span>
-            .
-          </div>
+        <div className="1stDiv">
+          <span>
+            <p className="event">Fetured Events</p>
+            <h2 className="eventHeading"> Join our upcoming event</h2>
+          </span>
         </div>
+        <div className="Div">
+          <span className="date" style={{ margin: "0px" }}>
+            <h2 style={{ margin: "0px" }}>02</h2>
+            <p style={{ margin: "0px" }}>October 2022</p>
+          </span>
+          <span className="location" style={{ margin: "0px" }}>
+            <h5 style={{ margin: "0px" }}>
+              <Image
+                src="/location.png"
+                alt="Picture of the author"
+                width={10}
+                height={10}
+              />
+              &nbsp; New York, US
+            </h5>
+            <p className="midText" style={{ margin: "0px" }}>
+              Global education fall meeting for everyone{" "}
+            </p>
+          </span>
+          <span className="tst" style={{ margin: "0px" }}>
+            <h5 className="timeSlot" style={{ margin: "0px" }}>
+              10:30am - 12:30pm
+            </h5>
+          </span>
+          <span className="time" style={{ margin: "0px" }}>
+            <button style={{ margin: "0px", border: "none" }}>
+              View Events
+            </button>
+            {/* <p style={{ margin: "0px" }}>View Events</p> */}
+          </span>
+        </div>
+
+        <div className="Div">
+          <span className="date" style={{ margin: "0px" }}>
+            <h2 style={{ margin: "0px" }}>02</h2>
+            <p style={{ margin: "0px" }}>October 2022</p>
+          </span>
+          <span className="location" style={{ margin: "0px" }}>
+            <h5 style={{ margin: "0px" }}>
+              <Image
+                src="/location.png"
+                alt="Picture of the author"
+                width={10}
+                height={10}
+              />
+              &nbsp; New York, US
+            </h5>
+            <p className="midText" style={{ margin: "0px" }}>
+              Global education fall meeting for everyone{" "}
+            </p>
+          </span>
+          <span className="tst" style={{ margin: "0px" }}>
+            <h5 className="timeSlot" style={{ margin: "0px" }}>
+              10:30am - 12:30pm
+            </h5>
+          </span>
+          <span className="time" style={{ margin: "0px" }}>
+            <button style={{ margin: "0px", border: "none" }}>
+              View Events
+            </button>
+            {/* <p style={{ margin: "0px" }}>View Events</p> */}
+          </span>
+        </div>
+
+        <div className="Div">
+          <span className="date" style={{ margin: "0px" }}>
+            <h2 style={{ margin: "0px" }}>02</h2>
+            <p style={{ margin: "0px" }}>October 2022</p>
+          </span>
+          <span className="location" style={{ margin: "0px" }}>
+            <h5 style={{ margin: "0px" }}>
+              <Image
+                src="/location.png"
+                alt="Picture of the author"
+                width={10}
+                height={10}
+              />
+              &nbsp; New York, US
+            </h5>
+            <p className="midText" style={{ margin: "0px" }}>
+              Global education fall meeting for everyone{" "}
+            </p>
+          </span>
+          <span className="tst" style={{ margin: "0px" }}>
+            <h5 className="timeSlot" style={{ margin: "0px" }}>
+              10:30am - 12:30pm
+            </h5>
+          </span>
+          <span className="time" style={{ margin: "0px" }}>
+            <button style={{ margin: "0px", border: "none" }}>
+              View Events
+            </button>
+            {/* <p style={{ margin: "0px" }}>View Events</p> */}
+          </span>
+        </div>
+
+        <div className="Div">
+          <span className="date" style={{ margin: "0px" }}>
+            <h2 style={{ margin: "0px" }}>02</h2>
+            <p style={{ margin: "0px" }}>October 2022</p>
+          </span>
+          <span className="location" style={{ margin: "0px" }}>
+            <h5 style={{ margin: "0px" }}>
+              <Image
+                src="/location.png"
+                alt="Picture of the author"
+                width={10}
+                height={10}
+              />
+              &nbsp; New York, US
+            </h5>
+            <p className="midText" style={{ margin: "0px" }}>
+              Global education fall meeting for everyone{" "}
+            </p>
+          </span>
+          <span className="tst" style={{ margin: "0px" }}>
+            <h5 className="timeSlot" style={{ margin: "0px" }}>
+              10:30am - 12:30pm
+            </h5>
+          </span>
+          <span className="time" style={{ margin: "0px" }}>
+            <button style={{ margin: "0px", border: "none" }}>
+              View Events
+            </button>
+            {/* <p style={{ margin: "0px" }}>View Events</p> */}
+          </span>
+        </div>
+
         <span style={{ marginLeft: "45%" }}>
           <Button variant="contained" size="medium">
             View More
