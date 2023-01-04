@@ -195,10 +195,10 @@ const MyForm = withFormik<MyFormProps, FormValues>({
 })(InnerForm);
 
 // Use <MyForm /> wherevs
-const AddActivityfrom = () => (
+const EdirActivityform = () => (
   <div>
     <MyForm message="Sign up" />
   </div>
 );
 
-export default AddActivityfrom;
+export default EdirActivityform;
