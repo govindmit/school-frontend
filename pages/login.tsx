@@ -3,19 +3,16 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Inter } from "@next/font/google";
 import { IconButton } from "@mui/material";
 import { BiArrowBack } from "react-icons/bi";
 import { SlSocialFacebook } from "react-icons/sl";
 import { RiTwitterLine } from "react-icons/ri";
 import { RxInstagramLogo } from "react-icons/rx";
-const inter = Inter({ subsets: ["latin"] });
+import Link from "next/link";
 export default function login() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -27,7 +24,7 @@ export default function login() {
   };
   return (
     <>
-      <Container>
+      <Container className="login-page">
         <header>
           <IconButton
             size="large"
@@ -46,16 +43,20 @@ export default function login() {
             Educorp
           </Typography>
           <nav className="nav-bar">
-            <Button
-              style={{
-                backgroundColor: "#26CEB3",
-              }}
-            >
-              <BiArrowBack /> Back to Home
-            </Button>
+            <Link href="/" style={{ textDecoration: "none" }}>
+              <Button
+                style={{
+                  backgroundColor: "#26CEB3",
+                  textDecoration: "none",
+                }}
+              >
+                <BiArrowBack /> Back to Home
+              </Button>
+            </Link>
           </nav>
         </header>
       </Container>
+
       <section className="productive">
         <div className="productive-img">
           <img src="/loginimg.png" alt="" />{" "}
@@ -64,9 +65,9 @@ export default function login() {
           <Container
             component="main"
             style={{
-              boxShadow: "1px 1px 12px 0px",
-              borderRadius: "25px",
-              padding: "30px",
+              boxShadow: "1px 1px 10px 0px",
+              borderRadius: "20px",
+              padding: "25px",
             }}
           >
             <Box>
@@ -77,7 +78,7 @@ export default function login() {
               >
                 <span style={{ color: "#26CEB3" }}>Login</span> to Your Account
               </Typography>
-              <Typography variant="body2">
+              <Typography variant="body2" style={{ color: "#5F6160" }}>
                 Lorem Ipsum is simply dummy text of the printing and typesetting
                 industry.
               </Typography>
@@ -89,28 +90,20 @@ export default function login() {
               >
                 <Typography>Email Address</Typography>
                 <TextField
-                  margin="normal"
-                  required
+                  style={{ marginTop: "8px" }}
                   fullWidth
-                  id="email"
-                  label="Email Address"
+                  size="small"
                   name="email"
-                  autoComplete="email"
-                  autoFocus
+                  placeholder="Email Address..."
                 />
-                <Typography>Password</Typography>
+                <Typography style={{ marginTop: "15px" }}>Password</Typography>
                 <TextField
-                  margin="normal"
-                  required
+                  style={{ marginTop: "8px" }}
                   fullWidth
-                  name="password"
-                  label="Password"
-                  type="password"
-                  id="password"
-                  autoComplete="current-password"
+                  size="small"
+                  placeholder="***********"
                 />
-
-                <Grid container>
+                <Grid container style={{ marginTop: "10px" }}>
                   <Grid item xs>
                     <FormControlLabel
                       control={<Checkbox value="remember" color="primary" />}
@@ -118,10 +111,12 @@ export default function login() {
                     />
                   </Grid>
                   <Grid item>
-                    <span>
+                    <Typography style={{ marginTop: "9px" }}>
                       Forgot Password?{" "}
-                      <Link style={{ color: "#26CEB3" }}>Click here</Link>{" "}
-                    </span>
+                      <Link href="/forgotpassword" style={{ color: "#26CEB3" }}>
+                        Click here
+                      </Link>
+                    </Typography>
                   </Grid>
                 </Grid>
                 <Button
@@ -129,7 +124,7 @@ export default function login() {
                   type="submit"
                   fullWidth
                   variant="contained"
-                  sx={{ mt: 3, mb: 2 }}
+                  sx={{ mt: 1 }}
                 >
                   Submit
                 </Button>
@@ -137,7 +132,7 @@ export default function login() {
             </Box>
           </Container>
           <footer>
-            <p>
+            <Typography>
               © 2022 Educorp. All Rights Reserved{" "}
               <a
                 href="http://www.polymer-project.org/"
@@ -175,7 +170,7 @@ export default function login() {
               >
                 <RxInstagramLogo />
               </a>
-            </p>
+            </Typography>
           </footer>
         </div>
       </section>

@@ -1,19 +1,15 @@
 import * as React from "react";
 import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Inter } from "@next/font/google";
 import { BiArrowBack } from "react-icons/bi";
 import { IconButton } from "@mui/material";
 import { RxInstagramLogo } from "react-icons/rx";
 import { RiTwitterLine } from "react-icons/ri";
 import { SlSocialFacebook } from "react-icons/sl";
-const inter = Inter({ subsets: ["latin"] });
-const theme = createTheme();
+import Link from "next/link";
 export default function resetpassword() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -44,9 +40,11 @@ export default function resetpassword() {
             Educorp
           </Typography>
           <nav className="nav-bar">
-            <Button style={{ backgroundColor: "#26CEB3" }}>
-              <BiArrowBack /> Back to Home
-            </Button>
+            <Link href="/" style={{ textDecoration: "none" }}>
+              <Button style={{ backgroundColor: "#26CEB3" }}>
+                <BiArrowBack /> Back to Home
+              </Button>
+            </Link>
           </nav>
         </header>
       </Container>
@@ -59,9 +57,9 @@ export default function resetpassword() {
           <Container
             component="main"
             style={{
-              boxShadow: "1px 1px 12px 0px",
-              borderRadius: "25px",
-              padding: "30px",
+              boxShadow: "1px 1px 10px 0px",
+              borderRadius: "20px",
+              padding: "25px",
             }}
           >
             <Box>
@@ -72,35 +70,36 @@ export default function resetpassword() {
                 </span>
                 Password
               </Typography>
-              <Typography variant="body2">
+              <Typography variant="body2" style={{ color: "#5F6160" }}>
                 Lorem Ipsum is simply dummy text of the printing and typesetting
                 industry.
               </Typography>
-              <Box component="form" onSubmit={handleSubmit} noValidate>
+              <Box
+                component="form"
+                onSubmit={handleSubmit}
+                noValidate
+                sx={{ mt: 1 }}
+              >
                 <Typography>New Password</Typography>
                 <TextField
-                  margin="normal"
-                  required
+                  style={{ marginTop: "8px" }}
                   fullWidth
-                  id="email"
-                  label="Email Address"
+                  size="small"
                   name="email"
-                  autoComplete="email"
-                  autoFocus
+                  placeholder="********"
                 />
-                <Typography>Confirm Password</Typography>
+                <Typography style={{ marginTop: "15px" }}>
+                  Confirm Password
+                </Typography>
                 <TextField
-                  margin="normal"
-                  required
+                  style={{ marginTop: "8px" }}
                   fullWidth
-                  name="password"
-                  label="Password"
-                  type="password"
-                  id="password"
-                  autoComplete="current-password"
+                  size="small"
+                  name="email"
+                  placeholder="********"
                 />
                 <Button
-                  style={{ backgroundColor: "#26CEB3" }}
+                  style={{ backgroundColor: "#26CEB3", fontWeight: "900" }}
                   type="submit"
                   fullWidth
                   variant="contained"
@@ -112,7 +111,7 @@ export default function resetpassword() {
             </Box>
           </Container>
           <footer>
-            <p>
+            <Typography>
               © 2022 Educorp. All Rights Reserved{" "}
               <a
                 href="http://www.polymer-project.org/"
@@ -150,7 +149,7 @@ export default function resetpassword() {
               >
                 <RxInstagramLogo />
               </a>
-            </p>
+            </Typography>
           </footer>
         </div>
       </section>
