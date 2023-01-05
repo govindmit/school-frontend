@@ -14,7 +14,8 @@ import Container from "@mui/material/Container";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-
+import MainListItems from "../layouts/listitems";
+import AvtivityDetails from "./activitydetail/details";
 const drawerWidth: number = 240;
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -63,10 +64,9 @@ const Drawer = styled(MuiDrawer, {
     }),
   },
 }));
-
 const mdTheme = createTheme();
 
-function EditActivity() {
+function ActivityDetails() {
   const [open, setOpen] = React.useState(true);
   const toggleDrawer = () => {
     setOpen(!open);
@@ -124,7 +124,7 @@ function EditActivity() {
             </IconButton>
           </Toolbar>
           <Divider />
-          {/* <List component="nav">{mainListItems}</List> */}
+          <List component="nav">  <MainListItems /></List>
         </Drawer>
         <Box
           component="main"
@@ -140,7 +140,7 @@ function EditActivity() {
         >
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-          
+            <AvtivityDetails />
           </Container>
         </Box>
       </Box>
@@ -149,5 +149,5 @@ function EditActivity() {
 }
 
 export default function Dashboard() {
-  return <EditActivity />;
+  return <ActivityDetails />;
 }

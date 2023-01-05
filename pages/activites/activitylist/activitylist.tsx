@@ -14,10 +14,28 @@ import {
   Button,
 } from "@mui/material";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { BiShow } from "react-icons/bi";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBin5Fill } from "react-icons/ri";
-export default function ActivityListing() {
+
+export default function ActivityList() {
+  const [activites, setactivites] = useState([]);
+
+  useEffect(() => {
+    const url = "https://api.adviceslip.com/advice";
+    const fetchData = async () => {
+      try {
+        const response = await fetch(url);
+        const json = await response.json();
+        console.log(json);
+      } catch (error) {
+        console.log("error", error);
+      }
+    };
+
+    fetchData();
+  }, []);
   return (
     <>
       <Container>
@@ -57,7 +75,7 @@ export default function ActivityListing() {
                   <TableCell align="left">Mangoit</TableCell>
                   <TableCell align="left">Mangoit</TableCell>
                   <TableCell align="left">
-                    <Link href="/activitydetails">
+                    <Link href="/activites/activitydetails">
                       <Button variant="outlined" size="small">
                         <BiShow />
                       </Button>

@@ -10,13 +10,13 @@ import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import Badge from "@mui/material/Badge";
+import Container from "@mui/material/Container";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import ActivityListing from "../activitylisting";
+import Add from "./addactivity/add";
 
 const drawerWidth: number = 240;
-
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
 }
@@ -67,7 +67,7 @@ const Drawer = styled(MuiDrawer, {
 
 const mdTheme = createTheme();
 
-function DashboardContent() {
+function AddActivity() {
   const [open, setOpen] = React.useState(true);
   const toggleDrawer = () => {
     setOpen(!open);
@@ -129,11 +129,20 @@ function DashboardContent() {
         </Drawer>
         <Box
           component="main"
-          sx={{ flexGrow: 1, p: 3 }}
-          style={{ marginTop: "30px" }}
+          sx={{
+            backgroundColor: (theme) =>
+              theme.palette.mode === "light"
+                ? theme.palette.grey[100]
+                : theme.palette.grey[900],
+            flexGrow: 1,
+            height: "100vh",
+            overflow: "auto",
+          }}
         >
           <Toolbar />
-          <ActivityListing />
+          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+            <Add />
+          </Container>
         </Box>
       </Box>
     </ThemeProvider>
@@ -141,5 +150,5 @@ function DashboardContent() {
 }
 
 export default function Dashboard() {
-  return <DashboardContent />;
+  return <AddActivity />;
 }

@@ -10,7 +10,8 @@ import { RxInstagramLogo } from "react-icons/rx";
 import { RiTwitterLine } from "react-icons/ri";
 import { SlSocialFacebook } from "react-icons/sl";
 import Link from "next/link";
-export default function resetpassword() {
+
+export default function Resetpassword() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -21,8 +22,8 @@ export default function resetpassword() {
   };
   return (
     <>
-      <Container>
-        <header>
+      <Container className="reset-password">
+        <header className="header-navbar">
           <IconButton
             size="large"
             edge="start"

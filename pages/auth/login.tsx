@@ -13,7 +13,7 @@ import { SlSocialFacebook } from "react-icons/sl";
 import { RiTwitterLine } from "react-icons/ri";
 import { RxInstagramLogo } from "react-icons/rx";
 import Link from "next/link";
-export default function login() {
+export default function Login() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -25,7 +25,7 @@ export default function login() {
   return (
     <>
       <Container className="login-page">
-        <header>
+        <header className="header-navbar">
           <IconButton
             size="large"
             edge="start"
@@ -113,7 +113,10 @@ export default function login() {
                   <Grid item>
                     <Typography style={{ marginTop: "9px" }}>
                       Forgot Password?{" "}
-                      <Link href="/forgotpassword" style={{ color: "#26CEB3" }}>
+                      <Link
+                        href="auth/forgotpassword"
+                        style={{ color: "#26CEB3" }}
+                      >
                         Click here
                       </Link>
                     </Typography>
