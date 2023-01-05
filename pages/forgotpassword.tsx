@@ -21,8 +21,8 @@ export default function forgotpassword() {
   };
   return (
     <>
-      <Container>
-        <header>
+      <Container className="forgot-password">
+        <header className="header-navbar">
           <IconButton
             size="large"
             edge="start"

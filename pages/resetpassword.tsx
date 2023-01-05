@@ -21,8 +21,8 @@ export default function resetpassword() {
   };
   return (
     <>
-      <Container>
-        <header>
+      <Container className="reset-password">
+        <header className="header-navbar">
           <IconButton
             size="large"
             edge="start"

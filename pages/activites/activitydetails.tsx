@@ -17,8 +17,8 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import mainListItems from "../layouts/listitems";
-import ActivityList from "./activitylist/activitylist";
-import EdirActivityform from "./editactivity/edit";
+import Add from "./addactivity/add";
+import AvtivityDetails from "./activitydetail/details";
 const drawerWidth: number = 240;
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -70,7 +70,7 @@ const Drawer = styled(MuiDrawer, {
 
 const mdTheme = createTheme();
 
-function DashboardContent() {
+function AddActivity() {
   const [open, setOpen] = React.useState(true);
   const toggleDrawer = () => {
     setOpen(!open);
@@ -144,7 +144,7 @@ function DashboardContent() {
         >
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <EdirActivityform />
+            <AvtivityDetails />
           </Container>
         </Box>
       </Box>
@@ -153,5 +153,5 @@ function DashboardContent() {
 }
 
 export default function Dashboard() {
-  return <DashboardContent />;
+  return <AddActivity />;
 }

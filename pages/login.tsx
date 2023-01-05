@@ -25,7 +25,7 @@ export default function login() {
   return (
     <>
       <Container className="login-page">
-        <header>
+        <header className="header-navbar">
           <IconButton
             size="large"
             edge="start"

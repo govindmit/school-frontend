@@ -1,9 +1,12 @@
 import {
   Button,
   Container,
+  FormControl,
   Grid,
   InputLabel,
+  MenuItem,
   OutlinedInput,
+  Select,
   Stack,
   TextareaAutosize,
 } from "@mui/material";
@@ -26,12 +29,8 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
   const { touched, errors, isSubmitting, message } = props;
   return (
     <>
-      <Container
-        maxWidth="sm"
-        component="main"
-        style={{ backgroundColor: "white" }}
-      >
-        <form>
+      <Container component="main" style={{ backgroundColor: "white" }}>
+        <Form>
           <Grid container spacing={3}>
             <Grid item xs={12} md={6}>
               <Stack spacing={1}>
@@ -39,13 +38,15 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
                   Activity Name <span className="err_str">*</span>
                 </InputLabel>
                 <OutlinedInput
+                  type="text"
                   id="name"
-                  type="name"
                   name="name"
+                  size="small"
                   placeholder="Activity Name..."
                   fullWidth
                 />
               </Stack>
+              {touched.email && errors.email && <div>{errors.email}</div>}
             </Grid>
             <Grid item xs={12} md={6}>
               <Stack spacing={1}>
@@ -57,6 +58,7 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
                   id="price"
                   type="price"
                   name="price"
+                  size="small"
                   placeholder="Price..."
                 />
               </Stack>
@@ -66,13 +68,16 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
                 <InputLabel htmlFor="type">
                   Type <span className="err_str">*</span>
                 </InputLabel>
-                <OutlinedInput
-                  fullWidth
-                  id="type"
-                  type="type"
-                  name="type"
-                  placeholder="Type.."
-                />
+                <FormControl>
+                  <Select
+                    size="small"
+                    displayEmpty
+                    inputProps={{ "aria-label": "Without label" }}
+                  >
+                    <MenuItem value="Free">Free</MenuItem>
+                    <MenuItem value="Paid">Paid</MenuItem>
+                  </Select>
+                </FormControl>
               </Stack>
             </Grid>
             <Grid item xs={12} md={6}>
@@ -80,11 +85,31 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
                 <InputLabel htmlFor="status">
                   Status <span className="err_str">*</span>
                 </InputLabel>
+                <FormControl>
+                  <Select
+                    size="small"
+                    displayEmpty
+                    inputProps={{ "aria-label": "Without label" }}
+                  >
+                    <MenuItem value="Active">Active</MenuItem>
+                    <MenuItem value="Archive">Archive</MenuItem>
+                    <MenuItem value="Draft">Draft</MenuItem>
+                  </Select>
+                </FormControl>
+              </Stack>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Stack spacing={1}>
+                <InputLabel htmlFor="enddate">
+                  End Date <span className="err_str">*</span>
+                </InputLabel>
                 <OutlinedInput
                   fullWidth
-                  id="status"
-                  name="status"
-                  placeholder="Status..."
+                  size="small"
+                  type="date"
+                  id="enddate"
+                  name="enddate"
+                  placeholder="enddate."
                 />
               </Stack>
             </Grid>
@@ -95,23 +120,10 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
                 </InputLabel>
                 <OutlinedInput
                   fullWidth
-                  id="startdate"
-                  type="startdate"
+                  size="small"
+                  type="date"
                   name="startdate"
-                  placeholder="startdate"
-                />
-              </Stack>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Stack spacing={1}>
-                <InputLabel htmlFor="enddate">
-                  End Date <span className="err_str">*</span>
-                </InputLabel>
-                <OutlinedInput
-                  fullWidth
-                  id="enddate"
-                  name="enddate"
-                  placeholder="enddate."
+                  id="startdate"
                 />
               </Stack>
             </Grid>
@@ -122,6 +134,7 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
                 </InputLabel>
                 <OutlinedInput
                   type="file"
+                  size="small"
                   fullWidth
                   id="image"
                   name="image"
@@ -154,11 +167,11 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
                 variant="contained"
                 color="primary"
               >
-                Add Activity
+                Update Activity
               </Button>
             </Grid>
           </Grid>
-        </form>
+        </Form>
       </Container>
     </>
   );
@@ -195,10 +208,10 @@ const MyForm = withFormik<MyFormProps, FormValues>({
 })(InnerForm);
 
 // Use <MyForm /> wherevs
-const ActivityDetails = () => (
+const EdirActivityform = () => (
   <div>
     <MyForm message="Sign up" />
   </div>
 );
 
-export default ActivityDetails;
+export default EdirActivityform;

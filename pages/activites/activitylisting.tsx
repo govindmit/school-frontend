@@ -18,7 +18,6 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import mainListItems from "../layouts/listitems";
 import ActivityList from "./activitylist/activitylist";
-import EdirActivityform from "./editactivity/edit";
 const drawerWidth: number = 240;
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -144,7 +143,7 @@ function DashboardContent() {
         >
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <EdirActivityform />
+            <ActivityList />
           </Container>
         </Box>
       </Box>
