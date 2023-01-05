@@ -4,6 +4,7 @@ import "../styles/navbar.css";
 import "../styles/auth.css";
 import "../styles/activity.css";
 import "../styles/view.css";
+import "../styles/edit.css";
 
 export default function App({ Component, pageProps }: AppProps) {
   return <Component {...pageProps} />;

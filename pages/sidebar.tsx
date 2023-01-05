@@ -159,7 +159,7 @@ export default function MiniDrawer() {
           <ListItem
             disablePadding
             sx={{ display: "block" }}
-            onClick={() => router.push("/dashboard")}
+            onClick={() => router.push("/guardians")}
           >
             <ListItemButton
               sx={{

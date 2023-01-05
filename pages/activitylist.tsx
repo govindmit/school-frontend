@@ -131,12 +131,12 @@ export default function ActivityList() {
                             <TableCell align="left">{startdate}</TableCell>
                             <TableCell align="left">{enddate}</TableCell>
                             <TableCell align="left">
-                              <Link href={`/activites/activitydetails/${id}`}>
+                              <Link href={`/activitydetails/${id}`}>
                                 <Button variant="outlined" size="small">
                                   <BiShow />
                                 </Button>
                               </Link>
-                              <Link href="/activites/editactivity">
+                              <Link href="/editactivity">
                                 <Button variant="outlined" size="small">
                                   <FiEdit />
                                 </Button>
