@@ -7,13 +7,19 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { type } from "os";
 
-export default function View() {
-  const router = useRouter();
-  const { id } = router.query;
+export interface UserDataType {
+  firstname: String;
+  lastname: String;
+  email: String;
+}
 
-  const [user, setUser] = useState();
+export default function View() {
+  const [user, setUser] = useState<UserDataType | any>("");
+  const router = useRouter();
 
   useEffect(() => {
+    const { id } = router.query;
+    console.log(id, "idddddddddddddddd");
     fetch("https://api-school.mangoitsol.com/api/get_authorization_token")
       .then((response) => response.json())
       .then((res) =>
@@ -36,6 +42,7 @@ export default function View() {
   // console.log(user && user.firstname, "userrr");
   return (
     <>
+      {console.log(user, "dfdsfsdfsdfs")}
       <div id="content">
         <div id="left">
           <div className="img">
@@ -47,9 +54,7 @@ export default function View() {
             &nbsp;
           </div>
           <div>
-            <span className="name">
-              {user == undefined ? type : user ? user.firstname : ""}
-            </span>{" "}
+            <span className="name">{!user ? "load" : user.firstname}</span>{" "}
             &nbsp;
             <span className="date">Created at: May 16, 2022</span>
           </div>
@@ -70,44 +75,31 @@ export default function View() {
                 <TextField
                   label="First Name"
                   id="filled-size-normal"
-                  defaultValue={
-                    user == undefined ? type : user ? user.firstname : ""
-                  }
+                  defaultValue={user.firstname}
+                  // value={user.firstname}
                   variant="filled"
+                  multiline
                 />
                 <TextField
                   label="Last Name"
                   id="filled-size-normal"
-                  defaultValue={
-                    user == undefined ? type : user ? user.lastname : ""
-                  }
+                  defaultValue={user.lastname}
                   variant="filled"
+                  multiline
                 />
                 <TextField
                   label="Email Address"
                   id="filled-size-normal"
-                  defaultValue={
-                    user == undefined ? type : user ? user.email : ""
-                  }
+                  defaultValue={user.email}
                   variant="filled"
+                  multiline
                 />
                 <TextField
                   label="Mobile Number"
                   id="filled-size-normal"
-                  defaultValue="Normal"
+                  defaultValue={user.contact}
                   variant="filled"
-                />
-                <TextField
-                  label="Status"
-                  id="filled-size-normal"
-                  defaultValue="Normal"
-                  variant="filled"
-                />
-                <TextField
-                  label="Address"
-                  id="filled-size-normal"
-                  defaultValue="Normal"
-                  variant="filled"
+                  multiline
                 />
               </div>
             </Box>
