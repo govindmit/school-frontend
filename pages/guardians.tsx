@@ -18,7 +18,7 @@ import { useEffect, useState } from "react";
 import { BiShow } from "react-icons/bi";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBin5Fill } from "react-icons/ri";
-import axios from "axios";
+
 export default function Guardians() {
   const [token, setToken] = useState([]);
   const [user, setUser] = useState([]);
