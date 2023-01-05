@@ -6,6 +6,7 @@ import Avatar from "@mui/material/Avatar";
 import { styled } from "@mui/material/styles";
 import { useEffect, useState } from "react";
 import {
+  Breadcrumbs,
   Card,
   CardActions,
   CardContent,
@@ -15,6 +16,7 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
+import Link from "next/link";
 
 export default function View() {
   const [user, setUser] = useState([]);
@@ -49,6 +51,33 @@ export default function View() {
 
   return (
     <>
+      <div style={{ width: "100%" }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            p: 2,
+            m: 2,
+            bgcolor: "background.paper",
+            borderRadius: 1,
+          }}
+        >
+          <Item>
+            <Breadcrumbs aria-label="breadcrumb">
+              <Link color="inherit" href="/">
+                Activites
+              </Link>
+              <Link
+                color="inherit"
+                href="/material-ui/getting-started/installation/"
+              >
+                Activity Details
+              </Link>
+            </Breadcrumbs>
+          </Item>
+          <Item>Item 2</Item>
+        </Box>
+      </div>
       <Container component="main">
         <Grid container spacing={2}>
           <Grid item xs={4}>
