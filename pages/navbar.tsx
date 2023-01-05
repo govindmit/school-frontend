@@ -110,7 +110,7 @@ function Navbar(props: IAppProps) {
                 <p className="headline">The Leader in Online Learning</p>
                 <h2 className="heading">
                   Build an Incredible Learning Experience BUILD AN INCREDIBLE
-                  LEARNING EXPERIENCE
+                  LEARNING EXPERIENCE hello
                 </h2>
               </div>
               <p className="paragraph">
