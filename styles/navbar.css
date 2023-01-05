@@ -167,7 +167,9 @@
   line-height: 21px;
   color: #0c140f;
 }
-
+header.MuiPaper-root.MuiPaper-elevation.MuiPaper-elevation4.MuiAppBar-root.MuiAppBar-colorPrimary.MuiAppBar-positionFixed.mui-fixed.css-1191obr-MuiPaper-root-MuiAppBar-root {
+  display: none;
+}
 .view {
   text-align: center;
   width: 130px;

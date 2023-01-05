@@ -16,7 +16,7 @@ export interface UserDataType {
   lastName: String;
 }
 
-export default function View() {
+export default function EditGuardians() {
   const [user, setUser] = useState<UserDataType | any>("");
   const [stud, setStud] = useState<UserDataType | any>("");
 
@@ -67,7 +67,6 @@ export default function View() {
   console.log(stud, "stud");
   return (
     <>
-      {console.log(user, "dfdsfsdfsdfs")}
       <Box sx={{ display: "flex" }}>
         <MiniDrawer />
 
@@ -82,16 +81,11 @@ export default function View() {
                 />
                 &nbsp;
               </div>
-              <div>
-                <span className="name">{!user ? "load" : user.firstname}</span>{" "}
-                &nbsp;
-                <span className="date">Created at: May 16, 2022</span>
-              </div>
             </div>
 
             <div id="right">
               <div className="one">
-                <h1 className="heading">GURADIAN INFO</h1>
+                <h1 className="heading">EDIT GURADIAN INFO</h1>
                 <Box
                   component="form"
                   sx={{
@@ -134,7 +128,7 @@ export default function View() {
                 </Box>
               </div>
               <div className="two">
-                <h1 className="heading">STUDENT INFO</h1>
+                <h1 className="heading">EDIT STUDENT INFO </h1>
                 <Box
                   component="form"
                   sx={{
