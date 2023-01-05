@@ -16,7 +16,8 @@ import Paper from "@mui/material/Paper";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import MainListItems from "../layouts/listitems";
+// import { mainListItems } from "./listitems";
+
 const drawerWidth: number = 240;
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -126,9 +127,7 @@ function DashboardContent() {
             </IconButton>
           </Toolbar>
           <Divider />
-          <List component="nav">
-            <MainListItems />
-          </List>
+          {/* <List component="nav">{mainListItems}</List> */}
         </Drawer>
         <Box
           component="main"

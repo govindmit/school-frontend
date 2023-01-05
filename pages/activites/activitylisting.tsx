@@ -14,7 +14,6 @@ import Container from "@mui/material/Container";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import MainListItems from "../layouts/listitems";
 import ActivityList from "./activitylist/activitylist";
 const drawerWidth: number = 240;
 interface AppBarProps extends MuiAppBarProps {
@@ -125,10 +124,7 @@ function ActivityListing() {
             </IconButton>
           </Toolbar>
           <Divider />
-          <List component="nav">
-            {" "}
-            <MainListItems />
-          </List>
+          {/* <List component="nav">{mainListItems}</List> */}
         </Drawer>
         <Box
           component="main"

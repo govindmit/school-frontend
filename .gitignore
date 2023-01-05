@@ -22,6 +22,7 @@ lib-cov
 coverage
 *.lcov
 
+
 # nyc test coverage
 .nyc_output
 
@@ -39,6 +40,7 @@ build/Release
 
 # Dependency directories
 node_modules/
+out/
 jspm_packages/
 
 # TypeScript v1 declaration files

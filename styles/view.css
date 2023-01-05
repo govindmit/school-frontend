@@ -83,3 +83,43 @@ span.date {
   color: #5a6873;
   margin-left: 162px;
 }
+.MuiFormControl-root.MuiTextField-root.css-1u3bzj6-MuiFormControl-root-MuiTextField-root {
+  width: 47%;
+  background: #f0f4ff;
+  border-radius: 5px;
+}
+label#filled-size-normal-label {
+  /* font-family: 'Roboto'; */
+  /* font-style: normal; */
+  position: absolute;
+  /* width: 71px; */
+  /* height: 24px; */
+  /* left: 883px; */
+  /* top: 335px; */
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 24px;
+  display: flex;
+  align-items: center;
+  letter-spacing: 0.15px;
+  color: #8d96ae;
+}
+textarea#filled-size-normal {
+  /* position: absolute; */
+  /* width: 50px; */
+  /* height: 24px; */
+  /* left: 1383px; */
+  /* top: 362px; */
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  display: flex;
+  align-items: center;
+  letter-spacing: 0.15px;
+  color: #5a6873;
+  /* margin-top: 12px; */
+}
