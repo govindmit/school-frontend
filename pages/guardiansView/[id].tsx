@@ -70,19 +70,25 @@ export default function View() {
                 <TextField
                   label="First Name"
                   id="filled-size-normal"
-                  defaultValue="Normal"
+                  defaultValue={
+                    user == undefined ? type : user ? user.firstname : ""
+                  }
                   variant="filled"
                 />
                 <TextField
                   label="Last Name"
                   id="filled-size-normal"
-                  defaultValue="Normal"
+                  defaultValue={
+                    user == undefined ? type : user ? user.lastname : ""
+                  }
                   variant="filled"
                 />
                 <TextField
                   label="Email Address"
                   id="filled-size-normal"
-                  defaultValue="Normal"
+                  defaultValue={
+                    user == undefined ? type : user ? user.email : ""
+                  }
                   variant="filled"
                 />
                 <TextField
