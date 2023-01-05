@@ -11,12 +11,10 @@ import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import Badge from "@mui/material/Badge";
 import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import mainListItems from "../layouts/listitems";
+import MainListItems from "../layouts/listitems";
 import ActivityList from "./activitylist/activitylist";
 const drawerWidth: number = 240;
 interface AppBarProps extends MuiAppBarProps {
@@ -69,7 +67,7 @@ const Drawer = styled(MuiDrawer, {
 
 const mdTheme = createTheme();
 
-function DashboardContent() {
+function ActivityListing() {
   const [open, setOpen] = React.useState(true);
   const toggleDrawer = () => {
     setOpen(!open);
@@ -127,7 +125,10 @@ function DashboardContent() {
             </IconButton>
           </Toolbar>
           <Divider />
-          <List component="nav">{mainListItems}</List>
+          <List component="nav">
+            {" "}
+            <MainListItems />
+          </List>
         </Drawer>
         <Box
           component="main"
@@ -152,5 +153,5 @@ function DashboardContent() {
 }
 
 export default function Dashboard() {
-  return <DashboardContent />;
+  return <ActivityListing />;
 }

@@ -11,9 +11,12 @@ import {
   TextareaAutosize,
 } from "@mui/material";
 import React from "react";
+import * as Yup from "yup";
 import { withFormik, FormikProps, FormikErrors, Form, Field } from "formik";
 // Shape of form values
 interface FormValues {
+  email: string;
+  password: string;
   name: string;
   price: number;
   type: string;
@@ -24,11 +27,9 @@ interface FormValues {
   description: string;
   shortdescription: string;
 }
-
 interface OtherProps {
   message: string;
 }
-
 // Aside: You may see InjectedFormikProps<OtherProps, FormValues> instead of what comes below in older code.. InjectedFormikProps was artifact of when Formik only exported a HoC. It is also less flexible as it MUST wrap all props (it passes them through).
 const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
   const { touched, errors, isSubmitting, message } = props;
@@ -41,26 +42,23 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
               <InputLabel htmlFor="name">
                 Activity Name <span className="err_str">*</span>
               </InputLabel>
-              <Field type="text" name="name" placeholder="Activity Name..." />
+              <OutlinedInput
+                type="text"
+                id="name"
+                name="name"
+                size="small"
+                placeholder="Activity Name..."
+                fullWidth
+              />
             </Stack>
-            <Stack>
-              <span
-                style={{
-                  color: "red",
-                  fontSize: "13px",
-                  fontWeight: "bold",
-                }}
-              >
-                {errors.name && touched.name && errors.name}
-              </span>
-            </Stack>
+            {touched.email && errors.email && <div>{errors.email}</div>}
           </Grid>
           <Grid item xs={12} md={6}>
             <Stack spacing={1}>
               <InputLabel htmlFor="price">
                 Activity Price <span className="err_str">*</span>
               </InputLabel>
-              <Field
+              <OutlinedInput
                 fullWidth
                 id="price"
                 type="price"
@@ -68,17 +66,6 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
                 size="small"
                 placeholder="Price..."
               />
-            </Stack>
-            <Stack>
-              <span
-                style={{
-                  color: "red",
-                  fontSize: "13px",
-                  fontWeight: "bold",
-                }}
-              >
-                {errors.price && touched.price && errors.price}
-              </span>
             </Stack>
           </Grid>
           <Grid item xs={12} md={6}>
@@ -97,17 +84,6 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
                 </Select>
               </FormControl>
             </Stack>
-            <Stack>
-              <span
-                style={{
-                  color: "red",
-                  fontSize: "13px",
-                  fontWeight: "bold",
-                }}
-              >
-                {errors.name && touched.name && errors.name}
-              </span>
-            </Stack>
           </Grid>
           <Grid item xs={12} md={6}>
             <Stack spacing={1}>
@@ -124,17 +100,6 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
                   <MenuItem value="Archive">Archive</MenuItem>
                   <MenuItem value="Draft">Draft</MenuItem>
                 </Select>
-                <Stack>
-                  <span
-                    style={{
-                      color: "red",
-                      fontSize: "13px",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {errors.name && touched.name && errors.name}
-                  </span>
-                </Stack>
               </FormControl>
             </Stack>
           </Grid>
@@ -143,7 +108,7 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
               <InputLabel htmlFor="enddate">
                 End Date <span className="err_str">*</span>
               </InputLabel>
-              <Field
+              <OutlinedInput
                 fullWidth
                 size="small"
                 type="date"
@@ -172,7 +137,7 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
               <InputLabel htmlFor="image">
                 Upload Image <span className="err_str">*</span>
               </InputLabel>
-              <Field
+              <OutlinedInput
                 type="file"
                 size="small"
                 fullWidth
@@ -195,20 +160,7 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
               <InputLabel htmlFor="description">
                 Description <span className="err_str">*</span>
               </InputLabel>
-              <Field minRows={5} />
-            </Stack>
-            <Stack>
-              <span
-                style={{
-                  color: "red",
-                  fontSize: "13px",
-                  fontWeight: "bold",
-                }}
-              >
-                {errors.description &&
-                  touched.description &&
-                  errors.description}
-              </span>
+              <TextareaAutosize minRows={5} />
             </Stack>
           </Grid>
           <Grid item xs={12}>
@@ -231,55 +183,25 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
 
 // The type of props MyForm receives
 interface MyFormProps {
-  initialname?: string;
-  initialprice: string;
-  initialdescription: string;
+  initialEmail?: string;
   message: string; // if this passed all the way through you might do this or make a union type
 }
 
 // Wrap our form with the withFormik HoC
 const MyForm = withFormik<MyFormProps, FormValues>({
-  //Transform outer props into form values
-  mapPropsToValues: (props) => {
-    return {
-      name: props.initialname || "",
-      price: props.initialprice || "",
-      type: "",
-      status: "",
-      startdate: "",
-      enddate: "",
-      shortdescription: "",
-      description: props.initialdescription || "",
-      image: "",
-    };
-  },
+  // Transform outer props into form values
+  // mapPropsToValues: (props) => {
+  //   return {
+  //     email: props.initialEmail || "",
+  //     password: "",
+  //   };
+  // },
 
   // Add a custom validation function (this can be async too!)
   validate: (values: FormValues) => {
     let errors: FormikErrors<FormValues> = {};
-    if (!values.name) {
-      errors.name = "Name Feild Required **";
-    }
-    if (!values.price) {
-      errors.price = "Price Feild Required **";
-    }
-    if (!values.type) {
-      errors.type = "Type Feild Required **";
-    }
-    if (!values.status) {
-      errors.status = "Status Feild Required **";
-    }
-    if (!values.startdate) {
-      errors.startdate = "Start date Feild Required **";
-    }
-    if (!values.enddate) {
-      errors.enddate = "End date Feild Required **";
-    }
-    if (!values.shortdescription) {
-      errors.shortdescription = "Short Desc Feild Required **";
-    }
-    if (!values.description) {
-      errors.description = "Description Feild Required **";
+    if (!values.email) {
+      errors.email = "Required";
     }
     return errors;
   },

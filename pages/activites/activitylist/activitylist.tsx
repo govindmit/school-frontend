@@ -18,6 +18,7 @@ import { useEffect, useState } from "react";
 import { BiShow } from "react-icons/bi";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBin5Fill } from "react-icons/ri";
+
 export default function ActivityList() {
   const [activites, setactivites] = useState([]);
 
@@ -74,7 +75,7 @@ export default function ActivityList() {
                   <TableCell align="left">Mangoit</TableCell>
                   <TableCell align="left">Mangoit</TableCell>
                   <TableCell align="left">
-                    <Link href="/activitydetails">
+                    <Link href="/activites/activitydetails">
                       <Button variant="outlined" size="small">
                         <BiShow />
                       </Button>
