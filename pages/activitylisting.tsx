@@ -17,7 +17,6 @@ import Link from "next/link";
 import { BiShow } from "react-icons/bi";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBin5Fill } from "react-icons/ri";
-
 export default function ActivityListing() {
   return (
     <>
@@ -59,11 +58,11 @@ export default function ActivityListing() {
                   <TableCell align="left">Mangoit</TableCell>
                   <TableCell align="left">
                     <Link href="/activitydetails">
-                      <Button variant="contained" size="small">
+                      <Button variant="outlined" size="small">
                         <BiShow />
                       </Button>
                     </Link>
-                    <Link href="/editactivity">
+                    <Link href="/activites/editactivity">
                       <Button variant="outlined" size="small">
                         <FiEdit />
                       </Button>
