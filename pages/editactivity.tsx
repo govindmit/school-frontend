@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Container,
   FormControl,
@@ -14,6 +15,7 @@ import {
 import React from "react";
 import * as Yup from "yup";
 import { withFormik, FormikProps, FormikErrors, Form, Field } from "formik";
+import MiniDrawer from "./sidebar";
 
 // Shape of form values
 interface FormValues {
@@ -29,6 +31,9 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
   const { touched, errors, isSubmitting, message } = props;
   return (
     <>
+      <Box sx={{ display: "flex" }}>
+      <MiniDrawer />
+      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
       <Container component="main" style={{ backgroundColor: "white" }}>
         <Form>
           <Grid container spacing={3}>
@@ -173,6 +178,8 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
           </Grid>
         </Form>
       </Container>
+      </Box>
+      </Box>
     </>
   );
 };
