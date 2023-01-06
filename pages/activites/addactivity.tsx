@@ -79,7 +79,7 @@ export default function Addactivity() {
     const end_point = "addactivity";
     await axios({
       method: "POST",
-      url: "http://localhost:5003/api/" + end_point,
+      url: api_url + end_point,
       data: reqData,
       headers: {
         Authorization: auth_token,

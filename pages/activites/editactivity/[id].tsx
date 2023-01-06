@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   BoxProps,
   Breadcrumbs,
@@ -95,17 +96,32 @@ export default function EditActivity() {
             >
               <Grid item xs={2} sm={4} md={4}>
                 <Item>
-                  {" "}
-                  <Card sx={{ maxWidth: 345 }}>
-                    <CardMedia
-                      sx={{ height: 140 }}
-                      image="https://mui.com/static/images/cards/contemplative-reptile.jpg"
-                      title="green iguana"
-                    />
-                    <CardContent>
-                      <Button variant="contained">Upload Image</Button>
-                    </CardContent>
-                  </Card>
+                  <div>
+                    <div className="img">
+                      <Avatar
+                        alt="Remy Sharp"
+                        src="/image.png"
+                        sx={{ width: 204, height: 204 }}
+                      />
+                      &nbsp;
+                    </div>
+                    <div className="upload">
+                      <Button
+                        sx={{ border: "1.5px solid #1A70C5" }}
+                        variant="outlined"
+                        startIcon={
+                          <img
+                            src="/Vect.png"
+                            alt=""
+                            width={14}
+                            height={10}
+                          ></img>
+                        }
+                      >
+                        Upload Image
+                      </Button>
+                    </div>
+                  </div>
                 </Item>
               </Grid>
               <Grid item xs={2} sm={4} md={8}>

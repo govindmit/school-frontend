@@ -8,10 +8,6 @@ import { useEffect, useState } from "react";
 import {
   Breadcrumbs,
   Button,
-  Card,
-  CardActions,
-  CardContent,
-  CardMedia,
   Container,
   FormControl,
   Grid,
@@ -27,29 +23,32 @@ import {
 import Link from "next/link";
 import MiniDrawer from "../../sidebar";
 import { useRouter } from "next/router";
+import axios from "axios";
+import { api_url, auth_token } from "../../api/hello";
 
 export default function View() {
-  const [activites, setactivites] = useState([]);
   const router = useRouter();
+  const { id } = router.query;
+  const [activites, setactivites] = useState([]);
+
+  const getactivity = async () => {
+    await axios({
+      method: "GET",
+      url: `${api_url}getactivitydetails/${id}`,
+      headers: {
+        Authorization: auth_token,
+      },
+    })
+      .then((data) => {
+        console.log("Success:", data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
+
   useEffect(() => {
-    const { id } = router.query;
-    const url = `https://api-school.mangoitsol.com/api/getactivitydetails/${id}`;
-    const fetchData = async () => {
-      try {
-        const response = await fetch(url, {
-          headers: {
-            Authorization:
-              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNqMjU4NTA5N0BnbWFpbC5jb20iLCJwYXNzd29yZCI6IlNodWJoYW0jMTIiLCJpYXQiOjE2Njk2MDk1MTR9.I06yy-Y3vlE784xUUg7__YH9Y1w_svjkGPKQC6SKSD4",
-          },
-        });
-        const json = await response.json();
-        //console.log(json.data);
-        setactivites(json.data);
-      } catch (error) {
-        console.log("error", error);
-      }
-    };
-    fetchData();
+    getactivity();
   }, []);
 
   const Item = styled(Paper)(({ theme }) => ({
@@ -94,9 +93,11 @@ export default function View() {
                 Activites
               </Typography>
             </Stack>
-            <Button variant="contained" size="small">
-              Add Activity
-            </Button>
+            <Link href="/activites/addactivity">
+              <Button variant="contained" size="small">
+                Add Activity
+              </Button>
+            </Link>
           </Stack>
           {/*bread cump */}
 
@@ -113,14 +114,32 @@ export default function View() {
                 <Grid item xs={2} sm={4} md={4}>
                   <Item>
                     {" "}
-                    <Card sx={{ maxWidth: 345 }}>
-                      <CardMedia
-                        sx={{ height: 140 }}
-                        image="https://mui.com/static/images/cards/contemplative-reptile.jpg"
-                        title="green iguana"
-                      />
-                      <CardContent></CardContent>
-                    </Card>
+                    <div>
+                      <div className="img">
+                        <Avatar
+                          alt="Remy Sharp"
+                          src="/image.png"
+                          sx={{ width: 204, height: 204 }}
+                        />
+                        &nbsp;
+                      </div>
+                      <div className="upload">
+                        <Button
+                          sx={{ border: "1.5px solid #1A70C5" }}
+                          variant="outlined"
+                          startIcon={
+                            <Image
+                              src="/Vect.png"
+                              alt=""
+                              width={14}
+                              height={10}
+                            ></Image>
+                          }
+                        >
+                          Upload Image
+                        </Button>
+                      </div>
+                    </div>
                   </Item>
                 </Grid>
                 <Grid item xs={2} sm={4} md={8}>

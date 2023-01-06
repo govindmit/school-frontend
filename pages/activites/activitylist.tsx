@@ -20,7 +20,6 @@ import {
   Breadcrumbs,
 } from "@mui/material";
 import Box from "@mui/material/Box";
-
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { BiShow } from "react-icons/bi";
@@ -81,11 +80,7 @@ export default function ActivityList() {
                   <Link key="1" color="inherit" href="/">
                     Home
                   </Link>
-                  <Link
-                    key="2"
-                    color="inherit"
-                    href="/material-ui/getting-started/installation/"
-                  >
+                  <Link key="2" color="inherit" href="/">
                     Activites
                   </Link>
                 </Breadcrumbs>
@@ -94,6 +89,7 @@ export default function ActivityList() {
                 Activites
               </Typography>
             </Stack>
+
             <Button variant="contained" size="small">
               Add Activity
             </Button>
@@ -116,9 +112,11 @@ export default function ActivityList() {
                       Activites
                     </Typography>
                   </Stack>
-                  <Button variant="contained" size="small">
-                    Add Activity
-                  </Button>
+                  <Link href="/activites/addactivity">
+                    <Button variant="contained" size="small">
+                      Add Activity
+                    </Button>
+                  </Link>
                 </Stack>
                 {/*bread cump */}
                 <Table>
@@ -181,12 +179,12 @@ export default function ActivityList() {
                             <TableCell align="left">{startdate}</TableCell>
                             <TableCell align="left">{enddate}</TableCell>
                             <TableCell align="left">
-                              <Link href={`/activitydetails/${id}`}>
+                              <Link href={`/activites/activitydetails/${id}`}>
                                 <Button variant="outlined" size="small">
                                   <BiShow />
                                 </Button>
                               </Link>
-                              <Link href="/editactivity">
+                              <Link href={`/activites/editactivity/${id}`}>
                                 <Button variant="outlined" size="small">
                                   <FiEdit />
                                 </Button>

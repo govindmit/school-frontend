@@ -1,0 +1,29 @@
+header.MuiPaper-root.MuiPaper-elevation.MuiPaper-elevation4.MuiAppBar-root.MuiAppBar-colorPrimary.MuiAppBar-positionFixed.mui-fixed.css-19z1ozs-MuiPaper-root-MuiAppBar-root {
+  background: #ffffff;
+  border-bottom: 1px solid #ededed;
+}
+.MuiToolbar-root.MuiToolbar-gutters.MuiToolbar-regular.css-hyum1k-MuiToolbar-root {
+  /* margin: 0; */
+  padding: 0px;
+  margin: 0px;
+  width: 255px;
+}
+.MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-multiline.css-dpjnhs-MuiInputBase-root-MuiOutlinedInput-root {
+  /* width: fit-content; */
+  /* width: 94%; */
+  width: 278px;
+  height: 40px;
+  /* left: 272px; */
+  top: 18px;
+  background: #f2f2f2;
+  border: 1px solid #d6d6d6;
+  border-radius: 25px;
+}
+input.MuiInputBase-input.MuiInput-input.css-1x51dt5-MuiInputBase-input-MuiInput-input {
+  display: none;
+}
+.maiDiv {
+  max-width: 100%;
+  /* margin: 0 auto; */
+  display: flex;
+}
