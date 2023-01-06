@@ -87,7 +87,7 @@ function Navbar(props: IAppProps) {
               <Link
                 variant="button"
                 color="text.primary"
-                href="#"
+                href="/auth/login"
                 sx={{ my: 1, mx: 1.5 }}
               >
                 <Image

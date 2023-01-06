@@ -17,6 +17,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Breadcrumbs,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 
@@ -27,7 +28,7 @@ import { FiEdit } from "react-icons/fi";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import MiniDrawer from "./sidebar";
+import MiniDrawer from "../sidebar";
 export default function ActivityList() {
   const [activites, setactivites] = useState([]);
 
@@ -65,12 +66,61 @@ export default function ActivityList() {
   return (
     <>
       <Box sx={{ display: "flex" }}>
-        <MiniDrawer/>
+        <MiniDrawer />
 
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+          {/*bread cump */}
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            <Stack>
+              <Stack spacing={2}>
+                <Breadcrumbs separator="›" aria-label="breadcrumb">
+                  <Link key="1" color="inherit" href="/">
+                    Home
+                  </Link>
+                  <Link
+                    key="2"
+                    color="inherit"
+                    href="/material-ui/getting-started/installation/"
+                  >
+                    Activites
+                  </Link>
+                </Breadcrumbs>
+              </Stack>
+              <Typography variant="h5" gutterBottom>
+                Activites
+              </Typography>
+            </Stack>
+            <Button variant="contained" size="small">
+              Add Activity
+            </Button>
+          </Stack>
+          {/*bread cump */}
+
           <Container>
             <Card>
               <TableContainer sx={{ minWidth: 800 }}>
+                {/*bread cump */}
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  style={{ padding: "5px" }}
+                >
+                  <Stack>
+                    <Stack spacing={2}></Stack>
+                    <Typography variant="h5" gutterBottom>
+                      Activites
+                    </Typography>
+                  </Stack>
+                  <Button variant="contained" size="small">
+                    Add Activity
+                  </Button>
+                </Stack>
+                {/*bread cump */}
                 <Table>
                   <TableHead>
                     <TableRow>

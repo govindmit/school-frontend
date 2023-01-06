@@ -15,7 +15,8 @@ import {
   OutlinedInput,
   Stack,
   TextareaAutosize,
-} from "@mui/material"
+} from "@mui/material";
+
 
 export interface UserDataType {
   firstname: String;
@@ -23,13 +24,20 @@ export interface UserDataType {
   email: String;
   firstName: String;
   lastName: String;
-  body:String
+  body: String;
 }
 
 export default function EditGuardians() {
   const [user, setUser] = useState<UserDataType | any>(null);
   const [stud, setStud] = useState<UserDataType | any>("");
-  const [formData, setFormData] = useState({ name: "" ,email:"",contact:"",lastname:"",studentF:"",studentL:""});
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    contact: "",
+    lastname: "",
+    studentF: "",
+    studentL: "",
+  });
   const router = useRouter();
 
   const student = (token: any) => {
@@ -74,14 +82,13 @@ export default function EditGuardians() {
         console.log(err);
       });
   }, []);
-  const handlechange = (e:any) =>{
+  const handlechange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-console.log(e.target.name)
-  }
-  const handleSubmit = (e:any) =>{
-    e.preventDefault()
-
-  }
+    console.log(e.target.name);
+  };
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+  };
   return (
     <>
       <Box sx={{ display: "flex" }}>
@@ -100,154 +107,145 @@ console.log(e.target.name)
               </div>
             </div>
 
-                   <form >
-            <div id="right">
-              <div className="one">
-                <h1 className="heading">EDIT GURADIAN INFO</h1>
-                <Box
-                  component="form"
-                  sx={{
-                    "& .MuiTextField-root": { m: 1, width: "35ch" },
-                  }}
-                  noValidate
-                  autoComplete="off"
-                >
-                  <div>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
-              <Stack spacing={1}>
-                <InputLabel htmlFor="name">
-                  First Name <span className="err_str">*</span>
-                </InputLabel>
-                <OutlinedInput
-                                onChange={(e)=>handlechange(e)}
-
-                  id="name"
-                  type="name"
-                  name="name"
-                  defaultValue={user?.firstname}
-                  // value={user.firstname}
-                  placeholder="Activity Name..."
-                  fullWidth
-                  multiline
-                />
-              </Stack>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Stack spacing={1}>
-                <InputLabel htmlFor="price">
-                  Last Name <span className="err_str">*</span>
-                </InputLabel>
-                <OutlinedInput
-                                onChange={(e)=>handlechange(e)}
-
-                  fullWidth
-                  id="price"
-                  type="price"
-                  name="lastname"
-                  placeholder="Price..."
-                  defaultValue={user?.lastname}
-                  multiline
-
-                />
-              </Stack>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Stack spacing={1}>
-                <InputLabel htmlFor="type">
-                  Email <span className="err_str">*</span>
-                </InputLabel>
-                <OutlinedInput
-                                onChange={(e)=>handlechange(e)}
-
-                  fullWidth
-                  id="type"
-                  type="type"
-                  name="email"
-                  placeholder="Type.."
-                  defaultValue={user?.email}
-                  multiline
-
-                />
-              </Stack>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Stack spacing={1}>
-                <InputLabel htmlFor="status">
-                  Contact <span className="err_str">*</span>
-                </InputLabel>
-                <OutlinedInput
-                                onChange={(e)=>handlechange(e)}
-
-                  fullWidth
-                  id="status"
-                  name="contact"
-                  placeholder="Status..."
-                  defaultValue={user?.contact}
-                  multiline
-
-                />
-              </Stack>
-            </Grid>
-          </Grid>
-                  </div>
-                </Box>
+            <form>
+              <div id="right">
+                <div className="one">
+                  <h1 className="heading">EDIT GURADIAN INFO</h1>
+                  <Box
+                    component="form"
+                    sx={{
+                      "& .MuiTextField-root": { m: 1, width: "35ch" },
+                    }}
+                    noValidate
+                    autoComplete="off"
+                  >
+                    <div>
+                      <Grid container spacing={3}>
+                        <Grid item xs={12} md={6}>
+                          <Stack spacing={1}>
+                            <InputLabel htmlFor="name">
+                              First Name <span className="err_str">*</span>
+                            </InputLabel>
+                            <OutlinedInput
+                              onChange={(e) => handlechange(e)}
+                              id="name"
+                              type="name"
+                              name="name"
+                              defaultValue={user?.firstname}
+                              // value={user.firstname}
+                              placeholder="Activity Name..."
+                              fullWidth
+                              multiline
+                            />
+                          </Stack>
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                          <Stack spacing={1}>
+                            <InputLabel htmlFor="price">
+                              Last Name <span className="err_str">*</span>
+                            </InputLabel>
+                            <OutlinedInput
+                              onChange={(e) => handlechange(e)}
+                              fullWidth
+                              id="price"
+                              type="price"
+                              name="lastname"
+                              placeholder="Price..."
+                              defaultValue={user?.lastname}
+                              multiline
+                            />
+                          </Stack>
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                          <Stack spacing={1}>
+                            <InputLabel htmlFor="type">
+                              Email <span className="err_str">*</span>
+                            </InputLabel>
+                            <OutlinedInput
+                              onChange={(e) => handlechange(e)}
+                              fullWidth
+                              id="type"
+                              type="type"
+                              name="email"
+                              placeholder="Type.."
+                              defaultValue={user?.email}
+                              multiline
+                            />
+                          </Stack>
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                          <Stack spacing={1}>
+                            <InputLabel htmlFor="status">
+                              Contact <span className="err_str">*</span>
+                            </InputLabel>
+                            <OutlinedInput
+                              onChange={(e) => handlechange(e)}
+                              fullWidth
+                              id="status"
+                              name="contact"
+                              placeholder="Status..."
+                              defaultValue={user?.contact}
+                              multiline
+                            />
+                          </Stack>
+                        </Grid>
+                      </Grid>
+                    </div>
+                  </Box>
+                </div>
+                <div className="two">
+                  <h1 className="heading">EDIT STUDENT INFO </h1>
+                  <Box
+                    component="form"
+                    sx={{
+                      "& .MuiTextField-root": { m: 1, width: "35ch" },
+                    }}
+                    noValidate
+                    autoComplete="off"
+                  >
+                    <div>
+                      <Grid container spacing={3}>
+                        <Grid item xs={12} md={6}>
+                          <Stack spacing={1}>
+                            <InputLabel htmlFor="status">
+                              First Name <span className="err_str">*</span>
+                            </InputLabel>
+                            <OutlinedInput
+                              onChange={(e) => handlechange(e)}
+                              fullWidth
+                              id="status"
+                              name="studentF"
+                              placeholder="Status..."
+                              defaultValue={stud?.firstName}
+                              multiline
+                            />
+                          </Stack>
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                          <Stack spacing={1}>
+                            <InputLabel htmlFor="status">
+                              Last Name <span className="err_str">*</span>
+                            </InputLabel>
+                            <OutlinedInput
+                              onChange={(e) => handlechange(e)}
+                              fullWidth
+                              id="status"
+                              name="studentL"
+                              placeholder="Status..."
+                              defaultValue={stud?.lastName}
+                              multiline
+                            />
+                          </Stack>
+                        </Grid>
+                      </Grid>
+                      <Button onClick={handleSubmit} type="button">
+                        save and update
+                      </Button>
+                    </div>
+                  </Box>
+                </div>
               </div>
-              <div className="two">
-                <h1 className="heading">EDIT STUDENT INFO </h1>
-                <Box
-                  component="form"
-                  sx={{
-                    "& .MuiTextField-root": { m: 1, width: "35ch" },
-                  }}
-                  noValidate
-                  autoComplete="off"
-                >
-                  <div>
-                  <Grid container spacing={3}>
-
-                  <Grid item xs={12} md={6}>
-              <Stack spacing={1}>
-                <InputLabel htmlFor="status">
-                  First Name <span className="err_str">*</span>
-                </InputLabel>
-                <OutlinedInput
-               onChange={(e)=>handlechange(e)}
-
-                  fullWidth
-                  id="status"
-                  name="studentF"
-                  placeholder="Status..."
-                  defaultValue={stud?.firstName}
-                  multiline
-
-                />
-              </Stack>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Stack spacing={1}>
-                <InputLabel htmlFor="status">
-                  Last Name <span className="err_str">*</span>
-                </InputLabel>
-                <OutlinedInput
-                onChange={(e)=>handlechange(e)}
-                  fullWidth
-                  id="status"
-                  name="studentL"
-                  placeholder="Status..."
-                  defaultValue={stud?.lastName}
-                  multiline
-
-                />
-              </Stack>
-            </Grid>
-            </Grid>
-              <Button onClick={handleSubmit} type='button'>save and update</Button>
-                  </div>
-                </Box>
-              </div>
-            </div>
-                  </form>
+            </form>
           </div>
         </Box>
       </Box>
