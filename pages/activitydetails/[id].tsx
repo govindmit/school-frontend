@@ -17,29 +17,31 @@ import {
   Typography,
 } from "@mui/material";
 import Link from "next/link";
-import MiniDrawer from "./sidebar";
+import MiniDrawer from "../sidebar";
+import { useRouter } from "next/router";
 
 export default function View() {
-  const [user, setUser] = useState([]);
-
+  const [activites, setactivites] = useState([]);
+  const router = useRouter();
   useEffect(() => {
-    fetch("https://api-school.mangoitsol.com/api/get_authorization_token")
-      .then((response) => response.json())
-      .then((res) =>
-        fetch("https://api-school.mangoitsol.com/api/getuser", {
+    const { id } = router.query;
+    const url = `https://api-school.mangoitsol.com/api/getactivitydetails/${id}`;
+    const fetchData = async () => {
+      try {
+        const response = await fetch(url, {
           headers: {
-            Authorization: `Bearer ${res.token}`,
+            Authorization:
+              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNqMjU4NTA5N0BnbWFpbC5jb20iLCJwYXNzd29yZCI6IlNodWJoYW0jMTIiLCJpYXQiOjE2Njk2MDk1MTR9.I06yy-Y3vlE784xUUg7__YH9Y1w_svjkGPKQC6SKSD4",
           },
-        })
-          .then((response) => response.json())
-          .then((res) => setUser(res.data))
-          .catch((err: any) => {
-            console.log(err);
-          })
-      )
-      .catch((err: any) => {
-        console.log(err);
-      });
+        });
+        const json = await response.json();
+        //console.log(json.data);
+        setactivites(json.data);
+      } catch (error) {
+        console.log("error", error);
+      }
+    };
+    fetchData();
   }, []);
 
   const Item = styled(Paper)(({ theme }) => ({
