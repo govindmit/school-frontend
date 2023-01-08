@@ -13,14 +13,58 @@ import { SlSocialFacebook } from "react-icons/sl";
 import { RiTwitterLine } from "react-icons/ri";
 import { RxInstagramLogo } from "react-icons/rx";
 import Link from "next/link";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { api_url, auth_token } from "../api/hello";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from "next/router";
+
+const style = {
+  color: "red",
+  fontSize: "12px",
+  fontWeight: "bold",
+};
+
+type FormValues = {
+  email: string;
+  password: string;
+};
+
 export default function Login() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+  const router = useRouter();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>();
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    //console.log(data);
+    const reqData = { email: data.email, password: data.password };
+    //console.log(reqData);
+    const end_point = "userlogin";
+    await axios({
+      method: "POST",
+      url: api_url + end_point,
+      data: reqData,
+      headers: {
+        Authorization: auth_token,
+      },
+    })
+      .then((data) => {
+        //console.log("Success:", data);
+        if (data.status === 200) {
+          toast.success("Login Successfull !");
+          const redirect = () => {
+            router.push("/dashboard");
+          };
+          setTimeout(redirect, 5000);
+        }
+      })
+      .catch((error) => {
+        //console.error("Error:", error);
+        toast.error("invalid crendentials!");
+      });
   };
   return (
     <>
@@ -82,56 +126,68 @@ export default function Login() {
                 Lorem Ipsum is simply dummy text of the printing and typesetting
                 industry.
               </Typography>
-              <Box
-                component="form"
-                onSubmit={handleSubmit}
-                noValidate
-                sx={{ mt: 1 }}
-              >
-                <Typography>Email Address</Typography>
-                <TextField
-                  style={{ marginTop: "8px" }}
-                  fullWidth
-                  size="small"
-                  name="email"
-                  placeholder="Email Address..."
-                />
-                <Typography style={{ marginTop: "15px" }}>Password</Typography>
-                <TextField
-                  style={{ marginTop: "8px" }}
-                  fullWidth
-                  size="small"
-                  placeholder="***********"
-                />
-                <Grid container style={{ marginTop: "10px" }}>
-                  <Grid item xs>
-                    <FormControlLabel
-                      control={<Checkbox value="remember" color="primary" />}
-                      label="Remember me?"
-                    />
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <Box sx={{ mt: 1 }}>
+                  <Typography>Email Address</Typography>
+                  <TextField
+                    style={{ marginTop: "8px" }}
+                    fullWidth
+                    size="small"
+                    placeholder="Email Address..."
+                    {...register("email", {
+                      required: true,
+                    })}
+                  />
+                  <Typography style={style}>
+                    {errors.email && <span>Email Feild is Required **</span>}
+                  </Typography>
+                  <Typography style={{ marginTop: "15px" }}>
+                    Password
+                  </Typography>
+                  <TextField
+                    style={{ marginTop: "8px" }}
+                    fullWidth
+                    size="small"
+                    placeholder="***********"
+                    {...register("password", {
+                      required: true,
+                    })}
+                  />
+                  <Typography style={style}>
+                    {errors.password && (
+                      <span>Password Feild is Required **</span>
+                    )}
+                  </Typography>
+                  <Grid container style={{ marginTop: "10px" }}>
+                    <Grid item xs>
+                      <FormControlLabel
+                        control={<Checkbox value="remember" color="primary" />}
+                        label="Remember me?"
+                      />
+                    </Grid>
+                    <Grid item>
+                      <Typography style={{ marginTop: "9px" }}>
+                        Forgot Password?{" "}
+                        <Link
+                          href="/auth/forgotpassword"
+                          style={{ color: "#26CEB3" }}
+                        >
+                          Click here
+                        </Link>
+                      </Typography>
+                    </Grid>
                   </Grid>
-                  <Grid item>
-                    <Typography style={{ marginTop: "9px" }}>
-                      Forgot Password?{" "}
-                      <Link
-                        href="auth/forgotpassword"
-                        style={{ color: "#26CEB3" }}
-                      >
-                        Click here
-                      </Link>
-                    </Typography>
-                  </Grid>
-                </Grid>
-                <Button
-                  style={{ backgroundColor: "#26CEB3", fontWeight: "900" }}
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  sx={{ mt: 1 }}
-                >
-                  Submit
-                </Button>
-              </Box>
+                  <Button
+                    style={{ backgroundColor: "#26CEB3", fontWeight: "900" }}
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    sx={{ mt: 1 }}
+                  >
+                    Submit
+                  </Button>
+                </Box>
+              </form>
             </Box>
           </Container>
           <footer>
@@ -177,6 +233,7 @@ export default function Login() {
           </footer>
         </div>
       </section>
+      <ToastContainer />
     </>
   );
 }
