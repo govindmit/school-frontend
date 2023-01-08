@@ -115,7 +115,9 @@ export default function Guardians() {
                 <h1 className="Gtitle">GUARDIANS</h1>
               </div>
               <div className="searchBar">
-                <BootstrapButton type="button">Add Guardians</BootstrapButton>
+                <Link href='/addguardians'>
+                <BootstrapButton type="button" >Add Guardians</BootstrapButton>
+                </Link>
                 {/* <Button sx={{ margin: "7px" }} type="button">
                   Add Guardians
                 </Button> */}
