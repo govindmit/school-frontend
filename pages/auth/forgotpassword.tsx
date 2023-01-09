@@ -1,7 +1,7 @@
 import * as React from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import { IconButton } from "@mui/material";
+import { Alert, IconButton } from "@mui/material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
@@ -10,16 +10,61 @@ import { SlSocialFacebook } from "react-icons/sl";
 import { RiTwitterLine } from "react-icons/ri";
 import { RxInstagramLogo } from "react-icons/rx";
 import Link from "next/link";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { api_url, auth_token, base_url } from "../api/hello";
+import axios from "axios";
+
+const style = {
+  color: "red",
+  fontSize: "12px",
+  fontWeight: "bold",
+};
+
+type FormValues = {
+  email: string;
+};
 
 export default function Forgotpassword() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+  const [emailerr, setemailerr] = React.useState("");
+  const [emailsuccess, setemailsuccess] = React.useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>();
+
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    //console.log(data);
+    const reqData = {
+      email: data.email,
+      reset_password_page_url: `${base_url}auth/resetpassword`,
+    };
+    console.log(reqData);
+    const end_point = "forgotpassword";
+    await axios({
+      method: "POST",
+      url: api_url + end_point,
+      data: reqData,
+      headers: {
+        Authorization: auth_token,
+      },
+    })
+      .then((data) => {
+        console.log("Success:", data);
+        setemailsuccess("Link Send Successfully Ckech Your Email ");
+        setTimeout(() => {
+          setemailsuccess("");
+        }, 5000);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        setemailerr("Email Not Registred");
+        setTimeout(() => {
+          setemailerr("");
+        }, 5000);
+      });
   };
+
   return (
     <>
       <Container className="forgot-password">
@@ -78,30 +123,65 @@ export default function Forgotpassword() {
                 Lorem Ipsum is simply dummy text of the printing and typesetting
                 industry.
               </Typography>
-              <Box
-                component="form"
-                onSubmit={handleSubmit}
-                noValidate
-                sx={{ mt: 2 }}
-              >
-                <Typography>Email Address</Typography>
-                <TextField
-                  style={{ marginTop: "8px" }}
-                  fullWidth
-                  size="small"
-                  name="email"
-                  placeholder="Email Address..."
-                />
-                <Button
-                  style={{ backgroundColor: "#26CEB3", fontWeight: "900" }}
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  sx={{ mt: 3, mb: 2 }}
+              <form onSubmit={handleSubmit(onSubmit)}>
+                {/* <Alert
+                  severity="error"
+                  style={{ marginTop: "10px", marginBottom: "10px" }}
                 >
-                  Submit
-                </Button>
-              </Box>
+                  This Email Not Registred!
+                </Alert>
+                <Alert
+                  severity="success"
+                  style={{ marginTop: "10px", marginBottom: "10px" }}
+                >
+                  Reset Password Link Send Successfully.
+                </Alert> */}
+
+                {emailerr !== "" ? (
+                  <Alert
+                    severity="error"
+                    style={{ marginTop: "10px", marginBottom: "10px" }}
+                  >
+                    This Email Not Registred!
+                  </Alert>
+                ) : (
+                  ""
+                )}
+                {emailsuccess !== "" ? (
+                  <Alert
+                    severity="success"
+                    style={{ marginTop: "10px", marginBottom: "10px" }}
+                  >
+                    Reset Password Link Send Successfully.
+                  </Alert>
+                ) : (
+                  ""
+                )}
+                <Box sx={{ mt: 1 }}>
+                  <Typography>Email Address</Typography>
+                  <TextField
+                    style={{ marginTop: "8px" }}
+                    fullWidth
+                    size="small"
+                    placeholder="Email Address..."
+                    {...register("email", {
+                      required: true,
+                    })}
+                  />
+                  <Typography style={style}>
+                    {errors.email && <span>Email Feild is Required **</span>}
+                  </Typography>
+                  <Button
+                    style={{ backgroundColor: "#26CEB3", fontWeight: "900" }}
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    sx={{ mt: 3, mb: 2 }}
+                  >
+                    Submit
+                  </Button>
+                </Box>
+              </form>
             </Box>
           </Container>
           <footer>

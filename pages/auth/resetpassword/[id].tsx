@@ -9,17 +9,64 @@ import { IconButton } from "@mui/material";
 import { RxInstagramLogo } from "react-icons/rx";
 import { RiTwitterLine } from "react-icons/ri";
 import { SlSocialFacebook } from "react-icons/sl";
+import { useForm, SubmitHandler } from "react-hook-form";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import axios from "axios";
+import { api_url, auth_token } from "../../api/hello";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+const style = {
+  color: "red",
+  fontSize: "12px",
+  fontWeight: "bold",
+};
+
+type FormValues = {
+  password: string;
+  confirmpassword: string;
+};
 
 export default function Resetpassword() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+  const router = useRouter();
+  const { id } = router.query;
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    formState: { errors },
+  } = useForm<FormValues>();
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    console.log(data);
+
+    const reqData = { email: data.password, password: data.confirmpassword };
+    //console.log(reqData);
+    const end_point = "resetpassword";
+    await axios({
+      method: "POST",
+      url: `${api_url}${end_point}/${id}`,
+      data: reqData,
+      headers: {
+        Authorization: auth_token,
+      },
+    })
+      .then((data) => {
+        //console.log("Success:", data);
+        if (data.status === 200) {
+          toast.success("Pasword Reset Successfull Please Login !");
+          const redirect = () => {
+            router.push("/auth/login");
+          };
+          setTimeout(redirect, 5000);
+        }
+      })
+      .catch((error) => {
+        //console.error("Error:", error);
+        toast.success("Enternal Server Error !");
+      });
   };
+
   return (
     <>
       <Container className="reset-password">
@@ -75,40 +122,51 @@ export default function Resetpassword() {
                 Lorem Ipsum is simply dummy text of the printing and typesetting
                 industry.
               </Typography>
-              <Box
-                component="form"
-                onSubmit={handleSubmit}
-                noValidate
-                sx={{ mt: 1 }}
-              >
-                <Typography>New Password</Typography>
-                <TextField
-                  style={{ marginTop: "8px" }}
-                  fullWidth
-                  size="small"
-                  name="email"
-                  placeholder="********"
-                />
-                <Typography style={{ marginTop: "15px" }}>
-                  Confirm Password
-                </Typography>
-                <TextField
-                  style={{ marginTop: "8px" }}
-                  fullWidth
-                  size="small"
-                  name="email"
-                  placeholder="********"
-                />
-                <Button
-                  style={{ backgroundColor: "#26CEB3", fontWeight: "900" }}
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  sx={{ mt: 3, mb: 2 }}
-                >
-                  Submit
-                </Button>
-              </Box>
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <Box sx={{ mt: 1 }}>
+                  <Typography>New Password</Typography>
+                  <TextField
+                    style={{ marginTop: "8px" }}
+                    fullWidth
+                    size="small"
+                    placeholder="********"
+                    {...register("password", {
+                      required: true,
+                    })}
+                  />
+                  <Typography style={style}>
+                    {errors.password && (
+                      <span> Password Feild is Required **</span>
+                    )}
+                  </Typography>
+                  <Typography style={{ marginTop: "15px" }}>
+                    Confirm Password
+                  </Typography>
+                  <TextField
+                    style={{ marginTop: "8px" }}
+                    fullWidth
+                    size="small"
+                    placeholder="********"
+                    {...register("confirmpassword", {
+                      required: true,
+                    })}
+                  />
+                  <Typography style={style}>
+                    {errors.confirmpassword && (
+                      <span>Confirm Password Feild is Required **</span>
+                    )}
+                  </Typography>
+                  <Button
+                    style={{ backgroundColor: "#26CEB3", fontWeight: "900" }}
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    sx={{ mt: 3, mb: 2 }}
+                  >
+                    Submit
+                  </Button>
+                </Box>
+              </form>
             </Box>
           </Container>
           <footer>
@@ -154,6 +212,7 @@ export default function Resetpassword() {
           </footer>
         </div>
       </section>
+      <ToastContainer />
     </>
   );
 }

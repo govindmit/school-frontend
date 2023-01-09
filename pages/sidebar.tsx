@@ -19,8 +19,10 @@ import ListItemText from "@mui/material/ListItemText";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 import Link from "next/link";
+import Image from "next/image";
+import { Input } from "@mui/material";
 import { useRouter } from "next/router";
-
+import { OutlinedInput } from "@mui/material";
 const drawerWidth = 240;
 
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -99,27 +101,38 @@ export default function MiniDrawer() {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      {/* <AppBar position="fixed" open={open}>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            // onClick={handleDrawerOpen}
-            edge="start"
-            sx={{
-              marginRight: 5,
-              ...(open && { display: "none" }),
-            }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Mini variant drawer
-          </Typography>
-        </Toolbar>
-      </AppBar> */}
+      <AppBar position="fixed" open={false}>
+        <div className="maiDiv">
+          <div>
+            <Toolbar>
+              <Typography variant="h6" noWrap component="div">
+                <Image
+                  src="/adminlogo.png"
+                  alt="Picture of the author"
+                  width={160}
+                  height={60}
+                />
+                <Input type="text"></Input>
+              </Typography>
+            </Toolbar>
+          </div>
+          <div className="inputBar">
+            <OutlinedInput
+              // onChange={(e) => handlechange(e)}
+              id="name"
+              type="text"
+              name="name"
+              // defaultValue={user?.firstname}
+              // value={user.firstname}
+              placeholder="Search"
+              multiline
+            />
+          </div>
+        </div>
+      </AppBar>
       <Drawer variant="permanent" open={open}>
-        <DrawerHeader>
+        <h1>Header</h1>
+        {/* <DrawerHeader>
           <IconButton onClick={() => setOpen(!open)}>
             {theme.direction === "rtl" ? (
               <ChevronRightIcon />
@@ -127,8 +140,7 @@ export default function MiniDrawer() {
               <ChevronLeftIcon />
             )}
           </IconButton>
-        </DrawerHeader>
-        <Divider />
+        </DrawerHeader> */}
         <List>
           <ListItem
             disablePadding
@@ -185,7 +197,7 @@ export default function MiniDrawer() {
           <ListItem
             disablePadding
             sx={{ display: "block" }}
-            onClick={() => router.push("/activitylist")}
+            onClick={() => router.push("/activites/activitylist")}
           >
             <ListItemButton
               sx={{
@@ -207,6 +219,7 @@ export default function MiniDrawer() {
         </List>
         <Divider />
       </Drawer>
+      <Divider />
     </Box>
   );
 }
