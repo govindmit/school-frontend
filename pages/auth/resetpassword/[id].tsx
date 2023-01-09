@@ -16,6 +16,8 @@ import axios from "axios";
 import { api_url, auth_token } from "../../api/hello";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as Yup from "yup";
 
 const style = {
   color: "red",
@@ -31,14 +33,21 @@ type FormValues = {
 export default function Resetpassword() {
   const router = useRouter();
   const { id } = router.query;
-  const {
-    register,
-    handleSubmit,
-    getValues,
-    formState: { errors },
-  } = useForm<FormValues>();
-  const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    console.log(data);
+
+  const formSchema = Yup.object().shape({
+    password: Yup.string().required("Password is Required"),
+    confirmpassword: Yup.string()
+      .required("Confirm Password is Required")
+      .oneOf(
+        [Yup.ref("password")],
+        "Password and Confirm Password does not match"
+      ),
+  });
+  const formOptions = { resolver: yupResolver(formSchema) };
+  const { register, handleSubmit, reset, formState } = useForm(formOptions);
+  const { errors }: any = formState;
+  async function onSubmit(data: any) {
+    console.log(JSON.stringify(data, null, 4));
 
     const reqData = { email: data.password, password: data.confirmpassword };
     //console.log(reqData);
@@ -65,7 +74,7 @@ export default function Resetpassword() {
         //console.error("Error:", error);
         toast.success("Enternal Server Error !");
       });
-  };
+  }
 
   return (
     <>
@@ -129,15 +138,12 @@ export default function Resetpassword() {
                     style={{ marginTop: "8px" }}
                     fullWidth
                     size="small"
+                    type="password"
                     placeholder="********"
-                    {...register("password", {
-                      required: true,
-                    })}
+                    {...register("password")}
                   />
                   <Typography style={style}>
-                    {errors.password && (
-                      <span> Password Feild is Required **</span>
-                    )}
+                    {/* {errors.password?.message} */}
                   </Typography>
                   <Typography style={{ marginTop: "15px" }}>
                     Confirm Password
@@ -146,15 +152,14 @@ export default function Resetpassword() {
                     style={{ marginTop: "8px" }}
                     fullWidth
                     size="small"
+                    type="password"
                     placeholder="********"
                     {...register("confirmpassword", {
                       required: true,
                     })}
                   />
                   <Typography style={style}>
-                    {errors.confirmpassword && (
-                      <span>Confirm Password Feild is Required **</span>
-                    )}
+                    {errors.confirmpassword?.message}
                   </Typography>
                   <Button
                     style={{ backgroundColor: "#26CEB3", fontWeight: "900" }}
