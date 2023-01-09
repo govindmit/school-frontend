@@ -1,16 +1,11 @@
 import {
   Avatar,
   Box,
-  BoxProps,
   Breadcrumbs,
   Button,
-  Card,
-  CardContent,
-  CardMedia,
   Container,
   FormControl,
   Grid,
-  IconButton,
   InputLabel,
   MenuItem,
   OutlinedInput,
@@ -23,10 +18,50 @@ import {
 import React, { useEffect, useState } from "react";
 import MiniDrawer from "../../sidebar";
 import Link from "next/link";
-import { PhotoCamera } from "@mui/icons-material";
 import styled from "@emotion/styled";
-import { api_url } from "../../api/hello";
 import { useRouter } from "next/router";
+import { useForm, SubmitHandler } from "react-hook-form";
+import axios from "axios";
+import { api_url, auth_token, backend_url } from "../../api/hello";
+import { toast } from "react-toastify";
+
+type activitesType = {
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+  status: string;
+  startdate: string;
+  enddate: string;
+  type: string;
+  shortdescription: string;
+};
+
+const style = {
+  color: "red",
+  fontSize: "12px",
+  fontWeight: "bold",
+};
+enum typeEnum {
+  Free = "Free",
+  Paid = "Paid",
+}
+enum statusEnum {
+  Active = "Active",
+  Archive = "Archive",
+  Draft = "Draft",
+}
+type FormValues = {
+  name: string;
+  type: typeEnum;
+  image: any;
+  shortdescription: string;
+  description: string;
+  price: number;
+  startDate: string;
+  endDate: string;
+  status: statusEnum;
+};
 
 const Item = styled(Paper)(({ theme }) => ({
   p: 10,
@@ -35,27 +70,74 @@ const Item = styled(Paper)(({ theme }) => ({
 export default function EditActivity() {
   const router = useRouter();
   const { id } = router.query;
-  const [activites, setactivites] = useState([]);
+  const [activites, setactivites] = useState<activitesType | any>([]);
+  const [name, setnameu] = useState<string>("");
 
   useEffect(() => {
-    const url = `https://api-school.mangoitsol.com/api/getactivitydetails/${id}`;
+    const url = `${api_url}getactivitydetails/${id}`;
     const fetchData = async () => {
       try {
         const response = await fetch(url, {
           headers: {
-            Authorization:
-              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNqMjU4NTA5N0BnbWFpbC5jb20iLCJwYXNzd29yZCI6IlNodWJoYW0jMTIiLCJpYXQiOjE2Njk2MDk1MTR9.I06yy-Y3vlE784xUUg7__YH9Y1w_svjkGPKQC6SKSD4",
+            Authorization: auth_token,
           },
         });
         const json = await response.json();
-        //console.log(json.data);
-        setactivites(json.data);
+        //console.log(json.data[0]);
+        setactivites(json.data[0]);
+        setnameu(json.data[0].name);
       } catch (error) {
         console.log("error", error);
       }
     };
     fetchData();
   }, []);
+  console.log(activites);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>();
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    console.log(data, "hii");
+    //console.log(data.image[0]);
+    const reqData = {
+      name: data.name,
+      type: data.type,
+      description: data.description,
+      shortdescription: data.shortdescription,
+      image: data.image[0],
+      startdate: data.startDate,
+      enddate: data.endDate,
+      status: data.status,
+      price: data.price,
+    };
+    const end_point = "editactivity";
+    await axios({
+      method: "POST",
+      url: api_url + end_point,
+      data: reqData,
+      headers: {
+        Authorization: auth_token,
+        "content-type": "multipart/form-data",
+      },
+    })
+      .then((data) => {
+        //console.log("Success:", data);
+        if (data.status === 201) {
+          toast.success("Activity Updated Successfully !");
+          const redirect = () => {
+            router.push("/activites/activitylist");
+          };
+          setTimeout(redirect, 5000);
+        }
+      })
+      .catch((error) => {
+        //console.error("Error:", error);
+        toast.error("Activity Allready Registred !");
+      });
+  };
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -63,71 +145,64 @@ export default function EditActivity() {
       <Box
         component="main"
         sx={{ flexGrow: 1, p: 3 }}
-        style={{ backgroundColor: "whitesmoke", padding: "50px" }}
+        style={{ marginTop: "80px" }}
       >
-        <Stack>
+        <Stack style={{ padding: "20px" }}>
           <Stack spacing={2}>
             <Breadcrumbs separator="›" aria-label="breadcrumb">
-              <Link key="1" color="inherit" href="/">
+              <Link
+                key="1"
+                color="inherit"
+                href="/"
+                style={{ color: "red", textDecoration: "none" }}
+              >
                 Home
               </Link>
               <Link
                 key="2"
                 color="inherit"
                 href="/material-ui/getting-started/installation/"
+                style={{ color: "black", textDecoration: "none" }}
               >
                 Edit Activites
               </Link>
             </Breadcrumbs>
           </Stack>
-          <Typography variant="h5" gutterBottom>
+          <Typography variant="h5" gutterBottom style={{ fontWeight: "bold" }}>
             EDIT ACTIVITES
           </Typography>
         </Stack>
-        <Container
-          component="main"
-          style={{ backgroundColor: "white", padding: "20px" }}
-        >
-          <Box sx={{ flexGrow: 1 }}>
-            <Grid
-              container
-              spacing={{ xs: 2, md: 3 }}
-              columns={{ xs: 4, sm: 8, md: 12 }}
-            >
-              <Grid item xs={2} sm={4} md={4}>
-                <Item>
-                  <div>
-                    <div className="img">
-                      <Avatar
-                        alt="Remy Sharp"
-                        src="/image.png"
-                        sx={{ width: 204, height: 204 }}
-                      />
-                      &nbsp;
-                    </div>
-                    <div className="upload">
-                      <Button
-                        sx={{ border: "1.5px solid #1A70C5" }}
-                        variant="outlined"
-                        startIcon={
-                          <img
-                            src="/Vect.png"
-                            alt=""
-                            width={14}
-                            height={10}
-                          ></img>
-                        }
-                      >
-                        Upload Image
-                      </Button>
-                    </div>
-                  </div>
-                </Item>
-              </Grid>
-              <Grid item xs={2} sm={4} md={8}>
-                <Item>
-                  <Typography>EDIT ACTIVITES</Typography>
-                  <form>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Container style={{ marginBottom: "30px" }}>
+            <Box sx={{ flexGrow: 1 }}>
+              <Grid
+                container
+                spacing={{ xs: 2, md: 3 }}
+                columns={{ xs: 4, sm: 8, md: 12 }}
+              >
+                <Grid item xs={2} sm={4} md={4}>
+                  <Item style={{ textAlign: "center" }}>
+                    <Avatar
+                      style={{ marginLeft: "90px" }}
+                      alt="Remy Sharp"
+                      src={`${backend_url}${activites.image}`}
+                      sx={{ width: 150, height: 150 }}
+                    />
+                    <Button
+                      sx={{ border: "1.5px solid #1A70C5" }}
+                      startIcon={<img src="/Vect.png" alt=""></img>}
+                      style={{ marginBottom: "10px", marginTop: "10px" }}
+                      color="primary"
+                    >
+                      <Typography>Upload Image</Typography>
+                    </Button>
+                  </Item>
+                </Grid>
+                <Grid item xs={2} sm={4} md={8}>
+                  <Item style={{ padding: "15px" }}>
+                    <Typography>
+                      <b>EDIT ACTIVITES</b>
+                    </Typography>
                     <Stack style={{ marginTop: "20px" }}>
                       <Grid container spacing={3}>
                         <Grid item xs={12} md={6}>
@@ -138,10 +213,18 @@ export default function EditActivity() {
                             <OutlinedInput
                               type="text"
                               id="name"
-                              name="name"
-                              placeholder="Activity Name..."
                               fullWidth
+                              value={name}
+                              {...register("name", {
+                                required: true,
+                              })}
+                              onChange={(e) => setnameu(e.target.value)}
                             />
+                            <Typography style={style}>
+                              {errors.name && (
+                                <span>Name Feild is Required **</span>
+                              )}
+                            </Typography>
                           </Stack>
                         </Grid>
                         <Grid item xs={12} md={6}>
@@ -153,6 +236,7 @@ export default function EditActivity() {
                               <Select
                                 displayEmpty
                                 inputProps={{ "aria-label": "Without label" }}
+                                value={activites.type}
                               >
                                 <MenuItem value="Free">Free</MenuItem>
                                 <MenuItem value="Paid">Paid</MenuItem>
@@ -166,7 +250,20 @@ export default function EditActivity() {
                               Short Description{" "}
                               <span className="err_str">*</span>
                             </InputLabel>
-                            <TextareaAutosize minRows={4} />
+                            <TextareaAutosize
+                              minRows={4}
+                              {...register("shortdescription", {
+                                required: true,
+                              })}
+                              value={activites.shortdescription}
+                            />
+                            <Typography style={style}>
+                              {errors.shortdescription && (
+                                <span>
+                                  Short dscription Feild is Required **
+                                </span>
+                              )}
+                            </Typography>
                           </Stack>
                         </Grid>
                         <Grid item xs={12}>
@@ -174,8 +271,19 @@ export default function EditActivity() {
                             <InputLabel htmlFor="description">
                               Description <span className="err_str">*</span>
                             </InputLabel>
-                            <TextareaAutosize minRows={6} />
+                            <TextareaAutosize
+                              minRows={6}
+                              {...register("description", {
+                                required: true,
+                              })}
+                              value={activites.description}
+                            />
                           </Stack>
+                          <Typography style={style}>
+                            {errors.shortdescription && (
+                              <span>Dscription Feild is Required **</span>
+                            )}
+                          </Typography>
                         </Grid>
                         <Grid item xs={12} md={3}>
                           <Stack spacing={1}>
@@ -185,24 +293,37 @@ export default function EditActivity() {
                             <OutlinedInput
                               type="text"
                               id="name"
-                              name="name"
-                              placeholder="Activity Name..."
+                              placeholder="price..."
                               fullWidth
+                              {...register("price", {
+                                required: true,
+                              })}
+                              value={activites.price}
                             />
+                            <Typography style={style}>
+                              {errors.price && <span> Price Required **</span>}
+                            </Typography>
                           </Stack>
                         </Grid>
                         <Grid item xs={12} md={3}>
                           <Stack spacing={1}>
-                            <InputLabel htmlFor="enddate">
+                            <InputLabel htmlFor="startdate">
                               Start Date <span className="err_str">*</span>
                             </InputLabel>
                             <OutlinedInput
                               fullWidth
                               type="date"
-                              id="enddate"
-                              name="enddate"
-                              placeholder="enddate."
+                              id="startdate"
+                              {...register("startDate", {
+                                required: true,
+                              })}
+                              value={activites.startdate}
                             />
+                            <Typography style={style}>
+                              {errors.startDate && (
+                                <span>Start date Required **</span>
+                              )}
+                            </Typography>
                           </Stack>
                         </Grid>
                         <Grid item xs={12} lg={3}>
@@ -214,7 +335,16 @@ export default function EditActivity() {
                               fullWidth
                               type="date"
                               id="startdate"
+                              {...register("endDate", {
+                                required: true,
+                              })}
+                              value={activites.enddate}
                             />
+                            <Typography style={style}>
+                              {errors.endDate && (
+                                <span>End date Required **</span>
+                              )}
+                            </Typography>
                           </Stack>
                         </Grid>
                         <Grid item xs={12} md={3}>
@@ -226,6 +356,7 @@ export default function EditActivity() {
                               <Select
                                 displayEmpty
                                 inputProps={{ "aria-label": "Without label" }}
+                                value={activites.status}
                               >
                                 <MenuItem value="Active">Active</MenuItem>
                                 <MenuItem value="Archive">Archive</MenuItem>
@@ -240,24 +371,27 @@ export default function EditActivity() {
                             variant="contained"
                             color="primary"
                           >
-                            SAVE & UPDATE
-                          </Button>
+                            <b>SAVE & UPDATE</b>
+                          </Button>{" "}
                           <Button
                             type="submit"
                             variant="contained"
-                            color="primary"
+                            style={{
+                              marginRight: "20px",
+                              backgroundColor: "#F95A37",
+                            }}
                           >
-                            CANCEL
+                            <b>CANCEL</b>
                           </Button>
                         </Grid>
                       </Grid>
                     </Stack>
-                  </form>
-                </Item>
+                  </Item>
+                </Grid>
               </Grid>
-            </Grid>
-          </Box>
-        </Container>
+            </Box>
+          </Container>
+        </form>
       </Box>
     </Box>
   );

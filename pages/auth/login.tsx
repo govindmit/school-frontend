@@ -38,6 +38,7 @@ export default function Login() {
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>();
+
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     //console.log(data);
     const reqData = { email: data.email, password: data.password };
@@ -136,10 +137,21 @@ export default function Login() {
                     placeholder="Email Address..."
                     {...register("email", {
                       required: true,
+                      pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                     })}
                   />
+
                   <Typography style={style}>
-                    {errors.email && <span>Email Feild is Required **</span>}
+                    {errors?.email?.type === "required" && (
+                      <div>Email Feild is required **</div>
+                    )}
+                  </Typography>
+
+                  <Typography style={style}>
+                    {" "}
+                    {errors?.email?.type === "pattern" && (
+                      <div>Enter Valid Email **</div>
+                    )}
                   </Typography>
                   <Typography style={{ marginTop: "15px" }}>
                     Password
@@ -148,6 +160,7 @@ export default function Login() {
                     style={{ marginTop: "8px" }}
                     fullWidth
                     size="small"
+                    type="password"
                     placeholder="***********"
                     {...register("password", {
                       required: true,

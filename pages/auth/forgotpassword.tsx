@@ -124,19 +124,6 @@ export default function Forgotpassword() {
                 industry.
               </Typography>
               <form onSubmit={handleSubmit(onSubmit)}>
-                {/* <Alert
-                  severity="error"
-                  style={{ marginTop: "10px", marginBottom: "10px" }}
-                >
-                  This Email Not Registred!
-                </Alert>
-                <Alert
-                  severity="success"
-                  style={{ marginTop: "10px", marginBottom: "10px" }}
-                >
-                  Reset Password Link Send Successfully.
-                </Alert> */}
-
                 {emailerr !== "" ? (
                   <Alert
                     severity="error"
@@ -166,10 +153,18 @@ export default function Forgotpassword() {
                     placeholder="Email Address..."
                     {...register("email", {
                       required: true,
+                      pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                     })}
                   />
                   <Typography style={style}>
-                    {errors.email && <span>Email Feild is Required **</span>}
+                    {errors?.email?.type === "required" && (
+                      <div>Email Feild is required **</div>
+                    )}
+                  </Typography>
+                  <Typography style={style}>
+                    {errors?.email?.type === "pattern" && (
+                      <div>Enter Valid Email **</div>
+                    )}
                   </Typography>
                   <Button
                     style={{ backgroundColor: "#26CEB3", fontWeight: "900" }}

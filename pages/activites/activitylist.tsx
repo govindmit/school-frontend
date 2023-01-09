@@ -18,6 +18,13 @@ import {
   DialogContentText,
   DialogActions,
   Breadcrumbs,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  TextField,
+  Pagination,
+  IconButton,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import Link from "next/link";
@@ -28,15 +35,46 @@ import { RiDeleteBin5Fill } from "react-icons/ri";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import MiniDrawer from "../sidebar";
+import { BoxProps } from "@mui/system";
+import { api_url, auth_token, backend_url } from "../api/hello";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+function Item(props: BoxProps) {
+  const { sx, ...other } = props;
+  return <Box sx={{}} {...other} />;
+}
+
 export default function ActivityList() {
   const [activites, setactivites] = useState([]);
+  const [page, setPage] = React.useState(1);
+  const [alldata, setalldata] = useState(0);
+  const handleChange = (event: any, value: any) => {
+    setPage(value);
+  };
 
   const [open, setOpen] = React.useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
-  const handleClickOpen = () => {
-    setOpen(true);
+  const handleClickOpen = async (id: any) => {
+    //setOpen(true);
+    alert(id);
+    await axios({
+      method: "DELETE",
+      url: `${api_url}deleteactivity/${id}`,
+      headers: {
+        Authorization: auth_token,
+      },
+    })
+      .then((data) => {
+        //console.log("Success:", data);
+        toast.success("Activity Deleted Successfully !");
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   };
 
   const handleClose = () => {
@@ -44,62 +82,101 @@ export default function ActivityList() {
   };
 
   useEffect(() => {
-    const url = "https://api-school.mangoitsol.com/api/getactivity";
+    const url = `${api_url}getactivity`;
     const fetchData = async () => {
       try {
         const response = await fetch(url, {
           headers: {
-            Authorization:
-              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNqMjU4NTA5N0BnbWFpbC5jb20iLCJwYXNzd29yZCI6IlNodWJoYW0jMTIiLCJpYXQiOjE2Njk2MDk1MTR9.I06yy-Y3vlE784xUUg7__YH9Y1w_svjkGPKQC6SKSD4",
+            Authorization: auth_token,
           },
         });
         const json = await response.json();
         //console.log(json.data);
         setactivites(json.data);
+        setalldata(json.data.length);
       } catch (error) {
         console.log("error", error);
       }
     };
     fetchData();
-  }, []);
+  }, [page, activites]);
   return (
     <>
       <Box sx={{ display: "flex" }}>
         <MiniDrawer />
-
-        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        <Box
+          component="main"
+          sx={{ flexGrow: 1, p: 3 }}
+          style={{ marginTop: "80px" }}
+        >
           {/*bread cump */}
           <Stack
             direction="row"
             alignItems="center"
             justifyContent="space-between"
+            style={{ padding: "15px" }}
           >
             <Stack>
               <Stack spacing={2}>
                 <Breadcrumbs separator="›" aria-label="breadcrumb">
-                  <Link key="1" color="inherit" href="/">
+                  <Link
+                    key="1"
+                    color="inherit"
+                    href="/"
+                    style={{ color: "red", textDecoration: "none" }}
+                  >
                     Home
                   </Link>
-                  <Link key="2" color="inherit" href="/">
+                  <Link
+                    key="2"
+                    color="inherit"
+                    href="/"
+                    style={{ color: "black", textDecoration: "none" }}
+                  >
                     Activites
                   </Link>
                 </Breadcrumbs>
               </Stack>
-              <Typography variant="h5" gutterBottom>
+              <Typography
+                variant="h5"
+                gutterBottom
+                style={{ fontWeight: "bold" }}
+              >
                 Activites
               </Typography>
             </Stack>
-
-            <Button variant="contained" size="small">
-              Add Activity
-            </Button>
+            <Link
+              href="/activites/addactivity"
+              style={{ textDecoration: "none" }}
+            >
+              <Button variant="contained" size="small" sx={{ width: 150 }}>
+                <b>Add Activites</b>
+              </Button>
+            </Link>
           </Stack>
           {/*bread cump */}
 
           <Container>
-            <Card>
+            <Card style={{ padding: "10px" }}>
               <TableContainer sx={{ minWidth: 800 }}>
                 {/*bread cump */}
+                <Stack>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "row",
+                      bgcolor: "background.paper",
+                      borderRadius: 1,
+                    }}
+                  >
+                    <Item style={{ color: "red", marginRight: "10px" }}>
+                      ALL({alldata}){" "}
+                    </Item>
+                    <Item style={{ marginRight: "10px" }}> Upcomming(17) </Item>
+                    <Item style={{ marginRight: "10px" }}>Past(2) </Item>
+                    <Item style={{ marginRight: "10px" }}>Current(1) </Item>
+                  </Box>
+                </Stack>
                 <Stack
                   direction="row"
                   alignItems="center"
@@ -108,15 +185,17 @@ export default function ActivityList() {
                 >
                   <Stack>
                     <Stack spacing={2}></Stack>
-                    <Typography variant="h5" gutterBottom>
-                      Activites
-                    </Typography>
+                    <FormControl fullWidth sx={{ minWidth: 200 }}>
+                      <Select id="demo-simple-select" size="small">
+                        <MenuItem value={10}>Ten</MenuItem>
+                        <MenuItem value={20}>Twenty</MenuItem>
+                        <MenuItem value={30}>Thirty</MenuItem>
+                      </Select>
+                    </FormControl>
                   </Stack>
-                  <Link href="/activites/addactivity">
-                    <Button variant="contained" size="small">
-                      Add Activity
-                    </Button>
-                  </Link>
+                  <FormControl>
+                    <TextField placeholder="Search..." size="small" />
+                  </FormControl>
                 </Stack>
                 {/*bread cump */}
                 <Table>
@@ -146,6 +225,7 @@ export default function ActivityList() {
                           startdate,
                           enddate,
                           description,
+                          image,
                         } = item;
                         return (
                           <TableRow
@@ -167,7 +247,7 @@ export default function ActivityList() {
                                 alignItems="center"
                                 spacing={2}
                               >
-                                <Avatar />
+                                <Avatar src={`${backend_url}${image}`} />
                                 <Typography variant="subtitle2" noWrap>
                                   {name}
                                 </Typography>
@@ -179,23 +259,23 @@ export default function ActivityList() {
                             <TableCell align="left">{startdate}</TableCell>
                             <TableCell align="left">{enddate}</TableCell>
                             <TableCell align="left">
-                              <Link href={`/activites/activitydetails/${id}`}>
-                                <Button variant="outlined" size="small">
-                                  <BiShow />
-                                </Button>
-                              </Link>
-                              <Link href={`/activites/editactivity/${id}`}>
-                                <Button variant="outlined" size="small">
-                                  <FiEdit />
-                                </Button>
-                              </Link>
-                              <Button
-                                onClick={handleClickOpen}
-                                variant="outlined"
-                                size="small"
-                              >
-                                <RiDeleteBin5Fill />
-                              </Button>
+                              <Stack direction="row" spacing={1}>
+                                <IconButton>
+                                  <Link
+                                    href={`/activites/activitydetails/${id}`}
+                                  >
+                                    <BiShow />
+                                  </Link>
+                                </IconButton>
+                                <IconButton>
+                                  <Link href={`/activites/editactivity/${id}`}>
+                                    <FiEdit />
+                                  </Link>
+                                </IconButton>
+                                <IconButton onClick={() => handleClickOpen(id)}>
+                                  <RiDeleteBin5Fill />
+                                </IconButton>
+                              </Stack>
                             </TableCell>
                           </TableRow>
                         );
@@ -203,6 +283,14 @@ export default function ActivityList() {
                   </TableBody>
                 </Table>
               </TableContainer>
+              <Stack style={{ padding: "10px" }}>
+                <Pagination
+                  count={10}
+                  color="primary"
+                  page={page}
+                  onChange={handleChange}
+                />
+              </Stack>
             </Card>
           </Container>
           <div>
@@ -234,6 +322,7 @@ export default function ActivityList() {
           </div>
         </Box>
       </Box>
+      <ToastContainer />
     </>
   );
 }
