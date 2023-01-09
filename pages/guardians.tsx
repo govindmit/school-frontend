@@ -115,8 +115,8 @@ export default function Guardians() {
                 <h1 className="Gtitle">GUARDIANS</h1>
               </div>
               <div className="searchBar">
-                <Link href='/addguardians'>
-                <BootstrapButton type="button" >Add Guardians</BootstrapButton>
+                <Link href="/addguardians">
+                  <BootstrapButton type="button">Add Guardians</BootstrapButton>
                 </Link>
                 {/* <Button sx={{ margin: "7px" }} type="button">
                   Add Guardians
@@ -177,7 +177,13 @@ export default function Guardians() {
                                   <TableCell align="left">
                                     {item.email}
                                   </TableCell>
-                                  <TableCell align="left">Active</TableCell>
+                                  {item.status === 1 ? (
+                                    <TableCell align="left">approve</TableCell>
+                                  ) : (
+                                    <TableCell align="left">
+                                      unapprove
+                                    </TableCell>
+                                  )}
                                   <TableCell align="left">2</TableCell>
                                   <TableCell align="left">
                                     <Link href={`/guardiansView/${item.id}`}>

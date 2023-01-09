@@ -14,25 +14,122 @@ import {
   InputLabel,
   OutlinedInput,
   Stack,
+  IconButton,
   TextareaAutosize,
   styled,
+  Typography,
 } from "@mui/material";
+import { PhotoCamera } from "@mui/icons-material";
+
 import axios from "axios";
 import { CleaningServices } from "@mui/icons-material";
 import { useRouter } from "next/router";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { json } from "stream/consumers";
 
-export interface UserDataType {
+export interface FormValues {
+  append(arg0: string, firstname: String): unknown;
   firstname: String;
   lastname: String;
   email: String;
+  contact: String;
+  token: String;
   firstName: String;
   lastName: String;
-  body: String;
+  image: any;
+  type: any;
 }
 
 export default function ADDGuardians() {
-  const [token, setToken] = useState<UserDataType | any>("");
+  const [token, setToken] = useState<FormValues | any>("");
+  const [image, setImage] = useState<FormValues | any>("");
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>();
+  const onSubmit: SubmitHandler<FormValues> = async (data: any) => {
+    let imageData = new FormData();
+    imageData.append("image", image);
+    imageData.append("firstName", data.firstname);
+    imageData.append("lastName", data.lastname);
+    imageData.append("email", data.email);
+    imageData.append("contact", data.contact);
+    imageData.append("status", "1");
+    imageData.append("password", "1233344444");
+    imageData.append("role_id", "1");
+
+    const userData = {
+      firstName: data.firstname,
+      lastName: data.lastname,
+      email: data.email,
+      contact: data.contact,
+      image: imageData,
+      status: 1,
+      password: "1233344444",
+      role_id: 1,
+    };
+    const studentData = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+    };
+    //   const end_point = "addactivity";
+    await axios({
+      method: "POST",
+      url: `https://api-school.mangoitsol.com/api/adduser`,
+      data: imageData,
+
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNqMjU4NTA5N0BnbWFpbC5jb20iLCJwYXNzd29yZCI6IlNodWJoYW0jMTIiLCJpYXQiOjE2NzIzOTAwNTl9.Et3nmGyTFiknlownJmSXGp04c6OsZPgPxLrg-zahlFU`,
+        "content-type": "multipart/form-data",
+      },
+    })
+      .then((data) => {
+        if (data) {
+          let userId = data.data.data.insertId;
+          addStudent(studentData, userId);
+        }
+
+        console.log("Success:", data);
+      })
+      .catch((error) => {
+        //console.error("Error:", error);
+      });
+    console.log(data, "daaaaaa");
+  };
+  const addStudent = async (student: any, userId: any) => {
+    let studentData = new FormData();
+    studentData.append("firstName", student.firstName);
+    studentData.append("lastName", student.lastName);
+    studentData.append("user_id", userId);
+    // const requestdata = {
+    //   firstName: student.firstName,
+    //   lastName: student.lastName,
+    //   user_id: userId,
+    // };
+    await axios({
+      method: "POST",
+      url: `https://api-school.mangoitsol.com/api/addstudent`,
+      data: studentData,
+
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNqMjU4NTA5N0BnbWFpbC5jb20iLCJwYXNzd29yZCI6IlNodWJoYW0jMTIiLCJpYXQiOjE2NzIzOTAwNTl9.Et3nmGyTFiknlownJmSXGp04c6OsZPgPxLrg-zahlFU`,
+        "content-type": "multipart/form-data",
+      },
+    }).then((res) => {
+      if (res) {
+        router.push("/guardians");
+      }
+    });
+  };
+  const style = {
+    color: "red",
+    fontSize: "12px",
+    fontWeight: "bold",
+  };
 
   const router = useRouter();
   const BootstrapButton = styled(Button)({
@@ -43,7 +140,6 @@ export default function ADDGuardians() {
   });
   const { id } = router.query;
 
-
   useEffect(() => {
     const { id } = router.query;
     console.log(id, "idddddddddddddddd");
@@ -51,52 +147,25 @@ export default function ADDGuardians() {
     fetch("https://api-school.mangoitsol.com/api/get_authorization_token")
       .then((response) => response.json())
       .then((res) => {
-
         setToken(res.token);
-       
-        
-      
       })
 
       .catch((err: any) => {
         console.log(err);
       });
   }, []);
-  const handlechange = (e: any) => {
-   
-    console.log(e.target.name);
-  };
+
   const handleCancel = () => {
     router.push("/guardians");
   };
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-    const requestedData = {
-     
-    };
-    const studentData = {
-    
-    };
-    await axios({
-      method: "PUT",
-      url: `https://api-school.mangoitsol.com/api/edituser/${id}`,
-      data: requestedData,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((result) => {
-        if (result) {
-          
-           
-        }
-      })
-      .catch((err) => {
-        console.log(err, "errrorr");
-      });
+  const uploadToClient = (event: any) => {
+    console.log(event, "eventtt");
+    if (event.target.files && event.target.files[0]) {
+      const i = event.target.files[0];
 
-    // console.log(user, "userrrrrrrrr");
+      setImage(i);
+    }
   };
 
   return (
@@ -105,187 +174,237 @@ export default function ADDGuardians() {
         <MiniDrawer />
 
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          <div id="editContent">
-            <div id="left">
-              <div className="img">
-                <Avatar
-                  alt="Remy Sharp"
-                  src="/image.png"
-                  sx={{ width: 204, height: 204 }}
-                />
-                &nbsp;
-              </div>
-              <div className="upload">
-                <Button
-                  sx={{ border: "1.5px solid #1A70C5" }}
-                  variant="outlined"
-                  startIcon={
-                    <Image
-                      src="/Vect.png"
-                      alt=""
-                      width={14}
-                      height={10}
-                    ></Image>
-                  }
-                >
-                  Upload Image
-                </Button>
-              </div>
-            </div>
-
-            <form>
-              <div id="right">
-                <div className="editform">
-                  <h1 className="heading">Add GURADIAN INFO</h1>
-                  <Box
-                    component="form"
-                    sx={{
-                      "& .MuiTextField-root": { m: 1, width: "35ch" },
-                    }}
-                    noValidate
-                    autoComplete="off"
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div id="editContent">
+              <div id="left">
+                <div className="imgs">
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    spacing={2}
+                    style={{ marginBottom: "5PX" }}
                   >
-                    <div>
-                      <Grid container spacing={3}>
-                        <Grid item xs={12} md={6}>
-                          <Stack spacing={1}>
-                            <InputLabel htmlFor="name">
-                              First Name <span className="err_str">*</span>
-                            </InputLabel>
-                            <OutlinedInput
-                              onChange={(e) => handlechange(e)}
-                              id="name"
-                              type="name"
-                              name="name"
-                              placeholder="Activity Name..."
-                              fullWidth
-                              multiline
-                            />
-                          </Stack>
-                        </Grid>
-                        <Grid item xs={12} md={6}>
-                          <Stack spacing={1}>
-                            <InputLabel htmlFor="price">
-                              Last Name <span className="err_str">*</span>
-                            </InputLabel>
-                            <OutlinedInput
-                              onChange={(e) => handlechange(e)}
-                              fullWidth
-                              id="price"
-                              type="price"
-                              name="lastname"
-                              placeholder="Price..."
-                              multiline
-                            />
-                          </Stack>
-                        </Grid>
-                        <Grid item xs={12} md={6}>
-                          <Stack spacing={1}>
-                            <InputLabel htmlFor="type">
-                              Email <span className="err_str">*</span>
-                            </InputLabel>
-                            <OutlinedInput
-                              onChange={(e) => handlechange(e)}
-                              fullWidth
-                              id="type"
-                              type="type"
-                              name="email"
-                              placeholder="Type.."
-                              multiline
-                            />
-                          </Stack>
-                        </Grid>
-                        <Grid item xs={12} md={6}>
-                          <Stack spacing={1}>
-                            <InputLabel htmlFor="status">
-                              Contact <span className="err_str">*</span>
-                            </InputLabel>
-                            <OutlinedInput
-                              onChange={(e) => handlechange(e)}
-                              fullWidth
-                              id="status"
-                              name="contact"
-                              placeholder="Status..."
-                              multiline
-                            />
-                          </Stack>
-                        </Grid>
-                      </Grid>
-                    </div>
-                  </Box>
+                    <Button variant="contained" component="label">
+                      Upload Image
+                      <input
+                        hidden
+                        accept="image/*"
+                        type="file"
+                        {...register("image", {
+                          required: true,
+                        })}
+                        onChange={uploadToClient}
+                      />
+                      <PhotoCamera />
+                    </Button>
+                    <IconButton
+                      color="primary"
+                      aria-label="upload picture"
+                      component="label"
+                    ></IconButton>
+                    <Typography style={style}>
+                      {errors.image && <span>image Feild is Required **</span>}
+                    </Typography>
+                  </Stack>
+                  {/* <Avatar
+                    alt="Remy Sharp"
+                    src="/image.png"
+                    sx={{ width: 204, height: 204 }}
+                  /> */}
+                  &nbsp;
                 </div>
-                <div className="stuform">
-                  <h1 className="heading">Add STUDENT INFO </h1>
-                  <Box
-                    component="form"
-                    sx={{
-                      "& .MuiTextField-root": { m: 1, width: "35ch" },
-                    }}
-                    noValidate
-                    autoComplete="off"
+                {/* <div className="upload">
+                  <IconButton
+                    color="primary"
+                    aria-label="upload picture"
+                    component="label"
                   >
-                    <div>
-                      <Grid container spacing={3}>
-                        <Grid item xs={12} md={6}>
-                          <Stack spacing={1}>
-                            <InputLabel htmlFor="status">
-                              First Name <span className="err_str">*</span>
-                            </InputLabel>
-                            <OutlinedInput
-                              onChange={(e) => handlechange(e)}
-                              fullWidth
-                              id="status"
-                              name="studentF"
-                              placeholder="Status..."
-                              multiline
-                            />
-                          </Stack>
+                    <PhotoCamera />
+                  </IconButton>
+                  <input type="file" name="myImage" onChange={uploadToClient} />
+                  Upload Image
+                </div> */}
+              </div>
+              <div>
+                <div id="right">
+                  <div className="editform">
+                    <h1 className="heading">Add GURADIAN INFO</h1>
+                    <Box
+                      component="form"
+                      sx={{
+                        "& .MuiTextField-root": { m: 1, width: "35ch" },
+                      }}
+                      noValidate
+                      autoComplete="off"
+                    >
+                      <div>
+                        <Grid container spacing={3}>
+                          <Grid item xs={12} md={6}>
+                            <Stack spacing={1}>
+                              <InputLabel htmlFor="name">
+                                First Name <span className="err_str">*</span>
+                              </InputLabel>
+                              <OutlinedInput
+                                id="name"
+                                type="name"
+                                {...register("firstname", {
+                                  required: true,
+                                })}
+                                placeholder="Activity Name..."
+                                fullWidth
+                              />
+                              <Typography style={style}>
+                                {errors.firstname && (
+                                  <span>firstName Feild is Required **</span>
+                                )}
+                              </Typography>
+                            </Stack>
+                          </Grid>
+                          <Grid item xs={12} md={6}>
+                            <Stack spacing={1}>
+                              <InputLabel htmlFor="lastname">
+                                Last Name <span className="err_str">*</span>
+                              </InputLabel>
+                              <OutlinedInput
+                                fullWidth
+                                id="lastname"
+                                type="lastname"
+                                {...register("lastname", {
+                                  required: true,
+                                })}
+                                placeholder="lastname..."
+                              />
+                              <Typography style={style}>
+                                {errors.lastname && (
+                                  <span>lastName Feild is Required **</span>
+                                )}
+                              </Typography>
+                            </Stack>
+                          </Grid>
+                          <Grid item xs={12} md={6}>
+                            <Stack spacing={1}>
+                              <InputLabel htmlFor="email">
+                                Email <span className="err_str">*</span>
+                              </InputLabel>
+                              <OutlinedInput
+                                fullWidth
+                                id="email"
+                                type="email"
+                                {...register("email", {
+                                  required: true,
+                                })}
+                                placeholder="email.."
+                              />
+                              <Typography style={style}>
+                                {errors.email && (
+                                  <span>email Feild is Required **</span>
+                                )}
+                              </Typography>
+                            </Stack>
+                          </Grid>
+                          <Grid item xs={12} md={6}>
+                            <Stack spacing={1}>
+                              <InputLabel htmlFor="contact">
+                                Contact <span className="err_str">*</span>
+                              </InputLabel>
+                              <OutlinedInput
+                                fullWidth
+                                id="conatct"
+                                {...register("contact", {
+                                  required: true,
+                                })}
+                                placeholder="contact..."
+                              />
+                              <Typography style={style}>
+                                {errors.contact && (
+                                  <span>contact Feild is Required **</span>
+                                )}
+                              </Typography>
+                            </Stack>
+                          </Grid>
                         </Grid>
-                        <Grid item xs={12} md={6}>
-                          <Stack spacing={1}>
-                            <InputLabel htmlFor="status">
-                              Last Name <span className="err_str">*</span>
-                            </InputLabel>
-                            <OutlinedInput
-                              onChange={(e) => handlechange(e)}
-                              fullWidth
-                              id="status"
-                              name="studentL"
-                              placeholder="Status..."
-                              multiline
-                            />
-                          </Stack>
+                      </div>
+                    </Box>
+                  </div>
+                  <div className="stuform">
+                    <h1 className="heading">Add STUDENT INFO </h1>
+                    <Box
+                      component="form"
+                      sx={{
+                        "& .MuiTextField-root": { m: 1, width: "35ch" },
+                      }}
+                      noValidate
+                      autoComplete="off"
+                    >
+                      <div>
+                        <Grid container spacing={3}>
+                          <Grid item xs={12} md={6}>
+                            <Stack spacing={1}>
+                              <InputLabel htmlFor="status">
+                                First Name <span className="err_str">*</span>
+                              </InputLabel>
+                              <OutlinedInput
+                                fullWidth
+                                id="firstName"
+                                placeholder="firstName..."
+                                {...register("firstName", {
+                                  required: true,
+                                })}
+                              />
+                              <Typography style={style}>
+                                {errors.firstName && (
+                                  <span>firstName Feild is Required **</span>
+                                )}
+                              </Typography>
+                            </Stack>
+                          </Grid>
+                          <Grid item xs={12} md={6}>
+                            <Stack spacing={1}>
+                              <InputLabel htmlFor="status">
+                                Last Name <span className="err_str">*</span>
+                              </InputLabel>
+                              <OutlinedInput
+                                fullWidth
+                                id="status"
+                                placeholder="lastName..."
+                                {...register("lastName", {
+                                  required: true,
+                                })}
+                              />
+                              <Typography style={style}>
+                                {errors.lastName && (
+                                  <span>lastName Feild is Required **</span>
+                                )}
+                              </Typography>
+                            </Stack>
+                          </Grid>
                         </Grid>
-                      </Grid>
 
-                      {/* <div>
+                        {/* <div>
                       
                       </div> */}
-                    </div>
-                    {/* <Button onClick={handleSubmit} type="button">
+                      </div>
+                      {/* <Button onClick={handleSubmit} type="button">
                       cancel
                     </Button> */}
-                  </Box>
-                </div>
-                <div className="butto">
-                  <div className="btn">
-                    <Button
-                      className="edit"
-                      onClick={handleSubmit}
-                      type="button"
-                    >
-                      Add
-                    </Button>
+                    </Box>
                   </div>
-                  <div className="btns">
-                    <BootstrapButton onClick={handleCancel} type="button">
-                      cancel
-                    </BootstrapButton>
+                  <div className="butto">
+                    <div className="btn">
+                      <Button className="edit" type="submit">
+                        Add
+                      </Button>
+                    </div>
+                    <div className="btns">
+                      <BootstrapButton onClick={handleCancel} type="button">
+                        cancel
+                      </BootstrapButton>
+                    </div>
                   </div>
                 </div>
               </div>
-            </form>
-          </div>
+            </div>
+          </form>
         </Box>
       </Box>
     </>
