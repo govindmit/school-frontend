@@ -10,6 +10,9 @@ export default function handler(
   res.status(200).json({ name: "John Doe" });
 }
 
+// const base_url ="http://localhost:5003/"
+// const api_url = "http://localhost:5003/api/"
+
 const base_url = "https://school.mangoitsol.com/";
 const api_url = "https://api-school.mangoitsol.com/api/";
 const auth_token =

@@ -26,6 +26,7 @@ import { CleaningServices } from "@mui/icons-material";
 import { useRouter } from "next/router";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { json } from "stream/consumers";
+import { api_url, base_url } from "./api/hello";
 
 export interface FormValues {
   append(arg0: string, firstname: String): unknown;
@@ -56,8 +57,7 @@ export default function ADDGuardians() {
     imageData.append("lastName", data.lastname);
     imageData.append("email", data.email);
     imageData.append("contact", data.contact);
-    imageData.append("status", "1");
-    imageData.append("password", "1233344444");
+    imageData.append("status", "0");
     imageData.append("role_id", "1");
 
     const userData = {
@@ -77,7 +77,7 @@ export default function ADDGuardians() {
     //   const end_point = "addactivity";
     await axios({
       method: "POST",
-      url: `https://api-school.mangoitsol.com/api/adduser`,
+      url: `${api_url}adduser`,
       data: imageData,
 
       headers: {
@@ -87,17 +87,15 @@ export default function ADDGuardians() {
       },
     })
       .then((data) => {
-        if (data) {
-          let userId = data.data.data.insertId;
-          addStudent(studentData, userId);
-        }
-
         console.log("Success:", data);
+        let userId = data.data.User.insertId;
+        addStudent(studentData, userId);
+
+        // console.log(data, "daaaaaa");
       })
       .catch((error) => {
-        //console.error("Error:", error);
+        console.error("Error:", error);
       });
-    console.log(data, "daaaaaa");
   };
   const addStudent = async (student: any, userId: any) => {
     let studentData = new FormData();

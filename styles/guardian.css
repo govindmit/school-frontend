@@ -52,10 +52,17 @@ span.secondHeading {
 .outLine {
   width: fit-content;
   height: fit-content;
-  margin-left: 71%;
+  /* margin-left: 71%; */
   /* margin: 31px; */
   /* margin-top: -3px; */
-  padding: 16px;
+
+  margin: 0;
+  padding: 0px;
+  position: relative;
+  left: 74%;
+  /* bottom: 49%; */
+  top: -28px;
+
   -webkit-font-smoothing: antialiased;
   -webkit-text-size-adjust: 100%;
   color: rgba(0, 0, 0, 0.87);
@@ -67,10 +74,6 @@ span.secondHeading {
   box-sizing: inherit;
   width: fit-content;
   height: fit-content;
-  margin-left: 71%;
-  padding: 16px;
-  padding-top: 0px;
-  padding-bottom: 27px;
 }
 .guardianList {
   background: linear-gradient(180deg, #ffffff 0%, #ffffff 100%);
@@ -136,4 +139,53 @@ button.MuiButtonBase-root.MuiButton-root.MuiButton-text.MuiButton-textPrimary.Mu
 .kk {
   display: flex;
   width: 100%;
+}
+.field {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 19px;
+  /* identical to box height */
+  margin: 10px;
+
+  color: #5a6873;
+  /* identical to box height */
+}
+.active {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 16px;
+
+  color: #02c509;
+}
+.inactive {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 16px;
+
+  color: #ff4026;
+}
+.fields {
+  margin: 10px;
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 19px;
+  /* identical to box height */
+
+  color: #f95a37;
+}
+th.MuiTableCell-root.MuiTableCell-head.MuiTableCell-sizeMedium.css-1ygcj2i-MuiTableCell-root {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 18px;
+  color: #5a6873;
 }

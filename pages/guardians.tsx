@@ -21,6 +21,7 @@ import { BiShow } from "react-icons/bi";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import MiniDrawer from "./sidebar";
+import axios from "axios";
 
 const style = {
   position: "absolute" as "absolute",
@@ -35,11 +36,21 @@ const style = {
 };
 
 export default function Guardians() {
+  let localUrl = process.env.NEXT_PUBLIC_BASE_URL;
+
   const [token, setToken] = useState([]);
   const [user, setUser] = useState([]);
   const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState();
+  const [id, setId] = useState();
 
-  const handleOpen = () => setOpen(true);
+  const handleOpen = (id: any) => {
+    // console.log(id, "iddddd");
+
+    setOpen(true);
+    setId(id);
+    // handledelete(id);
+  };
   const handleClose = () => setOpen(false);
 
   const BootstrapButton = styled(Button)({
@@ -54,8 +65,10 @@ export default function Guardians() {
   const getUser = () => {
     fetch("https://api-school.mangoitsol.com/api/get_authorization_token")
       .then((response) => response.json())
-      .then((res) =>
-        fetch("https://api-school.mangoitsol.com/api/getuser", {
+      .then((res) => {
+        setToken(res.token);
+
+        fetch(`${localUrl}getuser`, {
           headers: {
             Authorization: `Bearer ${res.token}`,
           },
@@ -64,13 +77,36 @@ export default function Guardians() {
           .then((res) => setUser(res.data))
           .catch((err: any) => {
             console.log(err);
-          })
-      )
+          });
+      })
       .catch((err: any) => {
         console.log(err);
       });
   };
 
+  const handleCancel = () => {
+    handleClose();
+  };
+  const handledelete = () => {
+    axios({
+      method: "DELETE",
+      url: `https://api-school.mangoitsol.com/api/deleteuser/${id}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((results) => {
+        // router.push("/guardians");
+        handleClose();
+        getUser();
+        console.log(results, "Studentresultttt");
+      })
+      .catch((err) => {
+        // router.push("/guardians");
+        console.log(err, "errrorr");
+      });
+    console.log("hhhhh", id);
+  };
   useEffect(() => {
     return getUser;
   }, []);
@@ -99,7 +135,7 @@ export default function Guardians() {
       });
     setUser(results);
   };
-  console.log(user, "usersssssss");
+  console.log(search, "search");
   return (
     <>
       <Box sx={{ display: "flex" }}>
@@ -125,6 +161,12 @@ export default function Guardians() {
             </div>
             <div className="midBar">
               <div className="guardianList">
+                <div className="hh">
+                  <span className="fields">All({user.length})</span>
+                  <span className="field">Active()</span>
+                  <span className="field">Inactive()</span>
+                </div>
+
                 <div className="outLine">
                   <OutlinedInput
                     onChange={(e) => handlechange(e)}
@@ -147,12 +189,12 @@ export default function Guardians() {
                             <TableCell padding="checkbox">
                               <Checkbox />
                             </TableCell>
-                            <TableCell>id</TableCell>
-                            <TableCell>Name</TableCell>
-                            <TableCell>email</TableCell>
-                            <TableCell>status</TableCell>
-                            <TableCell>No of students</TableCell>
-                            <TableCell>Action</TableCell>
+                            <TableCell>ID</TableCell>
+                            <TableCell>GUARDIAN NAME</TableCell>
+                            <TableCell>EMAIL ADDRESS</TableCell>
+                            <TableCell>STATUS</TableCell>
+                            <TableCell>NO OF STUDENTS</TableCell>
+                            <TableCell>ACTION</TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody>
@@ -178,13 +220,20 @@ export default function Guardians() {
                                     {item.email}
                                   </TableCell>
                                   {item.status === 1 ? (
-                                    <TableCell align="left">approve</TableCell>
+                                    <TableCell className="active" align="left">
+                                      ACTIVE
+                                    </TableCell>
                                   ) : (
-                                    <TableCell align="left">
-                                      unapprove
+                                    <TableCell
+                                      className="inactive"
+                                      align="left"
+                                    >
+                                      INACTIVE
                                     </TableCell>
                                   )}
-                                  <TableCell align="left">2</TableCell>
+                                  <TableCell align="left">
+                                    {item.count}
+                                  </TableCell>
                                   <TableCell align="left">
                                     <Link href={`/guardiansView/${item.id}`}>
                                       <Button variant="contained" size="small">
@@ -198,7 +247,7 @@ export default function Guardians() {
                                     </Link>
                                     <Button
                                       variant="outlined"
-                                      onClick={handleOpen}
+                                      onClick={() => handleOpen(item.id)}
                                       size="small"
                                     >
                                       <RiDeleteBin5Fill />
@@ -230,12 +279,16 @@ export default function Guardians() {
                   <div className="kk">
                     <Button
                       className="popup"
-                      // onClick={handledelete}
+                      onClick={handledelete}
                       variant="text"
                     >
                       ok
                     </Button>
-                    <Button className="ok" variant="text">
+                    <Button
+                      onClick={handleCancel}
+                      className="ok"
+                      variant="text"
+                    >
                       cancel
                     </Button>
                   </div>
