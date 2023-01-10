@@ -16,13 +16,12 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import MiniDrawer from "../../sidebar";
 import Link from "next/link";
 import styled from "@emotion/styled";
 import { useRouter } from "next/router";
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
-import { api_url, auth_token, backend_url } from "../../api/hello";
+import { api_url, auth_token, backend_url } from "./api/hello";
 import { toast } from "react-toastify";
 
 const style = {
@@ -30,38 +29,29 @@ const style = {
   fontSize: "12px",
   fontWeight: "bold",
 };
-enum typeEnum {
-  Free = "Free",
-  Paid = "Paid",
-}
-enum statusEnum {
-  Active = "Active",
-  Archive = "Archive",
-  Draft = "Draft",
-}
+
+const Item = styled(Paper)(({ theme }) => ({
+  p: 10,
+}));
+
 type FormValues = {
   name: string;
-  type: typeEnum;
   image: any;
   shortdescription: string;
   description: string;
   price: number;
   startDate: string;
   endDate: string;
-  status: statusEnum;
 };
-
-const Item = styled(Paper)(({ theme }) => ({
-  p: 10,
-}));
 
 export default function EditActivity() {
   const router = useRouter();
-  const { id } = router.query;
-  const [activites, setactivites] = useState<FormValues | any>([]);
+  const [activites, setactivites] = useState<any>([]);
+  const [name, setname] = useState("");
+  const [name_err, setname_err] = useState(false);
 
   useEffect(() => {
-    const url = `${api_url}getactivitydetails/${id}`;
+    const url = `${api_url}getactivitydetails/19`;
     const fetchData = async () => {
       try {
         const response = await fetch(url, {
@@ -72,64 +62,36 @@ export default function EditActivity() {
         const json = await response.json();
         //console.log(json.data[0]);
         setactivites(json.data[0]);
+        setname(activites.name);
       } catch (error) {
         console.log("error", error);
       }
     };
     fetchData();
   }, []);
-  //console.log(activites);
+  console.log(activites);
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm<FormValues>({});
-  const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    console.log(data, "hii");
-    //console.log(data.image[0]);
-    //return false;
-    const reqData = {
-      name: data.name,
-      type: data.type,
-      description: data.description,
-      shortdescription: data.shortdescription,
-      image: data.image[0],
-      startdate: data.startDate,
-      enddate: data.endDate,
-      status: data.status,
-      price: data.price,
-    };
-    const end_point = "editactivity";
-    await axios({
-      method: "PUT",
-      url: `${api_url}${end_point}/${id}`,
-      data: reqData,
-      headers: {
-        Authorization: auth_token,
-        "content-type": "multipart/form-data",
-      },
-    })
-      .then((data) => {
-        //console.log("Success:", data);
-        if (data.status === 201) {
-          toast.success("Activity Updated Successfully !");
-          const redirect = () => {
-            router.push("/activites/activitylist");
-          };
-          setTimeout(redirect, 5000);
-        }
-      })
-      .catch((error) => {
-        //console.error("Error:", error);
-        toast.error("Activity Allready Registred !");
-      });
+  const handlename = (e: any) => {
+    setname(e.target.value);
+    if (e.target.value === "") {
+      setname_err(true);
+    } else {
+      setname_err(false);
+    }
+  };
+
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+
+    let inputdata = { name };
+
+    if (inputdata.name === "") {
+      setname_err(true);
+    }
   };
 
   return (
     <Box sx={{ display: "flex" }}>
-      <MiniDrawer />
       <Box
         component="main"
         sx={{ flexGrow: 1, p: 3 }}
@@ -160,7 +122,7 @@ export default function EditActivity() {
             EDIT ACTIVITES
           </Typography>
         </Stack>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form>
           <Container style={{ marginBottom: "30px" }}>
             <Box sx={{ flexGrow: 1 }}>
               <Grid
@@ -173,7 +135,7 @@ export default function EditActivity() {
                     <Avatar
                       style={{ marginLeft: "90px" }}
                       alt="Remy Sharp"
-                      src={`${backend_url}${activites.image}`}
+                      src=""
                       sx={{ width: 150, height: 150 }}
                     />
                     <Button
@@ -182,13 +144,6 @@ export default function EditActivity() {
                       style={{ marginBottom: "10px", marginTop: "10px" }}
                       color="primary"
                     >
-                      {" "}
-                      <input
-                        hidden
-                        accept="image/*"
-                        type="file"
-                        {...register("image")}
-                      />
                       <Typography>Upload Image</Typography>
                     </Button>
                   </Item>
@@ -209,12 +164,14 @@ export default function EditActivity() {
                               type="text"
                               id="name"
                               fullWidth
-                              {...register("name")}
-                              value={activites.name}
+                              value={name}
+                              onChange={handlename}
                             />
                             <Typography style={style}>
-                              {errors.name && (
+                              {name_err === true ? (
                                 <span>Name Feild is Required **</span>
+                              ) : (
+                                ""
                               )}
                             </Typography>
                           </Stack>
@@ -228,8 +185,6 @@ export default function EditActivity() {
                               <Select
                                 displayEmpty
                                 inputProps={{ "aria-label": "Without label" }}
-                                {...register("type")}
-                                value={activites.type}
                               >
                                 <MenuItem value="Free">Free</MenuItem>
                                 <MenuItem value="Paid">Paid</MenuItem>
@@ -243,18 +198,8 @@ export default function EditActivity() {
                               Short Description{" "}
                               <span className="err_str">*</span>
                             </InputLabel>
-                            <TextareaAutosize
-                              minRows={4}
-                              {...register("shortdescription")}
-                              value={activites.shortdescription}
-                            />
-                            <Typography style={style}>
-                              {errors.shortdescription && (
-                                <span>
-                                  Short dscription Feild is Required **
-                                </span>
-                              )}
-                            </Typography>
+                            <TextareaAutosize minRows={4} />
+                            <Typography style={style}></Typography>
                           </Stack>
                         </Grid>
                         <Grid item xs={12}>
@@ -262,17 +207,9 @@ export default function EditActivity() {
                             <InputLabel htmlFor="description">
                               Description <span className="err_str">*</span>
                             </InputLabel>
-                            <TextareaAutosize
-                              minRows={6}
-                              {...register("description")}
-                              value={activites.description}
-                            />
+                            <TextareaAutosize minRows={6} />
                           </Stack>
-                          <Typography style={style}>
-                            {errors.shortdescription && (
-                              <span>Dscription Feild is Required **</span>
-                            )}
-                          </Typography>
+                          <Typography style={style}></Typography>
                         </Grid>
                         <Grid item xs={12} md={3}>
                           <Stack spacing={1}>
@@ -284,12 +221,8 @@ export default function EditActivity() {
                               id="name"
                               placeholder="price..."
                               fullWidth
-                              {...register("price")}
-                              value={activites.price}
                             />
-                            <Typography style={style}>
-                              {errors.price && <span> Price Required **</span>}
-                            </Typography>
+                            <Typography style={style}></Typography>
                           </Stack>
                         </Grid>
                         <Grid item xs={12} md={3}>
@@ -301,14 +234,8 @@ export default function EditActivity() {
                               fullWidth
                               type="date"
                               id="startdate"
-                              {...register("startDate")}
-                              value={activites.startdate}
                             />
-                            <Typography style={style}>
-                              {errors.startDate && (
-                                <span>Start date Required **</span>
-                              )}
-                            </Typography>
+                            <Typography style={style}></Typography>
                           </Stack>
                         </Grid>
                         <Grid item xs={12} lg={3}>
@@ -320,14 +247,8 @@ export default function EditActivity() {
                               fullWidth
                               type="date"
                               id="startdate"
-                              {...register("endDate")}
-                              value={activites.enddate}
                             />
-                            <Typography style={style}>
-                              {errors.endDate && (
-                                <span>End date Required **</span>
-                              )}
-                            </Typography>
+                            <Typography style={style}></Typography>
                           </Stack>
                         </Grid>
                         <Grid item xs={12} md={3}>
@@ -339,7 +260,6 @@ export default function EditActivity() {
                               <Select
                                 displayEmpty
                                 inputProps={{ "aria-label": "Without label" }}
-                                {...register("status")}
                               >
                                 <MenuItem value="Active">Active</MenuItem>
                                 <MenuItem value="Archive">Archive</MenuItem>
@@ -351,26 +271,22 @@ export default function EditActivity() {
                         <Grid item xs={12}>
                           <Button
                             type="submit"
+                            onClick={handleSubmit}
                             variant="contained"
                             color="primary"
                           >
                             <b>SAVE & UPDATE</b>
                           </Button>{" "}
-                          <Link
-                            style={{ color: "red", textDecoration: "none" }}
-                            href="/activites/activitylist"
+                          <Button
+                            type="submit"
+                            variant="contained"
+                            style={{
+                              marginRight: "20px",
+                              backgroundColor: "#F95A37",
+                            }}
                           >
-                            <Button
-                              type="submit"
-                              variant="contained"
-                              style={{
-                                marginRight: "20px",
-                                backgroundColor: "#F95A37",
-                              }}
-                            >
-                              <b>CANCEL</b>
-                            </Button>
-                          </Link>
+                            <b>CANCEL</b>
+                          </Button>
                         </Grid>
                       </Grid>
                     </Stack>

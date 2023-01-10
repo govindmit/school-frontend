@@ -24,7 +24,6 @@ import {
   TextField,
   Pagination,
   IconButton,
-  SelectChangeEvent,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import Link from "next/link";
@@ -34,13 +33,13 @@ import { FiEdit } from "react-icons/fi";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import MiniDrawer from "../sidebar";
+import MiniDrawer from "./sidebar";
 import { BoxProps } from "@mui/system";
-import { api_url, auth_token, backend_url } from "../api/hello";
+import { api_url, auth_token, backend_url } from "./api/hello";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import usePagination from "./pagination";
+import usePagination from "../pages/activites/pagination";
 
 function Item(props: BoxProps) {
   const { sx, ...other } = props;
@@ -50,7 +49,6 @@ function Item(props: BoxProps) {
 export default function ActivityList() {
   const [activites, setactivites] = useState([]);
   const [state, setstate] = useState("");
-  const [filterbystatus, setfilterbystatus] = React.useState("");
   const [alldata, setalldata] = useState(0);
   const [open, setOpen] = React.useState(false);
   const theme = useTheme();
@@ -108,21 +106,24 @@ export default function ActivityList() {
     setactivites(results);
   };
 
-  //filtering
-  const handleSelect = (event: SelectChangeEvent) => {
-    setfilterbystatus(event.target.value as string);
+  const [query, setquery] = useState("");
+  const [states, setstates] = useState({
+    query: "",
+    list: [],
+  });
+  const handleChanges = (e: any) => {
+    //setquery(e.target.value);
     const results = activites.filter((post: any) => {
-      if (filterbystatus === "") {
-        return activites;
-        //console.log(activites);
-      } else {
-        return post.status.includes(filterbystatus);
-      }
+      if (e.target.value === "") return activites;
+      return post.name.toLowerCase().includes(e.target.value.toLowerCase());
     });
-    // console.log(results);
+    setstates({
+      query: e.target.value,
+      list: results,
+    });
+
     setactivites(results);
   };
-  //console.log(filterbystatus);
 
   return (
     <>
@@ -210,17 +211,10 @@ export default function ActivityList() {
                   <Stack>
                     <Stack spacing={2}></Stack>
                     <FormControl fullWidth sx={{ minWidth: 200 }}>
-                      <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        size="small"
-                        onChange={handleSelect}
-                        value={filterbystatus}
-                        label="Select Status"
-                      >
-                        <MenuItem value="Active">Active</MenuItem>
-                        <MenuItem value="Archive">Archive</MenuItem>
-                        <MenuItem value="Draft">Draft</MenuItem>
+                      <Select id="demo-simple-select" size="small">
+                        <MenuItem value={10}>Ten</MenuItem>
+                        <MenuItem value={20}>Twenty</MenuItem>
+                        <MenuItem value={30}>Thirty</MenuItem>
                       </Select>
                     </FormControl>
                   </Stack>
@@ -231,6 +225,11 @@ export default function ActivityList() {
                       onChange={handleChange}
                       value={state}
                       type="search..."
+                    />
+                    <input
+                      type="search"
+                      value={states.query}
+                      onChange={handleChanges}
                     />
                   </FormControl>
                 </Stack>
