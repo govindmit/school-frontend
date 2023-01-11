@@ -109,7 +109,7 @@ export default function ADDGuardians() {
     // };
     await axios({
       method: "POST",
-      url: `https://api-school.mangoitsol.com/api/addstudent`,
+      url: `${api_url}api/addstudent`,
       data: studentData,
 
       headers: {

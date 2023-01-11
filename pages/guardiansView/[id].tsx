@@ -49,7 +49,7 @@ export default function View() {
       .then((response) => response.json())
       .then((res) => {
         student(res.token);
-        fetch(`${localUrl}getuserdetails/${id}`, {
+        fetch(`${api_url}getuserdetails/${id}`, {
           headers: {
             Authorization: `Bearer ${res.token}`,
           },

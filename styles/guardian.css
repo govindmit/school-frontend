@@ -189,3 +189,9 @@ th.MuiTableCell-root.MuiTableCell-head.MuiTableCell-sizeMedium.css-1ygcj2i-MuiTa
   line-height: 18px;
   color: #5a6873;
 }
+h4.notFound {
+  display: flex;
+  width: 254%;
+  margin-left: 19px;
+  text-align: center;
+}

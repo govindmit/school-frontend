@@ -22,6 +22,7 @@ import { FiEdit } from "react-icons/fi";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import MiniDrawer from "./sidebar";
 import axios from "axios";
+import { api_url, base_url } from "./api/hello";
 
 const style = {
   position: "absolute" as "absolute",
@@ -34,7 +35,9 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
-
+export interface FormValues {
+  status: Number;
+}
 export default function Guardians() {
   let localUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -43,6 +46,7 @@ export default function Guardians() {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState();
   const [id, setId] = useState();
+  const [error, setError] = useState<any>("");
 
   const handleOpen = (id: any) => {
     // console.log(id, "iddddd");
@@ -68,7 +72,7 @@ export default function Guardians() {
       .then((res) => {
         setToken(res.token);
 
-        fetch(`${localUrl}getuser`, {
+        fetch(`${api_url}getuser`, {
           headers: {
             Authorization: `Bearer ${res.token}`,
           },
@@ -90,7 +94,7 @@ export default function Guardians() {
   const handledelete = () => {
     axios({
       method: "DELETE",
-      url: `https://api-school.mangoitsol.com/api/deleteuser/${id}`,
+      url: `${api_url}deleteuser/${id}`,
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -117,13 +121,7 @@ export default function Guardians() {
       user.filter((post: any) => {
         var a;
         var b;
-        // if (a === "" && b === "") {
-        //   console.log("dayatatatatatattaatta");
-        //   return getUser();
-        // }
-        if (e.target.value === "") {
-          return getUser();
-        } else {
+        if (e.target.value) {
           a = post.firstname
             .toLowerCase()
             .includes(e.target.value.toLowerCase());
@@ -133,9 +131,23 @@ export default function Guardians() {
           return a || b;
         }
       });
-    setUser(results);
+
+    if (results.length > 0 && e.target.value) {
+      setError("");
+      setUser(results);
+      console.log(results, "resultttt");
+    } else if (results.length === 0 && e.target.value) {
+      let data = 1;
+      return setError(data);
+    } else {
+      getUser();
+      setError("");
+    }
   };
-  console.log(search, "search");
+
+  const InactiveRecords = user.filter((a: any) => a.status == 0);
+  const activeRecords = user.filter((a: any) => a.status == 1);
+
   return (
     <>
       <Box sx={{ display: "flex" }}>
@@ -163,8 +175,10 @@ export default function Guardians() {
               <div className="guardianList">
                 <div className="hh">
                   <span className="fields">All({user.length})</span>
-                  <span className="field">Active()</span>
-                  <span className="field">Inactive()</span>
+                  <span className="field">Active({activeRecords.length})</span>
+                  <span className="field">
+                    Inactive({InactiveRecords.length})
+                  </span>
                 </div>
 
                 <div className="outLine">
@@ -198,64 +212,57 @@ export default function Guardians() {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {user
-                            ? user.map((item: any) => (
-                                <TableRow hover tabIndex={-1} role="checkbox">
-                                  <TableCell padding="checkbox">
-                                    <Checkbox />
+                          {user && error != 1 ? (
+                            user.map((item: any) => (
+                              <TableRow hover tabIndex={-1} role="checkbox">
+                                <TableCell padding="checkbox">
+                                  <Checkbox />
+                                </TableCell>
+                                <TableCell
+                                  component="th"
+                                  scope="row"
+                                  padding="none"
+                                >
+                                  <TableCell align="left">{item.id}</TableCell>
+                                </TableCell>
+                                <TableCell align="left">
+                                  {item.firstname} &nbsp; {item.lastname}
+                                </TableCell>
+                                <TableCell align="left">{item.email}</TableCell>
+                                {item.status === 1 ? (
+                                  <TableCell className="active" align="left">
+                                    ACTIVE
                                   </TableCell>
-                                  <TableCell
-                                    component="th"
-                                    scope="row"
-                                    padding="none"
-                                  >
-                                    <TableCell align="left">
-                                      {item.id}
-                                    </TableCell>
+                                ) : (
+                                  <TableCell className="inactive" align="left">
+                                    INACTIVE
                                   </TableCell>
-                                  <TableCell align="left">
-                                    {item.firstname} &nbsp; {item.lastname}
-                                  </TableCell>
-                                  <TableCell align="left">
-                                    {item.email}
-                                  </TableCell>
-                                  {item.status === 1 ? (
-                                    <TableCell className="active" align="left">
-                                      ACTIVE
-                                    </TableCell>
-                                  ) : (
-                                    <TableCell
-                                      className="inactive"
-                                      align="left"
-                                    >
-                                      INACTIVE
-                                    </TableCell>
-                                  )}
-                                  <TableCell align="left">
-                                    {item.count}
-                                  </TableCell>
-                                  <TableCell align="left">
-                                    <Link href={`/guardiansView/${item.id}`}>
-                                      <Button variant="contained" size="small">
-                                        <BiShow />
-                                      </Button>
-                                    </Link>
-                                    <Link href={`/editGuardians/${item.id}`}>
-                                      <Button variant="outlined" size="small">
-                                        <FiEdit />
-                                      </Button>
-                                    </Link>
-                                    <Button
-                                      variant="outlined"
-                                      onClick={() => handleOpen(item.id)}
-                                      size="small"
-                                    >
-                                      <RiDeleteBin5Fill />
+                                )}
+                                <TableCell align="left">{item.count}</TableCell>
+                                <TableCell align="left">
+                                  <Link href={`/guardiansView/${item.id}`}>
+                                    <Button variant="contained" size="small">
+                                      <BiShow />
                                     </Button>
-                                  </TableCell>
-                                </TableRow>
-                              ))
-                            : ""}
+                                  </Link>
+                                  <Link href={`/editGuardians/${item.id}`}>
+                                    <Button variant="outlined" size="small">
+                                      <FiEdit />
+                                    </Button>
+                                  </Link>
+                                  <Button
+                                    variant="outlined"
+                                    onClick={() => handleOpen(item.id)}
+                                    size="small"
+                                  >
+                                    <RiDeleteBin5Fill />
+                                  </Button>
+                                </TableCell>
+                              </TableRow>
+                            ))
+                          ) : (
+                            <h4 className="notFound">Data not found</h4>
+                          )}
                         </TableBody>
                       </Table>
                     </TableContainer>
