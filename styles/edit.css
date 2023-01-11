@@ -94,3 +94,11 @@ button.MuiButtonBase-root.MuiButton-root.MuiButton-outlined.MuiButton-outlinedPr
   width: fit-content;
   margin-top: 12px;
 }
+
+.imgs {
+  width: -moz-fit-content;
+  width: fit-content;
+  display: flex;
+  margin-left: 27%;
+  margin-top: 93px;
+}

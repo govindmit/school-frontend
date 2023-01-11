@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { type } from "os";
 import MiniDrawer from "../sidebar";
+import { api_url, base_url, backend_url } from "../api/hello";
 
 export interface UserDataType {
   firstname: String;
@@ -17,6 +18,7 @@ export interface UserDataType {
 }
 
 export default function View() {
+  let localUrl = process.env.NEXT_PUBLIC_BASE_URL;
   const [user, setUser] = useState<UserDataType | any>("");
   const [stud, setStud] = useState<UserDataType | any>("");
 
@@ -24,7 +26,7 @@ export default function View() {
 
   const student = (token: any) => {
     const { id } = router.query;
-    fetch(`https://api-school.mangoitsol.com/api/getstudentbyuser/${id}`, {
+    fetch(`${api_url}getstudentbyuser/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -43,12 +45,11 @@ export default function View() {
   useEffect(() => {
     const { id } = router.query;
     console.log(id, "idddddddddddddddd");
-
     fetch("https://api-school.mangoitsol.com/api/get_authorization_token")
       .then((response) => response.json())
       .then((res) => {
         student(res.token);
-        fetch(`https://api-school.mangoitsol.com/api/getuserdetails/${id}`, {
+        fetch(`${api_url}getuserdetails/${id}`, {
           headers: {
             Authorization: `Bearer ${res.token}`,
           },
@@ -64,7 +65,7 @@ export default function View() {
         console.log(err);
       });
   }, []);
-  console.log(stud, "stud");
+  // console.log(localUrl, "localUrl");
   return (
     <>
       <Box sx={{ display: "flex" }}>
@@ -76,7 +77,7 @@ export default function View() {
               <div className="img">
                 <Avatar
                   alt="Remy Sharp"
-                  src="/image.png"
+                  src={`${backend_url}${user.image}`}
                   sx={{ width: 204, height: 204 }}
                 />
                 &nbsp;
