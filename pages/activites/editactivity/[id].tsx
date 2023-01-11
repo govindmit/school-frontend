@@ -22,7 +22,7 @@ import styled from "@emotion/styled";
 import { useRouter } from "next/router";
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
-import { api_url, auth_token, backend_url } from "../../api/hello";
+import { api_url, auth_token, base_url } from "../../api/hello";
 import { toast } from "react-toastify";
 
 type activitesType = {
@@ -185,7 +185,7 @@ export default function EditActivity() {
                     <Avatar
                       style={{ marginLeft: "90px" }}
                       alt="Remy Sharp"
-                      src={`${backend_url}${activites.image}`}
+                      src={`${base_url}${activites.image}`}
                       sx={{ width: 150, height: 150 }}
                     />
                     <Button
