@@ -21,7 +21,7 @@ import {
 import axios from "axios";
 import { CleaningServices } from "@mui/icons-material";
 import { useRouter } from "next/router";
-import { api_url, base_url } from "../api/hello";
+import { api_url, base_url, backend_url } from "../api/hello";
 import { PhotoCamera } from "@mui/icons-material";
 import { dirname } from "path";
 
@@ -181,7 +181,7 @@ export default function EditGuardians() {
                 ) : (
                   <Avatar
                     alt="Remy Sharp"
-                    src={`${base_url}${user?.image}`}
+                    src={`${backend_url}${user?.image}`}
                     sx={{ width: 204, height: 204 }}
                   />
                 )}

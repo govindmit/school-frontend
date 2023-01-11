@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { type } from "os";
 import MiniDrawer from "../sidebar";
-import { api_url, base_url } from "../api/hello";
+import { api_url, base_url, backend_url } from "../api/hello";
 
 export interface UserDataType {
   firstname: String;
@@ -78,7 +78,7 @@ export default function View() {
               <div className="img">
                 <Avatar
                   alt="Remy Sharp"
-                  src={`${base_url}${user.image}`}
+                  src={`${backend_url}${user.image}`}
                   sx={{ width: 204, height: 204 }}
                 />
                 &nbsp;

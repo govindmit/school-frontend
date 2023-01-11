@@ -45,6 +45,7 @@ export default function ADDGuardians() {
   const [token, setToken] = useState<FormValues | any>("");
   const [image, setImage] = useState<FormValues | any>("");
 
+  // let token = localStorage.getItem('token')
   const {
     register,
     handleSubmit,
@@ -60,16 +61,21 @@ export default function ADDGuardians() {
     imageData.append("status", "0");
     imageData.append("role_id", "1");
 
-    const userData = {
-      firstName: data.firstname,
-      lastName: data.lastname,
-      email: data.email,
-      contact: data.contact,
-      image: imageData,
-      status: 1,
-      password: "1233344444",
-      role_id: 1,
-    };
+    // let studentData = new FormData();
+    // studentData.append("firstName", data?.firstName);
+    // studentData.append("lastName", data?.lastName);
+
+    console.log(data.firstName, "studentData");
+    // const userData = {
+    //   firstName: data.firstname,
+    //   lastName: data.lastname,
+    //   email: data.email,
+    //   contact: data.contact,
+    //   image: imageData,
+    //   status: 1,
+    //   password: "1233344444",
+    //   role_id: 1,
+    // };
     const studentData = {
       firstName: data.firstName,
       lastName: data.lastName,
@@ -82,7 +88,7 @@ export default function ADDGuardians() {
 
       headers: {
         "Content-Type": "multipart/form-data",
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNqMjU4NTA5N0BnbWFpbC5jb20iLCJwYXNzd29yZCI6IlNodWJoYW0jMTIiLCJpYXQiOjE2NzIzOTAwNTl9.Et3nmGyTFiknlownJmSXGp04c6OsZPgPxLrg-zahlFU`,
+        Authorization: `Bearer ${token}`,
         "content-type": "multipart/form-data",
       },
     })
@@ -109,12 +115,12 @@ export default function ADDGuardians() {
     // };
     await axios({
       method: "POST",
-      url: `${api_url}api/addstudent`,
+      url: `${api_url}addstudent`,
       data: studentData,
 
       headers: {
         "Content-Type": "multipart/form-data",
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNqMjU4NTA5N0BnbWFpbC5jb20iLCJwYXNzd29yZCI6IlNodWJoYW0jMTIiLCJpYXQiOjE2NzIzOTAwNTl9.Et3nmGyTFiknlownJmSXGp04c6OsZPgPxLrg-zahlFU`,
+        Authorization: `Bearer ${token}`,
         "content-type": "multipart/form-data",
       },
     }).then((res) => {
@@ -182,24 +188,35 @@ export default function ADDGuardians() {
                     spacing={2}
                     style={{ marginBottom: "5PX" }}
                   >
-                    <Button variant="contained" component="label">
-                      Upload Image
-                      <input
-                        hidden
-                        accept="image/*"
-                        type="file"
-                        {...register("image", {
-                          required: true,
-                        })}
-                        onChange={uploadToClient}
+                    {image ? (
+                      <Avatar
+                        alt="Remy Sharp"
+                        src={`${URL.createObjectURL(image)}`}
+                        sx={{ width: 204, height: 204 }}
                       />
-                      <PhotoCamera />
-                    </Button>
-                    <IconButton
-                      color="primary"
-                      aria-label="upload picture"
-                      component="label"
-                    ></IconButton>
+                    ) : (
+                      ""
+                    )}
+                    <div className="igs">
+                      <Button variant="contained" component="label">
+                        Upload Image
+                        <input
+                          hidden
+                          accept="image/*"
+                          type="file"
+                          {...register("image", {
+                            required: true,
+                          })}
+                          onChange={uploadToClient}
+                        />
+                        <PhotoCamera />
+                      </Button>
+                      <IconButton
+                        color="primary"
+                        aria-label="upload picture"
+                        component="label"
+                      ></IconButton>
+                    </div>
                     <Typography style={style}>
                       {errors.image && <span>image Feild is Required **</span>}
                     </Typography>
