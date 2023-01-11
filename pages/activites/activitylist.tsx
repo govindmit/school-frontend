@@ -25,6 +25,7 @@ import {
   Pagination,
   IconButton,
   SelectChangeEvent,
+  InputLabel,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import Link from "next/link";
@@ -41,6 +42,7 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import usePagination from "./pagination";
+import ConfirmBox from "./confirmbox";
 
 function Item(props: BoxProps) {
   const { sx, ...other } = props;
@@ -49,20 +51,14 @@ function Item(props: BoxProps) {
 
 export default function ActivityList() {
   const [activites, setactivites] = useState([]);
-  const [state, setstate] = useState("");
-  const [filterbystatus, setfilterbystatus] = React.useState("");
+  const [searchquery, setsearchquery] = useState("");
+  const [searchdata, setsearchdata] = useState([]);
   const [alldata, setalldata] = useState(0);
   const [open, setOpen] = React.useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
-  const handleClickOpen = async (id: any) => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
-
+  //get data
   useEffect(() => {
     const url = `${api_url}getactivity`;
     const fetchData = async () => {
@@ -75,6 +71,7 @@ export default function ActivityList() {
         const json = await response.json();
         //console.log(json.data);
         setactivites(json.data);
+        setsearchdata(json.data);
         setalldata(json.data.length);
       } catch (error) {
         //console.log("error", error);
@@ -82,6 +79,20 @@ export default function ActivityList() {
     };
     fetchData();
   }, []);
+
+  //searching
+  const handleSearch = (e: any) => {
+    setsearchquery(e.target.value);
+    if (e.target.value === "") {
+      setactivites(searchdata);
+    } else {
+      const filterres = searchdata.filter((item: any) => {
+        return item.name.toLowerCase().includes(e.target.value.toLowerCase());
+      });
+      const dtd = filterres;
+      setactivites(dtd);
+    }
+  };
 
   //pagination
   let [page, setPage] = useState(1);
@@ -93,36 +104,43 @@ export default function ActivityList() {
     DATA.jump(p);
   };
 
-  //searching
-  const handleChange = (e: any) => {
-    setstate(e.target.value);
-    const results = activites.filter((post: any) => {
-      if (e.target.value === "") {
-        return activites;
-        //console.log(activites);
-      } else {
-        return post.name.toLowerCase().includes(e.target.value.toLowerCase());
-      }
-    });
-    // console.log(results);
-    setactivites(results);
+  const [status, setstatus] = React.useState("");
+  const handleSelectChange = (event: SelectChangeEvent) => {
+    setstatus(event.target.value as string);
+    if (event.target.value === "") {
+      setactivites(searchdata);
+    } else {
+      const filterresult = searchdata.filter((item: any) => {
+        return item.status.includes(event.target.value);
+      });
+      const dtdd = filterresult;
+      setactivites(dtdd);
+    }
   };
 
-  //filtering
-  const handleSelect = (event: SelectChangeEvent) => {
-    setfilterbystatus(event.target.value as string);
-    const results = activites.filter((post: any) => {
-      if (filterbystatus === "") {
-        return activites;
-        //console.log(activites);
-      } else {
-        return post.status.includes(filterbystatus);
-      }
-    });
-    // console.log(results);
-    setactivites(results);
-  };
-  //console.log(filterbystatus);
+  //delete user
+  const [deleteData, setDeleteData] = useState<any>({});
+  function openDelete(data: any) {
+    setOpen(true);
+    setDeleteData(data);
+  }
+  async function deleteUser() {
+    await axios({
+      method: "DELETE",
+      url: `${api_url}deleteactivity/${deleteData.id}`,
+      headers: {
+        Authorization: auth_token,
+      },
+    })
+      .then((data) => {
+        console.log("Success:", data);
+        toast.success("Activity Deleted Successfully !");
+        setOpen(false);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
 
   return (
     <>
@@ -208,15 +226,13 @@ export default function ActivityList() {
                   style={{ padding: "5px" }}
                 >
                   <Stack>
-                    <Stack spacing={2}></Stack>
-                    <FormControl fullWidth sx={{ minWidth: 200 }}>
+                    <FormControl fullWidth style={{ width: "200px" }}>
                       <Select
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
+                        value={status}
                         size="small"
-                        onChange={handleSelect}
-                        value={filterbystatus}
-                        label="Select Status"
+                        onChange={handleSelectChange}
                       >
                         <MenuItem value="Active">Active</MenuItem>
                         <MenuItem value="Archive">Archive</MenuItem>
@@ -228,9 +244,9 @@ export default function ActivityList() {
                     <TextField
                       placeholder="Search..."
                       size="small"
-                      onChange={handleChange}
-                      value={state}
+                      value={searchquery}
                       type="search..."
+                      onInput={(e) => handleSearch(e)}
                     />
                   </FormControl>
                 </Stack>
@@ -309,7 +325,7 @@ export default function ActivityList() {
                                     <FiEdit />
                                   </Link>
                                 </IconButton>
-                                <IconButton onClick={() => handleClickOpen(id)}>
+                                <IconButton onClick={() => openDelete(item)}>
                                   <RiDeleteBin5Fill />
                                 </IconButton>
                               </Stack>
@@ -326,46 +342,16 @@ export default function ActivityList() {
                   page={page}
                   color="primary"
                   onChange={handlePageChange}
-                  //onChange={(e, value) => setPageApi(value)}
                 />
-                {/* <Pagination
-                  count={count}
-                  size="large"
-                  page={page}
-                  variant="outlined"
-                  shape="rounded"
-                  onChange={handlePageChange}
-                /> */}
               </Stack>
             </Card>
           </Container>
-          <div>
-            <Dialog
-              fullScreen={fullScreen}
-              open={open}
-              onClose={handleClose}
-              aria-labelledby="responsive-dialog-title"
-            >
-              <DialogTitle id="responsive-dialog-title">
-                {"Delete Activity?"}
-              </DialogTitle>
-              <DialogContent>
-                <DialogContentText>
-                  Let Google help apps determine location. This means sending
-                  anonymous location data to Google, even when no apps are
-                  running.
-                </DialogContentText>
-              </DialogContent>
-              <DialogActions>
-                <Button autoFocus onClick={handleClose}>
-                  Cancel
-                </Button>
-                <Button onClick={handleClose} autoFocus>
-                  Ok
-                </Button>
-              </DialogActions>
-            </Dialog>
-          </div>
+          <ConfirmBox
+            open={open}
+            closeDialog={() => setOpen(false)}
+            title={deleteData?.name}
+            deleteFunction={deleteUser}
+          />
         </Box>
       </Box>
       <ToastContainer />

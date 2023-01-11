@@ -6,6 +6,7 @@ import {
   Container,
   FormControl,
   Grid,
+  IconButton,
   InputLabel,
   MenuItem,
   OutlinedInput,
@@ -22,8 +23,9 @@ import styled from "@emotion/styled";
 import { useRouter } from "next/router";
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
-import { api_url, auth_token, backend_url } from "../../api/hello";
+import { api_url, auth_token, backend_url, base_url } from "../../api/hello";
 import { toast } from "react-toastify";
+import { PhotoCamera } from "@mui/icons-material";
 
 const style = {
   color: "red",
@@ -59,6 +61,14 @@ export default function EditActivity() {
   const router = useRouter();
   const { id } = router.query;
   const [activites, setactivites] = useState<FormValues | any>([]);
+  const [image, setImage] = useState<FormValues | any>("");
+
+  const uploadToClient = (event: any) => {
+    if (event.target.files && event.target.files[0]) {
+      const i = event.target.files[0];
+      setImage(i);
+    }
+  };
 
   useEffect(() => {
     const url = `${api_url}getactivitydetails/${id}`;
@@ -170,26 +180,42 @@ export default function EditActivity() {
               >
                 <Grid item xs={2} sm={4} md={4}>
                   <Item style={{ textAlign: "center" }}>
-                    <Avatar
-                      style={{ marginLeft: "90px" }}
-                      alt="Remy Sharp"
-                      src={`${backend_url}${activites.image}`}
-                      sx={{ width: 150, height: 150 }}
-                    />
+                    {image ? (
+                      <Avatar
+                        style={{ marginLeft: "90px" }}
+                        alt="Remy Sharp"
+                        src={`${URL.createObjectURL(image)}`}
+                        sx={{ width: 150, height: 150 }}
+                      />
+                    ) : (
+                      <Avatar
+                        style={{ marginLeft: "90px" }}
+                        alt="Remy Sharp"
+                        src={`${backend_url}${activites.image}`}
+                        sx={{ width: 150, height: 150 }}
+                      />
+                    )}
                     <Button
-                      sx={{ border: "1.5px solid #1A70C5" }}
-                      startIcon={<img src="/Vect.png" alt=""></img>}
+                      variant="outlined"
+                      component="label"
+                      startIcon={
+                        <img
+                          src="/Vect.png"
+                          alt=""
+                          style={{ color: "white" }}
+                        ></img>
+                      }
                       style={{ marginBottom: "10px", marginTop: "10px" }}
+                      sx={{ border: "1.5px solid #1A70C5" }}
                       color="primary"
                     >
-                      {" "}
+                      <Typography>Upload Image</Typography>
                       <input
                         hidden
                         accept="image/*"
                         type="file"
-                        {...register("image")}
+                        onChange={uploadToClient}
                       />
-                      <Typography>Upload Image</Typography>
                     </Button>
                   </Item>
                 </Grid>
