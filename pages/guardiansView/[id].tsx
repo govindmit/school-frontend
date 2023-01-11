@@ -67,7 +67,6 @@ export default function View() {
   console.log(stud, "stud");
   return (
     <>
-      {console.log(user, "dfdsfsdfsdfs")}
       <Box sx={{ display: "flex" }}>
         <MiniDrawer />
 
