@@ -71,7 +71,7 @@ export default function Guardians() {
       .then((response) => response.json())
       .then((res) => {
         setToken(res.token);
-
+        localStorage.setItem("token", res.token);
         fetch(`${api_url}getuser`, {
           headers: {
             Authorization: `Bearer ${res.token}`,
