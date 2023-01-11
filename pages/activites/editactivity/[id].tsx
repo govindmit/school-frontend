@@ -25,7 +25,6 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
 import { api_url, auth_token, backend_url, base_url } from "../../api/hello";
 import { toast } from "react-toastify";
-import { PhotoCamera } from "@mui/icons-material";
 
 const style = {
   color: "red",

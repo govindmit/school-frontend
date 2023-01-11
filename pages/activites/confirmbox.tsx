@@ -9,7 +9,17 @@ import {
 } from "@mui/material";
 import { Box } from "@mui/system";
 
-function ConfirmBox({ open, closeDialog, title, deleteFunction }) {
+function ConfirmBox({
+  open,
+  closeDialog,
+  title,
+  deleteFunction,
+}: {
+  open: any;
+  closeDialog: any;
+  title: any;
+  deleteFunction: any;
+}) {
   return (
     <Dialog
       fullWidth
@@ -65,7 +75,7 @@ function ConfirmBox({ open, closeDialog, title, deleteFunction }) {
               color="error"
             >
               Delete
-            </Button>{" "}
+            </Button>
           </Grid>
         </Grid>
       </DialogContent>

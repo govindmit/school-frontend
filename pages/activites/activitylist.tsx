@@ -59,24 +59,25 @@ export default function ActivityList() {
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
   //get data
+
+  const url = `${api_url}getactivity`;
+  const fetchData = async () => {
+    try {
+      const response = await fetch(url, {
+        headers: {
+          Authorization: auth_token,
+        },
+      });
+      const json = await response.json();
+      //console.log(json.data);
+      setactivites(json.data);
+      setsearchdata(json.data);
+      setalldata(json.data.length);
+    } catch (error) {
+      //console.log("error", error);
+    }
+  };
   useEffect(() => {
-    const url = `${api_url}getactivity`;
-    const fetchData = async () => {
-      try {
-        const response = await fetch(url, {
-          headers: {
-            Authorization: auth_token,
-          },
-        });
-        const json = await response.json();
-        //console.log(json.data);
-        setactivites(json.data);
-        setsearchdata(json.data);
-        setalldata(json.data.length);
-      } catch (error) {
-        //console.log("error", error);
-      }
-    };
     fetchData();
   }, []);
 
@@ -136,6 +137,7 @@ export default function ActivityList() {
         console.log("Success:", data);
         toast.success("Activity Deleted Successfully !");
         setOpen(false);
+        fetchData();
       })
       .catch((error) => {
         console.error("Error:", error);

@@ -99,7 +99,6 @@ export default function Guardians() {
       });
     setUser(results);
   };
-  console.log(user, "usersssssss");
   return (
     <>
       <Box sx={{ display: "flex" }}>
