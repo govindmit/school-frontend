@@ -68,7 +68,6 @@ export default function View() {
   // console.log(localUrl, "localUrl");
   return (
     <>
-      {console.log(user, "dfdsfsdfsdfs")}
       <Box sx={{ display: "flex" }}>
         <MiniDrawer />
 
