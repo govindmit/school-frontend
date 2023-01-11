@@ -5,7 +5,7 @@ import Image from "next/image";
 import Avatar from "@mui/material/Avatar";
 import { useEffect, useState } from "react";
 import { type } from "os";
-import MiniDrawer from "../sidebar";
+import MiniDrawer from "./sidebar";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
   Button,
@@ -16,14 +16,10 @@ import {
   Stack,
   TextareaAutosize,
   styled,
-  IconButton,
 } from "@mui/material";
 import axios from "axios";
 import { CleaningServices } from "@mui/icons-material";
 import { useRouter } from "next/router";
-import { api_url, base_url } from "../api/hello";
-import { PhotoCamera } from "@mui/icons-material";
-import { dirname } from "path";
 
 export interface UserDataType {
   firstname: String;
@@ -32,14 +28,12 @@ export interface UserDataType {
   firstName: String;
   lastName: String;
   body: String;
-  image: any;
 }
 
 export default function EditGuardians() {
   const [user, setUser] = useState<UserDataType | any>(null);
   const [stud, setStud] = useState<UserDataType | any>("");
   const [token, setToken] = useState<UserDataType | any>("");
-  const [image, setImage] = useState<UserDataType | any>("");
 
   const [formData, setFormData] = useState({
     name: "",
@@ -49,8 +43,6 @@ export default function EditGuardians() {
     studentF: "",
     studentL: "",
   });
-  let localUrl = process.env.NEXT_PUBLIC_BASE_URL;
-
   const router = useRouter();
   const BootstrapButton = styled(Button)({
     backgroundColor: "red",
@@ -60,107 +52,102 @@ export default function EditGuardians() {
   });
   const { id } = router.query;
   const student = (token: any) => {
-    fetch(`${api_url}getstudentbyuser/${id}`, {
+    fetch(`https://api-school.mangoitsol.com/api/getstudentbyuser/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     })
       .then((response) => response.json())
       .then((res) => {
+        console.log(res, "studenttttt");
         setStud(res ? res.data[0] : "");
       })
-      .catch((err: any) => {});
+      .catch((err: any) => {
+        console.log(err);
+      });
+    console.log(token, "tokennnnn");
   };
 
   useEffect(() => {
     const { id } = router.query;
+    console.log(id, "idddddddddddddddd");
 
     fetch("https://api-school.mangoitsol.com/api/get_authorization_token")
       .then((response) => response.json())
       .then((res) => {
         student(res.token);
         setToken(res.token);
-        fetch(`${api_url}getuserdetails/${id}`, {
+        fetch(`https://api-school.mangoitsol.com/api/getuserdetails/${id}`, {
           headers: {
             Authorization: `Bearer ${res.token}`,
           },
         })
           .then((response) => response.json())
-          .then((res) => {
-            setUser(res?.data[0]);
-          })
-          .catch((err: any) => {});
+          .then((res) => setUser(res?.data[0]))
+          .catch((err: any) => {
+            console.log(err);
+          });
       })
 
-      .catch((err: any) => {});
+      .catch((err: any) => {
+        console.log(err);
+      });
   }, []);
   const handlechange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    console.log(e.target.name);
   };
   const handleCancel = () => {
     router.push("/guardians");
   };
-  const uploadToClient = (event: any) => {
-    if (event.target.files && event.target.files[0]) {
-      const i = event.target.files[0];
-      setImage(i);
-    }
-  };
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-
-    var firstName = formData.name ? formData.name : user.firstname;
-    var lastName = formData.lastname ? formData.lastname : user.lastname;
-    var email = formData.email ? formData.email : user.email;
-    var contact = formData.contact ? formData.contact : user.contact;
-    var status = user.status;
-    var role = user.role;
-
-    var imageData = new FormData();
-
-    imageData.append("firstName", firstName);
-    imageData.append("lastName", lastName);
-    imageData.append("email", email);
-    imageData.append("contact", contact);
-    imageData.append("status", status);
-    imageData.append("role_id", role);
-    imageData.append("image", image);
-
+    const requestedData = {
+      firstName: formData.name ? formData.name : user.firstname,
+      lastName: formData.lastname ? formData.lastname : user.lastname,
+      email: formData.email ? formData.email : user.email,
+      contact: formData.contact ? formData.contact : user.contact,
+      status: user.status,
+      role: user.role,
+    };
     const studentData = {
-      firstName: formData.studentF ? formData.studentF : stud?.firstName,
-      lastName: formData.studentL ? formData.studentL : stud?.lastName,
+      firstName: formData.studentF ? formData.studentF : stud.firstName,
+      lastName: formData.studentL ? formData.studentL : stud.lastName,
       user_id: id,
     };
     await axios({
       method: "PUT",
-      url: `${api_url}edituser/${id}`,
-      data: imageData,
+      url: `https://api-school.mangoitsol.com/api/edituser/${id}`,
+      data: requestedData,
       headers: {
         Authorization: `Bearer ${token}`,
       },
     })
       .then((result) => {
         if (result) {
-          router.push("/guardians");
-
           axios({
             method: "PUT",
-            url: `${api_url}updatestudent/${stud.id}`,
+            url: `https://api-school.mangoitsol.com/api/updatestudent/${stud.id}`,
             data: studentData,
             headers: {
               Authorization: `Bearer ${token}`,
             },
           })
             .then((results) => {
-              router.push("/guardians");
+              console.log(results, "Studentresultttt");
             })
             .catch((err) => {
-              // router.push("/guardians");
+              router.push("/guardians");
+              console.log(err, "errrorr");
             });
         }
       })
-      .catch((err) => {});
+      .catch((err) => {
+        console.log(err, "errrorr");
+      });
+
+    // console.log(user, "userrrrrrrrr");
   };
 
   return (
@@ -172,41 +159,32 @@ export default function EditGuardians() {
           <div id="editContent">
             <div id="left">
               <div className="img">
-                {image ? (
-                  <Avatar
-                    alt="Remy Sharp"
-                    src={`${URL.createObjectURL(image)}`}
-                    sx={{ width: 204, height: 204 }}
-                  />
-                ) : (
-                  <Avatar
-                    alt="Remy Sharp"
-                    src={`${base_url}${user?.image}`}
-                    sx={{ width: 204, height: 204 }}
-                  />
-                )}
+                <Avatar
+                  alt="Remy Sharp"
+                  src="/image.png"
+                  sx={{ width: 204, height: 204 }}
+                />
                 &nbsp;
               </div>
               <div className="upload">
-                <Button variant="contained" component="label">
+                <Button
+                  sx={{ border: "1.5px solid #1A70C5" }}
+                  variant="outlined"
+                  startIcon={
+                    <Image
+                      src="/Vect.png"
+                      alt=""
+                      width={14}
+                      height={10}
+                    ></Image>
+                  }
+                >
                   Upload Image
-                  <input
-                    hidden
-                    accept="image/*"
-                    type="file"
-                    onChange={uploadToClient}
-                  />
-                  <PhotoCamera />
                 </Button>
-                <IconButton
-                  color="primary"
-                  aria-label="upload picture"
-                  component="label"
-                ></IconButton>
               </div>
             </div>
 
-            <form>
+            <div>
               <div id="right">
                 <div className="editform">
                   <h1 className="heading">EDIT GURADIAN INFO</h1>
@@ -364,7 +342,7 @@ export default function EditGuardians() {
                   </div>
                 </div>
               </div>
-            </form>
+            </div>
           </div>
         </Box>
       </Box>
