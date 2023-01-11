@@ -36,7 +36,7 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import MiniDrawer from "../sidebar";
 import { BoxProps } from "@mui/system";
-import { api_url, auth_token, backend_url } from "../api/hello";
+import { api_url, auth_token, base_url } from "../api/hello";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -247,7 +247,7 @@ export default function ActivityList() {
                                 alignItems="center"
                                 spacing={2}
                               >
-                                <Avatar src={`${backend_url}${image}`} />
+                                <Avatar src={`${base_url}${image}`} />
                                 <Typography variant="subtitle2" noWrap>
                                   {name}
                                 </Typography>
