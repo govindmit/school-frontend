@@ -20,6 +20,7 @@ import MiniDrawer from "../sidebar";
 import Link from "next/link";
 import { PhotoCamera } from "@mui/icons-material";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { useRouter } from "next/router";
 import { api_url, auth_token } from "../api/hello";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
@@ -55,6 +56,7 @@ type FormValues = {
 };
 
 export default function Addactivity() {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -63,18 +65,16 @@ export default function Addactivity() {
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     //console.log(data);
     //console.log(data.image[0]);
-
-    let imageData = new FormData();
-    imageData.append("image", data.image[0]);
     const reqData = {
       name: data.name,
       type: data.type,
       description: data.description,
       shortdescription: data.shortdescription,
-      image: imageData,
+      image: data.image[0],
       startdate: data.startDate,
-      ensdate: data.endDate,
+      enddate: data.endDate,
       status: data.status,
+      price: data.price,
     };
     const end_point = "addactivity";
     await axios({
@@ -88,17 +88,17 @@ export default function Addactivity() {
     })
       .then((data) => {
         //console.log("Success:", data);
-        if (data.status === 200) {
-          toast.success("Login Successfull !");
+        if (data.status === 201) {
+          toast.success("Activity Added Successfully !");
           const redirect = () => {
-            /// router.push("/dashboard");
+            router.push("/activites/activitylist");
           };
           setTimeout(redirect, 5000);
         }
       })
       .catch((error) => {
         //console.error("Error:", error);
-        toast.error("invalid crendentials!");
+        toast.error("Activity Allready Registred !");
       });
   };
 
@@ -108,31 +108,34 @@ export default function Addactivity() {
       <Box
         component="main"
         sx={{ flexGrow: 1, p: 3 }}
-        style={{ backgroundColor: "whitesmoke", padding: "50px" }}
+        style={{ marginTop: "80px" }}
       >
-        <Stack>
+        <Stack style={{ padding: "20px" }}>
           <Stack spacing={2}>
             <Breadcrumbs separator="›" aria-label="breadcrumb">
-              <Link key="1" color="inherit" href="/">
+              <Link
+                key="1"
+                color="inherit"
+                href="/"
+                style={{ color: "red", textDecoration: "none" }}
+              >
                 Home
               </Link>
               <Link
                 key="2"
                 color="inherit"
                 href="/material-ui/getting-started/installation/"
+                style={{ color: "black", textDecoration: "none" }}
               >
                 Add Activites
               </Link>
             </Breadcrumbs>
           </Stack>
-          <Typography variant="h5" gutterBottom>
+          <Typography variant="h5" gutterBottom style={{ fontWeight: "bold" }}>
             ADD ACTIVITES
           </Typography>
         </Stack>
-        <Container
-          component="main"
-          style={{ backgroundColor: "white", padding: "50px" }}
-        >
+        <Container style={{ backgroundColor: "white", marginBottom: "30px" }}>
           <Grid>
             <form onSubmit={handleSubmit(onSubmit)}>
               <Stack
@@ -141,8 +144,12 @@ export default function Addactivity() {
                 spacing={2}
                 style={{ marginBottom: "5PX" }}
               >
-                <Button variant="contained" component="label">
-                  Upload
+                <Button
+                  variant="contained"
+                  component="label"
+                  sx={{ width: 200 }}
+                >
+                  <b>Upload</b>
                   <input
                     hidden
                     accept="image/*"
@@ -194,6 +201,7 @@ export default function Addactivity() {
                           displayEmpty
                           inputProps={{ "aria-label": "Without label" }}
                           {...register("type")}
+                          defaultValue={"Free"}
                         >
                           <MenuItem value="Free">Free</MenuItem>
                           <MenuItem value="Paid">Paid</MenuItem>
@@ -285,13 +293,13 @@ export default function Addactivity() {
                   </Grid>
                   <Grid item xs={12} lg={3}>
                     <Stack spacing={1}>
-                      <InputLabel htmlFor="startdate">
+                      <InputLabel htmlFor="enddate">
                         End Date <span className="err_str">*</span>
                       </InputLabel>
                       <OutlinedInput
                         fullWidth
                         type="date"
-                        id="startdate"
+                        id="enddate"
                         {...register("endDate", {
                           required: true,
                         })}
@@ -313,11 +321,17 @@ export default function Addactivity() {
                           displayEmpty
                           inputProps={{ "aria-label": "Without label" }}
                           {...register("status")}
+                          defaultValue={"Active"}
                         >
                           <MenuItem value="Active">Active</MenuItem>
                           <MenuItem value="Archive">Archive</MenuItem>
                           <MenuItem value="Draft">Draft</MenuItem>
                         </Select>
+                        <Typography style={style}>
+                          {errors.status && (
+                            <span>Status Feild is Required **</span>
+                          )}
+                        </Typography>
                       </FormControl>
                     </Stack>
                   </Grid>
@@ -327,8 +341,9 @@ export default function Addactivity() {
                       type="submit"
                       variant="contained"
                       color="primary"
+                      sx={{ width: 200 }}
                     >
-                      Submit
+                      <b>Submit</b>
                     </Button>
                   </Grid>
                 </Grid>
