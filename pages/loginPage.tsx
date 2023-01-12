@@ -376,6 +376,7 @@ export default function LoginPage() {
           </Grid>
         </Grid>
       </ThemeProvider>
+      <ToastContainer />
     </>
   );
 }
