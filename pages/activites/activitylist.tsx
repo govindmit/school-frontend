@@ -69,12 +69,9 @@ export default function ActivityList() {
       },
     })
       .then((data) => {
-        //console.log("Success:", data);
         toast.success("Activity Deleted Successfully !");
       })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+      .catch((error) => {});
   };
 
   const handleClose = () => {
@@ -91,12 +88,9 @@ export default function ActivityList() {
           },
         });
         const json = await response.json();
-        //console.log(json.data);
         setactivites(json.data);
         setalldata(json.data.length);
-      } catch (error) {
-        console.log("error", error);
-      }
+      } catch (error) {}
     };
     fetchData();
   }, [page, activites]);

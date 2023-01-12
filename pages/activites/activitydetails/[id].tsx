@@ -55,17 +55,13 @@ export default function View() {
       },
     })
       .then((data) => {
-        //console.log("Success:", data);
         setactivites(data.data.data[0]);
       })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+      .catch((error) => {});
   };
   useEffect(() => {
     getactivity();
   }, []);
-  //console.log(activites);
 
   const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -85,16 +81,13 @@ export default function View() {
       },
     })
       .then((data) => {
-        //console.log("Success:", data);
         toast.success("Activity Deleted Successfully !");
         const redirect = () => {
           router.push("/activites/activitylist");
         };
         setTimeout(redirect, 3000);
       })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+      .catch((error) => {});
   };
 
   return (

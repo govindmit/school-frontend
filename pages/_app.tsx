@@ -7,6 +7,7 @@ import "../styles/view.css";
 import "../styles/edit.css";
 import "../styles/sidebar.css";
 import "../styles/guardian.css";
+import "../styles/dashboard.css";
 
 export default function App({ Component, pageProps }: AppProps) {
   return <Component {...pageProps} />;

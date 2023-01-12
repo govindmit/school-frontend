@@ -63,8 +63,6 @@ export default function Addactivity() {
     formState: { errors },
   } = useForm<FormValues>();
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    //console.log(data);
-    //console.log(data.image[0]);
     const reqData = {
       name: data.name,
       type: data.type,
@@ -87,7 +85,6 @@ export default function Addactivity() {
       },
     })
       .then((data) => {
-        //console.log("Success:", data);
         if (data.status === 201) {
           toast.success("Activity Added Successfully !");
           const redirect = () => {
@@ -97,7 +94,6 @@ export default function Addactivity() {
         }
       })
       .catch((error) => {
-        //console.error("Error:", error);
         toast.error("Activity Allready Registred !");
       });
   };

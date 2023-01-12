@@ -65,7 +65,6 @@ export default function ADDGuardians() {
     // studentData.append("firstName", data?.firstName);
     // studentData.append("lastName", data?.lastName);
 
-    console.log(data.firstName, "studentData");
     // const userData = {
     //   firstName: data.firstname,
     //   lastName: data.lastname,
@@ -93,15 +92,10 @@ export default function ADDGuardians() {
       },
     })
       .then((data) => {
-        console.log("Success:", data);
         let userId = data.data.User.insertId;
         addStudent(studentData, userId);
-
-        // console.log(data, "daaaaaa");
       })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+      .catch((error) => {});
   };
   const addStudent = async (student: any, userId: any) => {
     let studentData = new FormData();
@@ -146,7 +140,6 @@ export default function ADDGuardians() {
 
   useEffect(() => {
     const { id } = router.query;
-    console.log(id, "idddddddddddddddd");
 
     fetch("https://api-school.mangoitsol.com/api/get_authorization_token")
       .then((response) => response.json())
@@ -154,9 +147,7 @@ export default function ADDGuardians() {
         setToken(res.token);
       })
 
-      .catch((err: any) => {
-        console.log(err);
-      });
+      .catch((err: any) => {});
   }, []);
 
   const handleCancel = () => {
@@ -164,7 +155,6 @@ export default function ADDGuardians() {
   };
 
   const uploadToClient = (event: any) => {
-    console.log(event, "eventtt");
     if (event.target.files && event.target.files[0]) {
       const i = event.target.files[0];
 

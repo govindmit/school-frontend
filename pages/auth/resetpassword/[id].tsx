@@ -47,10 +47,7 @@ export default function Resetpassword() {
   const { register, handleSubmit, reset, formState } = useForm(formOptions);
   const { errors }: any = formState;
   async function onSubmit(data: any) {
-    console.log(JSON.stringify(data, null, 4));
-
     const reqData = { email: data.password, password: data.confirmpassword };
-    //console.log(reqData);
     const end_point = "resetpassword";
     await axios({
       method: "POST",
@@ -61,7 +58,6 @@ export default function Resetpassword() {
       },
     })
       .then((data) => {
-        //console.log("Success:", data);
         if (data.status === 200) {
           toast.success("Pasword Reset Successfull Please Login !");
           const redirect = () => {
@@ -71,7 +67,6 @@ export default function Resetpassword() {
         }
       })
       .catch((error) => {
-        //console.error("Error:", error);
         toast.success("Enternal Server Error !");
       });
   }
