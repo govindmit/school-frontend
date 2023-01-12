@@ -110,7 +110,7 @@ svg.MuiSvgIcon-root.MuiSvgIcon-colorPrimary.MuiSvgIcon-fontSizeMedium.dlimg.css-
   display: flex;
   margin: 0px;
   padding: 0px;
-  height: fit-content;
+  height: 68px;
 }
 button.MuiButtonBase-root.MuiButton-root.MuiButton-text.MuiButton-textPrimary.MuiButton-sizeMedium.MuiButton-textSizeMedium.MuiButton-root.MuiButton-text.MuiButton-textPrimary.MuiButton-sizeMedium.MuiButton-textSizeMedium.dview.css-1e6y48t-MuiButtonBase-root-MuiButton-root {
   margin-left: 59%;
@@ -224,4 +224,19 @@ svg.MuiSvgIcon-root.MuiSvgIcon-colorPrimary.MuiSvgIcon-fontSizeMedium.dimg.css-c
 }
 svg.MuiSvgIcon-root.MuiSvgIcon-colorPrimary.MuiSvgIcon-fontSizeMedium.dlimg.css-ci5apu-MuiSvgIcon-root {
   font-size: 40px;
+}
+span.dramount {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 800;
+  font-size: 17px;
+  line-height: 23px;
+  text-transform: uppercase;
+  color: #333333;
+  /* margin: 0px; */
+  padding: 0px;
+  margin-right: 76%;
+}
+.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation1.css-1633um2-MuiPaper-root {
+  height: 99%;
 }
