@@ -26,6 +26,7 @@ import Image from "next/image";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import MiniDrawer from "../sidebar";
 
+import TasksChart from "../chart";
 import dynamic from "next/dynamic";
 import BabyChangingStationIcon from "@mui/icons-material/BabyChangingStation";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
@@ -40,7 +41,25 @@ export default function Dashboard(this: any) {
     textAlign: "center",
     color: theme.palette.text.secondary,
   }));
+  const options = {
+    chart: {
+      height: 350,
+      zoom: {
+        enabled: true,
+      },
+    },
+  };
 
+  const series = [
+    {
+      name: "All Tasks",
+      data: [31, 40, 28, 51, 42, 109, 100],
+    },
+    {
+      name: "My Tasks",
+      data: [11, 32, 45, 32, 34, 52, 41],
+    },
+  ];
   return (
     <>
       <Box sx={{ display: "flex" }}>

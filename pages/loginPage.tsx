@@ -69,12 +69,12 @@ export default function LoginPage() {
       .then((data) => {
         //console.log("Success:", data);
         if (data.status === 200) {
-          //console.log(data.data.data.role_id);
+          console.log(data.data);
           const role = data.data.data.role_id;
           setShowspinner(false);
           setBtnDisabled(false);
           toast.success("Login Successfull !");
-          localStorage.setItem("QIS_loginToken", data.data.token);
+          localStorage.setItem("QIS_loginToken", data.data.loginToken);
           const redirect = () => {
             if (role === 2) {
               router.push("/admin/dashboard");

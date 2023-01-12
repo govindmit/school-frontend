@@ -79,7 +79,6 @@ export default function EditActivity() {
           },
         });
         const json = await response.json();
-        //console.log(json.data[0]);
         setactivites(json.data[0]);
       } catch (error) {
         console.log("error", error);
@@ -96,7 +95,6 @@ export default function EditActivity() {
     formState: { errors },
   } = useForm<FormValues>({});
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    console.log(data, "hii");
     //console.log(data.image[0]);
     //return false;
     const reqData = {
@@ -121,7 +119,6 @@ export default function EditActivity() {
       },
     })
       .then((data) => {
-        //console.log("Success:", data);
         if (data.status === 201) {
           toast.success("Activity Updated Successfully !");
           const redirect = () => {
@@ -131,7 +128,6 @@ export default function EditActivity() {
         }
       })
       .catch((error) => {
-        //console.error("Error:", error);
         toast.error("Activity Allready Registred !");
       });
   };

@@ -94,7 +94,6 @@ export default function Addactivity() {
       },
     })
       .then((data) => {
-        //console.log("Success:", data);
         if (data.status === 201) {
           setshowspinner(false);
           setBtnDisabled(false);
@@ -106,7 +105,6 @@ export default function Addactivity() {
         }
       })
       .catch((error) => {
-        //console.error("Error:", error);
         toast.error("Activity Allready Registred !");
         setshowspinner(false);
         setBtnDisabled(false);
