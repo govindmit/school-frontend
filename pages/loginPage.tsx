@@ -41,24 +41,6 @@ type FormValues = {
   password: string;
 };
 
-function Copyright(props: any) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
-
 export default function LoginPage() {
   const router = useRouter();
   const [spinner, setShowspinner] = React.useState(false);
@@ -78,7 +60,7 @@ export default function LoginPage() {
 
     await axios({
       method: "POST",
-      url: `${api_url}userlogin`,
+      url: `http://localhost:5003/api/userlogin`,
       data: reqData,
       headers: {
         Authorization: auth_token,
@@ -87,11 +69,18 @@ export default function LoginPage() {
       .then((data) => {
         //console.log("Success:", data);
         if (data.status === 200) {
+          //console.log(data.data.data.role_id);
+          const role = data.data.data.role_id;
           setShowspinner(false);
           setBtnDisabled(false);
           toast.success("Login Successfull !");
+          localStorage.setItem("QIS_loginToken", data.data.token);
           const redirect = () => {
-            router.push("/dashboard");
+            if (role === 2) {
+              router.push("/admin/dashboard");
+            } else {
+              router.push("/user/dashboard");
+            }
           };
           setTimeout(redirect, 2000);
         }
