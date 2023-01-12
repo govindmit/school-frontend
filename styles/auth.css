@@ -1,7 +1,14 @@
-.header-navbar {
+.header-navbar1 {
   display: flex;
   justify-content: space-between;
-  margin-top: 30px;
+  margin-top: 20px;
+  padding: 20px;
+}
+
+.header-navbar2 {
+  display: flex;
+  justify-content: space-between;
+  margin-right: 40px;
 }
 
 button {
