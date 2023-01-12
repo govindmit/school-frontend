@@ -28,6 +28,7 @@ import {
 } from "@mui/material";
 import { BiArrowBack } from "react-icons/bi";
 import Head from "next/head";
+import Footer from "./components/footer";
 const theme = createTheme();
 
 const style = {
@@ -48,6 +49,7 @@ export default function LoginPage() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<FormValues>();
 
@@ -74,6 +76,7 @@ export default function LoginPage() {
           setShowspinner(false);
           setBtnDisabled(false);
           toast.success("Login Successfull !");
+          reset();
           localStorage.setItem("QIS_loginToken", data.data.loginToken);
           const redirect = () => {
             if (role === 2) {
@@ -159,7 +162,7 @@ export default function LoginPage() {
                   }}
                 >
                   WELCOME
-                  <span style={{ color: "#42D5CD" }}>QATAR,</span>
+                  <span style={{ color: "#42D5CD" }}> QATAR,</span>
                 </Typography>
                 <Typography style={{ fontSize: "25px", fontWeight: "900" }}>
                   CUSTOMER SELF SERVICE
@@ -362,6 +365,7 @@ export default function LoginPage() {
                 </Box>
               </form>
             </Box>
+            {/* <Footer /> */}
           </Grid>
         </Grid>
       </ThemeProvider>

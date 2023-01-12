@@ -27,6 +27,7 @@ import {
 } from "@mui/material";
 import { BiArrowBack } from "react-icons/bi";
 import Head from "next/head";
+import Footer from "../components/footer";
 const theme = createTheme();
 
 const style = {
@@ -66,6 +67,7 @@ export default function ForgotPasswordPage() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<FormValues>();
 
@@ -90,6 +92,7 @@ export default function ForgotPasswordPage() {
           setBtnDisabled(false);
           console.log("Success:", data);
           setemailSuccess("Link Send Successfully Ckech Your Email ");
+          reset();
           setTimeout(() => {
             setemailSuccess("");
           }, 5000);
@@ -171,7 +174,7 @@ export default function ForgotPasswordPage() {
                   }}
                 >
                   WELCOME
-                  <span style={{ color: "#42D5CD" }}>QATAR,</span>
+                  <span style={{ color: "#42D5CD" }}> QATAR,</span>
                 </Typography>
                 <Typography style={{ fontSize: "25px", fontWeight: "900" }}>
                   CUSTOMER SELF SERVICE

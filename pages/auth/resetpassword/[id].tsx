@@ -28,6 +28,7 @@ import { BiArrowBack } from "react-icons/bi";
 import Head from "next/head";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
+import Footer from "../../components/footer";
 const theme = createTheme();
 
 const style = {
@@ -346,6 +347,7 @@ export default function ResetPasswordPage() {
                   </Button>
                 </Box>
               </form>
+              {/* <Footer /> */}
             </Box>
           </Grid>
         </Grid>

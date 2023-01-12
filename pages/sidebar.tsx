@@ -282,7 +282,11 @@ export default function MiniDrawer() {
                   justifyContent: "center",
                 }}
               ></ListItemIcon>
-              <ListItemText primary="Log Out" sx={{ opacity: open ? 1 : 0 }} />
+              <ListItemText
+                primary="Log Out"
+                sx={{ opacity: open ? 1 : 0 }}
+                onClick={() => router.push("/logout")}
+              />
             </ListItemButton>
           </ListItem>
         </List>
