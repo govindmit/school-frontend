@@ -111,7 +111,7 @@ export default function Dashboard(this: any) {
                           <div className="dmain">
                             <h1 className="dhead">1021</h1>
                             <Image
-                              className="dimg"
+                              className="dstud"
                               src="/cap.png"
                               alt="Picture of the author"
                               width={45}
