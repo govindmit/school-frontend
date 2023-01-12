@@ -108,6 +108,7 @@ export default function LoginPage() {
     <>
       <Head>
         <title>QATAR INTERNATIONAL SCHOOL - QIS</title>
+        <link rel="shortcut icon" href="/public/svg-icon/qatar-logo.png" />
       </Head>
       <ThemeProvider theme={theme}>
         <Grid container component="main" sx={{ height: "100vh" }}>
@@ -129,7 +130,7 @@ export default function LoginPage() {
               background: "#F0F3FF",
             }}
           >
-            <header className="header-navbar">
+            <header className="header-navbar1">
               <IconButton
                 size="large"
                 edge="start"
@@ -139,7 +140,7 @@ export default function LoginPage() {
                 <img src="/svg-icon/svgicon.png" />
               </IconButton>
             </header>
-            <header className="header-navbar">
+            <header className="header-navbar2">
               <IconButton></IconButton>
               <nav className="nav-bar">
                 <IconButton
@@ -152,11 +153,17 @@ export default function LoginPage() {
                 </IconButton>
               </nav>
             </header>
-            <Box sx={{ width: "100%" }}>
+            <Box
+              sx={{
+                height: 400,
+                width: 450,
+              }}
+              style={{ marginLeft: "20%" }}
+            >
               <Stack>
                 <Typography
                   style={{
-                    fontSize: "50px",
+                    fontSize: "40px",
                     fontWeight: "900",
                     color: "#333333",
                     lineHeight: "46px",
@@ -165,39 +172,71 @@ export default function LoginPage() {
                   WELCOME
                   <span style={{ color: "#42D5CD" }}>QATAR,</span>
                 </Typography>
-                <Typography style={{ fontSize: "32px", fontWeight: "900" }}>
+                <Typography style={{ fontSize: "25px", fontWeight: "900" }}>
                   CUSTOMER SELF SERVICE
                 </Typography>
               </Stack>
               <Stack>
-                <Typography>
+                <Typography style={{ fontSize: "14px", marginTop: "10px" }}>
                   There are many variations of passages of Lorem Ipsum
                   available, but the majority have suffered alteration.
                 </Typography>
-                <FormGroup>
+                <FormGroup style={{ marginTop: "10px" }}>
                   <FormControlLabel
                     control={<Checkbox defaultChecked />}
-                    label="Lorem Ipsum is simply dummy text of the printing"
+                    //label="Lorem Ipsum is simply dummy text of the printing"
+                    label={
+                      <Box component="div" fontSize={14}>
+                        Lorem Ipsum is simply dummy text of the printing
+                      </Box>
+                    }
                   />
                   <FormControlLabel
                     control={<Checkbox defaultChecked />}
-                    label="When an unknown printer took a galley of type and scrambled"
+                    //label="When an unknown printer took a galley of type and scrambled"
+                    label={
+                      <Box component="div" fontSize={14}>
+                        When an unknown printer took a galley of type and
+                        scrambled
+                      </Box>
+                    }
                   />
                   <FormControlLabel
                     control={<Checkbox defaultChecked />}
-                    label="It was popularised in the 1960s with the"
+                    //label="It was popularised in the 1960s with the"
+                    label={
+                      <Box component="div" fontSize={14}>
+                        It was popularised in the 1960s with the
+                      </Box>
+                    }
                   />
                   <FormControlLabel
                     control={<Checkbox defaultChecked />}
-                    label="Lorem Ipsum is simply dummy text of the printing"
+                    //label="Lorem Ipsum is simply dummy text of the printing"
+                    label={
+                      <Box component="div" fontSize={14}>
+                        Lorem Ipsum is simply dummy text of the printing
+                      </Box>
+                    }
                   />
                   <FormControlLabel
                     control={<Checkbox defaultChecked />}
-                    label="When an unknown printer took a galley of type and scrambled"
+                    //label="When an unknown printer took a galley of type and scrambled"
+                    label={
+                      <Box component="div" fontSize={14}>
+                        When an unknown printer took a galley of type and
+                        scrambled
+                      </Box>
+                    }
                   />
                   <FormControlLabel
                     control={<Checkbox defaultChecked />}
-                    label="It was popularised in the 1960s with the"
+                    //label="It was popularised in the 1960s with the"
+                    label={
+                      <Box component="div" fontSize={14}>
+                        It was popularised in the 1960s with the
+                      </Box>
+                    }
                   />
                 </FormGroup>
               </Stack>
@@ -212,7 +251,7 @@ export default function LoginPage() {
             elevation={6}
             square
           >
-            <header className="header-navbar">
+            <header className="header-navbar1">
               <Typography></Typography>
               <nav className="nav-bar">
                 <Link
@@ -228,14 +267,16 @@ export default function LoginPage() {
               </nav>
             </header>
             <Box
-              style={{
-                borderRadius: "20px",
-                padding: "25px",
+              sx={{
+                height: 400,
+                width: 380,
+                marginTop: 5,
+                marginLeft: 11,
               }}
             >
               <Typography
                 style={{
-                  fontSize: "46px",
+                  fontSize: "40px",
                   fontWeight: "900",
                   color: "#333333",
                 }}

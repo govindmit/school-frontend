@@ -96,14 +96,14 @@ export default function ActivityList() {
   };
 
   //pagination
-  let [page, setPage] = useState(1);
-  const PER_PAGE = 5;
-  const count = Math.ceil(activites.length / PER_PAGE);
-  const DATA = usePagination(activites, PER_PAGE);
-  const handlePageChange = (e: any, p: any) => {
-    setPage(p);
-    DATA.jump(p);
-  };
+  // let [page, setPage] = useState(1);
+  // const PER_PAGE = 5;
+  // const count = Math.ceil(activites.length / PER_PAGE);
+  // const DATA = usePagination(activites, PER_PAGE);
+  // const handlePageChange = (e: any, p: any) => {
+  //   setPage(p);
+  //   DATA.jump(p);
+  // };
 
   const [status, setstatus] = React.useState("");
   const handleSelectChange = (event: SelectChangeEvent) => {
@@ -269,8 +269,9 @@ export default function ActivityList() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {DATA.currentData() &&
-                      DATA.currentData().map((item: any, key: any) => {
+                    {/* {DATA.currentData()} */}
+                    {activites &&
+                      activites.map((item: any, key: any) => {
                         const {
                           id,
                           name,
@@ -339,12 +340,12 @@ export default function ActivityList() {
                 </Table>
               </TableContainer>
               <Stack style={{ padding: "10px" }}>
-                <Pagination
+                {/* <Pagination
                   count={count}
                   page={page}
                   color="primary"
                   onChange={handlePageChange}
-                />
+                /> */}
               </Stack>
             </Card>
           </Container>
