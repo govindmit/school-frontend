@@ -1,12 +1,8 @@
 .dashboardBar {
-  /* width: 1920px; */
-  /* height: 1080px; */
-  /* left: 0px; */
-  /* top: 0px; */
-  background: #f5f6f9;
-  padding: 22px;
-  margin: 0px;
-  margin-top: 53px;
+  background: #f5f6f9 !important;
+  padding: 22px !important;
+  margin: 0px !important;
+  margin-top: 53px !important;
 }
 .dashboardGtitle {
   font-family: "Roboto";
@@ -91,8 +87,8 @@ h2.dh1 {
   margin: 0px;
 }
 svg.MuiSvgIcon-root.MuiSvgIcon-colorPrimary.MuiSvgIcon-fontSizeMedium.dlimg.css-ci5apu-MuiSvgIcon-root {
-  margin: 22px;
-  margin-left: 85px;
+  margin: 22px !important;
+  margin-left: 85px !important;
 }
 .dGraph {
   /* background: linear-gradient(180deg, #ffffff 0%, #ffffff 100%);
@@ -113,13 +109,13 @@ svg.MuiSvgIcon-root.MuiSvgIcon-colorPrimary.MuiSvgIcon-fontSizeMedium.dlimg.css-
   height: 68px;
 }
 button.MuiButtonBase-root.MuiButton-root.MuiButton-text.MuiButton-textPrimary.MuiButton-sizeMedium.MuiButton-textSizeMedium.MuiButton-root.MuiButton-text.MuiButton-textPrimary.MuiButton-sizeMedium.MuiButton-textSizeMedium.dview.css-1e6y48t-MuiButtonBase-root-MuiButton-root {
-  margin-left: 59%;
-  font-family: "Roboto";
-  font-style: normal;
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 16px;
-  color: #1a70c5;
+  margin-left: 59% !important;
+  font-family: "Roboto" !important;
+  font-style: normal !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  line-height: 16px !important;
+  color: #1a70c5 !important;
 }
 h3.dluser {
   font-family: "Roboto";
@@ -220,7 +216,7 @@ td.MuiTableCell-alignLeft.MuiTableCell-body.MuiTableCell-root.MuiTableCell-sizeM
 }
 
 svg.MuiSvgIcon-root.MuiSvgIcon-colorPrimary.MuiSvgIcon-fontSizeMedium.dimg.css-ci5apu-MuiSvgIcon-root {
-  font-size: 41px;
+  font-size: 41px !important;
 }
 svg.MuiSvgIcon-root.MuiSvgIcon-colorPrimary.MuiSvgIcon-fontSizeMedium.dlimg.css-ci5apu-MuiSvgIcon-root {
   font-size: 40px;
@@ -238,5 +234,5 @@ span.dramount {
   margin-right: 76%;
 }
 .MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation1.css-1633um2-MuiPaper-root {
-  height: 99%;
+  height: 99% !important;
 }
