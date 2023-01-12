@@ -19,12 +19,13 @@ import {
   DialogActions,
   Breadcrumbs,
   FormControl,
-  InputLabel,
   Select,
   MenuItem,
   TextField,
   Pagination,
   IconButton,
+  SelectChangeEvent,
+  InputLabel,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import Link from "next/link";
@@ -40,6 +41,8 @@ import { api_url, auth_token, base_url } from "../api/hello";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import usePagination from "./pagination";
+import ConfirmBox from "./confirmbox";
 
 function Item(props: BoxProps) {
   const { sx, ...other } = props;
@@ -48,52 +51,99 @@ function Item(props: BoxProps) {
 
 export default function ActivityList() {
   const [activites, setactivites] = useState([]);
-  const [page, setPage] = React.useState(1);
+  const [searchquery, setsearchquery] = useState("");
+  const [searchdata, setsearchdata] = useState([]);
   const [alldata, setalldata] = useState(0);
-  const handleChange = (event: any, value: any) => {
-    setPage(value);
-  };
-
   const [open, setOpen] = React.useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
-  const handleClickOpen = async (id: any) => {
-    //setOpen(true);
-    alert(id);
+  //get data
+
+  const url = `${api_url}getactivity`;
+  const fetchData = async () => {
+    try {
+      const response = await fetch(url, {
+        headers: {
+          Authorization: auth_token,
+        },
+      });
+      const json = await response.json();
+      //console.log(json.data);
+      setactivites(json.data);
+      setsearchdata(json.data);
+      setalldata(json.data.length);
+    } catch (error) {
+      //console.log("error", error);
+    }
+  };
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  //searching
+  const handleSearch = (e: any) => {
+    setsearchquery(e.target.value);
+    if (e.target.value === "") {
+      setactivites(searchdata);
+    } else {
+      const filterres = searchdata.filter((item: any) => {
+        return item.name.toLowerCase().includes(e.target.value.toLowerCase());
+      });
+      const dtd = filterres;
+      setactivites(dtd);
+    }
+  };
+
+  //pagination
+  // let [page, setPage] = useState(1);
+  // const PER_PAGE = 5;
+  // const count = Math.ceil(activites.length / PER_PAGE);
+  // const DATA = usePagination(activites, PER_PAGE);
+  // const handlePageChange = (e: any, p: any) => {
+  //   setPage(p);
+  //   DATA.jump(p);
+  // };
+
+  const [status, setstatus] = React.useState("");
+  const handleSelectChange = (event: SelectChangeEvent) => {
+    setstatus(event.target.value as string);
+    if (event.target.value === "") {
+      setactivites(searchdata);
+    } else {
+      const filterresult = searchdata.filter((item: any) => {
+        return item.status.includes(event.target.value);
+      });
+      const dtdd = filterresult;
+      setactivites(dtdd);
+    }
+  };
+
+  //delete user
+  const [deleteData, setDeleteData] = useState<any>({});
+  function openDelete(data: any) {
+    setOpen(true);
+    setDeleteData(data);
+  }
+  async function deleteUser() {
     await axios({
       method: "DELETE",
-      url: `${api_url}deleteactivity/${id}`,
+      url: `${api_url}deleteactivity/${deleteData.id}`,
       headers: {
         Authorization: auth_token,
       },
     })
       .then((data) => {
+        console.log("Success:", data);
         toast.success("Activity Deleted Successfully !");
+        setOpen(false);
+        fetchData();
       })
-      .catch((error) => {});
-  };
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
 
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  useEffect(() => {
-    const url = `${api_url}getactivity`;
-    const fetchData = async () => {
-      try {
-        const response = await fetch(url, {
-          headers: {
-            Authorization: auth_token,
-          },
-        });
-        const json = await response.json();
-        setactivites(json.data);
-        setalldata(json.data.length);
-      } catch (error) {}
-    };
-    fetchData();
-  }, [page, activites]);
   return (
     <>
       <Box sx={{ display: "flex" }}>
@@ -168,7 +218,7 @@ export default function ActivityList() {
                     </Item>
                     <Item style={{ marginRight: "10px" }}> Upcomming(17) </Item>
                     <Item style={{ marginRight: "10px" }}>Past(2) </Item>
-                    <Item style={{ marginRight: "10px" }}>Current(1) </Item>
+                    <Item style={{ marginRight: "10px" }}>Current({0})</Item>
                   </Box>
                 </Stack>
                 <Stack
@@ -178,17 +228,28 @@ export default function ActivityList() {
                   style={{ padding: "5px" }}
                 >
                   <Stack>
-                    <Stack spacing={2}></Stack>
-                    <FormControl fullWidth sx={{ minWidth: 200 }}>
-                      <Select id="demo-simple-select" size="small">
-                        <MenuItem value={10}>Ten</MenuItem>
-                        <MenuItem value={20}>Twenty</MenuItem>
-                        <MenuItem value={30}>Thirty</MenuItem>
+                    <FormControl fullWidth style={{ width: "200px" }}>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={status}
+                        size="small"
+                        onChange={handleSelectChange}
+                      >
+                        <MenuItem value="Active">Active</MenuItem>
+                        <MenuItem value="Archive">Archive</MenuItem>
+                        <MenuItem value="Draft">Draft</MenuItem>
                       </Select>
                     </FormControl>
                   </Stack>
                   <FormControl>
-                    <TextField placeholder="Search..." size="small" />
+                    <TextField
+                      placeholder="Search..."
+                      size="small"
+                      value={searchquery}
+                      type="search..."
+                      onInput={(e) => handleSearch(e)}
+                    />
                   </FormControl>
                 </Stack>
                 {/*bread cump */}
@@ -208,8 +269,9 @@ export default function ActivityList() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
+                    {/* {DATA.currentData()} */}
                     {activites &&
-                      activites.map((item, key) => {
+                      activites.map((item: any, key: any) => {
                         const {
                           id,
                           name,
@@ -266,7 +328,7 @@ export default function ActivityList() {
                                     <FiEdit />
                                   </Link>
                                 </IconButton>
-                                <IconButton onClick={() => handleClickOpen(id)}>
+                                <IconButton onClick={() => openDelete(item)}>
                                   <RiDeleteBin5Fill />
                                 </IconButton>
                               </Stack>
@@ -278,42 +340,21 @@ export default function ActivityList() {
                 </Table>
               </TableContainer>
               <Stack style={{ padding: "10px" }}>
-                <Pagination
-                  count={10}
-                  color="primary"
+                {/* <Pagination
+                  count={count}
                   page={page}
-                  onChange={handleChange}
-                />
+                  color="primary"
+                  onChange={handlePageChange}
+                /> */}
               </Stack>
             </Card>
           </Container>
-          <div>
-            <Dialog
-              fullScreen={fullScreen}
-              open={open}
-              onClose={handleClose}
-              aria-labelledby="responsive-dialog-title"
-            >
-              <DialogTitle id="responsive-dialog-title">
-                {"Delete Activity?"}
-              </DialogTitle>
-              <DialogContent>
-                <DialogContentText>
-                  Let Google help apps determine location. This means sending
-                  anonymous location data to Google, even when no apps are
-                  running.
-                </DialogContentText>
-              </DialogContent>
-              <DialogActions>
-                <Button autoFocus onClick={handleClose}>
-                  Cancel
-                </Button>
-                <Button onClick={handleClose} autoFocus>
-                  Ok
-                </Button>
-              </DialogActions>
-            </Dialog>
-          </div>
+          <ConfirmBox
+            open={open}
+            closeDialog={() => setOpen(false)}
+            title={deleteData?.name}
+            deleteFunction={deleteUser}
+          />
         </Box>
       </Box>
       <ToastContainer />

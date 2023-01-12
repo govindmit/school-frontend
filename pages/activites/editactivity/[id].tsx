@@ -6,6 +6,7 @@ import {
   Container,
   FormControl,
   Grid,
+  IconButton,
   InputLabel,
   MenuItem,
   OutlinedInput,
@@ -22,20 +23,8 @@ import styled from "@emotion/styled";
 import { useRouter } from "next/router";
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
-import { api_url, auth_token, backend_url } from "../../api/hello";
+import { api_url, auth_token, backend_url, base_url } from "../../api/hello";
 import { toast } from "react-toastify";
-
-type activitesType = {
-  name: string;
-  description: string;
-  price: number;
-  image: string;
-  status: string;
-  startdate: string;
-  enddate: string;
-  type: string;
-  shortdescription: string;
-};
 
 const style = {
   color: "red",
@@ -70,8 +59,15 @@ const Item = styled(Paper)(({ theme }) => ({
 export default function EditActivity() {
   const router = useRouter();
   const { id } = router.query;
-  const [activites, setactivites] = useState<activitesType | any>([]);
-  const [name, setnameu] = useState<string>("");
+  const [activites, setactivites] = useState<FormValues | any>([]);
+  const [image, setImage] = useState<FormValues | any>("");
+
+  const uploadToClient = (event: any) => {
+    if (event.target.files && event.target.files[0]) {
+      const i = event.target.files[0];
+      setImage(i);
+    }
+  };
 
   useEffect(() => {
     const url = `${api_url}getactivitydetails/${id}`;
@@ -84,18 +80,23 @@ export default function EditActivity() {
         });
         const json = await response.json();
         setactivites(json.data[0]);
-        setnameu(json.data[0].name);
-      } catch (error) {}
+      } catch (error) {
+        console.log("error", error);
+      }
     };
     fetchData();
   }, []);
+  //console.log(activites);
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
-  } = useForm<FormValues>();
+  } = useForm<FormValues>({});
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    //console.log(data.image[0]);
+    //return false;
     const reqData = {
       name: data.name,
       type: data.type,
@@ -109,8 +110,8 @@ export default function EditActivity() {
     };
     const end_point = "editactivity";
     await axios({
-      method: "POST",
-      url: api_url + end_point,
+      method: "PUT",
+      url: `${api_url}${end_point}/${id}`,
       data: reqData,
       headers: {
         Authorization: auth_token,
@@ -174,19 +175,42 @@ export default function EditActivity() {
               >
                 <Grid item xs={2} sm={4} md={4}>
                   <Item style={{ textAlign: "center" }}>
-                    <Avatar
-                      style={{ marginLeft: "90px" }}
-                      alt="Remy Sharp"
-                      src={`${backend_url}${activites.image}`}
-                      sx={{ width: 150, height: 150 }}
-                    />
+                    {image ? (
+                      <Avatar
+                        style={{ marginLeft: "90px" }}
+                        alt="Remy Sharp"
+                        src={`${URL.createObjectURL(image)}`}
+                        sx={{ width: 150, height: 150 }}
+                      />
+                    ) : (
+                      <Avatar
+                        style={{ marginLeft: "90px" }}
+                        alt="Remy Sharp"
+                        src={`${backend_url}${activites.image}`}
+                        sx={{ width: 150, height: 150 }}
+                      />
+                    )}
                     <Button
-                      sx={{ border: "1.5px solid #1A70C5" }}
-                      startIcon={<img src="/Vect.png" alt=""></img>}
+                      variant="outlined"
+                      component="label"
+                      startIcon={
+                        <img
+                          src="/Vect.png"
+                          alt=""
+                          style={{ color: "white" }}
+                        ></img>
+                      }
                       style={{ marginBottom: "10px", marginTop: "10px" }}
+                      sx={{ border: "1.5px solid #1A70C5" }}
                       color="primary"
                     >
                       <Typography>Upload Image</Typography>
+                      <input
+                        hidden
+                        accept="image/*"
+                        type="file"
+                        onChange={uploadToClient}
+                      />
                     </Button>
                   </Item>
                 </Grid>
@@ -206,11 +230,8 @@ export default function EditActivity() {
                               type="text"
                               id="name"
                               fullWidth
-                              value={name}
-                              {...register("name", {
-                                required: true,
-                              })}
-                              onChange={(e) => setnameu(e.target.value)}
+                              {...register("name")}
+                              value={activites.name}
                             />
                             <Typography style={style}>
                               {errors.name && (
@@ -228,6 +249,7 @@ export default function EditActivity() {
                               <Select
                                 displayEmpty
                                 inputProps={{ "aria-label": "Without label" }}
+                                {...register("type")}
                                 value={activites.type}
                               >
                                 <MenuItem value="Free">Free</MenuItem>
@@ -244,9 +266,7 @@ export default function EditActivity() {
                             </InputLabel>
                             <TextareaAutosize
                               minRows={4}
-                              {...register("shortdescription", {
-                                required: true,
-                              })}
+                              {...register("shortdescription")}
                               value={activites.shortdescription}
                             />
                             <Typography style={style}>
@@ -265,9 +285,7 @@ export default function EditActivity() {
                             </InputLabel>
                             <TextareaAutosize
                               minRows={6}
-                              {...register("description", {
-                                required: true,
-                              })}
+                              {...register("description")}
                               value={activites.description}
                             />
                           </Stack>
@@ -287,9 +305,7 @@ export default function EditActivity() {
                               id="name"
                               placeholder="price..."
                               fullWidth
-                              {...register("price", {
-                                required: true,
-                              })}
+                              {...register("price")}
                               value={activites.price}
                             />
                             <Typography style={style}>
@@ -306,9 +322,7 @@ export default function EditActivity() {
                               fullWidth
                               type="date"
                               id="startdate"
-                              {...register("startDate", {
-                                required: true,
-                              })}
+                              {...register("startDate")}
                               value={activites.startdate}
                             />
                             <Typography style={style}>
@@ -327,9 +341,7 @@ export default function EditActivity() {
                               fullWidth
                               type="date"
                               id="startdate"
-                              {...register("endDate", {
-                                required: true,
-                              })}
+                              {...register("endDate")}
                               value={activites.enddate}
                             />
                             <Typography style={style}>
@@ -348,7 +360,7 @@ export default function EditActivity() {
                               <Select
                                 displayEmpty
                                 inputProps={{ "aria-label": "Without label" }}
-                                value={activites.status}
+                                {...register("status")}
                               >
                                 <MenuItem value="Active">Active</MenuItem>
                                 <MenuItem value="Archive">Archive</MenuItem>
@@ -365,16 +377,21 @@ export default function EditActivity() {
                           >
                             <b>SAVE & UPDATE</b>
                           </Button>{" "}
-                          <Button
-                            type="submit"
-                            variant="contained"
-                            style={{
-                              marginRight: "20px",
-                              backgroundColor: "#F95A37",
-                            }}
+                          <Link
+                            style={{ color: "red", textDecoration: "none" }}
+                            href="/activites/activitylist"
                           >
-                            <b>CANCEL</b>
-                          </Button>
+                            <Button
+                              type="submit"
+                              variant="contained"
+                              style={{
+                                marginRight: "20px",
+                                backgroundColor: "#F95A37",
+                              }}
+                            >
+                              <b>CANCEL</b>
+                            </Button>
+                          </Link>
                         </Grid>
                       </Grid>
                     </Stack>

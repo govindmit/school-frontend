@@ -3,6 +3,7 @@ import {
   BoxProps,
   Breadcrumbs,
   Button,
+  CircularProgress,
   Container,
   FormControl,
   Grid,
@@ -15,7 +16,7 @@ import {
   TextareaAutosize,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import MiniDrawer from "../sidebar";
 import Link from "next/link";
 import { PhotoCamera } from "@mui/icons-material";
@@ -57,12 +58,20 @@ type FormValues = {
 
 export default function Addactivity() {
   const router = useRouter();
+  const [spinner, setshowspinner] = useState(false);
+  const [btnDisabled, setBtnDisabled] = useState(false);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>();
+
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    setshowspinner(true);
+    setBtnDisabled(true);
+    //console.log(data);
+    //console.log(data.image[0]);
     const reqData = {
       name: data.name,
       type: data.type,
@@ -86,15 +95,19 @@ export default function Addactivity() {
     })
       .then((data) => {
         if (data.status === 201) {
+          setshowspinner(false);
+          setBtnDisabled(false);
           toast.success("Activity Added Successfully !");
           const redirect = () => {
             router.push("/activites/activitylist");
           };
-          setTimeout(redirect, 5000);
+          setTimeout(redirect, 2000);
         }
       })
       .catch((error) => {
         toast.error("Activity Allready Registred !");
+        setshowspinner(false);
+        setBtnDisabled(false);
       });
   };
 
@@ -155,6 +168,7 @@ export default function Addactivity() {
                     })}
                   />
                 </Button>
+                <span>{}</span>
                 <IconButton
                   color="primary"
                   aria-label="upload picture"
@@ -338,8 +352,16 @@ export default function Addactivity() {
                       variant="contained"
                       color="primary"
                       sx={{ width: 200 }}
+                      disabled={btnDisabled}
                     >
                       <b>Submit</b>
+                      <span style={{ fontSize: "2px", paddingLeft: "10px" }}>
+                        {spinner === true ? (
+                          <CircularProgress color="inherit" />
+                        ) : (
+                          ""
+                        )}
+                      </span>
                     </Button>
                   </Grid>
                 </Grid>
