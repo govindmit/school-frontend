@@ -173,6 +173,7 @@ export default function Dashboard(this: any) {
                   <Grid container spacing={2}>
                     <Grid item xs={8} md={7}>
                       <Item>
+                        <span className="dramount">Refund Amount</span>
                         <DynamicComponentWithNoSSR />
                       </Item>
                     </Grid>

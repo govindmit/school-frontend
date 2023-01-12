@@ -25,20 +25,7 @@ ChartJS.register(
 
 export default function TaskChart() {
   const [data, setData] = useState({
-    labels: [
-      "Jan",
-      "Feb",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "Oct",
-      "Nov",
-      "Dec",
-    ],
+    labels: ["Jan", "Feb", "March", "April", "May", "June", "July"],
     datasets: [
       {
         label: "First Dataset",
