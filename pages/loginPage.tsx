@@ -60,7 +60,7 @@ export default function LoginPage() {
 
     await axios({
       method: "POST",
-      url: `http://localhost:5003/api/userlogin`,
+      url: `${api_url}userlogin`,
       data: reqData,
       headers: {
         Authorization: auth_token,
@@ -69,7 +69,7 @@ export default function LoginPage() {
       .then((data) => {
         //console.log("Success:", data);
         if (data.status === 200) {
-          console.log(data.data);
+          //console.log(data.data);
           const role = data.data.data.role_id;
           setShowspinner(false);
           setBtnDisabled(false);
