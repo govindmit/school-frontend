@@ -101,7 +101,7 @@ export default function MiniDrawer() {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <AppBar position="fixed" open={false}>
+      <AppBar className="sder" position="fixed" open={false}>
         <div className="maiDiv">
           <div>
             <Toolbar>
@@ -118,6 +118,7 @@ export default function MiniDrawer() {
           </div>
           <div className="inputBar">
             <OutlinedInput
+              className="inbar"
               // onChange={(e) => handlechange(e)}
               id="name"
               type="text"

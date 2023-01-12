@@ -1,14 +1,10 @@
-header.MuiPaper-root.MuiPaper-elevation.MuiPaper-elevation4.MuiAppBar-root.MuiAppBar-colorPrimary.MuiAppBar-positionFixed.mui-fixed.css-19z1ozs-MuiPaper-root-MuiAppBar-root {
-  background: #ffffff !important;
-  border-bottom: 1px solid #ededed !important;
-}
 .MuiToolbar-root.MuiToolbar-gutters.MuiToolbar-regular.css-hyum1k-MuiToolbar-root {
   /* margin: 0; */
   padding: 0px !important;
   margin: 0px !important;
   width: 255px !important;
 }
-.MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-multiline.css-dpjnhs-MuiInputBase-root-MuiOutlinedInput-root {
+.MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-multiline.inbar.css-dpjnhs-MuiInputBase-root-MuiOutlinedInput-root {
   /* width: fit-content; */
   /* width: 94%; */
   width: 278px !important;
@@ -26,4 +22,8 @@ input.MuiInputBase-input.MuiInput-input.css-1x51dt5-MuiInputBase-input-MuiInput-
   max-width: 100% !important;
   /* margin: 0 auto; */
   display: flex !important;
+}
+header.MuiPaper-root.MuiPaper-elevation.MuiPaper-elevation4.MuiAppBar-root.MuiAppBar-colorPrimary.MuiAppBar-positionFixed.sder.mui-fixed.css-19z1ozs-MuiPaper-root-MuiAppBar-root {
+  background: #ffffff !important;
+  border-bottom: 1px solid #ededed !important;
 }
