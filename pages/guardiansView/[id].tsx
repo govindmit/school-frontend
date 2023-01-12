@@ -33,18 +33,13 @@ export default function View() {
     })
       .then((response) => response.json())
       .then((res) => {
-        console.log(res, "studenttttt");
         setStud(res ? res.data[0] : "");
       })
-      .catch((err: any) => {
-        console.log(err);
-      });
-    console.log(token, "tokennnnn");
+      .catch((err: any) => {});
   };
 
   useEffect(() => {
     const { id } = router.query;
-    console.log(id, "idddddddddddddddd");
     fetch("https://api-school.mangoitsol.com/api/get_authorization_token")
       .then((response) => response.json())
       .then((res) => {
@@ -56,16 +51,11 @@ export default function View() {
         })
           .then((response) => response.json())
           .then((res) => setUser(res?.data[0]))
-          .catch((err: any) => {
-            console.log(err);
-          });
+          .catch((err: any) => {});
       })
 
-      .catch((err: any) => {
-        console.log(err);
-      });
+      .catch((err: any) => {});
   }, []);
-  // console.log(localUrl, "localUrl");
   return (
     <>
       <Box sx={{ display: "flex" }}>

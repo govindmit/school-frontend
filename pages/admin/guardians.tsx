@@ -20,9 +20,9 @@ import { useEffect, useState } from "react";
 import { BiShow } from "react-icons/bi";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBin5Fill } from "react-icons/ri";
-import MiniDrawer from "./sidebar";
+import MiniDrawer from "../sidebar";
 import axios from "axios";
-import { api_url, base_url } from "./api/hello";
+import { api_url, base_url } from "../api/hello";
 
 const style = {
   position: "absolute" as "absolute",
@@ -49,8 +49,6 @@ export default function Guardians() {
   const [error, setError] = useState<any>("");
 
   const handleOpen = (id: any) => {
-    // console.log(id, "iddddd");
-
     setOpen(true);
     setId(id);
     // handledelete(id);
@@ -79,13 +77,9 @@ export default function Guardians() {
         })
           .then((response) => response.json())
           .then((res) => setUser(res.data))
-          .catch((err: any) => {
-            console.log(err);
-          });
+          .catch((err: any) => {});
       })
-      .catch((err: any) => {
-        console.log(err);
-      });
+      .catch((err: any) => {});
   };
 
   const handleCancel = () => {
@@ -103,13 +97,10 @@ export default function Guardians() {
         // router.push("/guardians");
         handleClose();
         getUser();
-        console.log(results, "Studentresultttt");
       })
       .catch((err) => {
         // router.push("/guardians");
-        console.log(err, "errrorr");
       });
-    console.log("hhhhh", id);
   };
   useEffect(() => {
     return getUser;
@@ -126,7 +117,6 @@ export default function Guardians() {
             .toLowerCase()
             .includes(e.target.value.toLowerCase());
           b = post.email.toLowerCase().includes(e.target.value.toLowerCase());
-          console.log(a, b, "AB");
 
           return a || b;
         }
@@ -135,7 +125,6 @@ export default function Guardians() {
     if (results.length > 0 && e.target.value) {
       setError("");
       setUser(results);
-      console.log(results, "resultttt");
     } else if (results.length === 0 && e.target.value) {
       let data = 1;
       return setError(data);

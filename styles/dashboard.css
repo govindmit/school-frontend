@@ -1,0 +1,227 @@
+.dashboardBar {
+  /* width: 1920px; */
+  /* height: 1080px; */
+  /* left: 0px; */
+  /* top: 0px; */
+  background: #f5f6f9;
+  padding: 22px;
+  margin: 0px;
+  margin-top: 53px;
+}
+.dashboardGtitle {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 800;
+  font-size: 24px;
+  line-height: 28px;
+  text-transform: uppercase;
+
+  color: #333333;
+}
+span.dashboardsmallHeading {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 150%;
+  letter-spacing: 0.15px;
+  color: #f95a37;
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+span.dashboardsecondHeading {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 150%;
+  letter-spacing: 0.15px;
+  color: #333333;
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+.dashboardbar {
+  display: flex;
+}
+
+.dashboardContent {
+  background: linear-gradient(180deg, #ffffff 0%, #ffffff 100%);
+  box-shadow: 0px 10px 10px #eceef4, inset 0px 1px 1px #ffffff;
+  border-radius: 10px;
+}
+h1.dhead {
+  margin: 0px;
+  padding: 6px;
+  width: fit-content;
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 900;
+  font-size: 39px;
+  text-transform: uppercase;
+
+  color: #333333;
+}
+.div1 {
+  display: flex;
+  /* margin: -1px; */
+  /* padding: 12px; */
+}
+.dmain {
+  display: flex;
+}
+.Dtotal {
+  margin: 0px;
+  padding: 0px;
+  width: fit-content;
+}
+.dimg {
+  margin: 21px;
+  margin-left: 51%;
+}
+h2.dh1 {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 21px;
+  text-transform: uppercase;
+  color: #7d86a5;
+  margin: 0px;
+}
+svg.MuiSvgIcon-root.MuiSvgIcon-colorPrimary.MuiSvgIcon-fontSizeMedium.dlimg.css-ci5apu-MuiSvgIcon-root {
+  margin: 22px;
+  margin-left: 85px;
+}
+.dGraph {
+  /* background: linear-gradient(180deg, #ffffff 0%, #ffffff 100%);
+  box-shadow: 0px 10px 10px #eceef4, inset 0px 1px 1px #ffffff;
+  border-radius: 10px; */
+  margin-top: 46px;
+}
+.dicon {
+  display: inline-flex;
+  margin: 0px;
+  padding: 0px;
+  width: 10px;
+}
+.dlhead {
+  display: flex;
+  margin: 0px;
+  padding: 0px;
+  height: fit-content;
+}
+button.MuiButtonBase-root.MuiButton-root.MuiButton-text.MuiButton-textPrimary.MuiButton-sizeMedium.MuiButton-textSizeMedium.MuiButton-root.MuiButton-text.MuiButton-textPrimary.MuiButton-sizeMedium.MuiButton-textSizeMedium.dview.css-1e6y48t-MuiButtonBase-root-MuiButton-root {
+  margin-left: 59%;
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 16px;
+  color: #1a70c5;
+}
+h3.dluser {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 800;
+  font-size: 19px;
+  line-height: 23px;
+  text-transform: capitalize;
+  color: #333333;
+  /* width: -webkit-fill-available; */
+  margin: 2px;
+  padding: 0px;
+  height: fit-content;
+}
+#dimage {
+  margin: 0px;
+  width: 15%;
+}
+#dinfo {
+  margin: 0px;
+  width: 60%;
+}
+#dstatus {
+  margin: 0px;
+  width: 28%;
+}
+.Ddiv1 {
+  height: 68px;
+  display: flex;
+}
+/* span.hh {
+  margin-left: -101px;
+  margin-top: 21px;
+} */
+span.hh {
+  /* margin-left: -101px; */
+  /* margin-top: 21px; */
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  align-items: center;
+  letter-spacing: 0.15px;
+  color: #1a70c5;
+  margin-left: -101px;
+  margin-top: 21px;
+}
+span.dname {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  display: flex;
+  /* align-items: center; */
+  /* letter-spacing: 0.15px; */
+  color: #5a6873;
+}
+span.dactive {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 16px;
+  color: #02c509;
+}
+.dtable {
+  /* margin-left: 23px; */
+  margin-top: 19px;
+}
+.Dcredit {
+  width: fit-content;
+  margin: 26px;
+}
+td.MuiTableCell-root.MuiTableCell-body.MuiTableCell-alignLeft.MuiTableCell-sizeMedium.dpending.css-1ex1afd-MuiTableCell-root {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 16px;
+  color: #ff4026;
+}
+td.MuiTableCell-alignLeft.MuiTableCell-body.MuiTableCell-root.MuiTableCell-sizeMedium.css-1ex1afd-MuiTableCell-root.demail {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #1a70c5;
+}
+td.MuiTableCell-alignLeft.MuiTableCell-body.MuiTableCell-root.MuiTableCell-sizeMedium.css-1ex1afd-MuiTableCell-root.dname {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 20px;
+  color: #333333;
+}
+
+svg.MuiSvgIcon-root.MuiSvgIcon-colorPrimary.MuiSvgIcon-fontSizeMedium.dimg.css-ci5apu-MuiSvgIcon-root {
+  font-size: 41px;
+}
+svg.MuiSvgIcon-root.MuiSvgIcon-colorPrimary.MuiSvgIcon-fontSizeMedium.dlimg.css-ci5apu-MuiSvgIcon-root {
+  font-size: 40px;
+}
