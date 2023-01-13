@@ -9,7 +9,7 @@ function Logoutpage() {
   useEffect(() => {
     const login_token = localStorage.getItem("QIS_loginToken");
     if (login_token !== null) {
-      localStorage.removeItem("Name");
+      localStorage.removeItem("QIS_loginToken");
       router.push("/");
     } else {
       router.push("/");

@@ -10,20 +10,13 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Link from "next/link";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { api_url, auth_token } from "../../api/hello";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
-import {
-  Card,
-  CardContent,
-  CircularProgress,
-  FormGroup,
-  IconButton,
-  Stack,
-} from "@mui/material";
+import { CircularProgress, FormGroup, IconButton, Stack } from "@mui/material";
 import { BiArrowBack } from "react-icons/bi";
 import Head from "next/head";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -37,35 +30,13 @@ const style = {
   fontWeight: "bold",
 };
 
-type FormValues = {
-  password: string;
-  confirmpassword: string;
-};
-
-function Copyright(props: any) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
-
 export default function ResetPasswordPage() {
   const router = useRouter();
   const { id } = router.query;
   //console.log(id);
   const [spinner, setShowspinner] = React.useState(false);
   const [btnDisabled, setBtnDisabled] = React.useState(false);
+
   const formSchema = Yup.object().shape({
     password: Yup.string().required("Password is Required"),
     confirmpassword: Yup.string()
@@ -82,9 +53,7 @@ export default function ResetPasswordPage() {
   async function onSubmit(data: any) {
     setShowspinner(true);
     setBtnDisabled(true);
-    console.log(JSON.stringify(data, null, 4));
     const reqData = { token: id, password: data.password };
-    //console.log(reqData);
     await axios({
       method: "POST",
       url: `${api_url}resetpassword`,
@@ -93,21 +62,20 @@ export default function ResetPasswordPage() {
         Authorization: auth_token,
       },
     })
-      .then((data) => {
-        //console.log("Success:", data);
-        if (data.status === 200) {
+      .then((res) => {
+        if (res.status === 200) {
           setShowspinner(false);
           setBtnDisabled(false);
           toast.success("Password Reset Successfully Please Login !");
           const redirect = () => {
             router.push("/");
           };
-          setTimeout(redirect, 2000);
+          setTimeout(redirect, 3000);
         }
       })
       .catch((error) => {
         //console.error("Error:", error);
-        toast.error("Internal Server Error !");
+        toast.error("Reset passowrd link Expired !");
         setShowspinner(false);
         setBtnDisabled(false);
       });

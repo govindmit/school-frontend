@@ -1,5 +1,4 @@
 import * as React from "react";
-import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
@@ -8,7 +7,6 @@ import Checkbox from "@mui/material/Checkbox";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Link from "next/link";
@@ -18,14 +16,7 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
-import {
-  Card,
-  CardContent,
-  CircularProgress,
-  FormGroup,
-  IconButton,
-  Stack,
-} from "@mui/material";
+import { CircularProgress, FormGroup, IconButton, Stack } from "@mui/material";
 import { BiArrowBack } from "react-icons/bi";
 import Head from "next/head";
 import Footer from "./components/footer";
@@ -56,10 +47,7 @@ export default function LoginPage() {
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setShowspinner(true);
     setBtnDisabled(true);
-    //console.log(data);
     const reqData = { email: data.email, password: data.password };
-    //console.log(reqData);
-
     await axios({
       method: "POST",
       url: `${api_url}userlogin`,
@@ -68,16 +56,15 @@ export default function LoginPage() {
         Authorization: auth_token,
       },
     })
-      .then((data) => {
-        //console.log("Success:", data);
-        if (data.status === 200) {
-          //console.log(data.data);
-          const role = data.data.data.role_id;
+      .then((res) => {
+        if (res.status === 200) {
           setShowspinner(false);
           setBtnDisabled(false);
           toast.success("Login Successfull !");
           reset();
-          localStorage.setItem("QIS_loginToken", data.data.loginToken);
+          const role = res.data.data.role_id;
+          const loginToken = res.data.loginToken;
+          localStorage.setItem("QIS_loginToken", loginToken);
           const redirect = () => {
             if (role === 2) {
               router.push("/admin/dashboard");
@@ -85,7 +72,7 @@ export default function LoginPage() {
               router.push("/user/dashboard");
             }
           };
-          setTimeout(redirect, 2000);
+          setTimeout(redirect, 3000);
         }
       })
       .catch((error) => {
@@ -95,6 +82,13 @@ export default function LoginPage() {
         setBtnDisabled(false);
       });
   };
+
+  React.useEffect(() => {
+    const login_token = localStorage.getItem("QIS_loginToken");
+    if (login_token) {
+      router.push("/admin/dashboard");
+    }
+  }, []);
 
   return (
     <>
