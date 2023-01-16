@@ -41,12 +41,37 @@ import { api_url, auth_token, base_url } from "../api/hello";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import usePagination from "./pagination";
 import ConfirmBox from "./confirmbox";
 
 function Item(props: BoxProps) {
   const { sx, ...other } = props;
   return <Box sx={{}} {...other} />;
+}
+
+function usePagination(data: any, itemsPerPage: any) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const maxPage = Math.ceil(data.length / itemsPerPage);
+
+  function currentData() {
+    const begin = (currentPage - 1) * itemsPerPage;
+    const end = begin + itemsPerPage;
+    return data.slice(begin, end);
+  }
+
+  function next() {
+    setCurrentPage((currentPage) => Math.min(currentPage + 1, maxPage));
+  }
+
+  function prev() {
+    setCurrentPage((currentPage) => Math.max(currentPage - 1, 1));
+  }
+
+  function jump(page: any) {
+    const pageNumber = Math.max(1, page);
+    setCurrentPage((currentPage) => Math.min(pageNumber, maxPage));
+  }
+
+  return { next, prev, jump, currentData, currentPage, maxPage };
 }
 
 export default function ActivityList() {
@@ -95,14 +120,14 @@ export default function ActivityList() {
   };
 
   //pagination
-  // let [page, setPage] = useState(1);
-  // const PER_PAGE = 5;
-  // const count = Math.ceil(activites.length / PER_PAGE);
-  // const DATA = usePagination(activites, PER_PAGE);
-  // const handlePageChange = (e: any, p: any) => {
-  //   setPage(p);
-  //   DATA.jump(p);
-  // };
+  let [page, setPage] = useState(1);
+  const PER_PAGE = 5;
+  const count = Math.ceil(activites.length / PER_PAGE);
+  const DATA = usePagination(activites, PER_PAGE);
+  const handlePageChange = (e: any, p: any) => {
+    setPage(p);
+    DATA.jump(p);
+  };
 
   const [status, setstatus] = React.useState("");
   const handleSelectChange = (event: SelectChangeEvent) => {
@@ -226,21 +251,6 @@ export default function ActivityList() {
                   justifyContent="space-between"
                   style={{ padding: "5px" }}
                 >
-                  <Stack>
-                    <FormControl fullWidth style={{ width: "200px" }}>
-                      <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={status}
-                        size="small"
-                        onChange={handleSelectChange}
-                      >
-                        <MenuItem value="Active">Active</MenuItem>
-                        <MenuItem value="Archive">Archive</MenuItem>
-                        <MenuItem value="Draft">Draft</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Stack>
                   <FormControl>
                     <TextField
                       placeholder="Search..."
@@ -339,12 +349,12 @@ export default function ActivityList() {
                 </Table>
               </TableContainer>
               <Stack style={{ padding: "10px" }}>
-                {/* <Pagination
+                <Pagination
                   count={count}
                   page={page}
                   color="primary"
                   onChange={handlePageChange}
-                /> */}
+                />
               </Stack>
             </Card>
           </Container>
