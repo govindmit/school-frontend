@@ -44,7 +44,9 @@ function Item(props: BoxProps) {
 enum custStatusEnum {
   Active = "1",
   InActive = "0",
+  All = "2",
 }
+
 type FormValues = {
   status: custStatusEnum;
 };
@@ -222,7 +224,7 @@ export default function CustomerList() {
                           </Typography>
                           <Menu {...bindMenu(popupState)}>
                             <Container>
-                              <Grid>
+                              <Grid style={{ width: "1030px" }}>
                                 <Typography variant="h5">
                                   <b>Filter</b>
                                 </Typography>
@@ -436,10 +438,11 @@ export default function CustomerList() {
                                             <Select
                                               labelId="demo-simple-select-label"
                                               id="demo-simple-select"
-                                              defaultValue={"All"}
+                                              defaultValue={2}
                                               {...register("status")}
                                               size="small"
                                             >
+                                              <MenuItem value={2}>All</MenuItem>
                                               <MenuItem value={1}>
                                                 Active
                                               </MenuItem>
@@ -581,7 +584,13 @@ export default function CustomerList() {
                             </TableCell>
                             <TableCell align="left">{dataitem.email}</TableCell>
                             <TableCell align="left">
-                              {dataitem.status === 1 ? "ACTIVE" : "IACTIVE"}
+                              {dataitem.status === 1 ? (
+                                <span style={{ color: "#02C509" }}>ACTIVE</span>
+                              ) : (
+                                <span style={{ color: "#FF4026" }}>
+                                  IACTIVE
+                                </span>
+                              )}
                             </TableCell>
                             <TableCell align="left">
                               {dataitem.contact}
@@ -591,16 +600,26 @@ export default function CustomerList() {
                             <TableCell align="left">
                               <Stack direction="row" spacing={1}>
                                 <IconButton>
-                                  <Link href={`/activites/activitydetails/1`}>
+                                  <Link
+                                    href={`/activites/activitydetails/1`}
+                                    style={{
+                                      color: "#26CEB3",
+                                    }}
+                                  >
                                     <BiShow />
                                   </Link>
                                 </IconButton>
                                 <IconButton>
-                                  <Link href={`/activites/editactivity/1`}>
+                                  <Link
+                                    href={`/activites/editactivity/1`}
+                                    style={{
+                                      color: "#DFBF19",
+                                    }}
+                                  >
                                     <FiEdit />
                                   </Link>
                                 </IconButton>
-                                <IconButton>
+                                <IconButton style={{ color: "#F95A37" }}>
                                   <RiDeleteBin5Fill />
                                 </IconButton>
                               </Stack>
