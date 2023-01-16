@@ -2,7 +2,7 @@ import React from "react";
 import { useEffect } from "react";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
-import { PreLoader } from "./commorcmp/loader";
+import PreLoader from "./commoncmp/loader";
 
 function Logoutpage() {
   const router = useRouter();
