@@ -1,5 +1,4 @@
 import * as React from "react";
-import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
@@ -8,18 +7,14 @@ import Checkbox from "@mui/material/Checkbox";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Link from "next/link";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { api_url, auth_token } from "../api/hello";
 import axios from "axios";
-import { useRouter } from "next/router";
 import {
   Alert,
-  Card,
-  CardContent,
   CircularProgress,
   FormGroup,
   IconButton,
@@ -27,6 +22,7 @@ import {
 } from "@mui/material";
 import { BiArrowBack } from "react-icons/bi";
 import Head from "next/head";
+import Footer from "../components/footer";
 const theme = createTheme();
 
 const style = {
@@ -39,42 +35,23 @@ type FormValues = {
   email: string;
 };
 
-function Copyright(props: any) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
-
 export default function ForgotPasswordPage() {
-  const router = useRouter();
   const [emailerr, setemailerr] = React.useState("");
   const [emailSuccess, setemailSuccess] = React.useState("");
   const [spinner, setShowspinner] = React.useState(false);
   const [btnDisabled, setBtnDisabled] = React.useState(false);
+
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<FormValues>();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setShowspinner(true);
     setBtnDisabled(true);
-    //console.log(data);
     const reqData = { email: data.email };
-    //console.log(reqData);
     await axios({
       method: "POST",
       url: `${api_url}forgotpassword`,
@@ -84,19 +61,17 @@ export default function ForgotPasswordPage() {
       },
     })
       .then((data) => {
-        //console.log("Success:", data);
         if (data.status === 200) {
           setShowspinner(false);
           setBtnDisabled(false);
-          console.log("Success:", data);
           setemailSuccess("Link Send Successfully Ckech Your Email ");
+          reset();
           setTimeout(() => {
             setemailSuccess("");
           }, 5000);
         }
       })
       .catch((error) => {
-        //console.error("Error:", error);
         setShowspinner(false);
         setBtnDisabled(false);
         setemailerr("Email Not Registred");
@@ -171,7 +146,7 @@ export default function ForgotPasswordPage() {
                   }}
                 >
                   WELCOME
-                  <span style={{ color: "#42D5CD" }}>QATAR,</span>
+                  <span style={{ color: "#42D5CD" }}> QATAR,</span>
                 </Typography>
                 <Typography style={{ fontSize: "25px", fontWeight: "900" }}>
                   CUSTOMER SELF SERVICE
