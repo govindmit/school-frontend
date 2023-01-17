@@ -26,6 +26,8 @@ import {
   IconButton,
   SelectChangeEvent,
   InputLabel,
+  FormControlLabel,
+  Switch,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import Link from "next/link";
@@ -119,9 +121,15 @@ export default function ActivityList() {
     }
   };
 
+  const [row_per_page, set_row_per_page] = useState(5);
+
+  function handlerowchange(e: any) {
+    set_row_per_page(e.target.value);
+  }
+
   //pagination
   let [page, setPage] = useState(1);
-  const PER_PAGE = 5;
+  const PER_PAGE = row_per_page;
   const count = Math.ceil(activites.length / PER_PAGE);
   const DATA = usePagination(activites, PER_PAGE);
   const handlePageChange = (e: any, p: any) => {
@@ -279,8 +287,8 @@ export default function ActivityList() {
                   </TableHead>
                   <TableBody>
                     {/* {DATA.currentData()} */}
-                    {activites &&
-                      activites.map((item: any, key: any) => {
+                    {DATA.currentData() &&
+                      DATA.currentData().map((item: any, key: any) => {
                         const {
                           id,
                           name,
@@ -355,6 +363,18 @@ export default function ActivityList() {
                   color="primary"
                   onChange={handlePageChange}
                 />
+                <FormControl>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    defaultValue={5}
+                    onChange={handlerowchange}
+                  >
+                    <MenuItem value={5}>5</MenuItem>
+                    <MenuItem value={20}>20</MenuItem>
+                    <MenuItem value={50}>50</MenuItem>
+                  </Select>
+                </FormControl>
               </Stack>
             </Card>
           </Container>
