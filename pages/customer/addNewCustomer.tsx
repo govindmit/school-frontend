@@ -19,7 +19,6 @@ import {
   Stack,
   Tab,
 } from "@mui/material";
-import { TabContext, TabList, TabPanel } from "@material-ui/lab";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -93,7 +92,7 @@ export default function CustomizedDialogs() {
           New Customer
         </BootstrapDialogTitle>
         <DialogContent dividers>
-          <Box sx={{ width: "100%", typography: "body1" }}>
+          {/* <Box sx={{ width: "100%", typography: "body1" }}>
             <TabContext value={value}>
               <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
                 <TabList
@@ -314,7 +313,7 @@ export default function CustomizedDialogs() {
               </TabPanel>
               <TabPanel value="3">OPTIONS</TabPanel>
             </TabContext>
-          </Box>
+          </Box> */}
         </DialogContent>
         <DialogActions>
           <Grid item xs={12}>
