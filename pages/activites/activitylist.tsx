@@ -86,7 +86,7 @@ export default function ActivityList() {
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
   //get data
-  const url = `${api_url}getactivity`;
+  const url = `${api_url}/getactivity`;
   const fetchData = async () => {
     try {
       const response = await fetch(url, {
