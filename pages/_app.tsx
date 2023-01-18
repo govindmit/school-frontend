@@ -4,7 +4,6 @@ import "../styles/auth.css";
 import "../styles/sidebar.css";
 import "../styles/invoice.css";
 import "../styles/dashboard.css";
-
 export default function App({ Component, pageProps }: AppProps) {
   return <Component {...pageProps} />;
 }

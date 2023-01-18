@@ -23,6 +23,7 @@ import Image from "next/image";
 import { Input } from "@mui/material";
 import { useRouter } from "next/router";
 import { OutlinedInput } from "@mui/material";
+import Head from "next/head";
 const drawerWidth = 240;
 
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -99,41 +100,46 @@ export default function MiniDrawer() {
   const [open, setOpen] = React.useState(true);
   const router = useRouter();
   return (
-    <Box sx={{ display: "flex" }}>
-      <CssBaseline />
-      <AppBar className="sder" position="fixed" open={false}>
-        <div className="maiDiv">
-          <div>
-            <Toolbar>
-              <Typography variant="h6" noWrap component="div">
-                <Image
-                  src="/adminlogo.png"
-                  alt="Picture of the author"
-                  width={160}
-                  height={60}
-                />
-                <Input type="text"></Input>
-              </Typography>
-            </Toolbar>
+    <>
+      <Head>
+        <title>QATAR INTERNATIONAL SCHOOL - QIS</title>
+        <link rel="shortcut icon" href="/public/svg-icon/qatar-logo.png" />
+      </Head>
+      <Box sx={{ display: "flex" }}>
+        <CssBaseline />
+        <AppBar className="sder" position="fixed" open={false}>
+          <div className="maiDiv">
+            <div>
+              <Toolbar>
+                <Typography variant="h6" noWrap component="div">
+                  <Image
+                    src="/adminlogo.png"
+                    alt="Picture of the author"
+                    width={160}
+                    height={60}
+                  />
+                  <Input type="text"></Input>
+                </Typography>
+              </Toolbar>
+            </div>
+            <div className="inputBar">
+              <OutlinedInput
+                className="inbar"
+                // onChange={(e) => handlechange(e)}
+                id="name"
+                type="text"
+                name="name"
+                // defaultValue={user?.firstname}
+                // value={user.firstname}
+                placeholder="Search"
+                multiline
+              />
+            </div>
           </div>
-          <div className="inputBar">
-            <OutlinedInput
-              className="inbar"
-              // onChange={(e) => handlechange(e)}
-              id="name"
-              type="text"
-              name="name"
-              // defaultValue={user?.firstname}
-              // value={user.firstname}
-              placeholder="Search"
-              multiline
-            />
-          </div>
-        </div>
-      </AppBar>
-      <Drawer variant="permanent" open={open}>
-        <h1>Header</h1>
-        {/* <DrawerHeader>
+        </AppBar>
+        <Drawer variant="permanent" open={open}>
+          <h1>Header</h1>
+          {/* <DrawerHeader>
           <IconButton onClick={() => setOpen(!open)}>
             {theme.direction === "rtl" ? (
               <ChevronRightIcon />
@@ -142,154 +148,164 @@ export default function MiniDrawer() {
             )}
           </IconButton>
         </DrawerHeader> */}
-        <List>
-          <ListItem
-            disablePadding
-            sx={{ display: "block" }}
-            onClick={() => router.push("/admin/dashboard")}
-          >
-            <ListItemButton
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? "initial" : "center",
-                px: 2.5,
-              }}
+          <List>
+            <ListItem
+              disablePadding
+              sx={{ display: "block" }}
+              onClick={() => router.push("/admin/dashboard")}
             >
-              <ListItemIcon
+              <ListItemButton
                 sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : "auto",
-                  justifyContent: "center",
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
                 }}
-              ></ListItemIcon>
-              <ListItemText
-                primary="Dashboard"
-                sx={{ opacity: open ? 1 : 0 }}
-              />
-            </ListItemButton>
-          </ListItem>
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                ></ListItemIcon>
+                <ListItemText
+                  primary="Dashboard"
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
+              </ListItemButton>
+            </ListItem>
 
-          <ListItem
-            disablePadding
-            sx={{ display: "block" }}
-            onClick={() => router.push("/admin/guardians")}
-          >
-            <ListItemButton
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? "initial" : "center",
-                px: 2.5,
-              }}
+            <ListItem
+              disablePadding
+              sx={{ display: "block" }}
+              onClick={() => router.push("/customer/customerslist")}
             >
-              <ListItemIcon
+              <ListItemButton
                 sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : "auto",
-                  justifyContent: "center",
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
                 }}
-              ></ListItemIcon>
-              <ListItemText
-                primary="Customers"
-                sx={{ opacity: open ? 1 : 0 }}
-              />
-            </ListItemButton>
-          </ListItem>
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                ></ListItemIcon>
+                <ListItemText
+                  primary="Customers"
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
+              </ListItemButton>
+            </ListItem>
 
-          <ListItem
-            disablePadding
-            sx={{ display: "block" }}
-            onClick={() => router.push("/admin/invoices")}
-          >
-            <ListItemButton
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? "initial" : "center",
-                px: 2.5,
-              }}
+            <ListItem
+              disablePadding
+              sx={{ display: "block" }}
+              onClick={() => router.push("/admin/invoices")}
             >
-              <ListItemIcon
+              <ListItemButton
                 sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : "auto",
-                  justifyContent: "center",
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
                 }}
-              ></ListItemIcon>
-              <ListItemText primary="Invoices" sx={{ opacity: open ? 1 : 0 }} />
-            </ListItemButton>
-          </ListItem>
-          <ListItem
-            disablePadding
-            sx={{ display: "block" }}
-            onClick={() => router.push("/admin/creditNotes")}
-          >
-            <ListItemButton
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? "initial" : "center",
-                px: 2.5,
-              }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                ></ListItemIcon>
+                <ListItemText
+                  primary="Invoices"
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
+              </ListItemButton>
+            </ListItem>
+            <ListItem
+              disablePadding
+              sx={{ display: "block" }}
+              onClick={() => router.push("/admin/creditNotes")}
             >
-              <ListItemIcon
+              <ListItemButton
                 sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : "auto",
-                  justifyContent: "center",
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
                 }}
-              ></ListItemIcon>
-              <ListItemText
-                primary="Credit Notes"
-                sx={{ opacity: open ? 1 : 0 }}
-              />
-            </ListItemButton>
-          </ListItem>
-          <ListItem
-            disablePadding
-            sx={{ display: "block" }}
-            onClick={() => router.push("/activites/activitylist")}
-          >
-            <ListItemButton
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? "initial" : "center",
-                px: 2.5,
-              }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                ></ListItemIcon>
+                <ListItemText
+                  primary="Credit Notes"
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
+              </ListItemButton>
+            </ListItem>
+            <ListItem
+              disablePadding
+              sx={{ display: "block" }}
+              onClick={() => router.push("/activites/activitylist")}
             >
-              <ListItemIcon
+              <ListItemButton
                 sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : "auto",
-                  justifyContent: "center",
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
                 }}
-              ></ListItemIcon>
-              <ListItemText primary="Activity" sx={{ opacity: open ? 1 : 0 }} />
-            </ListItemButton>
-          </ListItem>
-          <ListItem
-            disablePadding
-            sx={{ display: "block" }}
-            // onClick={() => router.push("/activites/activitylist")}
-          >
-            <ListItemButton
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? "initial" : "center",
-                px: 2.5,
-              }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                ></ListItemIcon>
+                <ListItemText
+                  primary="Activity"
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
+              </ListItemButton>
+            </ListItem>
+            <ListItem
+              disablePadding
+              sx={{ display: "block" }}
+              // onClick={() => router.push("/activites/activitylist")}
             >
-              <ListItemIcon
+              <ListItemButton
                 sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : "auto",
-                  justifyContent: "center",
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
                 }}
-              ></ListItemIcon>
-              <ListItemText primary="Log Out" sx={{ opacity: open ? 1 : 0 }} />
-            </ListItemButton>
-          </ListItem>
-        </List>
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                ></ListItemIcon>
+                <ListItemText
+                  primary="Log Out"
+                  sx={{ opacity: open ? 1 : 0 }}
+                  onClick={() => router.push("/logout")}
+                />
+              </ListItemButton>
+            </ListItem>
+          </List>
+        </Drawer>
         <Divider />
-      </Drawer>
-      <Divider />
-    </Box>
+      </Box>
+    </>
   );
 }

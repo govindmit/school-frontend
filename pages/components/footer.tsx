@@ -13,7 +13,7 @@ export default function Footer() {
           href="http://www.polymer-project.org/"
           target="_blank"
           style={{
-            marginLeft: "15px",
+            marginLeft: "10px",
             padding: "8px",
             border: "1px solid gray",
             borderRadius: "50%",
@@ -25,7 +25,7 @@ export default function Footer() {
           href="http://www.polymer-project.org/"
           target="_blank"
           style={{
-            marginLeft: "15px",
+            marginLeft: "10px",
             padding: "8px",
             border: "1px solid gray",
             borderRadius: "50%",
@@ -37,7 +37,7 @@ export default function Footer() {
           href="http://www.polymer-project.org/"
           target="_blank"
           style={{
-            marginLeft: "15px",
+            marginLeft: "10px",
             padding: "8px",
             border: "1px solid gray",
             borderRadius: "50%",
