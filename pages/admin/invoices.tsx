@@ -81,7 +81,7 @@ export default function Guardians() {
   const getUser = async () => {
     await axios({
       method: "POST",
-      url: `http://localhost:5003/api/getInvoiceByUserId`,
+      url: `https://api-school.mangoitsol.com/api/getInvoiceByUserId`,
       headers: {
         "content-type": "multipart/form-data",
       },
@@ -107,7 +107,7 @@ export default function Guardians() {
 
     await axios({
       method: "POST",
-      url: `http://localhost:5003/api/getInvoiceByUserId`,
+      url: `https://api-school.mangoitsol.com/api/getInvoiceByUserId`,
       data: reqData,
       headers: {
         "content-type": "multipart/form-data",
@@ -233,8 +233,113 @@ export default function Guardians() {
                                     className="filterdd"
                                     item
                                     xs={12}
-                                    md={4}
+                                    md={3}
                                   >
+                                    <Stack spacing={1}>
+                                      <InputLabel id="demo-select-small">
+                                        Customer
+                                      </InputLabel>
+                                      <Select
+                                        labelId="demo-select-small"
+                                        id="demo-select-small"
+                                        value={status}
+                                        label="Status"
+                                        {...register("status")}
+                                        // onChange={handleChange}
+                                      >
+                                        <MenuItem value="All"></MenuItem>
+                                        <MenuItem value="pending">
+                                          Pending
+                                        </MenuItem>
+                                        <MenuItem value="paid">Paid</MenuItem>
+                                      </Select>
+                                    </Stack>
+                                  </Grid>
+                                  <Grid item xs={12} md={2}>
+                                    <Stack spacing={1}>
+                                      <InputLabel id="demo-select-small">
+                                        Date Range
+                                      </InputLabel>
+                                      <OutlinedInput
+                                        fullWidth
+                                        id="status"
+                                        name="contact"
+                                        placeholder="Start Date"
+                                        multiline
+                                      />
+                                    </Stack>
+                                  </Grid>
+                                  <Grid item xs={12} md={2}>
+                                    <Stack spacing={1}>
+                                      <InputLabel id="demo-select-small"></InputLabel>
+                                      .
+                                      <OutlinedInput
+                                        fullWidth
+                                        id="status"
+                                        name="contact"
+                                        placeholder="End Date"
+                                        multiline
+                                      />
+                                    </Stack>
+                                  </Grid>
+                                  <Grid item xs={12} md={2}>
+                                    <Stack spacing={1}>
+                                      <InputLabel id="demo-select-small">
+                                        Total
+                                      </InputLabel>
+                                      <OutlinedInput
+                                        fullWidth
+                                        id="status"
+                                        name="contact"
+                                        placeholder="Total"
+                                        multiline
+                                      />
+                                    </Stack>
+                                  </Grid>
+                                  <Grid item xs={12} md={2}>
+                                    <Stack spacing={1}>
+                                      <InputLabel htmlFor="type">
+                                        Balance
+                                      </InputLabel>
+                                      <OutlinedInput
+                                        fullWidth
+                                        id="type"
+                                        type="type"
+                                        name="email"
+                                        placeholder="Balance"
+                                        multiline
+                                      />
+                                    </Stack>
+                                  </Grid>
+                                  <Grid item xs={12} md={3}>
+                                    <Stack spacing={1}>
+                                      <InputLabel htmlFor="status">
+                                        Date Type
+                                      </InputLabel>
+                                      <OutlinedInput
+                                        fullWidth
+                                        id="status"
+                                        name="contact"
+                                        placeholder="EndDate..."
+                                        multiline
+                                      />
+                                    </Stack>
+                                  </Grid>
+                                  <Grid item xs={12} md={3}>
+                                    <Stack spacing={1}>
+                                      <InputLabel htmlFor="status">
+                                        Sort
+                                      </InputLabel>
+                                      <OutlinedInput
+                                        fullWidth
+                                        id="status"
+                                        name="contact"
+                                        placeholder="Chasing..."
+                                        multiline
+                                      />
+                                    </Stack>
+                                  </Grid>
+                                  <Grid item xs={12} md={3}>
                                     <Stack spacing={1}>
                                       <InputLabel id="demo-select-small">
                                         Status
@@ -255,81 +360,9 @@ export default function Guardians() {
                                       </Select>
                                     </Stack>
                                   </Grid>
-                                  <Grid item xs={12} md={4}>
-                                    <Stack spacing={1}>
-                                      <InputLabel id="demo-select-small">
-                                        Total
-                                      </InputLabel>
-                                      <OutlinedInput
-                                        fullWidth
-                                        id="status"
-                                        name="contact"
-                                        placeholder="Total..."
-                                        multiline
-                                      />
-                                    </Stack>
-                                  </Grid>
-                                  <Grid item xs={12} md={4}>
-                                    <Stack spacing={1}>
-                                      <InputLabel id="demo-select-small">
-                                        Balance
-                                      </InputLabel>
-                                      <OutlinedInput
-                                        fullWidth
-                                        id="status"
-                                        name="contact"
-                                        placeholder="Balance..."
-                                        multiline
-                                      />
-                                    </Stack>
-                                  </Grid>
-                                  <Grid item xs={12} md={4}>
-                                    <Stack spacing={1}>
-                                      <InputLabel htmlFor="type">
-                                        Start Date{" "}
-                                        <span className="err_str">*</span>
-                                      </InputLabel>
-                                      <OutlinedInput
-                                        fullWidth
-                                        id="type"
-                                        type="type"
-                                        name="email"
-                                        placeholder="Type.."
-                                        multiline
-                                      />
-                                    </Stack>
-                                  </Grid>
-                                  <Grid item xs={12} md={4}>
-                                    <Stack spacing={1}>
-                                      <InputLabel htmlFor="status">
-                                        EndDate{" "}
-                                        <span className="err_str">*</span>
-                                      </InputLabel>
-                                      <OutlinedInput
-                                        fullWidth
-                                        id="status"
-                                        name="contact"
-                                        placeholder="EndDate..."
-                                        multiline
-                                      />
-                                    </Stack>
-                                  </Grid>
-                                  <Grid item xs={12} md={4}>
-                                    <Stack spacing={1}>
-                                      <InputLabel htmlFor="status">
-                                        Chasing{" "}
-                                        <span className="err_str">*</span>
-                                      </InputLabel>
-                                      <OutlinedInput
-                                        fullWidth
-                                        id="status"
-                                        name="contact"
-                                        placeholder="Chasing..."
-                                        multiline
-                                      />
-                                    </Stack>
-                                  </Grid>
-                                  <Grid item xs={12} md={2}>
+                                  <br></br>
+                                  &nbsp;
+                                  <Grid item xs={12} md={3}>
                                     <Stack spacing={1}>
                                       <Button
                                         onClick={popupState.close}
