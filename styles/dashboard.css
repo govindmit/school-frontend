@@ -212,9 +212,6 @@ td.MuiTableCell-alignLeft.MuiTableCell-body.MuiTableCell-root.MuiTableCell-sizeM
   color: #333333;
 }
 
-svg.MuiSvgIcon-root.MuiSvgIcon-colorPrimary.MuiSvgIcon-fontSizeMedium.dimg.css-ci5apu-MuiSvgIcon-root {
-  font-size: 41px !important;
-}
 svg.MuiSvgIcon-root.MuiSvgIcon-colorPrimary.MuiSvgIcon-fontSizeMedium.dlimg.css-ci5apu-MuiSvgIcon-root {
   font-size: 40px;
 }
@@ -233,12 +230,36 @@ span.dramount {
 .MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation1.css-1633um2-MuiPaper-root {
   height: 99% !important;
 }
-svg.MuiSvgIcon-root.MuiSvgIcon-colorPrimary.MuiSvgIcon-fontSizeMedium.dimg.css-ci5apu-MuiSvgIcon-root {
+
+img.dstud {
+  margin-top: 14px;
+  margin-left: 125px;
+}
+
+svg.MuiSvgIcon-root.dimg.css-ci5apu-MuiSvgIcon-root {
   font-size: 41px !important;
   margin: 21px !important;
   margin-left: 51% !important;
 }
-img.dstud {
-  margin-top: 14px;
-  margin-left: 125px;
+.svg {
+  margin-left: 143px;
+}
+.svg3 {
+  margin-left: 133px;
+}
+
+svg.MuiSvgIcon-root.MuiSvgIcon-colorPrimary.MuiSvgIcon-fontSizeMedium.dimg.css-jxtyyz {
+  font-size: 41px !important;
+  margin: 13px !important;
+  /* margin-left: 52% !important; */
+}
+svg.MuiSvgIcon-root.MuiSvgIcon-colorPrimary.MuiSvgIcon-fontSizeMedium.dlimg.css-jxtyyz {
+  font-size: 41px !important;
+  margin: 13px !important;
+}
+.svgl {
+  margin-left: 84px;
+}
+.dvall {
+  margin-left: 56%;
 }

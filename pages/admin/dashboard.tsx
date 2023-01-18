@@ -83,11 +83,15 @@ export default function Dashboard(this: any) {
                       <Item>
                         <div>
                           <div className="dmain">
-                            <h1 className="dhead">157</h1>
-                            <PeopleAltIcon
-                              className="dimg"
-                              color="primary"
-                            ></PeopleAltIcon>
+                            <div>
+                              <h1 className="dhead">157</h1>
+                            </div>
+                            <div className="svg">
+                              <PeopleAltIcon
+                                className="dimg"
+                                color="primary"
+                              ></PeopleAltIcon>
+                            </div>
                             {/* <Image
                               className="dimg"
                               src="/school.png"
@@ -131,11 +135,15 @@ export default function Dashboard(this: any) {
                       <Item>
                         <div>
                           <div className="dmain">
-                            <h1 className="dhead">1021</h1>
-                            <BabyChangingStationIcon
-                              className="dimg"
-                              color="primary"
-                            ></BabyChangingStationIcon>
+                            <div>
+                              <h1 className="dhead">1021</h1>
+                            </div>
+                            <div className="svg3">
+                              <BabyChangingStationIcon
+                                className="dimg"
+                                color="primary"
+                              ></BabyChangingStationIcon>
+                            </div>
                           </div>
 
                           <div className="Dtotal">
@@ -150,11 +158,15 @@ export default function Dashboard(this: any) {
                       <Item>
                         <div>
                           <div className="dmain">
-                            <h1 className="dhead">$123.12</h1>
-                            <AttachMoneyIcon
-                              className="dlimg"
-                              color="primary"
-                            ></AttachMoneyIcon>
+                            <div>
+                              <h1 className="dhead">$123.12</h1>
+                            </div>
+                            <div className="svgl">
+                              <AttachMoneyIcon
+                                className="dlimg"
+                                color="primary"
+                              ></AttachMoneyIcon>
+                            </div>
                           </div>
 
                           <div className="Dtotal">
@@ -180,10 +192,14 @@ export default function Dashboard(this: any) {
                     <Grid item xs={8} md={5}>
                       <Item>
                         <div className="dlhead">
-                          <h3 className="dluser">Latest Users</h3>
-                          <Button className="dview" variant="text">
-                            View All
-                          </Button>
+                          <div>
+                            <h3 className="dluser">Latest Users</h3>
+                          </div>
+                          <div className="dvall">
+                            <Button className="dview" variant="text">
+                              View All
+                            </Button>
+                          </div>
                         </div>
                         <div className="Ddiv1">
                           <div id="dimage">
