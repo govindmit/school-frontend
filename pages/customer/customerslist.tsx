@@ -21,8 +21,11 @@ import {
   InputLabel,
   Container,
   Select,
-  SelectChangeEvent,
   IconButton,
+  DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -35,10 +38,42 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBin5Fill } from "react-icons/ri";
+import CloseIcon from "@mui/icons-material/Close";
+import styled from "@emotion/styled";
+import AddNewCustomer from "./addNewCustomer";
 
 function Item(props: BoxProps) {
   const { sx, ...other } = props;
   return <Box sx={{}} {...other} />;
+}
+
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({}));
+export interface DialogTitleProps {
+  id: string;
+  children?: React.ReactNode;
+  onClose: () => void;
+}
+function BootstrapDialogTitle(props: DialogTitleProps) {
+  const { children, onClose, ...other } = props;
+  return (
+    <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
+      {children}
+      {onClose ? (
+        <IconButton
+          aria-label="close"
+          onClick={onClose}
+          sx={{
+            position: "absolute",
+            right: 8,
+            top: 8,
+            color: (theme) => theme.palette.grey[500],
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+      ) : null}
+    </DialogTitle>
+  );
 }
 
 enum custStatusEnum {
@@ -65,6 +100,14 @@ export default function CustomerList() {
   const [searchquery, setsearchquery] = useState("");
   const [searchdata, setsearchdata] = useState([]);
   const { register, handleSubmit } = useForm<FormValues>();
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   useEffect(() => {
     getUser();
@@ -175,14 +218,14 @@ export default function CustomerList() {
                   CUSTOMERS
                 </Typography>
               </Stack>
-              <Link
-                href="/activites/addactivity"
-                style={{ textDecoration: "none" }}
+              <Button
+                variant="contained"
+                size="small"
+                sx={{ width: 150 }}
+                onClick={handleClickOpen}
               >
-                <Button variant="contained" size="small" sx={{ width: 150 }}>
-                  <b>New Customer</b>
-                </Button>
-              </Link>
+                <b>New Customer</b>
+              </Button>
             </Stack>
             {/*bread cump */}
             <Card style={{ margin: "10px", padding: "15px" }}>
@@ -622,6 +665,21 @@ export default function CustomerList() {
           </div>
         </Box>
       </Box>
+      <BootstrapDialog
+        onClose={handleClose}
+        aria-labelledby="customized-dialog-title"
+        open={open}
+      >
+        <BootstrapDialogTitle
+          id="customized-dialog-title"
+          onClose={handleClose}
+        >
+          New Customer
+        </BootstrapDialogTitle>
+        <DialogContent dividers>
+          <AddNewCustomer />
+        </DialogContent>
+      </BootstrapDialog>
     </>
   );
 }
