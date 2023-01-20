@@ -7,11 +7,14 @@ import {
   Button,
   Checkbox,
   DialogActions,
+  FormControl,
   FormControlLabel,
   FormGroup,
   Grid,
   InputLabel,
+  MenuItem,
   OutlinedInput,
+  Select,
   Stack,
 } from "@mui/material";
 
@@ -137,13 +140,17 @@ export default function AddNewCustomer() {
                   <InputLabel htmlFor="name">
                     Status <span className="err_str">*</span>
                   </InputLabel>
-                  <OutlinedInput
-                    type="text"
-                    id="name"
-                    placeholder="Activity Name..."
-                    fullWidth
-                    size="small"
-                  />
+                  <FormControl fullWidth>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      defaultValue={1}
+                      size="small"
+                    >
+                      <MenuItem value={1}>Active</MenuItem>
+                      <MenuItem value={0}>InActive</MenuItem>
+                    </Select>
+                  </FormControl>
                 </Stack>
               </Grid>
               <Grid item xs={12} md={6}>
@@ -154,7 +161,7 @@ export default function AddNewCustomer() {
                   <OutlinedInput
                     type="text"
                     id="name"
-                    placeholder="Activity Name..."
+                    placeholder="Alternate Email..."
                     fullWidth
                     size="small"
                   />
@@ -173,13 +180,19 @@ export default function AddNewCustomer() {
                   <InputLabel htmlFor="name">
                     Customer Type <span className="err_str">*</span>
                   </InputLabel>
-                  <OutlinedInput
-                    type="text"
-                    id="name"
-                    placeholder="Customer Name..."
-                    fullWidth
-                    size="small"
-                  />
+                  <FormControl fullWidth>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      size="small"
+                      defaultValue={0}
+                    >
+                      <MenuItem value={0}>All</MenuItem>
+                      <MenuItem value={1}>Impetus</MenuItem>
+                      <MenuItem value={2}>Infosys</MenuItem>
+                      <MenuItem value={3}>Wiprow</MenuItem>
+                    </Select>
+                  </FormControl>
                 </Stack>
               </Grid>
             </Grid>
@@ -216,7 +229,7 @@ export default function AddNewCustomer() {
                   <OutlinedInput
                     type="text"
                     id="name"
-                    placeholder="Activity Name..."
+                    placeholder="Contact Name..."
                     fullWidth
                     size="small"
                   />
@@ -230,7 +243,7 @@ export default function AddNewCustomer() {
                   <OutlinedInput
                     type="text"
                     id="name"
-                    placeholder="Activity Name..."
+                    placeholder="Print Us..."
                     fullWidth
                     size="small"
                   />

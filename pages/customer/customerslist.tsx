@@ -26,6 +26,7 @@ import {
   Dialog,
   DialogContent,
   DialogActions,
+  OutlinedInput,
 } from "@mui/material";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -76,26 +77,17 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
   );
 }
 
-enum custStatusEnum {
-  Active = "1",
-  InActive = "0",
-  All = "2",
-}
-
-enum custTypeenum {
-  All = "0",
-  Impetus = "1",
-  Infosys = "2",
-  Wiprow = "2",
-}
-
 type FormValues = {
-  status: custStatusEnum;
-  customerType: custTypeenum;
+  customerType: number;
+  status: number;
+  phoneNumber: number;
+  contactName: string;
+  sorting: number;
 };
 
 export default function CustomerList() {
   const [users, setUsers] = useState([]);
+  const [custtype, setcusttype] = useState<any>([]);
   const [All, setAll] = useState(0);
   const [searchquery, setsearchquery] = useState("");
   const [searchdata, setsearchdata] = useState([]);
@@ -111,6 +103,7 @@ export default function CustomerList() {
 
   useEffect(() => {
     getUser();
+    getType();
   }, []);
 
   //get customers list
@@ -132,9 +125,27 @@ export default function CustomerList() {
     }
   };
 
+  //get type
+  const getType = async () => {
+    const url = `${api_url}/getType`;
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: auth_token,
+        },
+      });
+      const res = await response.json();
+      setcusttype(res.data);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
   //apply filter
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     console.log(data);
+    return false;
     setUsers([]);
     const reqData = {
       status: data.status,
@@ -304,15 +315,19 @@ export default function CustomerList() {
                                               {...register("customerType")}
                                             >
                                               <MenuItem value={0}>All</MenuItem>
-                                              <MenuItem value={1}>
-                                                Impetus
-                                              </MenuItem>
-                                              <MenuItem value={2}>
-                                                Infosys
-                                              </MenuItem>
-                                              <MenuItem value={3}>
-                                                Wiprow
-                                              </MenuItem>
+                                              {custtype &&
+                                                custtype.map(
+                                                  (data: any, key: any) => {
+                                                    return (
+                                                      <MenuItem
+                                                        key={key}
+                                                        value={data.id}
+                                                      >
+                                                        {data.name}
+                                                      </MenuItem>
+                                                    );
+                                                  }
+                                                )}
                                             </Select>
                                           </FormControl>
                                         </Stack>
@@ -343,7 +358,7 @@ export default function CustomerList() {
                                       </Grid>
                                       <Grid item xs={12} md={3}>
                                         <Stack spacing={1}>
-                                          <InputLabel htmlFor="name">
+                                          <InputLabel htmlFor="sorting">
                                             Short
                                           </InputLabel>
                                           <FormControl fullWidth>
@@ -351,18 +366,21 @@ export default function CustomerList() {
                                               labelId="demo-simple-select-label"
                                               id="demo-simple-select"
                                               size="small"
+                                              {...register("sorting")}
+                                              defaultValue={0}
                                             >
-                                              <MenuItem value={10}>
-                                                Date Oldest First
+                                              <MenuItem value={0}>
+                                                Created Date Newest First
                                               </MenuItem>
-                                              <MenuItem value={20}>
-                                                Date Oldest Last
+                                              <MenuItem value={1}>
+                                                Created Date Oldest First
                                               </MenuItem>
-                                              <MenuItem value={30}>
-                                                Name Oldest First
+
+                                              <MenuItem value={2}>
+                                                Name, Ascending Order
                                               </MenuItem>
-                                              <MenuItem value={30}>
-                                                Name Oldest Last
+                                              <MenuItem value={3}>
+                                                Name, Descending Order
                                               </MenuItem>
                                             </Select>
                                           </FormControl>
@@ -395,53 +413,35 @@ export default function CustomerList() {
                                       </Grid>
                                       <Grid item xs={12} md={3}>
                                         <Stack spacing={1}>
-                                          <InputLabel htmlFor="enddate">
-                                            Phone NUmber
-                                            <span className="err_str">*</span>
+                                          <InputLabel htmlFor="number">
+                                            Phone Number
                                           </InputLabel>
                                           <FormControl fullWidth>
-                                            <Select
-                                              labelId="demo-simple-select-label"
-                                              id="demo-simple-select"
-                                              //onChange={handleChange}
+                                            <OutlinedInput
+                                              type="text"
+                                              id="number"
+                                              placeholder="Phone Number..."
+                                              fullWidth
                                               size="small"
-                                            >
-                                              <MenuItem value={10}>
-                                                Ten
-                                              </MenuItem>
-                                              <MenuItem value={20}>
-                                                Twenty
-                                              </MenuItem>
-                                              <MenuItem value={30}>
-                                                Thirty
-                                              </MenuItem>
-                                            </Select>
+                                              {...register("phoneNumber")}
+                                            />
                                           </FormControl>
                                         </Stack>
                                       </Grid>
                                       <Grid item xs={12} lg={3}>
                                         <Stack spacing={1}>
-                                          <InputLabel htmlFor="enddate">
+                                          <InputLabel htmlFor="contactname">
                                             Contact Name
-                                            <span className="err_str">*</span>
                                           </InputLabel>
                                           <FormControl fullWidth>
-                                            <Select
-                                              labelId="demo-simple-select-label"
-                                              id="demo-simple-select"
-                                              //onChange={handleChange}
+                                            <OutlinedInput
+                                              type="text"
+                                              id="contactname"
+                                              placeholder="Contact Name..."
+                                              fullWidth
                                               size="small"
-                                            >
-                                              <MenuItem value={10}>
-                                                Ten
-                                              </MenuItem>
-                                              <MenuItem value={20}>
-                                                Twenty
-                                              </MenuItem>
-                                              <MenuItem value={30}>
-                                                Thirty
-                                              </MenuItem>
-                                            </Select>
+                                              {...register("contactName")}
+                                            />
                                           </FormControl>
                                         </Stack>
                                       </Grid>
