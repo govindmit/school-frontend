@@ -21,8 +21,12 @@ import {
   InputLabel,
   Container,
   Select,
-  SelectChangeEvent,
   IconButton,
+  DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogActions,
+  OutlinedInput,
 } from "@mui/material";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -35,39 +39,71 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBin5Fill } from "react-icons/ri";
+import CloseIcon from "@mui/icons-material/Close";
+import styled from "@emotion/styled";
+import AddNewCustomer from "./addNewCustomer";
 
 function Item(props: BoxProps) {
   const { sx, ...other } = props;
   return <Box sx={{}} {...other} />;
 }
 
-enum custStatusEnum {
-  Active = "1",
-  InActive = "0",
-  All = "2",
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({}));
+export interface DialogTitleProps {
+  id: string;
+  children?: React.ReactNode;
+  onClose: () => void;
 }
-
-enum custTypeenum {
-  All = "0",
-  Impetus = "1",
-  Infosys = "2",
-  Wiprow = "2",
+function BootstrapDialogTitle(props: DialogTitleProps) {
+  const { children, onClose, ...other } = props;
+  return (
+    <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
+      {children}
+      {onClose ? (
+        <IconButton
+          aria-label="close"
+          onClick={onClose}
+          sx={{
+            position: "absolute",
+            right: 8,
+            top: 8,
+            color: (theme) => theme.palette.grey[500],
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+      ) : null}
+    </DialogTitle>
+  );
 }
 
 type FormValues = {
-  status: custStatusEnum;
-  customerType: custTypeenum;
+  customerType: number;
+  status: number;
+  phoneNumber: number;
+  contactName: string;
+  sorting: number;
 };
 
 export default function CustomerList() {
   const [users, setUsers] = useState([]);
+  const [custtype, setcusttype] = useState<any>([]);
   const [All, setAll] = useState(0);
   const [searchquery, setsearchquery] = useState("");
   const [searchdata, setsearchdata] = useState([]);
   const { register, handleSubmit } = useForm<FormValues>();
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   useEffect(() => {
     getUser();
+    getType();
   }, []);
 
   //get customers list
@@ -89,9 +125,27 @@ export default function CustomerList() {
     }
   };
 
+  //get type
+  const getType = async () => {
+    const url = `${api_url}/getType`;
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: auth_token,
+        },
+      });
+      const res = await response.json();
+      setcusttype(res.data);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
   //apply filter
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     console.log(data);
+    return false;
     setUsers([]);
     const reqData = {
       status: data.status,
@@ -175,14 +229,14 @@ export default function CustomerList() {
                   CUSTOMERS
                 </Typography>
               </Stack>
-              <Link
-                href="/activites/addactivity"
-                style={{ textDecoration: "none" }}
+              <Button
+                variant="contained"
+                size="small"
+                sx={{ width: 150 }}
+                onClick={handleClickOpen}
               >
-                <Button variant="contained" size="small" sx={{ width: 150 }}>
-                  <b>New Customer</b>
-                </Button>
-              </Link>
+                <b>New Customer</b>
+              </Button>
             </Stack>
             {/*bread cump */}
             <Card style={{ margin: "10px", padding: "15px" }}>
@@ -261,15 +315,19 @@ export default function CustomerList() {
                                               {...register("customerType")}
                                             >
                                               <MenuItem value={0}>All</MenuItem>
-                                              <MenuItem value={1}>
-                                                Impetus
-                                              </MenuItem>
-                                              <MenuItem value={2}>
-                                                Infosys
-                                              </MenuItem>
-                                              <MenuItem value={3}>
-                                                Wiprow
-                                              </MenuItem>
+                                              {custtype &&
+                                                custtype.map(
+                                                  (data: any, key: any) => {
+                                                    return (
+                                                      <MenuItem
+                                                        key={key}
+                                                        value={data.id}
+                                                      >
+                                                        {data.name}
+                                                      </MenuItem>
+                                                    );
+                                                  }
+                                                )}
                                             </Select>
                                           </FormControl>
                                         </Stack>
@@ -300,7 +358,7 @@ export default function CustomerList() {
                                       </Grid>
                                       <Grid item xs={12} md={3}>
                                         <Stack spacing={1}>
-                                          <InputLabel htmlFor="name">
+                                          <InputLabel htmlFor="sorting">
                                             Short
                                           </InputLabel>
                                           <FormControl fullWidth>
@@ -308,18 +366,21 @@ export default function CustomerList() {
                                               labelId="demo-simple-select-label"
                                               id="demo-simple-select"
                                               size="small"
+                                              {...register("sorting")}
+                                              defaultValue={0}
                                             >
-                                              <MenuItem value={10}>
-                                                Date Oldest First
+                                              <MenuItem value={0}>
+                                                Created Date Newest First
                                               </MenuItem>
-                                              <MenuItem value={20}>
-                                                Date Oldest Last
+                                              <MenuItem value={1}>
+                                                Created Date Oldest First
                                               </MenuItem>
-                                              <MenuItem value={30}>
-                                                Name Oldest First
+
+                                              <MenuItem value={2}>
+                                                Name, Ascending Order
                                               </MenuItem>
-                                              <MenuItem value={30}>
-                                                Name Oldest Last
+                                              <MenuItem value={3}>
+                                                Name, Descending Order
                                               </MenuItem>
                                             </Select>
                                           </FormControl>
@@ -352,53 +413,35 @@ export default function CustomerList() {
                                       </Grid>
                                       <Grid item xs={12} md={3}>
                                         <Stack spacing={1}>
-                                          <InputLabel htmlFor="enddate">
-                                            Phone NUmber
-                                            <span className="err_str">*</span>
+                                          <InputLabel htmlFor="number">
+                                            Phone Number
                                           </InputLabel>
                                           <FormControl fullWidth>
-                                            <Select
-                                              labelId="demo-simple-select-label"
-                                              id="demo-simple-select"
-                                              //onChange={handleChange}
+                                            <OutlinedInput
+                                              type="text"
+                                              id="number"
+                                              placeholder="Phone Number..."
+                                              fullWidth
                                               size="small"
-                                            >
-                                              <MenuItem value={10}>
-                                                Ten
-                                              </MenuItem>
-                                              <MenuItem value={20}>
-                                                Twenty
-                                              </MenuItem>
-                                              <MenuItem value={30}>
-                                                Thirty
-                                              </MenuItem>
-                                            </Select>
+                                              {...register("phoneNumber")}
+                                            />
                                           </FormControl>
                                         </Stack>
                                       </Grid>
                                       <Grid item xs={12} lg={3}>
                                         <Stack spacing={1}>
-                                          <InputLabel htmlFor="enddate">
+                                          <InputLabel htmlFor="contactname">
                                             Contact Name
-                                            <span className="err_str">*</span>
                                           </InputLabel>
                                           <FormControl fullWidth>
-                                            <Select
-                                              labelId="demo-simple-select-label"
-                                              id="demo-simple-select"
-                                              //onChange={handleChange}
+                                            <OutlinedInput
+                                              type="text"
+                                              id="contactname"
+                                              placeholder="Contact Name..."
+                                              fullWidth
                                               size="small"
-                                            >
-                                              <MenuItem value={10}>
-                                                Ten
-                                              </MenuItem>
-                                              <MenuItem value={20}>
-                                                Twenty
-                                              </MenuItem>
-                                              <MenuItem value={30}>
-                                                Thirty
-                                              </MenuItem>
-                                            </Select>
+                                              {...register("contactName")}
+                                            />
                                           </FormControl>
                                         </Stack>
                                       </Grid>
@@ -622,6 +665,21 @@ export default function CustomerList() {
           </div>
         </Box>
       </Box>
+      <BootstrapDialog
+        onClose={handleClose}
+        aria-labelledby="customized-dialog-title"
+        open={open}
+      >
+        <BootstrapDialogTitle
+          id="customized-dialog-title"
+          onClose={handleClose}
+        >
+          New Customer
+        </BootstrapDialogTitle>
+        <DialogContent dividers>
+          <AddNewCustomer />
+        </DialogContent>
+      </BootstrapDialog>
     </>
   );
 }
