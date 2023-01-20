@@ -2,8 +2,6 @@ import * as React from "react";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -13,16 +11,12 @@ import Link from "next/link";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { api_url, auth_token } from "../api/hello";
 import axios from "axios";
-import {
-  Alert,
-  CircularProgress,
-  FormGroup,
-  IconButton,
-  Stack,
-} from "@mui/material";
+import { Alert, CircularProgress, Stack } from "@mui/material";
 import { BiArrowBack } from "react-icons/bi";
 import Head from "next/head";
-import Footer from "../components/footer";
+import AuthHeader from "../commoncmp/authheader";
+import AuthRightTemplate from "../commoncmp/authrighttemplate";
+import Footer from "../commoncmp/footer";
 const theme = createTheme();
 
 const style = {
@@ -54,7 +48,7 @@ export default function ForgotPasswordPage() {
     const reqData = { email: data.email };
     await axios({
       method: "POST",
-      url: `${api_url}forgotpassword`,
+      url: `${api_url}/forgotpassword`,
       data: reqData,
       headers: {
         Authorization: auth_token,
@@ -106,117 +100,8 @@ export default function ForgotPasswordPage() {
               background: "#F0F3FF",
             }}
           >
-            <header className="header-navbar1">
-              <IconButton
-                size="large"
-                edge="start"
-                color="inherit"
-                aria-label="menu"
-              >
-                <img src="/svg-icon/svgicon.png" />
-              </IconButton>
-            </header>
-            <header className="header-navbar2">
-              <IconButton></IconButton>
-              <nav className="nav-bar">
-                <IconButton
-                  size="large"
-                  edge="start"
-                  color="inherit"
-                  aria-label="menu"
-                >
-                  <img src="/svg-icon/Vector.png" />
-                </IconButton>
-              </nav>
-            </header>
-            <Box
-              sx={{
-                height: 400,
-                width: 450,
-              }}
-              style={{ marginLeft: "20%" }}
-            >
-              <Stack>
-                <Typography
-                  style={{
-                    fontSize: "40px",
-                    fontWeight: "900",
-                    color: "#333333",
-                    lineHeight: "46px",
-                  }}
-                >
-                  WELCOME
-                  <span style={{ color: "#42D5CD" }}> QATAR,</span>
-                </Typography>
-                <Typography style={{ fontSize: "25px", fontWeight: "900" }}>
-                  CUSTOMER SELF SERVICE
-                </Typography>
-              </Stack>
-              <Stack>
-                <Typography style={{ fontSize: "14px", marginTop: "10px" }}>
-                  There are many variations of passages of Lorem Ipsum
-                  available, but the majority have suffered alteration.
-                </Typography>
-                <FormGroup style={{ marginTop: "10px" }}>
-                  <FormControlLabel
-                    control={<Checkbox defaultChecked />}
-                    //label="Lorem Ipsum is simply dummy text of the printing"
-                    label={
-                      <Box component="div" fontSize={14}>
-                        Lorem Ipsum is simply dummy text of the printing
-                      </Box>
-                    }
-                  />
-                  <FormControlLabel
-                    control={<Checkbox defaultChecked />}
-                    //label="When an unknown printer took a galley of type and scrambled"
-                    label={
-                      <Box component="div" fontSize={14}>
-                        When an unknown printer took a galley of type and
-                        scrambled
-                      </Box>
-                    }
-                  />
-                  <FormControlLabel
-                    control={<Checkbox defaultChecked />}
-                    //label="It was popularised in the 1960s with the"
-                    label={
-                      <Box component="div" fontSize={14}>
-                        It was popularised in the 1960s with the
-                      </Box>
-                    }
-                  />
-                  <FormControlLabel
-                    control={<Checkbox defaultChecked />}
-                    //label="Lorem Ipsum is simply dummy text of the printing"
-                    label={
-                      <Box component="div" fontSize={14}>
-                        Lorem Ipsum is simply dummy text of the printing
-                      </Box>
-                    }
-                  />
-                  <FormControlLabel
-                    control={<Checkbox defaultChecked />}
-                    //label="When an unknown printer took a galley of type and scrambled"
-                    label={
-                      <Box component="div" fontSize={14}>
-                        When an unknown printer took a galley of type and
-                        scrambled
-                      </Box>
-                    }
-                  />
-                  <FormControlLabel
-                    control={<Checkbox defaultChecked />}
-                    //label="It was popularised in the 1960s with the"
-                    label={
-                      <Box component="div" fontSize={14}>
-                        It was popularised in the 1960s with the
-                      </Box>
-                    }
-                  />
-                </FormGroup>
-              </Stack>
-            </Box>
+            <AuthHeader />
+            <AuthRightTemplate />
           </Grid>
           <Grid
             item
@@ -244,7 +129,7 @@ export default function ForgotPasswordPage() {
             </header>
             <Box
               sx={{
-                height: 400,
+                height: 360,
                 width: 400,
                 marginTop: 12,
                 marginLeft: 11,
@@ -328,9 +213,22 @@ export default function ForgotPasswordPage() {
                       )}
                     </Typography>
                   </Button>
+                  <Stack style={{ alignItems: "end" }}>
+                    <Link
+                      href="/"
+                      style={{
+                        color: "#1A70C5",
+                        textDecoration: "none",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      <BiArrowBack /> Back to Login
+                    </Link>
+                  </Stack>
                 </Box>
               </form>
             </Box>
+            <Footer />
           </Grid>
         </Grid>
       </ThemeProvider>

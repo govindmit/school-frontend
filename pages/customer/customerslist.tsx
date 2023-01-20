@@ -21,8 +21,12 @@ import {
   InputLabel,
   Container,
   Select,
-  SelectChangeEvent,
   IconButton,
+  DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogActions,
+  OutlinedInput,
 } from "@mui/material";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -35,36 +39,76 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBin5Fill } from "react-icons/ri";
+import CloseIcon from "@mui/icons-material/Close";
+import styled from "@emotion/styled";
+import AddNewCustomer from "./addNewCustomer";
 
 function Item(props: BoxProps) {
   const { sx, ...other } = props;
   return <Box sx={{}} {...other} />;
 }
 
-enum custStatusEnum {
-  Active = "1",
-  InActive = "0",
-  All = "2",
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({}));
+export interface DialogTitleProps {
+  id: string;
+  children?: React.ReactNode;
+  onClose: () => void;
+}
+function BootstrapDialogTitle(props: DialogTitleProps) {
+  const { children, onClose, ...other } = props;
+  return (
+    <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
+      {children}
+      {onClose ? (
+        <IconButton
+          aria-label="close"
+          onClick={onClose}
+          sx={{
+            position: "absolute",
+            right: 8,
+            top: 8,
+            color: (theme) => theme.palette.grey[500],
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+      ) : null}
+    </DialogTitle>
+  );
 }
 
 type FormValues = {
-  status: custStatusEnum;
+  customerType: number;
+  status: number;
+  phoneNumber: number;
+  contactName: string;
+  sorting: number;
 };
 
 export default function CustomerList() {
   const [users, setUsers] = useState([]);
+  const [custtype, setcusttype] = useState<any>([]);
   const [All, setAll] = useState(0);
   const [searchquery, setsearchquery] = useState("");
   const [searchdata, setsearchdata] = useState([]);
   const { register, handleSubmit } = useForm<FormValues>();
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   useEffect(() => {
     getUser();
+    getType();
   }, []);
 
   //get customers list
   const getUser = async () => {
-    const url = `${api_url}getuser`;
+    const url = `${api_url}/getuser`;
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -81,9 +125,27 @@ export default function CustomerList() {
     }
   };
 
+  //get type
+  const getType = async () => {
+    const url = `${api_url}/getType`;
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: auth_token,
+        },
+      });
+      const res = await response.json();
+      setcusttype(res.data);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
   //apply filter
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     console.log(data);
+    return false;
     setUsers([]);
     const reqData = {
       status: data.status,
@@ -167,14 +229,14 @@ export default function CustomerList() {
                   CUSTOMERS
                 </Typography>
               </Stack>
-              <Link
-                href="/activites/addactivity"
-                style={{ textDecoration: "none" }}
+              <Button
+                variant="contained"
+                size="small"
+                sx={{ width: 150 }}
+                onClick={handleClickOpen}
               >
-                <Button variant="contained" size="small" sx={{ width: 150 }}>
-                  <b>New Customer</b>
-                </Button>
-              </Link>
+                <b>New Customer</b>
+              </Button>
             </Stack>
             {/*bread cump */}
             <Card style={{ margin: "10px", padding: "15px" }}>
@@ -194,34 +256,42 @@ export default function CustomerList() {
                       borderRadius: 1,
                     }}
                   >
-                    <Item style={{ color: "red", marginRight: "15px" }}>
+                    <Item
+                      style={{
+                        color: "red",
+                        marginRight: "15px",
+                        fontSize: "15px",
+                      }}
+                    >
                       ALL ({All})
                     </Item>
-                    <Item style={{ marginRight: "15px" }}>Drafts (17) </Item>
-                    <Item style={{ marginRight: "15px" }}>Outstanding (2)</Item>
-                    <Item style={{ marginRight: "10px" }}>Past Due (1)</Item>
-                    <Item style={{ marginRight: "10px" }}>Paid (1)</Item>
+                    <Item style={{ marginRight: "15px", fontSize: "15px" }}>
+                      ACTIVE (17){" "}
+                    </Item>
+                    <Item style={{ marginRight: "15px", fontSize: "15px" }}>
+                      INACTIVE (2){" "}
+                    </Item>
                   </Box>
                   <Stack
                     direction="row"
                     alignItems="center"
-                    justifyContent="space-between"
                     style={{ padding: "5px" }}
                   >
                     <PopupState variant="popover" popupId="demo-popup-menu">
                       {(popupState) => (
-                        <React.Fragment>
-                          <Typography
+                        <Box>
+                          <MenuItem
                             style={{
                               color: "#1A70C5",
                               fontWeight: "500",
                               cursor: "pointer",
-                              marginRight: "30px",
+                              marginRight: "5px",
                             }}
                             {...bindTrigger(popupState)}
                           >
-                            <BiFilterAlt /> Filter{" "}
-                          </Typography>
+                            <BiFilterAlt />
+                            &nbsp; Filter
+                          </MenuItem>
                           <Menu {...bindMenu(popupState)}>
                             <Container>
                               <Grid style={{ width: "1030px" }}>
@@ -241,190 +311,23 @@ export default function CustomerList() {
                                               labelId="demo-simple-select-label"
                                               id="demo-simple-select"
                                               size="small"
+                                              defaultValue={0}
+                                              {...register("customerType")}
                                             >
-                                              <MenuItem value={1}>
-                                                Active
-                                              </MenuItem>
-                                              <MenuItem value={0}>
-                                                InActive
-                                              </MenuItem>
-                                            </Select>
-                                          </FormControl>
-                                        </Stack>
-                                      </Grid>
-                                      <Grid item xs={12} md={3}>
-                                        <Stack spacing={1}>
-                                          <InputLabel htmlFor="name">
-                                            Date Type
-                                          </InputLabel>
-                                          <FormControl fullWidth>
-                                            <Select
-                                              labelId="demo-simple-select-label"
-                                              id="demo-simple-select"
-                                              //onChange={handleChange}
-                                              size="small"
-                                            >
-                                              <MenuItem value={10}>
-                                                Ten
-                                              </MenuItem>
-                                              <MenuItem value={20}>
-                                                Twenty
-                                              </MenuItem>
-                                              <MenuItem value={30}>
-                                                Thirty
-                                              </MenuItem>
-                                            </Select>
-                                          </FormControl>
-                                        </Stack>
-                                      </Grid>
-                                      <Grid item xs={12} md={3}>
-                                        <Stack spacing={1}>
-                                          <InputLabel htmlFor="Price">
-                                            Short
-                                          </InputLabel>
-                                          <FormControl fullWidth>
-                                            <Select
-                                              labelId="demo-simple-select-label"
-                                              id="demo-simple-select"
-                                              //onChange={handleChange}
-                                              size="small"
-                                            >
-                                              <MenuItem value={10}>
-                                                Ten
-                                              </MenuItem>
-                                              <MenuItem value={20}>
-                                                Twenty
-                                              </MenuItem>
-                                              <MenuItem value={30}>
-                                                Thirty
-                                              </MenuItem>
-                                            </Select>
-                                          </FormControl>
-                                        </Stack>
-                                      </Grid>
-                                      <Grid item xs={12} md={3}>
-                                        <Stack spacing={1}>
-                                          <InputLabel htmlFor="enddate">
-                                            Open Ballance
-                                            <span className="err_str">*</span>
-                                          </InputLabel>
-                                          <FormControl fullWidth>
-                                            <Select
-                                              labelId="demo-simple-select-label"
-                                              id="demo-simple-select"
-                                              //onChange={handleChange}
-                                              size="small"
-                                            >
-                                              <MenuItem value={10}>
-                                                Ten
-                                              </MenuItem>
-                                              <MenuItem value={20}>
-                                                Twenty
-                                              </MenuItem>
-                                              <MenuItem value={30}>
-                                                Thirty
-                                              </MenuItem>
-                                            </Select>
-                                          </FormControl>
-                                        </Stack>
-                                      </Grid>
-                                      <Grid item xs={12} lg={3}>
-                                        <Stack spacing={1}>
-                                          <InputLabel htmlFor="enddate">
-                                            Credit Balance
-                                            <span className="err_str">*</span>
-                                          </InputLabel>
-                                          <FormControl fullWidth>
-                                            <Select
-                                              labelId="demo-simple-select-label"
-                                              id="demo-simple-select"
-                                              //onChange={handleChange}
-                                              size="small"
-                                            >
-                                              <MenuItem value={10}>
-                                                Ten
-                                              </MenuItem>
-                                              <MenuItem value={20}>
-                                                Twenty
-                                              </MenuItem>
-                                              <MenuItem value={30}>
-                                                Thirty
-                                              </MenuItem>
-                                            </Select>
-                                          </FormControl>
-                                        </Stack>
-                                      </Grid>
-                                      <Grid item xs={12} lg={3}>
-                                        <Stack spacing={1}>
-                                          <InputLabel htmlFor="enddate">
-                                            Chasing Candence
-                                          </InputLabel>
-                                          <FormControl fullWidth>
-                                            <Select
-                                              labelId="demo-simple-select-label"
-                                              id="demo-simple-select"
-                                              //onChange={handleChange}
-                                              size="small"
-                                            >
-                                              <MenuItem value={10}>
-                                                Ten
-                                              </MenuItem>
-                                              <MenuItem value={20}>
-                                                Twenty
-                                              </MenuItem>
-                                              <MenuItem value={30}>
-                                                Thirty
-                                              </MenuItem>
-                                            </Select>
-                                          </FormControl>
-                                        </Stack>
-                                      </Grid>
-                                      <Grid item xs={12} lg={3}>
-                                        <Stack spacing={1}>
-                                          <InputLabel htmlFor="enddate">
-                                            Owner
-                                          </InputLabel>
-                                          <FormControl fullWidth>
-                                            <Select
-                                              labelId="demo-simple-select-label"
-                                              id="demo-simple-select"
-                                              //onChange={handleChange}
-                                              size="small"
-                                            >
-                                              <MenuItem value={10}>
-                                                Ten
-                                              </MenuItem>
-                                              <MenuItem value={20}>
-                                                Twenty
-                                              </MenuItem>
-                                              <MenuItem value={30}>
-                                                Thirty
-                                              </MenuItem>
-                                            </Select>
-                                          </FormControl>
-                                        </Stack>
-                                      </Grid>
-                                      <Grid item xs={12} lg={3}>
-                                        <Stack spacing={1}>
-                                          <InputLabel htmlFor="enddate">
-                                            Parent Customer
-                                          </InputLabel>
-                                          <FormControl fullWidth>
-                                            <Select
-                                              labelId="demo-simple-select-label"
-                                              id="demo-simple-select"
-                                              //onChange={handleChange}
-                                              size="small"
-                                            >
-                                              <MenuItem value={10}>
-                                                Ten
-                                              </MenuItem>
-                                              <MenuItem value={20}>
-                                                Twenty
-                                              </MenuItem>
-                                              <MenuItem value={30}>
-                                                Thirty
-                                              </MenuItem>
+                                              <MenuItem value={0}>All</MenuItem>
+                                              {custtype &&
+                                                custtype.map(
+                                                  (data: any, key: any) => {
+                                                    return (
+                                                      <MenuItem
+                                                        key={key}
+                                                        value={data.id}
+                                                      >
+                                                        {data.name}
+                                                      </MenuItem>
+                                                    );
+                                                  }
+                                                )}
                                             </Select>
                                           </FormControl>
                                         </Stack>
@@ -450,6 +353,95 @@ export default function CustomerList() {
                                                 InActive
                                               </MenuItem>
                                             </Select>
+                                          </FormControl>
+                                        </Stack>
+                                      </Grid>
+                                      <Grid item xs={12} md={3}>
+                                        <Stack spacing={1}>
+                                          <InputLabel htmlFor="sorting">
+                                            Short
+                                          </InputLabel>
+                                          <FormControl fullWidth>
+                                            <Select
+                                              labelId="demo-simple-select-label"
+                                              id="demo-simple-select"
+                                              size="small"
+                                              {...register("sorting")}
+                                              defaultValue={0}
+                                            >
+                                              <MenuItem value={0}>
+                                                Created Date Newest First
+                                              </MenuItem>
+                                              <MenuItem value={1}>
+                                                Created Date Oldest First
+                                              </MenuItem>
+
+                                              <MenuItem value={2}>
+                                                Name, Ascending Order
+                                              </MenuItem>
+                                              <MenuItem value={3}>
+                                                Name, Descending Order
+                                              </MenuItem>
+                                            </Select>
+                                          </FormControl>
+                                        </Stack>
+                                      </Grid>
+                                      <Grid item xs={12} md={3}>
+                                        <Stack spacing={1}>
+                                          <InputLabel htmlFor="Price">
+                                            Parent Id
+                                          </InputLabel>
+                                          <FormControl fullWidth>
+                                            <Select
+                                              labelId="demo-simple-select-label"
+                                              id="demo-simple-select"
+                                              //onChange={handleChange}
+                                              size="small"
+                                            >
+                                              <MenuItem value={10}>
+                                                Pant0001
+                                              </MenuItem>
+                                              <MenuItem value={20}>
+                                                Pant0002
+                                              </MenuItem>
+                                              <MenuItem value={30}>
+                                                Pant0003
+                                              </MenuItem>
+                                            </Select>
+                                          </FormControl>
+                                        </Stack>
+                                      </Grid>
+                                      <Grid item xs={12} md={3}>
+                                        <Stack spacing={1}>
+                                          <InputLabel htmlFor="number">
+                                            Phone Number
+                                          </InputLabel>
+                                          <FormControl fullWidth>
+                                            <OutlinedInput
+                                              type="text"
+                                              id="number"
+                                              placeholder="Phone Number..."
+                                              fullWidth
+                                              size="small"
+                                              {...register("phoneNumber")}
+                                            />
+                                          </FormControl>
+                                        </Stack>
+                                      </Grid>
+                                      <Grid item xs={12} lg={3}>
+                                        <Stack spacing={1}>
+                                          <InputLabel htmlFor="contactname">
+                                            Contact Name
+                                          </InputLabel>
+                                          <FormControl fullWidth>
+                                            <OutlinedInput
+                                              type="text"
+                                              id="contactname"
+                                              placeholder="Contact Name..."
+                                              fullWidth
+                                              size="small"
+                                              {...register("contactName")}
+                                            />
                                           </FormControl>
                                         </Stack>
                                       </Grid>
@@ -487,25 +479,24 @@ export default function CustomerList() {
                               </Grid>
                             </Container>
                           </Menu>
-                        </React.Fragment>
+                        </Box>
                       )}
                     </PopupState>
                     <PopupState variant="popover" popupId="demo-popup-menu">
                       {(popupState) => (
-                        <React.Fragment>
-                          <Typography
+                        <Box>
+                          <MenuItem
                             style={{
                               color: "#1A70C5",
                               fontWeight: "500",
                               cursor: "pointer",
-                              marginRight: "30px",
+                              marginRight: "5px",
                             }}
                             {...bindTrigger(popupState)}
                           >
                             Export
                             <KeyboardArrowDownIcon />
-                          </Typography>
-
+                          </MenuItem>
                           <Menu {...bindMenu(popupState)}>
                             <MenuItem onClick={popupState.close}>
                               Profile
@@ -517,10 +508,38 @@ export default function CustomerList() {
                               Logout
                             </MenuItem>
                           </Menu>
-                        </React.Fragment>
+                        </Box>
                       )}
                     </PopupState>
-
+                    <PopupState variant="popover" popupId="demo-popup-menu">
+                      {(popupState) => (
+                        <Box>
+                          <MenuItem
+                            style={{
+                              color: "#1A70C5",
+                              fontWeight: "500",
+                              cursor: "pointer",
+                              marginRight: "5px",
+                            }}
+                            {...bindTrigger(popupState)}
+                          >
+                            Import
+                            <KeyboardArrowDownIcon />
+                          </MenuItem>
+                          <Menu {...bindMenu(popupState)}>
+                            <MenuItem onClick={popupState.close}>
+                              Profile
+                            </MenuItem>
+                            <MenuItem onClick={popupState.close}>
+                              My account
+                            </MenuItem>
+                            <MenuItem onClick={popupState.close}>
+                              Logout
+                            </MenuItem>
+                          </Menu>
+                        </Box>
+                      )}
+                    </PopupState>
                     <FormControl>
                       <TextField
                         placeholder="Search..."
@@ -546,19 +565,28 @@ export default function CustomerList() {
                         <Typography>NAME</Typography>
                       </TableCell>
                       <TableCell>
-                        <Typography>EMAIL ADD.</Typography>
+                        <Typography>EMAIL 1</Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography>EMAIL 2</Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography>COST. TYPE</Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography>CONT. NAME</Typography>
                       </TableCell>
                       <TableCell>
                         <Typography>STATUS</Typography>
                       </TableCell>
                       <TableCell>
-                        <Typography>CON. NUM.</Typography>
+                        <Typography>PRINT US</Typography>
                       </TableCell>
                       <TableCell>
-                        <Typography>PARENT ID</Typography>
+                        <Typography>PHONE 1</Typography>
                       </TableCell>
                       <TableCell>
-                        <Typography>ACC. NO.</Typography>
+                        <Typography>PHONE 2</Typography>
                       </TableCell>
                       <TableCell>
                         <Typography>ACTION</Typography>
@@ -595,6 +623,9 @@ export default function CustomerList() {
                             <TableCell align="left">
                               {dataitem.contact}
                             </TableCell>
+                            <TableCell align="left"></TableCell>
+                            <TableCell align="left"></TableCell>
+                            <TableCell align="left"></TableCell>
                             <TableCell align="left"></TableCell>
                             <TableCell align="left"></TableCell>
                             <TableCell align="left">
@@ -634,6 +665,21 @@ export default function CustomerList() {
           </div>
         </Box>
       </Box>
+      <BootstrapDialog
+        onClose={handleClose}
+        aria-labelledby="customized-dialog-title"
+        open={open}
+      >
+        <BootstrapDialogTitle
+          id="customized-dialog-title"
+          onClose={handleClose}
+        >
+          New Customer
+        </BootstrapDialogTitle>
+        <DialogContent dividers>
+          <AddNewCustomer />
+        </DialogContent>
+      </BootstrapDialog>
     </>
   );
 }

@@ -109,7 +109,7 @@ export default function Guardians() {
   const getUser = async () => {
     await axios({
       method: "POST",
-      url: `${api_url}getInvoice`,
+      url: `${api_url}/getInvoice`,
       headers: {
         "content-type": "multipart/form-data",
       },
@@ -153,7 +153,7 @@ export default function Guardians() {
 
     await axios({
       method: "POST",
-      url: `${api_url}getInvoice`,
+      url: `${api_url}/getInvoice`,
       data: reqData,
       headers: {
         "content-type": "multipart/form-data",
@@ -203,7 +203,7 @@ export default function Guardians() {
     };
     await axios({
       method: "DELETE",
-      url: `${api_url}deleteInvoice/${id}`,
+      url: `${api_url}/deleteInvoice/${id}`,
       data: reqData,
       headers: {
         "content-type": "multipart/form-data",
@@ -220,7 +220,7 @@ export default function Guardians() {
   const handleSend = async () => {
     await axios({
       method: "GET",
-      url: `${api_url}sendInvoiceEmail/${invoiceId}`,
+      url: `${api_url}/sendInvoiceEmail/${invoiceId}`,
       headers: {
         "content-type": "multipart/form-data",
       },

@@ -1,342 +1,263 @@
 import * as React from "react";
-import Button from "@mui/material/Button";
-import { styled } from "@mui/material/styles";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
-import DialogActions from "@mui/material/DialogActions";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 import {
-  Box,
+  Button,
   Checkbox,
+  DialogActions,
+  FormControl,
   FormControlLabel,
   FormGroup,
   Grid,
   InputLabel,
+  MenuItem,
   OutlinedInput,
+  Select,
   Stack,
-  Tab,
 } from "@mui/material";
 
-const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-  "& .MuiDialogContent-root": {
-    padding: theme.spacing(2),
-  },
-  "& .MuiDialogActions-root": {
-    padding: theme.spacing(1),
-  },
-}));
+const style = {
+  color: "red",
+  fontSize: "12px",
+  fontWeight: "bold",
+};
 
-export interface DialogTitleProps {
-  id: string;
+interface TabPanelProps {
   children?: React.ReactNode;
-  onClose: () => void;
+  index: number;
+  value: number;
 }
 
-function BootstrapDialogTitle(props: DialogTitleProps) {
-  const { children, onClose, ...other } = props;
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
 
   return (
-    <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
-      {children}
-      {onClose ? (
-        <IconButton
-          aria-label="close"
-          onClick={onClose}
-          sx={{
-            position: "absolute",
-            right: 8,
-            top: 8,
-            color: (theme) => theme.palette.grey[500],
-          }}
-        >
-          <CloseIcon />
-        </IconButton>
-      ) : null}
-    </DialogTitle>
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
   );
 }
 
-export default function CustomizedDialogs() {
-  const [open, setOpen] = React.useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
+function a11yProps(index: number) {
+  return {
+    id: `simple-tab-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
   };
-  const handleClose = () => {
-    setOpen(false);
+}
+
+export default function AddNewCustomer() {
+  const [value, setValue] = React.useState(0);
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
   };
-
-  const [value, setValue] = React.useState("1");
-
-  // const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-  //   setValue(newValue);
-  // };
 
   return (
-    <div>
-      <Button variant="outlined" onClick={handleClickOpen}>
-        Open dialog
-      </Button>
-      <BootstrapDialog
-        onClose={handleClose}
-        aria-labelledby="customized-dialog-title"
-        open={open}
-      >
-        <BootstrapDialogTitle
-          id="customized-dialog-title"
-          onClose={handleClose}
+    <Box sx={{ width: "100%" }}>
+      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          aria-label="basic tabs example"
         >
-          New Customer
-        </BootstrapDialogTitle>
-        <DialogContent dividers>
-          {/* <Box sx={{ width: "100%", typography: "body1" }}>
-            <TabContext value={value}>
-              <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                <TabList
-                  //onChange={handleChange}
-                  aria-label="lab API tabs example"
-                >
-                  <Tab label="BASIC" value="1" />
-                  <Tab label="ADDRESS" value="2" />
-                  <Tab label="OPTIONS" value="3" />
-                </TabList>
-              </Box>
-              <TabPanel value="1">
-                <Grid>
-                  <form>
-                    <Stack>
-                      <Grid container spacing={2}>
-                        <Grid item xs={12} md={12}>
-                          <Stack spacing={1}>
-                            <InputLabel htmlFor="name">
-                              Customer <span className="err_str">*</span>
-                            </InputLabel>
-                            <OutlinedInput
-                              type="text"
-                              id="name"
-                              placeholder="Activity Name..."
-                              fullWidth
-                              size="small"
-                            />
-                          </Stack>
-                          <FormGroup>
-                            <FormControlLabel
-                              control={<Checkbox defaultChecked />}
-                              label="This is an individual"
-                            />
-                          </FormGroup>
-                        </Grid>
-                      </Grid>
-                    </Stack>
-                    <Stack>
-                      <Grid container spacing={2}>
-                        <Grid item xs={12} md={6}>
-                          <Stack spacing={1}>
-                            <InputLabel htmlFor="name">
-                              Customer <span className="err_str">*</span>
-                            </InputLabel>
-                            <OutlinedInput
-                              type="text"
-                              id="name"
-                              placeholder="Activity Name..."
-                              fullWidth
-                              size="small"
-                            />
-                          </Stack>
-                        </Grid>
-                        <Grid item xs={12} md={6}>
-                          <Stack spacing={1}>
-                            <InputLabel htmlFor="name">
-                              Customer <span className="err_str">*</span>
-                            </InputLabel>
-                            <OutlinedInput
-                              type="text"
-                              id="name"
-                              placeholder="Activity Name..."
-                              fullWidth
-                              size="small"
-                            />
-                          </Stack>
-                        </Grid>
-                      </Grid>
-                    </Stack>
-                    <Stack>
-                      <Grid container spacing={2}>
-                        <Grid item xs={12} md={6}>
-                          <Stack spacing={1}>
-                            <InputLabel htmlFor="name">
-                              Customer <span className="err_str">*</span>
-                            </InputLabel>
-                            <OutlinedInput
-                              type="text"
-                              id="name"
-                              placeholder="Activity Name..."
-                              fullWidth
-                              size="small"
-                            />
-                          </Stack>
-                        </Grid>
-                        <Grid item xs={12} md={6}>
-                          <Stack spacing={1}>
-                            <InputLabel htmlFor="name">
-                              Customer <span className="err_str">*</span>
-                            </InputLabel>
-                            <OutlinedInput
-                              type="text"
-                              id="name"
-                              placeholder="Activity Name..."
-                              fullWidth
-                              size="small"
-                            />
-                          </Stack>
-                        </Grid>
-                      </Grid>
-                    </Stack>
-                  </form>
-                </Grid>
-              </TabPanel>
-              <TabPanel value="2">
-                {" "}
-                <Stack>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="name">
-                          Customer <span className="err_str">*</span>
-                        </InputLabel>
-                        <OutlinedInput
-                          type="text"
-                          id="name"
-                          placeholder="Activity Name..."
-                          fullWidth
-                          size="small"
-                        />
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="name">
-                          Customer <span className="err_str">*</span>
-                        </InputLabel>
-                        <OutlinedInput
-                          type="text"
-                          id="name"
-                          placeholder="Activity Name..."
-                          fullWidth
-                          size="small"
-                        />
-                      </Stack>
-                    </Grid>
-                  </Grid>
+          <Tab label="Basic" {...a11yProps(0)} />
+          <Tab label="Options" {...a11yProps(1)} />
+        </Tabs>
+      </Box>
+      <TabPanel value={value} index={0}>
+        <Grid>
+          <Stack>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={12}>
+                <Stack spacing={1}>
+                  <InputLabel htmlFor="name">
+                    Customer <span className="err_str">*</span>
+                  </InputLabel>
+                  <OutlinedInput
+                    type="text"
+                    id="name"
+                    placeholder="Customer Name..."
+                    fullWidth
+                    size="small"
+                  />
                 </Stack>
-                <Stack>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="name">
-                          Customer <span className="err_str">*</span>
-                        </InputLabel>
-                        <OutlinedInput
-                          type="text"
-                          id="name"
-                          placeholder="Activity Name..."
-                          fullWidth
-                          size="small"
-                        />
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="name">
-                          Customer <span className="err_str">*</span>
-                        </InputLabel>
-                        <OutlinedInput
-                          type="text"
-                          id="name"
-                          placeholder="Activity Name..."
-                          fullWidth
-                          size="small"
-                        />
-                      </Stack>
-                    </Grid>
-                  </Grid>
+                <FormGroup>
+                  <FormControlLabel
+                    control={<Checkbox defaultChecked />}
+                    label="This is an individual"
+                  />
+                </FormGroup>
+              </Grid>
+            </Grid>
+          </Stack>
+          <Stack style={{ marginTop: "8px" }}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={6}>
+                <Stack spacing={1}>
+                  <InputLabel htmlFor="name">
+                    Account <span className="err_str">*</span>
+                  </InputLabel>
+                  <OutlinedInput
+                    type="text"
+                    id="name"
+                    placeholder="Account..."
+                    fullWidth
+                    size="small"
+                  />
                 </Stack>
-                <Stack>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={4}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="name">
-                          Customer <span className="err_str">*</span>
-                        </InputLabel>
-                        <OutlinedInput
-                          type="text"
-                          id="name"
-                          placeholder="Activity Name..."
-                          fullWidth
-                          size="small"
-                        />
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={4}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="name">
-                          Customer <span className="err_str">*</span>
-                        </InputLabel>
-                        <OutlinedInput
-                          type="text"
-                          id="name"
-                          placeholder="Activity Name..."
-                          fullWidth
-                          size="small"
-                        />
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={4}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="name">
-                          Customer <span className="err_str">*</span>
-                        </InputLabel>
-                        <OutlinedInput
-                          type="text"
-                          id="name"
-                          placeholder="Activity Name..."
-                          fullWidth
-                          size="small"
-                        />
-                      </Stack>
-                    </Grid>
-                  </Grid>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Stack spacing={1}>
+                  <InputLabel htmlFor="name">
+                    Email <span className="err_str">*</span>
+                  </InputLabel>
+                  <OutlinedInput
+                    type="text"
+                    id="name"
+                    placeholder="Email..."
+                    fullWidth
+                    size="small"
+                  />
                 </Stack>
-              </TabPanel>
-              <TabPanel value="3">OPTIONS</TabPanel>
-            </TabContext>
-          </Box> */}
-        </DialogContent>
-        <DialogActions>
-          <Grid item xs={12}>
-            <Button
-              size="large"
-              type="submit"
-              variant="contained"
-              color="primary"
-              sx={{ width: 150 }}
-              //disabled={btnDisabled}
-            >
-              <b>Create</b>
-              <span style={{ fontSize: "2px", paddingLeft: "10px" }}>
-                {/* {spinner === true ? (
-                                <CircularProgress color="inherit" />
-                              ) : (
-                                ""
-                              )} */}
-              </span>
-            </Button>
-          </Grid>
-        </DialogActions>
-      </BootstrapDialog>
-    </div>
+              </Grid>
+            </Grid>
+          </Stack>
+          <Stack style={{ marginTop: "15px" }}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={6}>
+                <Stack spacing={1}>
+                  <InputLabel htmlFor="name">
+                    Status <span className="err_str">*</span>
+                  </InputLabel>
+                  <FormControl fullWidth>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      defaultValue={1}
+                      size="small"
+                    >
+                      <MenuItem value={1}>Active</MenuItem>
+                      <MenuItem value={0}>InActive</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Stack>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Stack spacing={1}>
+                  <InputLabel htmlFor="name">
+                    Alternate Email <span className="err_str">*</span>
+                  </InputLabel>
+                  <OutlinedInput
+                    type="text"
+                    id="name"
+                    placeholder="Alternate Email..."
+                    fullWidth
+                    size="small"
+                  />
+                </Stack>
+              </Grid>
+            </Grid>
+          </Stack>
+        </Grid>
+      </TabPanel>
+      <TabPanel value={value} index={1}>
+        <Grid>
+          <Stack>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={12}>
+                <Stack spacing={1}>
+                  <InputLabel htmlFor="name">
+                    Customer Type <span className="err_str">*</span>
+                  </InputLabel>
+                  <FormControl fullWidth>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      size="small"
+                      defaultValue={0}
+                    >
+                      <MenuItem value={0}>All</MenuItem>
+                      <MenuItem value={1}>Impetus</MenuItem>
+                      <MenuItem value={2}>Infosys</MenuItem>
+                      <MenuItem value={3}>Wiprow</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Stack>
+              </Grid>
+            </Grid>
+          </Stack>
+          <Stack style={{ marginTop: "10px" }}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={12}>
+                <FormGroup>
+                  <FormControlLabel
+                    control={<Checkbox defaultChecked />}
+                    label="Belongs to a parent customer"
+                  />
+                </FormGroup>
+                <Stack spacing={1}>
+                  <InputLabel htmlFor="name"></InputLabel>
+                  <OutlinedInput
+                    type="text"
+                    id="name"
+                    placeholder="Activity Name..."
+                    fullWidth
+                    size="small"
+                  />
+                </Stack>
+              </Grid>
+            </Grid>
+          </Stack>
+          <Stack style={{ marginTop: "20px" }}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={6}>
+                <Stack spacing={1}>
+                  <InputLabel htmlFor="name">
+                    Contact Name <span className="err_str">*</span>
+                  </InputLabel>
+                  <OutlinedInput
+                    type="text"
+                    id="name"
+                    placeholder="Contact Name..."
+                    fullWidth
+                    size="small"
+                  />
+                </Stack>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Stack spacing={1}>
+                  <InputLabel htmlFor="name">
+                    Print Us <span className="err_str">*</span>
+                  </InputLabel>
+                  <OutlinedInput
+                    type="text"
+                    id="name"
+                    placeholder="Print Us..."
+                    fullWidth
+                    size="small"
+                  />
+                </Stack>
+              </Grid>
+            </Grid>
+          </Stack>
+        </Grid>
+      </TabPanel>
+      <DialogActions>
+        <Button variant="contained" size="small" sx={{ width: 150 }} autoFocus>
+          <b>Create</b>
+        </Button>
+      </DialogActions>
+    </Box>
   );
 }

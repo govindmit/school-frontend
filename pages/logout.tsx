@@ -8,8 +8,10 @@ function Logoutpage() {
   const router = useRouter();
   useEffect(() => {
     const login_token = localStorage.getItem("QIS_loginToken");
-    if (login_token !== null) {
+    const login_user = localStorage.getItem("QIS_User");
+    if (login_token !== null && login_user) {
       localStorage.removeItem("QIS_loginToken");
+      localStorage.removeItem("QIS_User");
       router.push("/");
     } else {
       router.push("/");
