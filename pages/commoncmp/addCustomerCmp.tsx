@@ -43,7 +43,7 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
 }
 
 export default function AddCustomerCmp() {
-  const [Open, setOpen] = React.useState<any>(true);
+  const [Open, setOpen] = React.useState(true);
   const [users, setUsers] = useState<any>([]);
   const [searchdata, setsearchdata] = useState<any>([]);
   const [opens, setOpens] = React.useState(false);
@@ -106,8 +106,7 @@ export default function AddCustomerCmp() {
   return (
     <>
       <Autocomplete
-        Open={Open}
-        debug={true}
+        open={Open}
         options={option}
         size="small"
         renderInput={(params) => (
