@@ -188,7 +188,7 @@ h4.notFound {
   font-size: 16px;
   line-height: 19px;
   color: #1a70c5;
-  position: fixed;
+  cursor: pointer;
 }
 .iimg {
   margin-top: 14px;
@@ -205,6 +205,7 @@ span.iexport {
   font-size: 16px;
   line-height: 19px;
   color: #1a70c5;
+  cursor: pointer;
 }
 .MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-3bmhjh-MuiPaper-root-MuiPopover-paper {
   width: 81%;
@@ -217,4 +218,63 @@ span.iexport {
   top: 50px;
   left: 262px;
   transform-origin: 716.227px 137.156px;
+}
+.btn {
+  display: flex;
+}
+.idiv {
+  margin: 7px;
+}
+.dd {
+  margin-top: 14px;
+}
+.ISBOX.MuiBox-root.css-1wnsr1i {
+  margin: 0px;
+  padding: 0px;
+}
+h3.ehead {
+  margin: 11px;
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 160%;
+  letter-spacing: 0.15px;
+  color: #5a6873;
+}
+.Isend {
+  margin: 14px;
+}
+svg.telegram {
+  /* height: 31px; */
+  font-size: 42px;
+  margin: 13px;
+  margin-left: 28px;
+}
+.sendEmailBox {
+  display: flex;
+  background: "#EFF3FD";
+  height: "8vh";
+  width: 100%;
+  background-color: "#EFF3FD";
+}
+h3.eshead {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 21px;
+  color: #5f6160;
+}
+
+.css-1mfccow {
+  display: flex;
+  flex-direction: column;
+  width: 247px;
+}
+.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation8.MuiPopover-paper.css-1dmzujt {
+  width: 81%;
+}
+.telegram {
+  cursor: pointer;
 }
