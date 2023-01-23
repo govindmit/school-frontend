@@ -43,7 +43,7 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
 }
 
 export default function App() {
-  const [Open, setOpen] = React.useState<any>(true);
+  const [Open, setOpen] = React.useState(true);
   const [users, setUsers] = useState<any>([]);
   const [searchdata, setsearchdata] = useState<any>([]);
   const [opens, setOpens] = React.useState(false);
@@ -103,8 +103,7 @@ export default function App() {
   return (
     <>
       <Autocomplete
-        Open={Open}
-        debug={true}
+        open={Open}
         options={option}
         renderInput={(params) => (
           <>
