@@ -144,15 +144,17 @@ export default function CustomerList() {
 
   //apply filter
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    console.log(data);
-    return false;
     setUsers([]);
     const reqData = {
       status: data.status,
+      customerType: data.customerType,
+      contactName: data.contactName,
+      number: data.phoneNumber,
+      sorting: data.sorting,
     };
     await axios({
       method: "POST",
-      url: `${api_url}getuser`,
+      url: `${api_url}/getUser`,
       data: reqData,
       headers: {
         Authorization: auth_token,
@@ -606,11 +608,24 @@ export default function CustomerList() {
                             <TableCell padding="checkbox">
                               <Checkbox />
                             </TableCell>
-                            <TableCell align="left">{dataitem.id}</TableCell>
+                            <TableCell align="left">
+                              {dataitem.customerId}
+                            </TableCell>
                             <TableCell align="left">
                               {dataitem.firstname + dataitem.lastname}
                             </TableCell>
-                            <TableCell align="left">{dataitem.email}</TableCell>
+                            <TableCell align="left">
+                              {dataitem.email1}
+                            </TableCell>
+                            <TableCell align="left">
+                              {dataitem.email2}
+                            </TableCell>
+                            <TableCell align="left">
+                              {dataitem.CustomerType}
+                            </TableCell>
+                            <TableCell align="left">
+                              {dataitem.contactName}
+                            </TableCell>
                             <TableCell align="left">
                               {dataitem.status === 1 ? (
                                 <span style={{ color: "#02C509" }}>ACTIVE</span>
@@ -621,13 +636,14 @@ export default function CustomerList() {
                               )}
                             </TableCell>
                             <TableCell align="left">
-                              {dataitem.contact}
+                              {dataitem.printUs}
                             </TableCell>
-                            <TableCell align="left"></TableCell>
-                            <TableCell align="left"></TableCell>
-                            <TableCell align="left"></TableCell>
-                            <TableCell align="left"></TableCell>
-                            <TableCell align="left"></TableCell>
+                            <TableCell align="left">
+                              {dataitem.phone1}
+                            </TableCell>
+                            <TableCell align="left">
+                              {dataitem.phone2}
+                            </TableCell>
                             <TableCell align="left">
                               <Stack direction="row" spacing={1}>
                                 <IconButton>
