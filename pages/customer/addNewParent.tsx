@@ -5,12 +5,9 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import {
   Button,
-  Checkbox,
   CircularProgress,
   DialogActions,
   FormControl,
-  FormControlLabel,
-  FormGroup,
   Grid,
   InputLabel,
   MenuItem,
@@ -20,11 +17,10 @@ import {
 } from "@mui/material";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { api_url, auth_token } from "../api/hello";
-import AddCustomerCmp from "../commoncmp/addCustomerCmp";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
+import { Router, useRouter } from "next/router";
 import "react-toastify/dist/ReactToastify.css";
-import { useRouter } from "next/router";
 
 const style = {
   color: "red",
@@ -66,35 +62,68 @@ function a11yProps(index: number) {
 }
 
 type FormValues = {
-  name: string;
-  status: number;
-  customertype: number;
+  firstName: string;
+  lastName: string;
   email1: string;
   email2: string;
   number: number;
+  phone2: number;
   contactName: string;
   printUs: string;
+  status: number;
+  type: number;
 };
 
-export default function AddNewCustomer() {
+export default function AddNewParent() {
   const router = useRouter();
   const [value, setValue] = React.useState(0);
   const [spinner, setshowspinner] = React.useState(false);
-  const [custtype, setcusttype] = React.useState<any>([]);
   const [btnDisabled, setBtnDisabled] = React.useState(false);
+  const [custtype, setcusttype] = React.useState<any>([]);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
-  const [Check, setCheck] = React.useState(false);
-  if (Check === true) {
-    var hideshowstyle = {
-      display: "block",
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>();
+
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    console.log(data);
+    const reqData = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email1: data.email1,
+      email2: data.email2,
+      number: data.number,
+      phone2: data.phone2,
+      contactName: data.contactName,
+      printUs: data.printUs,
+      status: data.status,
+      type: data.type,
     };
-  } else {
-    var hideshowstyle = {
-      display: "none",
-    };
-  }
+    await axios({
+      method: "POST",
+      url: `${api_url}/addUser`,
+      data: reqData,
+      headers: {
+        Authorization: auth_token,
+      },
+    })
+      .then((data) => {
+        if (data.status === 201) {
+          setshowspinner(false);
+          setBtnDisabled(false);
+          toast.success("Customer Added Successfully !");
+        }
+      })
+      .catch((error) => {
+        toast.error("Email Allready Registred !");
+        setshowspinner(false);
+        setBtnDisabled(false);
+      });
+  };
 
   React.useEffect(() => {
     getUser();
@@ -133,47 +162,6 @@ export default function AddNewCustomer() {
     }
   };
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormValues>();
-
-  const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    setshowspinner(true);
-    setBtnDisabled(true);
-    const reqData = {
-      name: data.name,
-      email1: data.email1,
-      email2: data.email2,
-      typeId: data.customertype,
-      phone1: data.number,
-      contactName: data.contactName,
-      printUs: data.printUs,
-      roleId: 2,
-    };
-    await axios({
-      method: "POST",
-      url: `${api_url}/addUser`,
-      data: reqData,
-      headers: {
-        Authorization: auth_token,
-      },
-    })
-      .then((data) => {
-        if (data.status === 201) {
-          setshowspinner(false);
-          setBtnDisabled(false);
-          toast.success("Customer Added Successfully !");
-        }
-      })
-      .catch((error) => {
-        toast.error("Email Allready Registred !");
-        setshowspinner(false);
-        setBtnDisabled(false);
-      });
-  };
-
   return (
     <Box sx={{ width: "100%" }}>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -192,65 +180,59 @@ export default function AddNewCustomer() {
           <Grid>
             <Stack>
               <Grid container spacing={2}>
-                <Grid item xs={12} md={12}>
+                <Grid item xs={12} md={6}>
                   <Stack spacing={1}>
-                    <InputLabel htmlFor="name">
-                      Customer <span className="err_str">*</span>
+                    <InputLabel htmlFor="fname">
+                      First Name <span className="err_str">*</span>
                     </InputLabel>
                     <OutlinedInput
                       type="text"
-                      id="name"
-                      placeholder="Customer Name..."
+                      id="fname"
+                      placeholder="fiste name..."
                       fullWidth
                       size="small"
-                      {...register("name", {
+                      {...register("firstName", {
                         required: true,
                       })}
                     />
-                    {errors.name && (
+                    {errors.firstName && (
                       <span style={style}>Field is Required **</span>
                     )}
                   </Stack>
-                  <FormGroup>
-                    <FormControlLabel
-                      control={<Checkbox defaultChecked />}
-                      label="This is an individual"
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Stack spacing={1}>
+                    <InputLabel htmlFor="lname">
+                      Last Name <span className="err_str">*</span>
+                    </InputLabel>
+                    <OutlinedInput
+                      type="text"
+                      id="lname"
+                      placeholder="last name..."
+                      fullWidth
+                      size="small"
+                      {...register("lastName", {
+                        required: true,
+                      })}
                     />
-                  </FormGroup>
+                    {errors.lastName && (
+                      <span style={style}>Field is Required **</span>
+                    )}
+                  </Stack>
                 </Grid>
               </Grid>
             </Stack>
-            <Stack style={{ marginTop: "8px" }}>
+            <Stack style={{ marginTop: "20px" }}>
               <Grid container spacing={2}>
                 <Grid item xs={12} md={6}>
                   <Stack spacing={1}>
-                    <InputLabel htmlFor="name">
-                      Phone Number <span className="err_str">*</span>
-                    </InputLabel>
-                    <OutlinedInput
-                      type="text"
-                      id="name"
-                      placeholder="Phone..."
-                      fullWidth
-                      size="small"
-                      {...register("number", {
-                        required: true,
-                      })}
-                    />
-                    {errors.number && (
-                      <span style={style}>Field is Required **</span>
-                    )}
-                  </Stack>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <Stack spacing={1}>
-                    <InputLabel htmlFor="name">
+                    <InputLabel htmlFor="email">
                       Email <span className="err_str">*</span>
                     </InputLabel>
                     <OutlinedInput
                       type="text"
                       id="name"
-                      placeholder="Email..."
+                      placeholder="email..."
                       fullWidth
                       size="small"
                       {...register("email1", {
@@ -262,10 +244,43 @@ export default function AddNewCustomer() {
                     )}
                   </Stack>
                 </Grid>
+                <Grid item xs={12} md={6}>
+                  <Stack spacing={1}>
+                    <InputLabel htmlFor="aemail">Alternate Email</InputLabel>
+                    <OutlinedInput
+                      type="text"
+                      id="name"
+                      placeholder="Alternate Email..."
+                      fullWidth
+                      size="small"
+                      {...register("email2")}
+                    />
+                  </Stack>
+                </Grid>
               </Grid>
             </Stack>
-            <Stack style={{ marginTop: "15px" }}>
+            <Stack style={{ marginTop: "20px" }}>
               <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <Stack spacing={1}>
+                    <InputLabel htmlFor="number">
+                      Phone Number <span className="err_str">*</span>
+                    </InputLabel>
+                    <OutlinedInput
+                      type="text"
+                      id="number"
+                      placeholder="number..."
+                      fullWidth
+                      size="small"
+                      {...register("number", {
+                        required: true,
+                      })}
+                    />
+                    {errors.number && (
+                      <span style={style}>Field is Required **</span>
+                    )}
+                  </Stack>
+                </Grid>
                 <Grid item xs={12} md={6}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor="name">Status</InputLabel>
@@ -281,19 +296,6 @@ export default function AddNewCustomer() {
                         <MenuItem value={0}>InActive</MenuItem>
                       </Select>
                     </FormControl>
-                  </Stack>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <Stack spacing={1}>
-                    <InputLabel htmlFor="name">Alternate Email</InputLabel>
-                    <OutlinedInput
-                      type="text"
-                      id="name"
-                      placeholder="Alternate Email..."
-                      fullWidth
-                      size="small"
-                      {...register("email2")}
-                    />
                   </Stack>
                 </Grid>
               </Grid>
@@ -394,14 +396,14 @@ export default function AddNewCustomer() {
               <Grid container spacing={2}>
                 <Grid item xs={12} md={12}>
                   <Stack spacing={1}>
-                    <InputLabel htmlFor="name">Customer Type</InputLabel>
+                    <InputLabel htmlFor="name">Parent Type</InputLabel>
                     <FormControl fullWidth>
                       <Select
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
                         size="small"
                         defaultValue={0}
-                        {...register("customertype")}
+                        {...register("type")}
                       >
                         <MenuItem value={0}>Individual</MenuItem>
                         {custtype &&
@@ -418,22 +420,21 @@ export default function AddNewCustomer() {
                 </Grid>
               </Grid>
             </Stack>
-            <Stack style={{ marginTop: "10px" }}>
-              <Grid container spacing={2}>
+            <Stack>
+              <Grid container spacing={2} style={{ marginTop: "15px" }}>
                 <Grid item xs={12} md={12}>
-                  <FormGroup>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          onChange={(e) => setCheck(e.target.checked)}
-                        />
-                      }
-                      label="Belongs to a parent customer"
-                    />
-                  </FormGroup>
-                  <Stack spacing={1} style={hideshowstyle}>
-                    <InputLabel htmlFor="name"></InputLabel>
-                    <AddCustomerCmp />
+                  <Stack spacing={1}>
+                    <InputLabel htmlFor="name">Alternate Number</InputLabel>
+                    <FormControl fullWidth>
+                      <OutlinedInput
+                        type="text"
+                        id="name"
+                        placeholder="Contact Name..."
+                        fullWidth
+                        size="small"
+                        {...register("phone2")}
+                      />
+                    </FormControl>
                   </Stack>
                 </Grid>
               </Grid>
@@ -487,7 +488,6 @@ export default function AddNewCustomer() {
             size="small"
             sx={{ width: 150 }}
             autoFocus
-            disabled={btnDisabled}
           >
             <b>Create</b>
             <span style={{ fontSize: "2px", paddingLeft: "10px" }}>
