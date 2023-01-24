@@ -10,12 +10,13 @@ import { Grid, InputLabel, Stack } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
+import Autocomplete from "@mui/material/Autocomplete";
 
 import { useEffect, useState } from "react";
 import MiniDrawer from "../sidebar";
 import axios from "axios";
 import TextField from "@mui/material/TextField";
-import { api_url, base_url } from "../api/hello";
+import { api_url, auth_token, base_url } from "../api/hello";
 import moment from "moment";
 import Image from "next/image";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -29,6 +30,7 @@ import Typography from "@mui/material/Typography";
 import { Button, OutlinedInput } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import ETable from "../table";
+import AddNewCustomer from "../customer/addNewCustomer";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -79,7 +81,7 @@ export interface FormValues {
   firstName: String;
   name: String;
   price: String;
-  description: String;
+  description: any;
 }
 const rowss = [
   { id: 1, lastName: "Snow", firstName: "Jon", age: 35 },
@@ -215,17 +217,30 @@ interface EnhancedTableProps {
 }
 export default function Guardians() {
   let localUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState<any>({});
+  const [opens, setOpens] = useState(false);
 
   const [user, setUser] = useState<FormValues | any>([]);
   const [invoiceId, setInvoiceId] = useState();
   const [sdata, setUserId] = useState<FormValues | any>([]);
   const [id, setId] = useState();
   const [dollerOpen, setDollerOpen] = useState(false);
+  const [popup, setSecondPop] = useState(false);
+  const [inputValue, setInputValue] = useState<FormValues | any>([]);
 
   const [item, setItem] = useState<FormValues | any>([]);
   const [product, setProduct] = useState<FormValues | any>([]);
   const [selected, setSelected] = useState<readonly string[]>([]);
 
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<FormValues>();
+
+  setSecondPop;
   const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
     const arr = [];
 
@@ -249,8 +264,11 @@ export default function Guardians() {
     setSelected(newSelected);
     getItem();
   };
-
-  console.log(item, "iemssssssss");
+  const style = {
+    color: "red",
+    fontSize: "12px",
+    fontWeight: "bold",
+  };
 
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
   const BootstrapButton = styled(Button)({
@@ -288,69 +306,31 @@ export default function Guardians() {
       </DialogTitle>
     );
   }
-
-  const getUser = async () => {
-    await axios({
-      method: "POST",
-      url: `${api_url}/getInvoice`,
-      headers: {
-        "content-type": "multipart/form-data",
-      },
-    })
-      .then((res) => {
-        console.log(res, "ressssss");
-        setUser(res?.data.data);
-      })
-      .catch((err) => {
-        console.log(err, "err");
-      });
+  const onclose = () => {
+    setSecondPop(false);
   };
-  const {
-    register,
-    reset,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormValues>();
 
   const onSubmit: SubmitHandler<FormValues> = async (data: any) => {
-    let sdate = moment(data.startDate).format("DD/MM/YYYY");
-    let edate = moment(data.endDate).format("DD/MM/YYYY");
-    var ids: any = [];
-
-    if (sdata.length > 0) {
-      for (let item of sdata) {
-        ids.push(item?.id);
-      }
-    }
     let reqData = {
-      status: data.status,
-      startDate: sdate === "Invalid date" ? "" : sdate,
-      endDate: edate === "Invalid date" ? "" : edate,
-      order: data.sort,
-      amount: data.Total,
-      customer: ids,
+      name: data.name,
+      price: data.price,
+      description: data.description,
     };
-
-    console.log(sdata, "sdate");
-    console.log(reqData, "requestedData");
 
     await axios({
       method: "POST",
-      url: `${api_url}/getInvoice`,
+      url: `${api_url}/createItem`,
       data: reqData,
       headers: {
         "content-type": "multipart/form-data",
       },
     })
       .then((res) => {
-        console.log(res, "ressssss");
-        setUser(res?.data.data);
+        getItem();
+        setSecondPop(false);
         reset();
-        setUserId("");
       })
-      .catch((err) => {
-        console.log(err, "err");
-      });
+      .catch((err) => {});
   };
   const getItem = async () => {
     await axios({
@@ -362,12 +342,9 @@ export default function Guardians() {
       },
     })
       .then((res) => {
-        console.log(res, "ressssss");
         setItem(res?.data.data);
       })
-      .catch((err) => {
-        console.log(err, "err");
-      });
+      .catch((err) => {});
   };
 
   useEffect(() => {
@@ -376,7 +353,6 @@ export default function Guardians() {
   }, []);
 
   const searchItems = (e: any) => {
-    console.log(e.target.value, "eeeeeeeeeeeeee");
     if (e.target.value === "") {
       // setUsers(searchdata);
       getItem();
@@ -388,14 +364,10 @@ export default function Guardians() {
       setItem(dtd);
     }
   };
-  console.log(item, "itemmmmmmmmmmmmmm");
   const handleItem = () => {
     setDollerOpen(true);
   };
-  const handleClicks = (id: any) => {
-    console.log(id, "idddddddddd");
-    setId(id);
-  };
+
   const handleCreate = async () => {
     let requested = {
       id: selected,
@@ -410,14 +382,51 @@ export default function Guardians() {
       },
     })
       .then((res) => {
-        console.log(res, "ressssss");
         setProduct(res?.data.data);
         handleCloses();
       })
-      .catch((err) => {
-        console.log(err, "err");
-      });
+      .catch((err) => {});
   };
+  var price = 0;
+  for (let d of product) {
+    price = price + d.price;
+  }
+  const handleNew = () => {
+    setSecondPop(true);
+  };
+
+  const getUser = async () => {
+    await axios({
+      method: "POST",
+      url: `${api_url}/getuser`,
+      headers: {
+        Authorization: auth_token,
+      },
+    })
+      .then((res) => {
+        console.log(res.data.data, "responseeeeeeeeeeeeeee");
+        setUser(res?.data.data);
+      })
+      .catch((err) => {});
+  };
+  const handleSearch = (e: any) => {
+    setInputValue(e.target.value);
+    if (e.target.value === "") {
+      setInputValue("");
+    } else {
+      const filterres =
+        user &&
+        user.filter((item: any) => {
+          return item.firstName.includes(e.target.value.toLowerCase());
+        });
+      const dtd = filterres;
+      setUser(dtd);
+    }
+  };
+  const handleClickOpen = () => {
+    setOpens(true);
+  };
+
   return (
     <>
       <Box sx={{ display: "flex" }}>
@@ -485,11 +494,37 @@ export default function Guardians() {
                     <InputLabel htmlFor="name">
                       Customer <span className="err_str">*</span>
                     </InputLabel>
-                    <OutlinedInput
+                    <Autocomplete
+                      style={{ width: 300 }}
                       fullWidth
-                      type="text"
-                      id="name"
-                      placeholder="Customer Name..."
+                      value={value}
+                      inputValue={inputValue}
+                      onChange={(event, newValue) => {
+                        setValue(newValue);
+                      }}
+                      onInputChange={(event, newInputValue) => {
+                        setInputValue(newInputValue);
+                      }}
+                      options={user}
+                      getOptionLabel={(option) => option.firstname}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          variant="outlined"
+                          placeholder="Find or create a parent"
+                        />
+                      )}
+                      noOptionsText={
+                        <Button onClick={handleClickOpen}>
+                          {inputValue === "" ? (
+                            "Please enter 1 or more character"
+                          ) : (
+                            <span>
+                              Add &nbsp;<b>{inputValue}</b>&nbsp;as a new parent
+                            </span>
+                          )}
+                        </Button>
+                      }
                     />
                   </div>
                   <div className="invoicedateField">
@@ -572,19 +607,19 @@ export default function Guardians() {
                   <div className="invoiceTotalamount">
                     <div className="sdiv">
                       <div className="sidiv">Subtotal</div>
-                      <div>$100.0</div>
+                      <div>$ &nbsp;{price}</div>
                     </div>
                     <div className="sdiv">
                       <div className="sidiv">Total</div>
-                      <div>$100.0</div>
+                      <div>$ &nbsp;{price}</div>
                     </div>
                     <div className="sdiv">
                       <div className="sidiv">Amount Paid</div>
-                      <div>$100.0</div>
+                      <div>$ &nbsp;0.00</div>
                     </div>
                     <div className="sdiv">
                       <div className="sidiv">Balance Due</div>
-                      <div>$100.0</div>
+                      <div>$ &nbsp;{price}</div>
                     </div>
                   </div>
                 </div>
@@ -616,7 +651,7 @@ export default function Guardians() {
                         />
                       </div>
                       <div>
-                        <Button>New</Button>
+                        <Button onClick={handleNew}>New</Button>
                       </div>
                     </div>
                     <Paper sx={{ width: "100%", mb: 2 }}>
@@ -696,6 +731,126 @@ export default function Guardians() {
                 </DialogActions>
               </BootstrapDialog>
             </div>
+
+            <BootstrapDialog
+              onClose={onclose}
+              aria-labelledby="customized-dialog-title"
+              open={popup}
+            >
+              <BootstrapDialogTitle
+                id="customized-dialog-title"
+                onClose={onclose}
+              >
+                New Item
+              </BootstrapDialogTitle>
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <DialogContent dividers className="dialogss">
+                  <Grid>
+                    <Stack>
+                      <Grid container spacing={2}>
+                        <Grid item xs={12} md={14}>
+                          <Stack spacing={1}>
+                            <div className="display">
+                              <div className="label">
+                                <InputLabel htmlFor="name">Name :</InputLabel>
+                              </div>
+                              <div>
+                                <OutlinedInput
+                                  type="text"
+                                  id="name"
+                                  placeholder="Name"
+                                  fullWidth
+                                  {...register("name", {
+                                    required: true,
+                                  })}
+                                />
+                                <Typography style={style}>
+                                  {errors.name ? (
+                                    <span>Feild is Required **</span>
+                                  ) : (
+                                    ""
+                                  )}
+                                </Typography>
+                              </div>
+                            </div>
+                          </Stack>
+                        </Grid>
+                      </Grid>
+                    </Stack>
+                    <Stack>
+                      <Grid container spacing={2}>
+                        <Grid item xs={12} md={14}>
+                          <Stack spacing={1}>
+                            <div className="display">
+                              <div className="label">
+                                <InputLabel htmlFor="name">Price :</InputLabel>
+                              </div>
+                              <div>
+                                <OutlinedInput
+                                  type="number"
+                                  id="name"
+                                  placeholder="price"
+                                  fullWidth
+                                  {...register("price", {
+                                    required: true,
+                                  })}
+                                />
+                                <Typography style={style}>
+                                  {errors.price ? (
+                                    <span>Feild is Required **</span>
+                                  ) : (
+                                    ""
+                                  )}
+                                </Typography>
+                              </div>
+                            </div>
+                          </Stack>
+                        </Grid>
+                      </Grid>
+                    </Stack>
+                    <Stack>
+                      <Grid container spacing={2}>
+                        <Grid item xs={12} md={14}>
+                          <Stack spacing={1}>
+                            <div className="display">
+                              <div className="label">
+                                <InputLabel htmlFor="name">
+                                  Description :
+                                </InputLabel>
+                              </div>
+                              <div>
+                                <TextField
+                                  id="outlined-multiline-static"
+                                  multiline
+                                  rows={4}
+                                  fullWidth
+                                  {...register("description", {
+                                    required: true,
+                                  })}
+                                />
+                                <Typography style={style}>
+                                  {errors.price ? (
+                                    <span>Feild is Required **</span>
+                                  ) : (
+                                    ""
+                                  )}
+                                </Typography>
+                              </div>
+                            </div>
+                          </Stack>
+                        </Grid>
+                      </Grid>
+                    </Stack>
+                  </Grid>
+                </DialogContent>
+                <DialogActions>
+                  <Button variant="contained" type="submit" autoFocus>
+                    Create
+                  </Button>
+                </DialogActions>
+              </form>
+            </BootstrapDialog>
+            {opens ? <AddNewCustomer /> : ""}
           </div>
         </Box>
       </Box>
