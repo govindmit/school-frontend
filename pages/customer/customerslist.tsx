@@ -25,8 +25,8 @@ import {
   DialogTitle,
   Dialog,
   DialogContent,
-  DialogActions,
   OutlinedInput,
+  Pagination,
 } from "@mui/material";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -42,12 +42,38 @@ import { RiDeleteBin5Fill } from "react-icons/ri";
 import CloseIcon from "@mui/icons-material/Close";
 import styled from "@emotion/styled";
 import AddNewCustomer from "./addNewCustomer";
-
+import ConfirmBox from "../commoncmp/confirmbox";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import AddCustomer from "./add";
 function Item(props: BoxProps) {
   const { sx, ...other } = props;
   return <Box sx={{}} {...other} />;
 }
 
+//pagination function
+function usePagination(data: any, itemsPerPage: any) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const maxPage = Math.ceil(data.length / itemsPerPage);
+  function currentData() {
+    const begin = (currentPage - 1) * itemsPerPage;
+    const end = begin + itemsPerPage;
+    return data.slice(begin, end);
+  }
+  function next() {
+    setCurrentPage((currentPage) => Math.min(currentPage + 1, maxPage));
+  }
+  function prev() {
+    setCurrentPage((currentPage) => Math.max(currentPage - 1, 1));
+  }
+  function jump(page: any) {
+    const pageNumber = Math.max(1, page);
+    setCurrentPage((currentPage) => Math.min(pageNumber, maxPage));
+  }
+  return { next, prev, jump, currentData, currentPage, maxPage };
+}
+
+//dialog box
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({}));
 export interface DialogTitleProps {
   id: string;
@@ -77,6 +103,7 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
   );
 }
 
+//filter form values
 type FormValues = {
   customerType: number;
   status: number;
@@ -92,21 +119,15 @@ export default function CustomerList() {
   const [searchquery, setsearchquery] = useState("");
   const [searchdata, setsearchdata] = useState([]);
   const { register, handleSubmit } = useForm<FormValues>();
-  const [open, setOpen] = React.useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const [deleteConfirmBoxOpen, setdeleteConfirmBoxOpen] = React.useState(false);
+  const [newCustOpen, setnewCustOpen] = React.useState(false);
 
   useEffect(() => {
     getUser();
     getType();
   }, []);
 
-  //get customers list
+  //get customers(users) list
   const getUser = async () => {
     const url = `${api_url}/getuser`;
     try {
@@ -125,7 +146,7 @@ export default function CustomerList() {
     }
   };
 
-  //get type
+  //get customers(users) type
   const getType = async () => {
     const url = `${api_url}/getType`;
     try {
@@ -171,7 +192,7 @@ export default function CustomerList() {
       });
   };
 
-  //searching
+  // apply searching
   const handleSearch = (e: any) => {
     setsearchquery(e.target.value);
     if (e.target.value === "") {
@@ -188,6 +209,46 @@ export default function CustomerList() {
   };
 
   // pagination
+  // const [row_per_page, set_row_per_page] = useState(5);
+  // function handlerowchange(e: any) {
+  //   set_row_per_page(e.target.value);
+  // }
+  let [page, setPage] = React.useState(1);
+  const PER_PAGE = 5;
+  const count = Math.ceil(users.length / PER_PAGE);
+  const DATA = usePagination(users, PER_PAGE);
+  const handlePageChange = (e: any, p: any) => {
+    setPage(p);
+    DATA.jump(p);
+  };
+
+  //delete user
+  const [deleteData, setDeleteData] = useState<any>({});
+  function openDelete(data: any) {
+    setdeleteConfirmBoxOpen(true);
+    setDeleteData(data);
+  }
+  async function deleteUser() {
+    await axios({
+      method: "DELETE",
+      url: `${api_url}/deleteuser/${deleteData.id}`,
+      headers: {
+        Authorization: auth_token,
+      },
+    })
+      .then((data) => {
+        toast.success("User Deleted Successfully !");
+        setdeleteConfirmBoxOpen(false);
+        getUser();
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+
+  function handleNewCustomerOpen() {
+    setnewCustOpen(true);
+  }
 
   return (
     <>
@@ -235,7 +296,7 @@ export default function CustomerList() {
                 variant="contained"
                 size="small"
                 sx={{ width: 150 }}
-                onClick={handleClickOpen}
+                onClick={handleNewCustomerOpen}
               >
                 <b>New Customer</b>
               </Button>
@@ -596,8 +657,8 @@ export default function CustomerList() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {users &&
-                      users.map((dataitem: any, key) => {
+                    {DATA.currentData() &&
+                      DATA.currentData().map((dataitem: any, key: any) => {
                         return (
                           <TableRow
                             hover
@@ -648,7 +709,7 @@ export default function CustomerList() {
                               <Stack direction="row" spacing={1}>
                                 <IconButton>
                                   <Link
-                                    href={`/activites/activitydetails/1`}
+                                    href={"#"}
                                     style={{
                                       color: "#26CEB3",
                                     }}
@@ -658,7 +719,7 @@ export default function CustomerList() {
                                 </IconButton>
                                 <IconButton>
                                   <Link
-                                    href={`/activites/editactivity/1`}
+                                    href={"#"}
                                     style={{
                                       color: "#DFBF19",
                                     }}
@@ -666,7 +727,10 @@ export default function CustomerList() {
                                     <FiEdit />
                                   </Link>
                                 </IconButton>
-                                <IconButton style={{ color: "#F95A37" }}>
+                                <IconButton
+                                  style={{ color: "#F95A37" }}
+                                  onClick={() => openDelete(dataitem)}
+                                >
                                   <RiDeleteBin5Fill />
                                 </IconButton>
                               </Stack>
@@ -676,12 +740,38 @@ export default function CustomerList() {
                       })}
                   </TableBody>
                 </Table>
+                <Stack
+                  style={{ marginBottom: "10px", marginTop: "10px" }}
+                  direction="row"
+                  alignItems="right"
+                  justifyContent="space-between"
+                >
+                  <Pagination
+                    count={count}
+                    page={page}
+                    color="primary"
+                    onChange={handlePageChange}
+                  />
+                  {/* <FormControl>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      defaultValue={5}
+                      onChange={handlerowchange}
+                      size="small"
+                    >
+                      <MenuItem value={5}>5</MenuItem>
+                      <MenuItem value={20}>20</MenuItem>
+                      <MenuItem value={50}>50</MenuItem>
+                    </Select>
+                  </FormControl> */}
+                </Stack>
               </TableContainer>
             </Card>
           </div>
         </Box>
       </Box>
-      <BootstrapDialog
+      {/* <BootstrapDialog
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
         open={open}
@@ -695,7 +785,18 @@ export default function CustomerList() {
         <DialogContent dividers>
           <AddNewCustomer />
         </DialogContent>
-      </BootstrapDialog>
+      </BootstrapDialog> */}
+      <AddCustomer
+        open={newCustOpen}
+        closeDialog={() => setnewCustOpen(false)}
+      />
+      <ConfirmBox
+        open={deleteConfirmBoxOpen}
+        closeDialog={() => setdeleteConfirmBoxOpen(false)}
+        title={deleteData?.firstname}
+        deleteFunction={deleteUser}
+      />
+      <ToastContainer />
     </>
   );
 }
