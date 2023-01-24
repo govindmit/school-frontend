@@ -1,0 +1,107 @@
+.cinvoice {
+  display: flex;
+}
+span.GItitle {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 800;
+  font-size: 24px;
+  line-height: 28px;
+  text-transform: uppercase;
+  color: #333333;
+}
+.isave {
+  margin-left: 53%;
+}
+.aititle {
+  display: flex;
+}
+.iatitle {
+  /* width: 22%; */
+  display: grid;
+}
+span.iahead {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 800;
+  font-size: 24px;
+  /* line-height: 48px; */
+  letter-spacing: 0.853923px;
+  color: #000000;
+}
+span.line {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: #333333;
+}
+.itele {
+  display: grid;
+  margin-left: 46%;
+}
+span.iainvoice {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 800;
+  font-size: 35px;
+  line-height: 41px;
+  text-transform: uppercase;
+  color: #333333;
+}
+
+.invoice {
+  text-align: center;
+  margin-top: 44px;
+}
+.ickks {
+  display: inline-flex;
+  margin: 26px;
+  width: 100%;
+}
+.invoicedateField {
+  margin-left: 56%;
+}
+button.MuiButtonBase-root.MuiButton-root.MuiButton-text.MuiButton-textPrimary.MuiButton-sizeMedium.MuiButton-textSizeMedium.itembtn.css-1gwix6k-MuiButtonBase-root-MuiButton-root {
+  background: #13c710;
+  border: 1.5px solid #13c710;
+  border-radius: 5px;
+}
+.MuiInputBase-root.invoiceNote.css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root {
+  width: 399px;
+  height: 76px;
+}
+.invoiceSubTotal {
+  display: flex;
+  /* margin-left: 24px; */
+}
+.invoiceTotalamount {
+  display: grid;
+  margin-left: 48%;
+}
+.sdiv {
+  display: flex;
+}
+.sidiv {
+  width: 152px;
+}
+span.select {
+  margin-left: 230px;
+  color: blue;
+}
+.invoiceInput {
+  width: 94%;
+}
+.hhh {
+  display: flex;
+  /* width: 100%; */
+}
+/*  */
+span.plus {
+  margin-left: 75%;
+}
+span.selectss {
+  margin-left: 57%;
+  color: #1818ff;
+}

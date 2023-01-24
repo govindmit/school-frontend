@@ -6,6 +6,9 @@ import {
   TableBody,
   TableCell,
   Container,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
   TableContainer,
   TableHead,
   Button,
@@ -19,7 +22,7 @@ import { BsTelegram } from "react-icons/bs";
 import { Grid, InputLabel, Stack } from "@mui/material";
 import Modal from "@mui/material/Modal";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { BiShow } from "react-icons/bi";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBin5Fill } from "react-icons/ri";
@@ -37,13 +40,32 @@ import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import Popover from "@mui/material/Popover";
 import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
 import MenuItem from "@mui/material/MenuItem";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 import { useForm, SubmitHandler } from "react-hook-form";
 import {
   setSyntheticLeadingComments,
   setTokenSourceMapRange,
 } from "typescript";
 import Paper from "@mui/material/Paper";
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+  "& .MuiDialogContent-root": {
+    padding: theme.spacing(2),
+  },
+  "& .MuiDialogActions-root": {
+    padding: theme.spacing(1),
+  },
+}));
 
+export interface DialogTitleProps {
+  id: string;
+  children?: React.ReactNode;
+  onClose: () => void;
+}
 const style = {
   position: "absolute" as "absolute",
   top: "50%",
@@ -73,6 +95,7 @@ export interface FormValues {
   sdata: String;
   option: String;
   firstName: String;
+  recievedPay: any;
 }
 export default function Guardians() {
   let localUrl = process.env.NEXT_PUBLIC_BASE_URL;
@@ -87,6 +110,17 @@ export default function Guardians() {
   const [id, setId] = useState();
   const [inputValue, setInputValue] = useState("");
   const [error, setError] = useState<any>("");
+  const [dollerOpen, setDollerOpen] = useState(false);
+  const [recievedPay, setRecieved] = useState<FormValues | any>([]);
+
+  const handleClickOpen = (item: any) => {
+    console.log(item);
+    setRecieved(item);
+    setDollerOpen(true);
+  };
+  const handleCloses = () => {
+    setDollerOpen(false);
+  };
   // const [open, setOpen] = useState(false);
   const closePopper = () => setOpen(false);
 
@@ -122,6 +156,30 @@ export default function Guardians() {
         console.log(err, "err");
       });
   };
+
+  function BootstrapDialogTitle(props: DialogTitleProps) {
+    const { children, onClose, ...other } = props;
+
+    return (
+      <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
+        {children}
+        {onClose ? (
+          <IconButton
+            aria-label="close"
+            onClick={onClose}
+            sx={{
+              position: "absolute",
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        ) : null}
+      </DialogTitle>
+    );
+  }
   const {
     register,
     reset,
@@ -176,6 +234,23 @@ export default function Guardians() {
 
   const handleCancel = () => {
     handleClose();
+  };
+  const handleCreate = async (id: any) => {
+    console.log(id, "idddddd");
+    await axios({
+      method: "PUT",
+      url: `${api_url}/updateInvoice/${id}`,
+      headers: {
+        "content-type": "multipart/form-data",
+      },
+    })
+      .then((res) => {
+        getUser();
+        handleCloses();
+      })
+      .catch((err) => {
+        console.log(err, "err");
+      });
   };
   const searchItems = (e: any) => {
     console.log(e.target.value, "eeeeeeeeeeeeee");
@@ -243,7 +318,8 @@ export default function Guardians() {
     getUser();
     console.log(user, "click filter");
   };
-  console.log(sdata, "sdataaaaaaaaaaaaaa");
+
+  console.log(recievedPay, "recievedPay");
   return (
     <>
       <Box sx={{ display: "flex" }}>
@@ -282,7 +358,7 @@ export default function Guardians() {
                       <FilterAltOutlinedIcon color="primary"></FilterAltOutlinedIcon>
                     </div>
                     <PopupState variant="popover" popupId="demo-popup-popover">
-                      {(popupState) => (
+                      {(popupState: any) => (
                         <div className="dd" onClick={() => handleFilter()}>
                           <span
                             className="ifliter"
@@ -314,14 +390,15 @@ export default function Guardians() {
                                       <InputLabel id="demo-select-small">
                                         Customer
                                       </InputLabel>
+
                                       <Autocomplete
                                         onChange={(event, value) =>
                                           setUserId(value)
                                         }
                                         open={open}
                                         onOpen={() => {
-                                          if (inputValue) {
-                                            setOpen(true);
+                                          if (inputValue && inputValue.length) {
+                                            return setOpen(true);
                                           }
                                         }}
                                         inputValue={inputValue}
@@ -339,7 +416,7 @@ export default function Guardians() {
                                         getOptionLabel={(option: any) =>
                                           option?.firstName
                                         }
-                                        renderInput={(params) => (
+                                        renderInput={(params: any) => (
                                           <TextField
                                             {...params}
                                             placeholder="customer"
@@ -569,6 +646,7 @@ export default function Guardians() {
                                     </Button> */}
                                     <div className="idiv">
                                       <Image
+                                        onClick={() => handleClickOpen(item)}
                                         src="/doller.svg"
                                         alt="Picture of the author"
                                         width={25}
@@ -667,6 +745,144 @@ export default function Guardians() {
                 </Typography>
               </Box>
             </Modal>
+            <div>
+              <BootstrapDialog
+                onClose={handleCloses}
+                aria-labelledby="customized-dialog-title"
+                open={dollerOpen}
+              >
+                <BootstrapDialogTitle
+                  id="customized-dialog-title"
+                  onClose={handleCloses}
+                >
+                  Recieve Payment
+                </BootstrapDialogTitle>
+                <DialogContent dividers>
+                  <Grid>
+                    <Stack>
+                      <Grid container spacing={2}>
+                        <Grid item xs={12} md={12}>
+                          <Stack spacing={1}>
+                            <InputLabel htmlFor="name">
+                              Customer <span className="err_str">*</span>
+                            </InputLabel>
+                            <OutlinedInput
+                              defaultValue={recievedPay.firstName}
+                              type="text"
+                              id="name"
+                              placeholder="Customer Name..."
+                              fullWidth
+                              size="small"
+                            />
+                          </Stack>
+                        </Grid>
+                      </Grid>
+                    </Stack>
+                    <Stack style={{ marginTop: "8px" }}>
+                      <Grid container spacing={2}>
+                        <Grid item xs={12} md={6}>
+                          <Stack spacing={1}>
+                            <InputLabel htmlFor="name">
+                              Received On <span className="err_str">*</span>
+                            </InputLabel>
+                            <OutlinedInput
+                              defaultValue={moment(
+                                recievedPay.invoiceDate,
+                                "DD/MM/YYYY"
+                              ).format("ll")}
+                              type="text"
+                              id="name"
+                              placeholder="Phone..."
+                              fullWidth
+                              size="small"
+                            />
+                          </Stack>
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                          <Stack spacing={1}>
+                            <InputLabel htmlFor="name">Method</InputLabel>
+                            <Select
+                              labelId="demo-select-small"
+                              id="demo-select-small"
+                              defaultValue="Cash"
+                              size="small"
+                            >
+                              <MenuItem value="All"></MenuItem>
+                              <MenuItem value="Credit Card">
+                                Credit Card
+                              </MenuItem>
+                              <MenuItem value="Debit Card">Debit Card</MenuItem>
+                              <MenuItem value="AMFX">AMFX</MenuItem>
+                              <MenuItem value="Cash">Cash on Delivery</MenuItem>
+                            </Select>
+                          </Stack>
+                        </Grid>
+                      </Grid>
+                    </Stack>
+                    <Stack style={{ marginTop: "15px" }}>
+                      <Grid container spacing={2}>
+                        <Grid item xs={12} md={6}>
+                          <Stack spacing={1}>
+                            <InputLabel htmlFor="name">Reerence</InputLabel>
+                            <OutlinedInput
+                              type="text"
+                              id="name"
+                              placeholder="Alternate Email..."
+                              fullWidth
+                              size="small"
+                            />
+                          </Stack>
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                          <Stack spacing={1}>
+                            <InputLabel htmlFor="name">Amount</InputLabel>
+                            <OutlinedInput
+                              defaultValue={recievedPay.amount}
+                              type="text"
+                              id="name"
+                              placeholder="Alternate Email..."
+                              fullWidth
+                              size="small"
+                            />
+                          </Stack>
+                        </Grid>
+                      </Grid>
+                    </Stack>
+                    <FormGroup>
+                      <FormControlLabel
+                        control={<Checkbox defaultChecked />}
+                        label="Want to use credit balance $100"
+                      />
+                    </FormGroup>
+                    <div>
+                      <h5 className="apply">Apply Payment</h5>
+                    </div>
+                    <div className="iadiv">
+                      <div className="hh">Invoice Amount:</div>
+                      <div>${recievedPay.amount}</div>
+                    </div>
+                    <div className="iadiv">
+                      <div className="hh">Total Credit Balance:</div>
+                      <div>$100.00</div>
+                    </div>
+                    &nbsp;
+                  </Grid>
+                  <div className="iadiv">
+                    <div className="hh">Total Amount:</div>
+                    <div>$1024.00</div>
+                  </div>
+                </DialogContent>
+                <DialogActions>
+                  <Button
+                    variant="contained"
+                    autoFocus
+                    onClick={() => handleCreate(recievedPay.id)}
+                  >
+                    Create
+                  </Button>
+                </DialogActions>
+              </BootstrapDialog>
+            </div>
           </div>
         </Box>
       </Box>
