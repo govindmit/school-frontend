@@ -140,7 +140,7 @@ export default function AddCustomerCmp() {
           New Parent
         </BootstrapDialogTitle>
         <DialogContent dividers>
-          <AddNewParent />
+          <AddNewParent parentName={inputValue} />
         </DialogContent>
       </BootstrapDialog>
     </>

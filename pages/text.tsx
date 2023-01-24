@@ -42,12 +42,18 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
   );
 }
 
+interface Data {
+  parentName: any;
+}
+
 export default function App() {
   const [Open, setOpen] = React.useState(true);
   const [users, setUsers] = useState<any>([]);
   const [searchdata, setsearchdata] = useState<any>([]);
   const [opens, setOpens] = React.useState(false);
-  const [inputValue, setInputValue] = useState("");
+
+  const [value, setValue] = useState<any>({});
+  const [inputValue, setInputValue] = useState<any>("");
 
   useEffect(() => {
     getUser();
@@ -100,10 +106,19 @@ export default function App() {
     setOpens(false);
   };
 
+  const top100Films = [
+    { id: 1, title: "The Shawshank Redemption" },
+    { id: 2, title: "The Godfather" },
+    { id: 3, title: "The Godfather: Part II" },
+    { id: 4, title: "The Dark Knight" },
+  ];
+
+  console.log(value, inputValue);
+
   return (
     <>
       <Autocomplete
-        open={Open}
+        //open={Open}
         options={option}
         renderInput={(params) => (
           <>
@@ -123,6 +138,38 @@ export default function App() {
         }
         onInputChange={handleSearch}
       />
+
+      <Autocomplete
+        value={value}
+        inputValue={inputValue}
+        onChange={(event, newValue) => {
+          setValue(newValue);
+        }}
+        onInputChange={(event, newInputValue) => {
+          setInputValue(newInputValue);
+        }}
+        options={top100Films}
+        getOptionLabel={(option) => option.title}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            variant="outlined"
+            placeholder="Find or create a parent"
+          />
+        )}
+        noOptionsText={
+          <Button onClick={handleClickOpen}>
+            {inputValue === "" ? (
+              "Please enter 1 or more character"
+            ) : (
+              <span>
+                Add &nbsp;<b>{inputValue}</b>&nbsp;as a new parent
+              </span>
+            )}
+          </Button>
+        }
+      />
+
       <BootstrapDialog
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
@@ -135,7 +182,7 @@ export default function App() {
           New Parent
         </BootstrapDialogTitle>
         <DialogContent dividers>
-          <AddNewParent />
+          <AddNewParent parentName={inputValue} />
         </DialogContent>
       </BootstrapDialog>
     </>
