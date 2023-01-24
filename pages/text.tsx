@@ -8,9 +8,9 @@ import {
   TextField,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { api_url, auth_token } from "./api/hello";
 import CloseIcon from "@mui/icons-material/Close";
 import styled from "@emotion/styled";
+import { api_url, auth_token } from "./api/hello";
 import AddNewParent from "./customer/addNewParent";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({}));
@@ -42,18 +42,13 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
   );
 }
 
-interface Data {
-  parentName: any;
-}
-
-export default function App() {
+export default function AddCustomerCmp() {
   const [Open, setOpen] = React.useState(true);
   const [users, setUsers] = useState<any>([]);
   const [searchdata, setsearchdata] = useState<any>([]);
   const [opens, setOpens] = React.useState(false);
-
-  const [value, setValue] = useState<any>({});
-  const [inputValue, setInputValue] = useState<any>("");
+  const [inputValue, setInputValue] = useState("");
+  const [selected, setSelected] = useState([]);
 
   useEffect(() => {
     getUser();
@@ -106,20 +101,14 @@ export default function App() {
     setOpens(false);
   };
 
-  const top100Films = [
-    { id: 1, title: "The Shawshank Redemption" },
-    { id: 2, title: "The Godfather" },
-    { id: 3, title: "The Godfather: Part II" },
-    { id: 4, title: "The Dark Knight" },
-  ];
-
-  console.log(value, inputValue);
+  console.log(selected);
 
   return (
     <>
       <Autocomplete
-        //open={Open}
+        open={Open}
         options={option}
+        size="small"
         renderInput={(params) => (
           <>
             <TextField {...params} placeholder="Find or create a parent" />
@@ -137,39 +126,8 @@ export default function App() {
           </Button>
         }
         onInputChange={handleSearch}
+        onChange={(event, value: any) => setSelected(value)}
       />
-
-      <Autocomplete
-        value={value}
-        inputValue={inputValue}
-        onChange={(event, newValue) => {
-          setValue(newValue);
-        }}
-        onInputChange={(event, newInputValue) => {
-          setInputValue(newInputValue);
-        }}
-        options={top100Films}
-        getOptionLabel={(option) => option.title}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            variant="outlined"
-            placeholder="Find or create a parent"
-          />
-        )}
-        noOptionsText={
-          <Button onClick={handleClickOpen}>
-            {inputValue === "" ? (
-              "Please enter 1 or more character"
-            ) : (
-              <span>
-                Add &nbsp;<b>{inputValue}</b>&nbsp;as a new parent
-              </span>
-            )}
-          </Button>
-        }
-      />
-
       <BootstrapDialog
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"

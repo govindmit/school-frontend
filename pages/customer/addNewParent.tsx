@@ -83,6 +83,9 @@ export default function AddNewParent(props: any) {
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+
+  const [open, setOpen] = React.useState(false);
+
   const {
     register,
     handleSubmit,
@@ -116,6 +119,7 @@ export default function AddNewParent(props: any) {
           setshowspinner(false);
           setBtnDisabled(false);
           toast.success("Customer Added Successfully !");
+          localStorage.setItem("currentParentId", data.data.data.insertId);
         }
       })
       .catch((error) => {
