@@ -109,6 +109,7 @@ type FormValues = {
   number: number;
   contactName: string;
   printUs: string;
+  parentId: number;
 };
 
 export default function AddCustomer({
@@ -118,8 +119,7 @@ export default function AddCustomer({
   open: any;
   closeDialog: any;
 }) {
-  const router = useRouter();
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = React.useState<any>(0);
   const [spinner, setshowspinner] = React.useState(false);
   const [custtype, setcusttype] = React.useState<any>([]);
   const [btnDisabled, setBtnDisabled] = React.useState(false);
@@ -138,24 +138,8 @@ export default function AddCustomer({
   }
 
   React.useEffect(() => {
-    getUser();
     getType();
   }, []);
-
-  const getUser = async () => {
-    const url = `${api_url}/getuser`;
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          Authorization: auth_token,
-        },
-      });
-      const res = await response.json();
-    } catch (error) {
-      console.log("error", error);
-    }
-  };
 
   //get type
   const getType = async () => {
@@ -177,6 +161,7 @@ export default function AddCustomer({
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<FormValues>();
 
@@ -192,7 +177,9 @@ export default function AddCustomer({
       contactName: data.contactName,
       printUs: data.printUs,
       roleId: 2,
+      parentId: value.id,
     };
+    console.log(reqData);
     await axios({
       method: "POST",
       url: `${api_url}/addUser`,
@@ -206,6 +193,7 @@ export default function AddCustomer({
           setshowspinner(false);
           setBtnDisabled(false);
           toast.success("Customer Added Successfully !");
+          reset();
         }
       })
       .catch((error) => {

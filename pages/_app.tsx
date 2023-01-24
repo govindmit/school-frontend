@@ -7,7 +7,9 @@ import "../styles/dashboard.css";
 import "../styles/customer.css";
 import "../styles/globals.css";
 import "../styles/addinvoice.css";
+import { useState } from "react";
 
 export default function App({ Component, pageProps }: AppProps) {
+  const [data, setdata] = useState<any>([]);
   return <Component {...pageProps} />;
 }
