@@ -278,3 +278,17 @@ h3.eshead {
 .telegram {
   cursor: pointer;
 }
+.clabel {
+  margin-bottom: 13px;
+}
+.hh {
+  width: 201px;
+}
+.iadiv {
+  display: flex;
+}
+h5.apply {
+  margin: 3px;
+  font-size: 16px;
+  padding: -1px;
+}
