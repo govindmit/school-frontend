@@ -8,10 +8,11 @@ import {
   TextField,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { api_url, auth_token } from "./api/hello";
 import CloseIcon from "@mui/icons-material/Close";
 import styled from "@emotion/styled";
-import { api_url, auth_token } from "../api/hello";
-import AddNewParent from "../customer/addNewParent";
+import AddNewParent from "./customer/addNewParent";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({}));
 export interface DialogTitleProps {
@@ -42,17 +43,26 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
   );
 }
 
-export default function AddCustomerCmp() {
-  const [Open, setOpen] = React.useState(true);
+type FormValues = {};
+
+export default function App() {
   const [users, setUsers] = useState<any>([]);
   const [opens, setOpens] = React.useState(false);
-  const [inputValue, setInputValue] = useState("");
   const [value, setValue] = useState<any>({});
-  // const id = localStorage.getItem("currentParentId");
+  const [inputValue, setInputValue] = useState<any>("");
+
+  const { handleSubmit } = useForm<FormValues>();
+
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    console.log(data);
+    const reqdata = {
+      parentId: value.id,
+    };
+    console.log("req data", reqdata);
+  };
 
   useEffect(() => {
     getUser();
-    //getUserByid();
   }, []);
   const getUser = async () => {
     const url = `${api_url}/getuser`;
@@ -69,23 +79,6 @@ export default function AddCustomerCmp() {
       console.log("error", error);
     }
   };
-
-  // const getUserByid = async () => {
-  //   const url = `${api_url}/getuserdetails/${id}`;
-  //   try {
-  //     const response = await fetch(url, {
-  //       method: "POST",
-  //       headers: {
-  //         Authorization: auth_token,
-  //       },
-  //     });
-  //     const res = await response.json();
-  //     console.log(res.data);
-  //   } catch (error) {
-  //     console.log("error", error);
-  //   }
-  // };
-
   const option: { id: number; title: string }[] = [];
   users &&
     users.map((data: any, key: any) => {
@@ -101,38 +94,43 @@ export default function AddCustomerCmp() {
     setOpens(false);
   };
 
+  //console.log(value);
+
   return (
     <>
-      <Autocomplete
-        value={value}
-        inputValue={inputValue}
-        onChange={(event, newValue) => {
-          setValue(newValue);
-        }}
-        onInputChange={(event, newInputValue) => {
-          setInputValue(newInputValue);
-        }}
-        options={option}
-        getOptionLabel={(option) => option.title}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            variant="outlined"
-            placeholder="Find or create a parent"
-          />
-        )}
-        noOptionsText={
-          <Button onClick={handleClickOpen}>
-            {inputValue === "" ? (
-              "Please enter 1 or more character"
-            ) : (
-              <span>
-                Add &nbsp;<b>{inputValue}</b>&nbsp;as a new parent
-              </span>
-            )}
-          </Button>
-        }
-      />
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Autocomplete
+          //value={value}
+          inputValue={inputValue}
+          onChange={(event, newValue) => {
+            setValue(newValue);
+          }}
+          onInputChange={(event, newInputValue) => {
+            setInputValue(newInputValue);
+          }}
+          options={option}
+          getOptionLabel={(option) => option.title}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              variant="outlined"
+              placeholder="Find or create a parent"
+            />
+          )}
+          noOptionsText={
+            <Button onClick={handleClickOpen}>
+              {inputValue === "" ? (
+                "Please enter 1 or more character"
+              ) : (
+                <span>
+                  Add &nbsp;<b>{inputValue}</b>&nbsp;as a new parent
+                </span>
+              )}
+            </Button>
+          }
+        />
+        <button type="submit">save</button>
+      </form>
 
       <BootstrapDialog
         onClose={handleClose}

@@ -8,9 +8,9 @@ import {
   TextField,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { api_url, auth_token } from "./api/hello";
 import CloseIcon from "@mui/icons-material/Close";
 import styled from "@emotion/styled";
+import { api_url, auth_token } from "./api/hello";
 import AddNewParent from "./customer/addNewParent";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({}));
@@ -42,12 +42,13 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
   );
 }
 
-export default function App() {
+export default function AddCustomerCmp() {
   const [Open, setOpen] = React.useState(true);
   const [users, setUsers] = useState<any>([]);
   const [searchdata, setsearchdata] = useState<any>([]);
   const [opens, setOpens] = React.useState(false);
   const [inputValue, setInputValue] = useState("");
+  const [selected, setSelected] = useState([]);
 
   useEffect(() => {
     getUser();
@@ -100,11 +101,14 @@ export default function App() {
     setOpens(false);
   };
 
+  console.log(selected);
+
   return (
     <>
       <Autocomplete
         open={Open}
         options={option}
+        size="small"
         renderInput={(params) => (
           <>
             <TextField {...params} placeholder="Find or create a parent" />
@@ -122,6 +126,7 @@ export default function App() {
           </Button>
         }
         onInputChange={handleSearch}
+        onChange={(event, value: any) => setSelected(value)}
       />
       <BootstrapDialog
         onClose={handleClose}
@@ -135,7 +140,7 @@ export default function App() {
           New Parent
         </BootstrapDialogTitle>
         <DialogContent dividers>
-          <AddNewParent />
+          <AddNewParent parentName={inputValue} />
         </DialogContent>
       </BootstrapDialog>
     </>

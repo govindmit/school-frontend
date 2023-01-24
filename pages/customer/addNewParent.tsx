@@ -74,7 +74,7 @@ type FormValues = {
   type: number;
 };
 
-export default function AddNewParent() {
+export default function AddNewParent(props: any) {
   const router = useRouter();
   const [value, setValue] = React.useState(0);
   const [spinner, setshowspinner] = React.useState(false);
@@ -83,6 +83,9 @@ export default function AddNewParent() {
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+
+  const [open, setOpen] = React.useState(false);
+
   const {
     register,
     handleSubmit,
@@ -116,6 +119,7 @@ export default function AddNewParent() {
           setshowspinner(false);
           setBtnDisabled(false);
           toast.success("Customer Added Successfully !");
+          localStorage.setItem("currentParentId", data.data.data.insertId);
         }
       })
       .catch((error) => {
@@ -191,6 +195,7 @@ export default function AddNewParent() {
                       placeholder="fiste name..."
                       fullWidth
                       size="small"
+                      defaultValue={props.parentName}
                       {...register("firstName", {
                         required: true,
                       })}
