@@ -74,6 +74,7 @@ type FormValues = {
   number: number;
   contactName: string;
   printUs: string;
+  parentId: number;
 };
 
 export default function AddNewCustomer() {

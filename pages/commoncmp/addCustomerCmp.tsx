@@ -43,12 +43,10 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
 }
 
 export default function AddCustomerCmp() {
-  const [Open, setOpen] = React.useState(true);
   const [users, setUsers] = useState<any>([]);
   const [opens, setOpens] = React.useState(false);
   const [inputValue, setInputValue] = useState("");
   const [value, setValue] = useState<any>({});
-  // const id = localStorage.getItem("currentParentId");
 
   useEffect(() => {
     getUser();
@@ -133,7 +131,6 @@ export default function AddCustomerCmp() {
           </Button>
         }
       />
-
       <BootstrapDialog
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
