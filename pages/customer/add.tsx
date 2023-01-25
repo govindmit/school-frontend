@@ -119,11 +119,8 @@ export default function AddCustomer({
   open: any;
   closeDialog: any;
 }) {
-  const router = useRouter();
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = React.useState<any>(0);
   const [spinner, setshowspinner] = React.useState(false);
-  const [opens, setOpen] = React.useState(open);
-
   const [custtype, setcusttype] = React.useState<any>([]);
   const [btnDisabled, setBtnDisabled] = React.useState(false);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -141,27 +138,8 @@ export default function AddCustomer({
   }
 
   React.useEffect(() => {
-    if (open === true) {
-      setOpen(true);
-    }
-    getUser();
     getType();
   }, []);
-
-  const getUser = async () => {
-    const url = `${api_url}/getuser`;
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          Authorization: auth_token,
-        },
-      });
-      const res = await response.json();
-    } catch (error) {
-      console.log("error", error);
-    }
-  };
 
   //get type
   const getType = async () => {
@@ -183,6 +161,7 @@ export default function AddCustomer({
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<FormValues>();
 
@@ -198,7 +177,9 @@ export default function AddCustomer({
       contactName: data.contactName,
       printUs: data.printUs,
       roleId: 2,
+      parentId: value.id,
     };
+    console.log(reqData);
     await axios({
       method: "POST",
       url: `${api_url}/addUser`,
@@ -211,14 +192,8 @@ export default function AddCustomer({
         if (data.status === 201) {
           setshowspinner(false);
           setBtnDisabled(false);
-          console.log(data.data.data.insertId, "dataaaaaaaaaaaaaaaa");
-          closeDialog(data.data.data.insertId);
-
           toast.success("Customer Added Successfully !");
-
-          setTimeout(() => {
-            setOpen(false);
-          }, 3000);
+          reset();
         }
       })
       .catch((error) => {
@@ -228,21 +203,13 @@ export default function AddCustomer({
       });
   };
 
-  // console.log(closeDialog, "closeDialog");
-  const closeDialogs = () => {
-    closeDialog(false);
-    setOpen(false);
-  };
-  console.log(open, "opennnnnnnnnnnnnn");
-  console.log(opens, "opennnnnnnnnnnnnnsssssssssssssssssssssssssss");
-
   return (
     <BootstrapDialog
       onClose={closeDialog}
       aria-labelledby="customized-dialog-title"
-      open={opens}
+      open={open}
     >
-      <BootstrapDialogTitle id="customized-dialog-title" onClose={closeDialogs}>
+      <BootstrapDialogTitle id="customized-dialog-title" onClose={closeDialog}>
         New Customer
       </BootstrapDialogTitle>
       <DialogContent dividers>

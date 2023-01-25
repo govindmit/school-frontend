@@ -19,7 +19,6 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { api_url, auth_token } from "../api/hello";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
-import { Router, useRouter } from "next/router";
 import "react-toastify/dist/ReactToastify.css";
 
 const style = {
@@ -27,16 +26,13 @@ const style = {
   fontSize: "12px",
   fontWeight: "bold",
 };
-
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
 }
-
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
-
   return (
     <div
       role="tabpanel"
@@ -53,14 +49,12 @@ function TabPanel(props: TabPanelProps) {
     </div>
   );
 }
-
 function a11yProps(index: number) {
   return {
     id: `simple-tab-${index}`,
     "aria-controls": `simple-tabpanel-${index}`,
   };
 }
-
 type FormValues = {
   firstName: string;
   lastName: string;
@@ -73,9 +67,7 @@ type FormValues = {
   status: number;
   type: number;
 };
-
 export default function AddNewParent(props: any) {
-  const router = useRouter();
   const [value, setValue] = React.useState(0);
   const [spinner, setshowspinner] = React.useState(false);
   const [btnDisabled, setBtnDisabled] = React.useState(false);
@@ -84,16 +76,14 @@ export default function AddNewParent(props: any) {
     setValue(newValue);
   };
 
-  const [open, setOpen] = React.useState(false);
-
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<FormValues>();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    console.log(data);
     const reqData = {
       firstName: data.firstName,
       lastName: data.lastName,
@@ -119,7 +109,8 @@ export default function AddNewParent(props: any) {
           setshowspinner(false);
           setBtnDisabled(false);
           toast.success("Customer Added Successfully !");
-          localStorage.setItem("currentParentId", data.data.data.insertId);
+          reset();
+          localStorage.setItem("setpatentpopup", "true");
         }
       })
       .catch((error) => {
@@ -130,24 +121,8 @@ export default function AddNewParent(props: any) {
   };
 
   React.useEffect(() => {
-    getUser();
     getType();
   }, []);
-
-  const getUser = async () => {
-    const url = `${api_url}/getuser`;
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          Authorization: auth_token,
-        },
-      });
-      const res = await response.json();
-    } catch (error) {
-      console.log("error", error);
-    }
-  };
 
   //get type
   const getType = async () => {
@@ -493,6 +468,7 @@ export default function AddNewParent(props: any) {
             size="small"
             sx={{ width: 150 }}
             autoFocus
+            disabled={btnDisabled}
           >
             <b>Create</b>
             <span style={{ fontSize: "2px", paddingLeft: "10px" }}>
