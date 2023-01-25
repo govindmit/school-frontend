@@ -13,6 +13,7 @@ import {
   TableHead,
   Button,
   Box,
+  Pagination,
   styled,
   OutlinedInput,
   Typography,
@@ -46,6 +47,8 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
+import { jsPDF } from "jspdf";
+
 import { useForm, SubmitHandler } from "react-hook-form";
 import {
   setSyntheticLeadingComments,
@@ -97,6 +100,32 @@ export interface FormValues {
   firstName: String;
   recievedPay: any;
 }
+function usePagination(data: any, itemsPerPage: any) {
+  console.log(data, "dataaaaaaaaaaaaaaaaaaaaaaaaaaa", itemsPerPage);
+  const [currentPage, setCurrentPage] = useState(1);
+  const maxPage = Math.ceil(data.length / itemsPerPage);
+
+  function currentData() {
+    const begin = (currentPage - 1) * itemsPerPage;
+    const end = begin + itemsPerPage;
+    return data.slice(begin, end);
+  }
+
+  function next() {
+    setCurrentPage((currentPage) => Math.min(currentPage + 1, maxPage));
+  }
+
+  function prev() {
+    setCurrentPage((currentPage) => Math.max(currentPage - 1, 1));
+  }
+
+  function jump(page: any) {
+    const pageNumber = Math.max(1, page);
+    setCurrentPage((currentPage) => Math.min(pageNumber, maxPage));
+  }
+
+  return { next, prev, jump, currentData, currentPage, maxPage };
+}
 export default function Guardians() {
   let localUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -112,6 +141,17 @@ export default function Guardians() {
   const [error, setError] = useState<any>("");
   const [dollerOpen, setDollerOpen] = useState(false);
   const [recievedPay, setRecieved] = useState<FormValues | any>([]);
+  let [page, setPage] = useState(1);
+  const [searchdata, setsearchdata] = useState([]);
+  const [row_per_page, set_row_per_page] = useState(5);
+  const [searchquery, setsearchquery] = useState("");
+  const PER_PAGE = 5;
+  const count = Math.ceil(user.length / PER_PAGE);
+  const DATA = usePagination(user, PER_PAGE);
+  const handlePageChange = (e: any, p: any) => {
+    setPage(p);
+    DATA.jump(p);
+  };
 
   const handleClickOpen = (item: any) => {
     console.log(item);
@@ -151,6 +191,7 @@ export default function Guardians() {
       .then((res) => {
         console.log(res, "ressssss");
         setUser(res?.data.data);
+        setsearchdata(res?.data.data);
       })
       .catch((err) => {
         console.log(err, "err");
@@ -252,16 +293,14 @@ export default function Guardians() {
         console.log(err, "err");
       });
   };
+
   const searchItems = (e: any) => {
-    console.log(e.target.value, "eeeeeeeeeeeeee");
+    setsearchquery(e.target.value);
     if (e.target.value === "") {
-      // setUsers(searchdata);
-      getUser();
+      setUser(searchdata);
     } else {
       const filterres = user.filter((item: any) => {
-        return item.firstName
-          .toLowerCase()
-          .includes(e.target.value.toLowerCase());
+        return item.name.toLowerCase().includes(e.target.value.toLowerCase());
       });
       const dtd = filterres;
       setUser(dtd);
@@ -309,6 +348,9 @@ export default function Guardians() {
     console.log("email send");
   };
 
+  function handlerowchange(e: any) {
+    set_row_per_page(e.target.value);
+  }
   const pending = user.filter((a: any) => a.status == "pending");
   const paid = user.filter((a: any) => a.status == "paid");
   const draft = user.filter((a: any) => a.status == "draft");
@@ -414,7 +456,7 @@ export default function Guardians() {
                                         freeSolo
                                         options={user}
                                         getOptionLabel={(option: any) =>
-                                          option?.firstName
+                                          option?.name
                                         }
                                         renderInput={(params: any) => (
                                           <TextField
@@ -585,8 +627,8 @@ export default function Guardians() {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {user &&
-                            user.map((item: any) => (
+                          {DATA.currentData() &&
+                            DATA.currentData().map((item: any) => (
                               <TableRow hover tabIndex={-1} role="checkbox">
                                 <TableCell padding="checkbox">
                                   <Checkbox />
@@ -598,9 +640,7 @@ export default function Guardians() {
                                 >
                                   <TableCell align="left">{item.id}</TableCell>
                                 </TableCell>
-                                <TableCell align="left">
-                                  {item.firstName} &nbsp; {item.lastName}
-                                </TableCell>
+                                <TableCell align="left">{item.name}</TableCell>
                                 <TableCell align="left">
                                   {/* {item.generate_date_time.slice(0, 10)} */}
                                   {moment(
@@ -676,6 +716,36 @@ export default function Guardians() {
                             ))}
                         </TableBody>
                       </Table>
+                      <Stack
+                        style={{
+                          marginBottom: "10px",
+                          marginRight: "49px",
+                          marginTop: "10px",
+                        }}
+                        direction="row"
+                        alignItems="right"
+                        justifyContent="space-between"
+                      >
+                        <Pagination
+                          count={count}
+                          page={page}
+                          color="primary"
+                          onChange={handlePageChange}
+                        />
+                        <FormControl>
+                          <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            defaultValue={5}
+                            onChange={handlerowchange}
+                            size="small"
+                          >
+                            <MenuItem value={5}>5</MenuItem>
+                            <MenuItem value={20}>20</MenuItem>
+                            <MenuItem value={50}>50</MenuItem>
+                          </Select>
+                        </FormControl>
+                      </Stack>
                     </TableContainer>
                   </Card>
                 </Container>
