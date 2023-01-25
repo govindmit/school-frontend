@@ -11,6 +11,7 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 import Autocomplete from "@mui/material/Autocomplete";
+import { useRouter } from "next/router";
 
 import { useEffect, useState } from "react";
 import MiniDrawer from "../sidebar";
@@ -31,6 +32,8 @@ import { Button, OutlinedInput } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import ETable from "../table";
 import AddNewCustomer from "../customer/addNewCustomer";
+import AddCustomer from "../customer/addNewCustomer";
+import AddItem from "./additem";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -82,6 +85,9 @@ export interface FormValues {
   name: String;
   price: String;
   description: any;
+  customerName: string;
+  date: string;
+  Customername: string;
 }
 const rowss = [
   { id: 1, lastName: "Snow", firstName: "Jon", age: 35 },
@@ -220,14 +226,15 @@ export default function Guardians() {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState<any>({});
   const [opens, setOpens] = useState(false);
+  const [userID, setUserId] = useState<FormValues | any>([]);
 
   const [user, setUser] = useState<FormValues | any>([]);
-  const [invoiceId, setInvoiceId] = useState();
-  const [sdata, setUserId] = useState<FormValues | any>([]);
-  const [id, setId] = useState();
   const [dollerOpen, setDollerOpen] = useState(false);
   const [popup, setSecondPop] = useState(false);
   const [inputValue, setInputValue] = useState<FormValues | any>([]);
+  const [newCustOpen, setnewCustOpen] = useState(false);
+  const [id, setId] = useState<FormValues | any>([]);
+  const [date, setDate] = useState<FormValues | any>([]);
 
   const [item, setItem] = useState<FormValues | any>([]);
   const [product, setProduct] = useState<FormValues | any>([]);
@@ -309,25 +316,37 @@ export default function Guardians() {
   const onclose = () => {
     setSecondPop(false);
   };
+  const router = useRouter();
 
   const onSubmit: SubmitHandler<FormValues> = async (data: any) => {
-    let reqData = {
-      name: data.name,
-      price: data.price,
-      description: data.description,
+    const dates = new Date();
+
+    const invoiceDate = moment(data.date).format("DD/MM/YYYY");
+    const createdDate = moment(dates).format("DD/MM/YYYY");
+
+    console.log(moment(dates).format("DD/MM/YYYY"), "date");
+    const requestedData = {
+      itemId: selected,
+      amount: price,
+      status: "pending",
+      createdDate: createdDate,
+      createdBy: "1",
+      invoiceDate: invoiceDate,
+      customerId: userID.id,
     };
+    console.log(requestedData, "requestedData");
 
     await axios({
       method: "POST",
-      url: `${api_url}/createItem`,
-      data: reqData,
+      url: `${api_url}/createInvoice`,
+      data: requestedData,
       headers: {
         "content-type": "multipart/form-data",
       },
     })
       .then((res) => {
-        getItem();
-        setSecondPop(false);
+        router.push("/admin/invoices");
+
         reset();
       })
       .catch((err) => {});
@@ -348,6 +367,12 @@ export default function Guardians() {
   };
 
   useEffect(() => {
+    let cusId = localStorage.getItem("customerId");
+
+    console.log(cusId, "custID");
+    // if (cusId) {
+    //   setOpens(false);
+    // }
     getUser();
     getItem();
   }, []);
@@ -404,7 +429,6 @@ export default function Guardians() {
       },
     })
       .then((res) => {
-        console.log(res.data.data, "responseeeeeeeeeeeeeee");
         setUser(res?.data.data);
       })
       .catch((err) => {});
@@ -426,7 +450,58 @@ export default function Guardians() {
   const handleClickOpen = () => {
     setOpens(true);
   };
+  const handleClose = (data: any) => {
+    if (data === false) {
+      getUser();
+      setOpens(false);
 
+      console.log(
+        data,
+        "......................................................x"
+      );
+    } else {
+      setId(data);
+      getUser();
+      setOpens(false);
+
+      console.log(data, "..................id");
+    }
+  };
+
+  const handlePopup = (stats: any) => {
+    if (stats === false) {
+      getItem();
+      setSecondPop(false);
+
+      console.log(
+        stats,
+        "......................................................x"
+      );
+    } else {
+      getItem();
+      setSecondPop(false);
+    }
+
+    if (stats) {
+      console.log(stats, "statsssssssssssssss");
+    }
+  };
+  // const handleSave = () => {
+  //   // let cusId = localStorage.getItem("customerId");
+  //   console.log(moment(date).format("DD/MM/YYYY"), "date");
+  //   const requestedData = {
+  //     itemId: selected,
+  //     amount: price,
+  //     status: "pending",
+  //     createdDate: "19/01/2023",
+  //     createdBy: "1",
+  //     invoiceDate: "28/01/2023",
+  //     customerId: id,
+  //   };
+  //   console.log(requestedData, "requestedData");
+  // };
+
+  console.log(user, "userrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
   return (
     <>
       <Box sx={{ display: "flex" }}>
@@ -434,423 +509,334 @@ export default function Guardians() {
 
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <div className="guardianBar">
-            <div className="bars">
-              <div>
-                <span className="smallHeading">Home</span>&nbsp;
-                <span>&gt;</span> &nbsp;{" "}
-                <span className="secondHeading">Create Invoices</span>
-              </div>
-              <div className="cinvoice">
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="bars">
                 <div>
-                  <span className="GItitle">CREATE INVOICES</span>
+                  <span className="smallHeading">Home</span>&nbsp;
+                  <span>&gt;</span> &nbsp;{" "}
+                  <span className="secondHeading">Create Invoices</span>
                 </div>
-                <div className="isave">
-                  <BootstrapButton type="button">Save as Draft</BootstrapButton>
-
-                  <BootstrapButton type="button">Save & issue</BootstrapButton>
-                </div>
-                {/* <Button sx={{ margin: "7px" }} type="button">
-                    Add Guardians
-                  </Button> */}
-              </div>
-            </div>
-            <div className="midBar">
-              <div className="guardianList">
-                <div>Required</div>
-                <div className="aititle">
+                <div className="cinvoice">
                   <div>
-                    {" "}
-                    <Image
-                      className="iaimg"
-                      src="/favicon.ico"
-                      alt="Picture of the author"
-                      width={65}
-                      height={62}
-                    />
+                    <span className="GItitle">CREATE INVOICES</span>
                   </div>
-                  <div className="iatitle">
-                    <span className="iahead">Qatar International School</span>
-                    <span className="line">
-                      Qatar international school W.L.L
-                    </span>
-                    <span className="line">
-                      United Nations St, West Bay, P.O. Box: 5697
-                    </span>
-                    <span className="line">Doha, Qatar</span>
-                  </div>
-                  <div className="itele">
-                    <span className="Tline">Telephone: 443434343</span>
-                    <span className="Tline">Website: www.qis.org</span>
-                    <span className="Tline">Email: qisfinance@qis.org</span>
-                  </div>
-                </div>
-                <div className="icenter">
-                  <div className="invoice">
-                    <span className="iainvoice">Invoice</span>
-                  </div>
-                </div>
-                <div className="ickks">
-                  <div className="ickk">
-                    <InputLabel htmlFor="name">
-                      Customer <span className="err_str">*</span>
-                    </InputLabel>
-                    <Autocomplete
-                      style={{ width: 300 }}
-                      fullWidth
-                      value={value}
-                      inputValue={inputValue}
-                      onChange={(event, newValue) => {
-                        setValue(newValue);
-                      }}
-                      onInputChange={(event, newInputValue) => {
-                        setInputValue(newInputValue);
-                      }}
-                      options={user}
-                      getOptionLabel={(option) => option.firstname}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          variant="outlined"
-                          placeholder="Find or create a parent"
-                        />
-                      )}
-                      noOptionsText={
-                        <Button onClick={handleClickOpen}>
-                          {inputValue === "" ? (
-                            "Please enter 1 or more character"
-                          ) : (
-                            <span>
-                              Add &nbsp;<b>{inputValue}</b>&nbsp;as a new parent
-                            </span>
-                          )}
-                        </Button>
-                      }
-                    />
-                  </div>
-                  <div className="invoicedateField">
-                    <InputLabel htmlFor="name"></InputLabel>
-                    <OutlinedInput
-                      type="text"
-                      id="name"
-                      placeholder="# Generate If blank"
-                      fullWidth
-                    />
-                    <InputLabel id="demo-select-small"></InputLabel>
-                    &nbsp; &nbsp;
-                    <TextField
-                      placeholder="Date"
-                      fullWidth
-                      InputLabelProps={{
-                        shrink: true,
-                        required: true,
-                      }}
-                      type="date"
+                  <div className="isave">
+                    <BootstrapButton type="submit">
+                      Save as Draft
+                    </BootstrapButton>
 
-                      // defaultValue={values.someDate}
-                    />
-                  </div>
-                </div>
-                <div className="invoiceItem">
-                  <TableContainer component={Paper}>
-                    <Table sx={{ minWidth: 500 }} aria-label="simple table">
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>Item</TableCell>
-                          <TableCell>Quantity</TableCell>
-                          <TableCell>Rate</TableCell>
-                          <TableCell>Amount</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {product.map((row: any) => (
-                          <TableRow
-                            key={row.name}
-                            // sx={{
-                            //   "&:last-child td, &:last-child th": { border: 0 },
-                            // }}
-                          >
-                            <TableCell component="th" scope="row">
-                              {row.name}
-                            </TableCell>
-                            <TableCell>1</TableCell>
-                            <TableCell>{row.price}</TableCell>
-                            <TableCell>{row.price}</TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                  &nbsp;&nbsp;
-                  <div>
-                    <BootstrapButton
-                      className="itembtn"
-                      onClick={handleItem}
-                      type="button"
-                    >
-                      Add items
+                    <BootstrapButton type="button">
+                      Save & issue
                     </BootstrapButton>
                   </div>
+                  {/* <Button sx={{ margin: "7px" }} type="button">
+                    Add Guardians
+                  </Button> */}
                 </div>
-                &nbsp;&nbsp;
-                <div className="invoiceSubTotal">
-                  <div>
-                    <InputLabel id="demo-select-small">Notes:</InputLabel>
-
-                    <OutlinedInput
-                      className="invoiceNote"
-                      size="medium"
-                      type="text"
-                      id="name"
-                      placeholder="Please select a customer"
-                    />
+              </div>
+              <div className="midBar">
+                <div className="guardianList">
+                  <div>Required</div>
+                  <div className="aititle">
+                    <div>
+                      {" "}
+                      <Image
+                        className="iaimg"
+                        src="/favicon.ico"
+                        alt="Picture of the author"
+                        width={65}
+                        height={62}
+                      />
+                    </div>
+                    <div className="iatitle">
+                      <span className="iahead">Qatar International School</span>
+                      <span className="line">
+                        Qatar international school W.L.L
+                      </span>
+                      <span className="line">
+                        United Nations St, West Bay, P.O. Box: 5697
+                      </span>
+                      <span className="line">Doha, Qatar</span>
+                    </div>
+                    <div className="itele">
+                      <span className="Tline">Telephone: 443434343</span>
+                      <span className="Tline">Website: www.qis.org</span>
+                      <span className="Tline">Email: qisfinance@qis.org</span>
+                    </div>
                   </div>
-                  <div className="invoiceTotalamount">
-                    <div className="sdiv">
-                      <div className="sidiv">Subtotal</div>
-                      <div>$ &nbsp;{price}</div>
+                  <div className="icenter">
+                    <div className="invoice">
+                      <span className="iainvoice">Invoice</span>
                     </div>
-                    <div className="sdiv">
-                      <div className="sidiv">Total</div>
-                      <div>$ &nbsp;{price}</div>
+                  </div>
+                  <div className="ickks">
+                    <div className="ickk">
+                      <InputLabel htmlFor="name">
+                        Customer <span className="err_str">*</span>
+                      </InputLabel>
+                      <Autocomplete
+                        style={{ width: 300 }}
+                        fullWidth
+                        // value={value}
+                        inputValue={inputValue}
+                        onChange={(event, value) => setUserId(value)}
+                        // onChange={(event, newValue) => {
+                        //   setValue(newValue);
+                        // }}
+                        onInputChange={(event, newInputValue) => {
+                          setInputValue(newInputValue);
+                        }}
+                        options={user}
+                        getOptionLabel={(option: any) => option.name}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            variant="outlined"
+                            placeholder="Find or create a parent"
+                          />
+                        )}
+                        noOptionsText={
+                          <Button onClick={handleClickOpen}>
+                            {inputValue === "" ? (
+                              "Please enter 1 or more character"
+                            ) : (
+                              <span>
+                                Add &nbsp;<b>{inputValue}</b>&nbsp;as a new
+                                parent
+                              </span>
+                            )}
+                          </Button>
+                        }
+                        // {...register("Customername", {
+                        //   required: true,
+                        // })}
+                      />
+                      {/* <Typography style={style}>
+                        {errors.Customername ? (
+                          <span>Feild is Required **</span>
+                        ) : (
+                          ""
+                        )}
+                      </Typography> */}
                     </div>
-                    <div className="sdiv">
-                      <div className="sidiv">Amount Paid</div>
-                      <div>$ &nbsp;0.00</div>
+                    <div className="invoicedateField">
+                      <InputLabel htmlFor="name"></InputLabel>
+                      <OutlinedInput
+                        type="text"
+                        id="name"
+                        placeholder="# Generate If blank"
+                        fullWidth
+                      />
+                      <InputLabel id="demo-select-small"></InputLabel>
+                      &nbsp; &nbsp;
+                      <TextField
+                        // onChange={(e) => setDate(e.target.value)}
+                        placeholder="Date"
+                        fullWidth
+                        InputLabelProps={{
+                          shrink: true,
+                          required: true,
+                        }}
+                        type="date"
+                        // defaultValue={values.someDate}
+                        {...register("date", {
+                          required: true,
+                        })}
+                      />
+                      <Typography style={style}>
+                        {errors.date ? <span>Feild is Required **</span> : ""}
+                      </Typography>
                     </div>
-                    <div className="sdiv">
-                      <div className="sidiv">Balance Due</div>
-                      <div>$ &nbsp;{price}</div>
+                  </div>
+                  <div className="invoiceItem">
+                    <TableContainer component={Paper}>
+                      <Table sx={{ minWidth: 500 }} aria-label="simple table">
+                        <TableHead>
+                          <TableRow>
+                            <TableCell>Item</TableCell>
+                            <TableCell>Quantity</TableCell>
+                            <TableCell>Rate</TableCell>
+                            <TableCell>Amount</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {product.map((row: any) => (
+                            <TableRow
+                              key={row.name}
+                              // sx={{
+                              //   "&:last-child td, &:last-child th": { border: 0 },
+                              // }}
+                            >
+                              <TableCell component="th" scope="row">
+                                {row.name}
+                              </TableCell>
+                              <TableCell>1</TableCell>
+                              <TableCell>{row.price}</TableCell>
+                              <TableCell>{row.price}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                    &nbsp;&nbsp;
+                    <div>
+                      <BootstrapButton
+                        className="itembtn"
+                        onClick={handleItem}
+                        type="button"
+                      >
+                        Add items
+                      </BootstrapButton>
+                    </div>
+                  </div>
+                  &nbsp;&nbsp;
+                  <div className="invoiceSubTotal">
+                    <div>
+                      <InputLabel id="demo-select-small">Notes:</InputLabel>
+
+                      <OutlinedInput
+                        className="invoiceNote"
+                        size="medium"
+                        type="text"
+                        id="name"
+                        placeholder="Please select a customer"
+                      />
+                    </div>
+                    <div className="invoiceTotalamount">
+                      <div className="sdiv">
+                        <div className="sidiv">Subtotal</div>
+                        <div>$ &nbsp;{price}</div>
+                      </div>
+                      <div className="sdiv">
+                        <div className="sidiv">Total</div>
+                        <div>$ &nbsp;{price}</div>
+                      </div>
+                      <div className="sdiv">
+                        <div className="sidiv">Amount Paid</div>
+                        <div>$ &nbsp;0.00</div>
+                      </div>
+                      <div className="sdiv">
+                        <div className="sidiv">Balance Due</div>
+                        <div>$ &nbsp;{price}</div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div>
-              <BootstrapDialog
-                onClose={handleCloses}
-                aria-labelledby="customized-dialog-title"
-                open={dollerOpen}
-              >
-                <BootstrapDialogTitle
-                  id="customized-dialog-title"
+              <div>
+                <BootstrapDialog
                   onClose={handleCloses}
+                  aria-labelledby="customized-dialog-title"
+                  open={dollerOpen}
                 >
-                  Add Items
-                </BootstrapDialogTitle>
-                <DialogContent dividers>
-                  <Box sx={{ width: "100%" }}>
-                    <div className="hhh">
-                      <div className="invoiceInput">
-                        <OutlinedInput
-                          onChange={(e) => searchItems(e)}
-                          type="text"
-                          id="name"
-                          placeholder="Search"
-                          fullWidth
-                          size="small"
-                        />
+                  <BootstrapDialogTitle
+                    id="customized-dialog-title"
+                    onClose={handleCloses}
+                  >
+                    Add Items
+                  </BootstrapDialogTitle>
+                  <DialogContent dividers>
+                    <Box sx={{ width: "100%" }}>
+                      <div className="hhh">
+                        <div className="invoiceInput">
+                          <OutlinedInput
+                            onChange={(e) => searchItems(e)}
+                            type="text"
+                            id="name"
+                            placeholder="Search"
+                            fullWidth
+                            size="small"
+                          />
+                        </div>
+                        <div>
+                          <Button onClick={handleNew}>New</Button>
+                        </div>
                       </div>
-                      <div>
-                        <Button onClick={handleNew}>New</Button>
-                      </div>
-                    </div>
-                    <Paper sx={{ width: "100%", mb: 2 }}>
-                      <TableContainer>
-                        <Table
-                          sx={{ minWidth: 550 }}
-                          aria-labelledby="tableTitle"
-                          size="small"
-                        >
-                          <TableBody>
-                            {item.map((row: any) => {
-                              const isItemSelected = isSelected(row.id);
-                              const labelId = `enhanced-table-checkbox-${row.id}`;
+                      <Paper sx={{ width: "100%", mb: 2 }}>
+                        <TableContainer>
+                          <Table
+                            sx={{ minWidth: 550 }}
+                            aria-labelledby="tableTitle"
+                            size="small"
+                          >
+                            <TableBody>
+                              {item.map((row: any) => {
+                                const isItemSelected = isSelected(row.id);
+                                const labelId = `enhanced-table-checkbox-${row.id}`;
 
-                              return (
-                                <TableRow
-                                  hover
-                                  onClick={(event) =>
-                                    handleClick(event, row.id)
-                                  }
-                                  role="checkbox"
-                                  aria-checked={isItemSelected}
-                                  tabIndex={-1}
-                                  key={row.name}
-                                  selected={isItemSelected}
-                                >
-                                  <TableCell padding="checkbox"></TableCell>
-                                  <TableCell
-                                    component="th"
-                                    id={labelId}
-                                    scope="row"
-                                    padding="none"
+                                return (
+                                  <TableRow
+                                    hover
+                                    onClick={(event) =>
+                                      handleClick(event, row.id)
+                                    }
+                                    role="checkbox"
+                                    aria-checked={isItemSelected}
+                                    tabIndex={-1}
+                                    key={row.name}
+                                    selected={isItemSelected}
                                   >
-                                    <div className="table">
-                                      <div>{row.name}</div>
-                                      <div>{row.price}</div>
-                                    </div>
-                                  </TableCell>
-                                  {isItemSelected ? (
-                                    <span className="selectss">selected</span>
-                                  ) : (
-                                    <span className="plus">+</span>
-                                  )}
-                                  {/* <TableCell align="right">{row.protein}</TableCell> */}
-                                </TableRow>
-                              );
-                            })}
-                          </TableBody>
-                        </Table>
-                      </TableContainer>
-                    </Paper>
-                    <div>
-                      {selected.length > 0 ? (
-                        <Typography
-                          sx={{ flex: "1 1 100%" }}
-                          color="inherit"
-                          variant="subtitle1"
-                          component="div"
-                        >
-                          {selected.length} selected
-                        </Typography>
-                      ) : (
-                        <Typography
-                          sx={{ flex: "1 1 100%" }}
-                          variant="h6"
-                          id="tableTitle"
-                          component="div"
-                        ></Typography>
-                      )}
-                    </div>
-                  </Box>{" "}
-                </DialogContent>
-                <DialogActions>
-                  <Button variant="contained" autoFocus onClick={handleCreate}>
-                    Create
-                  </Button>
-                </DialogActions>
-              </BootstrapDialog>
-            </div>
+                                    <TableCell padding="checkbox"></TableCell>
+                                    <TableCell
+                                      component="th"
+                                      id={labelId}
+                                      scope="row"
+                                      padding="none"
+                                    >
+                                      <div className="table">
+                                        <div>{row.name}</div>
+                                        <div>{row.price}</div>
+                                      </div>
+                                    </TableCell>
+                                    {isItemSelected ? (
+                                      <span className="selectss">selected</span>
+                                    ) : (
+                                      <span className="plus">+</span>
+                                    )}
+                                    {/* <TableCell align="right">{row.protein}</TableCell> */}
+                                  </TableRow>
+                                );
+                              })}
+                            </TableBody>
+                          </Table>
+                        </TableContainer>
+                      </Paper>
+                      <div>
+                        {selected.length > 0 ? (
+                          <Typography
+                            sx={{ flex: "1 1 100%" }}
+                            color="inherit"
+                            variant="subtitle1"
+                            component="div"
+                          >
+                            {selected.length} selected
+                          </Typography>
+                        ) : (
+                          <Typography
+                            sx={{ flex: "1 1 100%" }}
+                            variant="h6"
+                            id="tableTitle"
+                            component="div"
+                          ></Typography>
+                        )}
+                      </div>
+                    </Box>{" "}
+                  </DialogContent>
+                  <DialogActions>
+                    <Button
+                      variant="contained"
+                      autoFocus
+                      onClick={handleCreate}
+                    >
+                      Create
+                    </Button>
+                  </DialogActions>
+                </BootstrapDialog>
+              </div>
+            </form>
+            {popup ? <AddItem start={true} closeD={handlePopup} /> : ""}
 
-            <BootstrapDialog
-              onClose={onclose}
-              aria-labelledby="customized-dialog-title"
-              open={popup}
-            >
-              <BootstrapDialogTitle
-                id="customized-dialog-title"
-                onClose={onclose}
-              >
-                New Item
-              </BootstrapDialogTitle>
-              <form onSubmit={handleSubmit(onSubmit)}>
-                <DialogContent dividers className="dialogss">
-                  <Grid>
-                    <Stack>
-                      <Grid container spacing={2}>
-                        <Grid item xs={12} md={14}>
-                          <Stack spacing={1}>
-                            <div className="display">
-                              <div className="label">
-                                <InputLabel htmlFor="name">Name :</InputLabel>
-                              </div>
-                              <div>
-                                <OutlinedInput
-                                  type="text"
-                                  id="name"
-                                  placeholder="Name"
-                                  fullWidth
-                                  {...register("name", {
-                                    required: true,
-                                  })}
-                                />
-                                <Typography style={style}>
-                                  {errors.name ? (
-                                    <span>Feild is Required **</span>
-                                  ) : (
-                                    ""
-                                  )}
-                                </Typography>
-                              </div>
-                            </div>
-                          </Stack>
-                        </Grid>
-                      </Grid>
-                    </Stack>
-                    <Stack>
-                      <Grid container spacing={2}>
-                        <Grid item xs={12} md={14}>
-                          <Stack spacing={1}>
-                            <div className="display">
-                              <div className="label">
-                                <InputLabel htmlFor="name">Price :</InputLabel>
-                              </div>
-                              <div>
-                                <OutlinedInput
-                                  type="number"
-                                  id="name"
-                                  placeholder="price"
-                                  fullWidth
-                                  {...register("price", {
-                                    required: true,
-                                  })}
-                                />
-                                <Typography style={style}>
-                                  {errors.price ? (
-                                    <span>Feild is Required **</span>
-                                  ) : (
-                                    ""
-                                  )}
-                                </Typography>
-                              </div>
-                            </div>
-                          </Stack>
-                        </Grid>
-                      </Grid>
-                    </Stack>
-                    <Stack>
-                      <Grid container spacing={2}>
-                        <Grid item xs={12} md={14}>
-                          <Stack spacing={1}>
-                            <div className="display">
-                              <div className="label">
-                                <InputLabel htmlFor="name">
-                                  Description :
-                                </InputLabel>
-                              </div>
-                              <div>
-                                <TextField
-                                  id="outlined-multiline-static"
-                                  multiline
-                                  rows={4}
-                                  fullWidth
-                                  {...register("description", {
-                                    required: true,
-                                  })}
-                                />
-                                <Typography style={style}>
-                                  {errors.price ? (
-                                    <span>Feild is Required **</span>
-                                  ) : (
-                                    ""
-                                  )}
-                                </Typography>
-                              </div>
-                            </div>
-                          </Stack>
-                        </Grid>
-                      </Grid>
-                    </Stack>
-                  </Grid>
-                </DialogContent>
-                <DialogActions>
-                  <Button variant="contained" type="submit" autoFocus>
-                    Create
-                  </Button>
-                </DialogActions>
-              </form>
-            </BootstrapDialog>
-            {opens ? <AddNewCustomer /> : ""}
+            {opens ? <AddCustomer open={true} closeDialog={handleClose} /> : ""}
           </div>
         </Box>
       </Box>

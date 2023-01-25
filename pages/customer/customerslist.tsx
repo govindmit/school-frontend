@@ -45,7 +45,7 @@ import AddNewCustomer from "./addNewCustomer";
 import ConfirmBox from "../commoncmp/confirmbox";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import AddCustomer from "./add";
+import AddCustomer from "./addNewCustomer";
 function Item(props: BoxProps) {
   const { sx, ...other } = props;
   return <Box sx={{}} {...other} />;
