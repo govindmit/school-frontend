@@ -48,6 +48,7 @@ import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 import {
@@ -55,6 +56,7 @@ import {
   setTokenSourceMapRange,
 } from "typescript";
 import Paper from "@mui/material/Paper";
+import { number } from "yup/lib/locale";
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
     padding: theme.spacing(2),
@@ -99,9 +101,11 @@ export interface FormValues {
   option: String;
   firstName: String;
   recievedPay: any;
+  name: String;
+  description: String;
+  price: String;
 }
 function usePagination(data: any, itemsPerPage: any) {
-  console.log(data, "dataaaaaaaaaaaaaaaaaaaaaaaaaaa", itemsPerPage);
   const [currentPage, setCurrentPage] = useState(1);
   const maxPage = Math.ceil(data.length / itemsPerPage);
 
@@ -141,6 +145,8 @@ export default function Guardians() {
   const [error, setError] = useState<any>("");
   const [dollerOpen, setDollerOpen] = useState(false);
   const [recievedPay, setRecieved] = useState<FormValues | any>([]);
+  // const [items, setItem] = useState<FormValues | any>([]);
+
   let [page, setPage] = useState(1);
   const [searchdata, setsearchdata] = useState([]);
   const [row_per_page, set_row_per_page] = useState(5);
@@ -154,7 +160,6 @@ export default function Guardians() {
   };
 
   const handleClickOpen = (item: any) => {
-    console.log(item);
     setRecieved(item);
     setDollerOpen(true);
   };
@@ -189,13 +194,10 @@ export default function Guardians() {
       },
     })
       .then((res) => {
-        console.log(res, "ressssss");
         setUser(res?.data.data);
         setsearchdata(res?.data.data);
       })
-      .catch((err) => {
-        console.log(err, "err");
-      });
+      .catch((err) => {});
   };
 
   function BootstrapDialogTitle(props: DialogTitleProps) {
@@ -232,10 +234,9 @@ export default function Guardians() {
     let sdate = moment(data.startDate).format("DD/MM/YYYY");
     let edate = moment(data.endDate).format("DD/MM/YYYY");
     var ids: any = [];
-
     if (sdata.length > 0) {
       for (let item of sdata) {
-        ids.push(item?.id);
+        ids.push(item?.customerId);
       }
     }
     let reqData = {
@@ -247,9 +248,6 @@ export default function Guardians() {
       customer: ids,
     };
 
-    console.log(sdata, "sdate");
-    console.log(reqData, "requestedData");
-
     await axios({
       method: "POST",
       url: `${api_url}/getInvoice`,
@@ -259,16 +257,123 @@ export default function Guardians() {
       },
     })
       .then((res) => {
-        console.log(res, "ressssss");
         setUser(res?.data.data);
         reset();
         setUserId("");
       })
-      .catch((err) => {
-        console.log(err, "err");
-      });
+      .catch((err) => {});
   };
 
+  const generateSimplePDF = async (item: any) => {
+    let requested = {
+      id: item.itemId,
+    };
+    await axios({
+      method: "POST",
+      url: `${api_url}/getItembyid`,
+      data: requested,
+
+      headers: {
+        "content-type": "multipart/form-data",
+      },
+    })
+      .then((res) => {
+        // setItem(res?.data.data);
+        let items = res?.data.data;
+        if (res) {
+          setTimeout(() => {
+            var price = 0;
+            for (let d of items) {
+              price = price + d.price;
+            }
+            const doc = new jsPDF("l", "mm", "a4");
+            doc.setFontSize(20);
+
+            doc.text("Qatar International School", 40, 20);
+            doc.setFontSize(10);
+            doc.text("Qatar International School", 40, 25);
+            doc.setFontSize(10);
+            doc.text("United Nations St, West Bay, P.O. Box: 5697", 40, 30);
+            doc.text("Doha, Qatar", 40, 35);
+            doc.text("Telephone: 44833456", 240, 20);
+            doc.text("Website:  www.qis.org", 240, 28);
+            doc.text("Email:  qisfinance@qis.org", 237, 35);
+
+            doc.setFont("courier");
+
+            doc.setFontSize(40);
+
+            doc.text("INVOICE", 120, 60);
+
+            doc.setFontSize(20);
+
+            doc.text("family ID", 30, 90);
+            doc.text(`12`, 100, 90);
+
+            doc.text("Account Number", 30, 100);
+            doc.text("123", 100, 100);
+
+            doc.text("Invoice No", 200, 90);
+            doc.text(`${item.invoiceId}`, 250, 90);
+
+            doc.text("Date", 200, 100);
+            doc.text(`${item.invoiceDate}`, 250, 100);
+
+            const head = [["ITEM", "AMOUNT"]];
+            var data: any = [];
+            // push each tickcet's info into a row
+            // items.map((it: any) => data.push(Object.values(it)));
+            {
+              items && items.length > 1
+                ? items.map((ticket: any) => {
+                    let ticketData = [
+                      ticket.name,
+                      ticket.price,
+
+                      // called date-fns to format the date on the ticket
+                    ];
+                    // push each tickcet's info into a row
+                    data.push(ticketData);
+                  })
+                : data.push([
+                    items && items[0]?.name,
+                    items && items[0]?.price,
+                  ]);
+              // push each tickcet's info into a row
+            }
+            doc.setFontSize(20);
+
+            autoTable(doc, {
+              theme: "plain",
+              margin: { top: 120, left: 50 },
+              tableWidth: 500,
+              styles: { fontSize: 15 },
+              columnStyles: { 0: { halign: "left" } },
+              head: head,
+              body: data,
+
+              didDrawCell: (data: any) => {},
+            });
+            if (items.length > 2) {
+              doc.setFontSize(20);
+              doc.text("Grand Total", 195, 163);
+              doc.setFontSize(15);
+
+              doc.text(`${price}`, 258, 163);
+            } else {
+              doc.setFontSize(20);
+              doc.text("Grand Total", 190, 155);
+              doc.setFontSize(15);
+
+              doc.text(`${price}`, 240, 155);
+            }
+
+            doc.save("Document.pdf");
+          }, 2000);
+        }
+      })
+      .catch((err) => {});
+  };
   useEffect(() => {
     getUser();
   }, []);
@@ -277,7 +382,6 @@ export default function Guardians() {
     handleClose();
   };
   const handleCreate = async (id: any) => {
-    console.log(id, "idddddd");
     await axios({
       method: "PUT",
       url: `${api_url}/updateInvoice/${id}`,
@@ -289,9 +393,7 @@ export default function Guardians() {
         getUser();
         handleCloses();
       })
-      .catch((err) => {
-        console.log(err, "err");
-      });
+      .catch((err) => {});
   };
 
   const searchItems = (e: any) => {
@@ -307,7 +409,6 @@ export default function Guardians() {
     }
   };
   const handleShare = async (item: any) => {
-    console.log(item.id, "itemmmm");
     setInvoiceId(item?.id);
     setShare(true);
   };
@@ -327,9 +428,7 @@ export default function Guardians() {
         getUser();
         handleClose();
       })
-      .catch((err) => {
-        console.log(err, "err");
-      });
+      .catch((err) => {});
   };
   const handleSend = async () => {
     await axios({
@@ -342,10 +441,7 @@ export default function Guardians() {
       .then((res) => {
         setShare(false);
       })
-      .catch((err) => {
-        console.log(err, "err");
-      });
-    console.log("email send");
+      .catch((err) => {});
   };
 
   function handlerowchange(e: any) {
@@ -355,13 +451,10 @@ export default function Guardians() {
   const paid = user.filter((a: any) => a.status == "paid");
   const draft = user.filter((a: any) => a.status == "draft");
 
-  console.log(sdata, "sdata");
   const handleFilter = () => {
     getUser();
-    console.log(user, "click filter");
   };
 
-  console.log(recievedPay, "recievedPay");
   return (
     <>
       <Box sx={{ display: "flex" }}>
@@ -437,12 +530,6 @@ export default function Guardians() {
                                         onChange={(event, value) =>
                                           setUserId(value)
                                         }
-                                        open={open}
-                                        onOpen={() => {
-                                          if (inputValue && inputValue.length) {
-                                            return setOpen(true);
-                                          }
-                                        }}
                                         inputValue={inputValue}
                                         onInputChange={(e, value, reason) => {
                                           setInputValue(value);
@@ -627,7 +714,7 @@ export default function Guardians() {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {DATA.currentData() &&
+                          {DATA.currentData() && DATA.currentData() ? (
                             DATA.currentData().map((item: any) => (
                               <TableRow hover tabIndex={-1} role="checkbox">
                                 <TableCell padding="checkbox">
@@ -663,6 +750,7 @@ export default function Guardians() {
                                   <div className="btn">
                                     <div className="idiv">
                                       <Image
+                                        onClick={() => generateSimplePDF(item)}
                                         src="/download.svg"
                                         alt="Picture of the author"
                                         width={25}
@@ -713,7 +801,10 @@ export default function Guardians() {
                                   </Button> */}
                                 </TableCell>
                               </TableRow>
-                            ))}
+                            ))
+                          ) : (
+                            <h3>No Record found</h3>
+                          )}
                         </TableBody>
                       </Table>
                       <Stack
@@ -837,7 +928,7 @@ export default function Guardians() {
                               Customer <span className="err_str">*</span>
                             </InputLabel>
                             <OutlinedInput
-                              defaultValue={recievedPay.firstName}
+                              defaultValue={recievedPay.name}
                               type="text"
                               id="name"
                               placeholder="Customer Name..."
@@ -939,7 +1030,7 @@ export default function Guardians() {
                   </Grid>
                   <div className="iadiv">
                     <div className="hh">Total Amount:</div>
-                    <div>$1024.00</div>
+                    <div>${recievedPay.amount}</div>
                   </div>
                 </DialogContent>
                 <DialogActions>

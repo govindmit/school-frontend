@@ -345,9 +345,10 @@ export default function Guardians() {
       },
     })
       .then((res) => {
-        router.push("/admin/invoices");
-
-        reset();
+        if (!res) {
+          router.push("/admin/invoices");
+          reset();
+        }
       })
       .catch((err) => {});
   };
