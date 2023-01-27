@@ -42,6 +42,7 @@ build/Release
 node_modules/
 out/
 jspm_packages/
+api/
 
 
 # TypeScript v1 declaration files

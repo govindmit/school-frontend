@@ -28,7 +28,6 @@ import AddCustomerCmp from "../commoncmp/addCustomerCmp";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useRouter } from "next/router";
 import CloseIcon from "@mui/icons-material/Close";
 import styled from "@emotion/styled";
 const style = {
@@ -75,7 +74,6 @@ interface TabPanelProps {
 
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
-
   return (
     <div
       role="tabpanel"
@@ -119,13 +117,11 @@ export default function AddCustomer({
   open: any;
   closeDialog: any;
 }) {
-  const router = useRouter();
   const [value, setValue] = React.useState(0);
   const [spinner, setshowspinner] = React.useState(false);
   const [opens, setOpen] = React.useState(open);
-  const [parentid, setparentid] = React.useState(0);
-
   const [custtype, setcusttype] = React.useState<any>([]);
+  const [parentId, setparentId] = React.useState<any>(0);
   const [btnDisabled, setBtnDisabled] = React.useState(false);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -181,7 +177,6 @@ export default function AddCustomer({
       contactName: data.contactName,
       printUs: data.printUs,
       roleId: 2,
-      parentId: parentid,
     };
     await axios({
       method: "POST",
@@ -196,7 +191,9 @@ export default function AddCustomer({
           setshowspinner(false);
           setBtnDisabled(false);
           toast.success("Customer Added Successfully !");
-          setOpen(false);
+          setTimeout(() => {
+            setOpen(false);
+          }, 2000);
         }
       })
       .catch((error) => {
@@ -212,7 +209,9 @@ export default function AddCustomer({
   };
 
   const Getdata = (item: any) => {
-    setparentid(item.id);
+    if (item) {
+      setparentId(item.id);
+    }
   };
 
   return (

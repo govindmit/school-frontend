@@ -40,8 +40,7 @@ import ConfirmBox from "../commoncmp/confirmbox";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AddCustomer from "./addNewCustomer";
-import PreLoader from "../commoncmp/loader";
-import { useRouter } from "next/router";
+import EditCustomer from "./editcustomer";
 function Item(props: BoxProps) {
   const { sx, ...other } = props;
   return <Box sx={{}} {...other} />;
@@ -87,7 +86,8 @@ export default function CustomerList() {
   const { register, handleSubmit } = useForm<FormValues>();
   const [deleteConfirmBoxOpen, setdeleteConfirmBoxOpen] = React.useState(false);
   const [newCustOpen, setnewCustOpen] = React.useState(false);
-  const router = useRouter();
+  const [editCustOpen, seteditCustOpen] = React.useState(false);
+  const [editid, seteditid] = useState<any>(0);
   useEffect(() => {
     getUser();
     getType();
@@ -214,8 +214,18 @@ export default function CustomerList() {
   function handleNewCustomerOpen() {
     setnewCustOpen(true);
   }
-  const closePoP = (item: any) => {
+  const closePoP = () => {
     setnewCustOpen(false);
+    getUser();
+  };
+
+  //edit customer
+  function handleEditCustomerOpen(id: any) {
+    seteditCustOpen(true);
+    seteditid(id);
+  }
+  const closeEditPoP = () => {
+    seteditCustOpen(false);
     getUser();
   };
 
@@ -678,15 +688,12 @@ export default function CustomerList() {
                                     <BiShow />
                                   </Link>
                                 </IconButton>
-                                <IconButton>
-                                  <Link
-                                    href={"#"}
-                                    style={{
-                                      color: "#DFBF19",
-                                    }}
-                                  >
-                                    <FiEdit />
-                                  </Link>
+                                <IconButton
+                                  onClick={() =>
+                                    handleEditCustomerOpen(dataitem.id)
+                                  }
+                                >
+                                  <FiEdit />
                                 </IconButton>
                                 <IconButton
                                   style={{ color: "#F95A37" }}
@@ -734,6 +741,15 @@ export default function CustomerList() {
       </Box>
       {newCustOpen ? (
         <AddCustomer open={newCustOpen} closeDialog={closePoP} />
+      ) : (
+        ""
+      )}
+      {editCustOpen ? (
+        <EditCustomer
+          id={editid}
+          open={editCustOpen}
+          closeDialogedit={closeEditPoP}
+        />
       ) : (
         ""
       )}

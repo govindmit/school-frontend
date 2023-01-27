@@ -24,11 +24,18 @@ import {
 } from "@mui/material";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { api_url, auth_token } from "../api/hello";
+import AddCustomerCmp from "../commoncmp/addCustomerCmp";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from "next/router";
+import CloseIcon from "@mui/icons-material/Close";
 import styled from "@emotion/styled";
-import { GridCloseIcon } from "@mui/x-data-grid";
+const style = {
+  color: "red",
+  fontSize: "12px",
+  fontWeight: "bold",
+};
 
 //dialog box
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({}));
@@ -53,18 +60,12 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
             color: (theme) => theme.palette.grey[500],
           }}
         >
-          <GridCloseIcon />
+          <CloseIcon />
         </IconButton>
       ) : null}
     </DialogTitle>
   );
 }
-
-const style = {
-  color: "red",
-  fontSize: "12px",
-  fontWeight: "bold",
-};
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -74,6 +75,7 @@ interface TabPanelProps {
 
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
+
   return (
     <div
       role="tabpanel"
@@ -90,6 +92,7 @@ function TabPanel(props: TabPanelProps) {
     </div>
   );
 }
+
 function a11yProps(index: number) {
   return {
     id: `simple-tab-${index}`,
@@ -99,79 +102,49 @@ function a11yProps(index: number) {
 
 type FormValues = {
   name: string;
+  status: number;
+  customertype: number;
   email1: string;
   email2: string;
-  phone1: number;
-  phone2: number;
+  number: number;
   contactName: string;
   printUs: string;
-  status: number;
-  type: number;
+  parentId: number;
 };
 
-export default function AddNewParent({
+export default function EditCustomer({
+  id,
   open,
-  closeDialog,
-  name,
+  closeDialogedit,
 }: {
+  id: any;
   open: any;
-  closeDialog: any;
-  name: any;
+  closeDialogedit: any;
 }) {
-  const [value, setValue] = React.useState(0);
+  const router = useRouter();
+  const [selvalue, setselValue] = React.useState(0);
   const [spinner, setshowspinner] = React.useState(false);
-  const [btnDisabled, setBtnDisabled] = React.useState(false);
+  const [opens, setOpen] = React.useState(open);
+  const [parentid, setparentid] = React.useState(0);
   const [custtype, setcusttype] = React.useState<any>([]);
+  const [btnDisabled, setBtnDisabled] = React.useState(false);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
+    setselValue(newValue);
   };
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<FormValues>();
-
-  const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    const reqData = {
-      name: data.name,
-      email1: data.email1,
-      email2: data.email2,
-      phone1: data.phone1,
-      phone2: data.phone2,
-      contactName: data.contactName,
-      printUs: data.printUs,
-      status: data.status,
-      type: data.type,
+  const [Check, setCheck] = React.useState(false);
+  if (Check === true) {
+    var hideshowstyle = {
+      display: "block",
     };
-
-    await axios({
-      method: "POST",
-      url: `${api_url}/addUser`,
-      data: reqData,
-      headers: {
-        Authorization: auth_token,
-      },
-    })
-      .then((data) => {
-        if (data.status === 201) {
-          setshowspinner(false);
-          setBtnDisabled(false);
-          toast.success("Customer Added Successfully !");
-          reset();
-          closeDialog(false);
-        }
-      })
-      .catch((error) => {
-        toast.error("Email Allready Registred !");
-        setshowspinner(false);
-        setBtnDisabled(false);
-      });
-  };
+  } else {
+    var hideshowstyle = {
+      display: "none",
+    };
+  }
 
   React.useEffect(() => {
     getType();
+    getUserDet();
   }, []);
 
   //get type
@@ -191,25 +164,91 @@ export default function AddNewParent({
     }
   };
 
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<FormValues>();
+
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    setshowspinner(true);
+    setBtnDisabled(true);
+    const reqData = {
+      name: data.name,
+      email1: data.email1,
+      email2: data.email2,
+      phone1: data.number,
+      contactName: data.contactName,
+      printUs: data.printUs,
+    };
+    await axios({
+      method: "PUT",
+      url: `${api_url}/edituser/${id}`,
+      data: reqData,
+      headers: {
+        Authorization: auth_token,
+      },
+    })
+      .then((data) => {
+        if (data.status === 201) {
+          setshowspinner(false);
+          setBtnDisabled(false);
+          toast.success("Customer Updated Successfully !");
+          setOpen(false);
+        }
+      })
+      .catch((error) => {
+        toast.error("Email Allready Registred !");
+        setshowspinner(false);
+        setBtnDisabled(false);
+      });
+  };
+
+  const getUserDet = async () => {
+    try {
+      const response = await fetch(`${api_url}/getuserdetails/${id}`, {
+        method: "GET",
+        headers: {
+          Authorization: auth_token,
+        },
+      });
+      const res = await response.json();
+      setValue("name", res.data[0].name);
+      setValue("email1", res.data[0].email1);
+      setValue("email2", res.data[0].email2);
+      setValue("number", res.data[0].phone1);
+      setValue("contactName", res.data[0].contactName);
+      setValue("printUs", res.data[0].printUs);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
   const closeDialogs = () => {
-    closeDialog(false);
+    closeDialogedit(false);
+    setOpen(false);
+  };
+
+  const Getdata = (item: any) => {
+    setparentid(item.id);
   };
 
   return (
     <BootstrapDialog
       onClose={closeDialogs}
       aria-labelledby="customized-dialog-title"
-      open={open}
+      open={opens}
     >
       <BootstrapDialogTitle id="customized-dialog-title" onClose={closeDialogs}>
-        New Parent
+        Edit Customer
       </BootstrapDialogTitle>
       <DialogContent dividers>
         <Box sx={{ width: "100%" }}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
               <Tabs
-                value={value}
+                value={selvalue}
                 onChange={handleChange}
                 aria-label="basic tabs example"
               >
@@ -218,25 +257,24 @@ export default function AddNewParent({
                 <Tab label="Options" {...a11yProps(2)} />
               </Tabs>
             </Box>
-            <TabPanel value={value} index={0}>
+            <TabPanel value={selvalue} index={0}>
               <Grid>
                 <Stack>
                   <Grid container spacing={2}>
                     <Grid item xs={12} md={12}>
                       <Stack spacing={1}>
                         <InputLabel htmlFor="name">
-                          Parent Name <span className="err_str">*</span>
+                          Customer <span className="err_str">*</span>
                         </InputLabel>
                         <OutlinedInput
                           type="text"
                           id="name"
-                          placeholder="Parent Name..."
+                          placeholder="Customer Name..."
                           fullWidth
                           size="small"
                           {...register("name", {
                             required: true,
                           })}
-                          defaultValue={name}
                         />
                         {errors.name && (
                           <span style={style}>Field is Required **</span>
@@ -251,17 +289,37 @@ export default function AddNewParent({
                     </Grid>
                   </Grid>
                 </Stack>
-                <Stack style={{ marginTop: "20px" }}>
+                <Stack style={{ marginTop: "8px" }}>
                   <Grid container spacing={2}>
                     <Grid item xs={12} md={6}>
                       <Stack spacing={1}>
-                        <InputLabel htmlFor="email">
+                        <InputLabel htmlFor="name">
+                          Phone Number <span className="err_str">*</span>
+                        </InputLabel>
+                        <OutlinedInput
+                          type="text"
+                          id="name"
+                          placeholder="Phone..."
+                          fullWidth
+                          size="small"
+                          {...register("number", {
+                            required: true,
+                          })}
+                        />
+                        {errors.number && (
+                          <span style={style}>Field is Required **</span>
+                        )}
+                      </Stack>
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <Stack spacing={1}>
+                        <InputLabel htmlFor="name">
                           Email <span className="err_str">*</span>
                         </InputLabel>
                         <OutlinedInput
                           type="text"
                           id="name"
-                          placeholder="email..."
+                          placeholder="Email..."
                           fullWidth
                           size="small"
                           {...register("email1", {
@@ -273,45 +331,10 @@ export default function AddNewParent({
                         )}
                       </Stack>
                     </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="aemail">
-                          Alternate Email
-                        </InputLabel>
-                        <OutlinedInput
-                          type="text"
-                          id="name"
-                          placeholder="Alternate Email..."
-                          fullWidth
-                          size="small"
-                          {...register("email2")}
-                        />
-                      </Stack>
-                    </Grid>
                   </Grid>
                 </Stack>
-                <Stack style={{ marginTop: "20px" }}>
+                <Stack style={{ marginTop: "15px" }}>
                   <Grid container spacing={2}>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="number">
-                          Phone Number <span className="err_str">*</span>
-                        </InputLabel>
-                        <OutlinedInput
-                          type="text"
-                          id="number"
-                          placeholder="number..."
-                          fullWidth
-                          size="small"
-                          {...register("phone1", {
-                            required: true,
-                          })}
-                        />
-                        {errors.phone1 && (
-                          <span style={style}>Field is Required **</span>
-                        )}
-                      </Stack>
-                    </Grid>
                     <Grid item xs={12} md={6}>
                       <Stack spacing={1}>
                         <InputLabel htmlFor="name">Status</InputLabel>
@@ -329,11 +352,24 @@ export default function AddNewParent({
                         </FormControl>
                       </Stack>
                     </Grid>
+                    <Grid item xs={12} md={6}>
+                      <Stack spacing={1}>
+                        <InputLabel htmlFor="name">Alternate Email</InputLabel>
+                        <OutlinedInput
+                          type="text"
+                          id="name"
+                          placeholder="Alternate Email..."
+                          fullWidth
+                          size="small"
+                          {...register("email2")}
+                        />
+                      </Stack>
+                    </Grid>
                   </Grid>
                 </Stack>
               </Grid>
             </TabPanel>
-            <TabPanel value={value} index={1}>
+            <TabPanel value={selvalue} index={1}>
               <Grid>
                 <Stack style={{ marginTop: "20px" }}>
                   <Grid container spacing={2}>
@@ -421,20 +457,20 @@ export default function AddNewParent({
                 </Stack>
               </Grid>
             </TabPanel>
-            <TabPanel value={value} index={2}>
+            <TabPanel value={selvalue} index={2}>
               <Grid>
                 <Stack>
                   <Grid container spacing={2}>
                     <Grid item xs={12} md={12}>
                       <Stack spacing={1}>
-                        <InputLabel htmlFor="name">Parent Type</InputLabel>
+                        <InputLabel htmlFor="name">Customer Type</InputLabel>
                         <FormControl fullWidth>
                           <Select
                             labelId="demo-simple-select-label"
                             id="demo-simple-select"
                             size="small"
                             defaultValue={0}
-                            {...register("type")}
+                            {...register("customertype")}
                           >
                             <MenuItem value={0}>Individual</MenuItem>
                             {custtype &&
@@ -451,21 +487,22 @@ export default function AddNewParent({
                     </Grid>
                   </Grid>
                 </Stack>
-                <Stack>
-                  <Grid container spacing={2} style={{ marginTop: "15px" }}>
+                <Stack style={{ marginTop: "10px" }}>
+                  <Grid container spacing={2}>
                     <Grid item xs={12} md={12}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="name">Alternate Number</InputLabel>
-                        <FormControl fullWidth>
-                          <OutlinedInput
-                            type="text"
-                            id="name"
-                            placeholder="Contact Name..."
-                            fullWidth
-                            size="small"
-                            {...register("phone2")}
-                          />
-                        </FormControl>
+                      <FormGroup>
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              onChange={(e) => setCheck(e.target.checked)}
+                            />
+                          }
+                          label="Belongs to a parent customer"
+                        />
+                      </FormGroup>
+                      <Stack spacing={1} style={hideshowstyle}>
+                        <InputLabel htmlFor="name"></InputLabel>
+                        <AddCustomerCmp Data={Getdata} />
                       </Stack>
                     </Grid>
                   </Grid>
@@ -521,15 +558,15 @@ export default function AddNewParent({
                 autoFocus
                 disabled={btnDisabled}
               >
-                <b>Create</b>
+                <b>Update</b>
                 <span style={{ fontSize: "2px", paddingLeft: "10px" }}>
                   {spinner === true ? <CircularProgress color="inherit" /> : ""}
                 </span>
               </Button>
             </DialogActions>
           </form>
+          <ToastContainer />
         </Box>
-        <ToastContainer />
       </DialogContent>
     </BootstrapDialog>
   );
