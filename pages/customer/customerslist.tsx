@@ -40,6 +40,8 @@ import ConfirmBox from "../commoncmp/confirmbox";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AddCustomer from "./addNewCustomer";
+import PreLoader from "../commoncmp/loader";
+import { useRouter } from "next/router";
 function Item(props: BoxProps) {
   const { sx, ...other } = props;
   return <Box sx={{}} {...other} />;
@@ -85,7 +87,7 @@ export default function CustomerList() {
   const { register, handleSubmit } = useForm<FormValues>();
   const [deleteConfirmBoxOpen, setdeleteConfirmBoxOpen] = React.useState(false);
   const [newCustOpen, setnewCustOpen] = React.useState(false);
-
+  const router = useRouter();
   useEffect(() => {
     getUser();
     getType();

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { api_url, auth_token } from "../api/hello";
 import AddNewParent from "../customer/addNewParent";
 
-export default function AddCustomerCmp() {
+export default function AddCustomerCmp({ Data }: { Data: any }) {
   const [users, setUsers] = useState<any>([]);
   const [opens, setOpens] = React.useState(false);
   const [inputValue, setInputValue] = useState("");
@@ -12,7 +12,6 @@ export default function AddCustomerCmp() {
 
   useEffect(() => {
     getUser();
-    //getUserByid();
   }, []);
 
   const getUser = async () => {
@@ -30,23 +29,6 @@ export default function AddCustomerCmp() {
       console.log("error", error);
     }
   };
-
-  // const getUserByid = async () => {
-  //   const url = `${api_url}/getuserdetails/20`;
-  //   try {
-  //     const response = await fetch(url, {
-  //       method: "POST",
-  //       headers: {
-  //         Authorization: auth_token,
-  //       },
-  //     });
-  //     const res = await response.json();
-  //     console.log(res.data);
-  //   } catch (error) {
-  //     console.log("error", error);
-  //   }
-  // };
-
   const option: { id: number; title: string }[] = [];
   users &&
     users.map((data: any, key: any) => {
@@ -62,11 +44,13 @@ export default function AddCustomerCmp() {
     setOpens(false);
     getUser();
   };
+  Data(value);
 
   return (
     <>
       <Autocomplete
-        value={value === "undefined" ? "" : value}
+        size="small"
+        value={value}
         inputValue={inputValue}
         onChange={(event, newValue) => {
           setValue(newValue);
@@ -75,7 +59,7 @@ export default function AddCustomerCmp() {
           setInputValue(newInputValue);
         }}
         options={option}
-        getOptionLabel={(option) => option.title}
+        getOptionLabel={(option) => option.title || ""}
         renderInput={(params) => (
           <TextField
             {...params}
@@ -96,11 +80,7 @@ export default function AddCustomerCmp() {
         }
       />
       {opens ? (
-        <AddNewParent
-          open={true}
-          closeDialog={closePoP}
-          parentName={inputValue}
-        />
+        <AddNewParent open={true} closeDialog={closePoP} name={inputValue} />
       ) : (
         ""
       )}

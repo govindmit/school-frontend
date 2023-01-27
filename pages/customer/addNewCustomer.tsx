@@ -119,8 +119,12 @@ export default function AddCustomer({
   open: any;
   closeDialog: any;
 }) {
-  const [value, setValue] = React.useState<any>(0);
+  const router = useRouter();
+  const [value, setValue] = React.useState(0);
   const [spinner, setshowspinner] = React.useState(false);
+  const [opens, setOpen] = React.useState(open);
+  const [parentid, setparentid] = React.useState(0);
+
   const [custtype, setcusttype] = React.useState<any>([]);
   const [btnDisabled, setBtnDisabled] = React.useState(false);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -177,9 +181,8 @@ export default function AddCustomer({
       contactName: data.contactName,
       printUs: data.printUs,
       roleId: 2,
-      parentId: value.id,
+      parentId: parentid,
     };
-    console.log(reqData);
     await axios({
       method: "POST",
       url: `${api_url}/addUser`,
@@ -193,8 +196,7 @@ export default function AddCustomer({
           setshowspinner(false);
           setBtnDisabled(false);
           toast.success("Customer Added Successfully !");
-          reset();
-          setTimeout(closeDialog(false), 2000);
+          setOpen(false);
         }
       })
       .catch((error) => {
@@ -203,15 +205,21 @@ export default function AddCustomer({
         setBtnDisabled(false);
       });
   };
+
   const closeDialogs = () => {
-    setTimeout(closeDialog(false), 2000);
+    closeDialog(false);
+    setOpen(false);
+  };
+
+  const Getdata = (item: any) => {
+    setparentid(item.id);
   };
 
   return (
     <BootstrapDialog
-      onClose={closeDialogs}
+      onClose={closeDialog}
       aria-labelledby="customized-dialog-title"
-      open={open}
+      open={opens}
     >
       <BootstrapDialogTitle id="customized-dialog-title" onClose={closeDialogs}>
         New Customer
@@ -475,7 +483,7 @@ export default function AddCustomer({
                       </FormGroup>
                       <Stack spacing={1} style={hideshowstyle}>
                         <InputLabel htmlFor="name"></InputLabel>
-                        <AddCustomerCmp />
+                        <AddCustomerCmp Data={Getdata} />
                       </Stack>
                     </Grid>
                   </Grid>

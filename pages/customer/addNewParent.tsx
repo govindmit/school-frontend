@@ -98,10 +98,10 @@ function a11yProps(index: number) {
 }
 
 type FormValues = {
-  parentname: string;
+  name: string;
   email1: string;
   email2: string;
-  number: number;
+  phone1: number;
   phone2: number;
   contactName: string;
   printUs: string;
@@ -112,11 +112,11 @@ type FormValues = {
 export default function AddNewParent({
   open,
   closeDialog,
-  parentName,
+  name,
 }: {
   open: any;
   closeDialog: any;
-  parentName: any;
+  name: any;
 }) {
   const [value, setValue] = React.useState(0);
   const [spinner, setshowspinner] = React.useState(false);
@@ -135,16 +135,17 @@ export default function AddNewParent({
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     const reqData = {
-      name: parentName,
+      name: data.name,
       email1: data.email1,
       email2: data.email2,
-      number: data.number,
+      phone1: data.phone1,
       phone2: data.phone2,
       contactName: data.contactName,
       printUs: data.printUs,
       status: data.status,
       type: data.type,
     };
+
     await axios({
       method: "POST",
       url: `${api_url}/addUser`,
@@ -232,12 +233,12 @@ export default function AddNewParent({
                           placeholder="Parent Name..."
                           fullWidth
                           size="small"
-                          {...register("parentname", {
+                          {...register("name", {
                             required: true,
                           })}
-                          defaultValue={parentName}
+                          defaultValue={name}
                         />
-                        {errors.parentname && (
+                        {errors.name && (
                           <span style={style}>Field is Required **</span>
                         )}
                       </Stack>
@@ -302,11 +303,11 @@ export default function AddNewParent({
                           placeholder="number..."
                           fullWidth
                           size="small"
-                          {...register("number", {
+                          {...register("phone1", {
                             required: true,
                           })}
                         />
-                        {errors.number && (
+                        {errors.phone1 && (
                           <span style={style}>Field is Required **</span>
                         )}
                       </Stack>
