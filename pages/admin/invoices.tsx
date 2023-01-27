@@ -50,6 +50,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useForm, SubmitHandler } from "react-hook-form";
 import {
   setSyntheticLeadingComments,
@@ -160,8 +162,14 @@ export default function Guardians() {
   };
 
   const handleClickOpen = (item: any) => {
-    setRecieved(item);
-    setDollerOpen(true);
+    console.log(item, "itemmmmm");
+    if (item.status == "paid") {
+      setDollerOpen(false);
+      toast.success("Already Paid!");
+    } else {
+      setRecieved(item);
+      setDollerOpen(true);
+    }
   };
   const handleCloses = () => {
     setDollerOpen(false);
@@ -391,7 +399,11 @@ export default function Guardians() {
     })
       .then((res) => {
         getUser();
-        handleCloses();
+        toast.success("Payment Successfully !");
+
+        setTimeout(() => {
+          handleCloses();
+        }, 1000);
       })
       .catch((err) => {});
   };
@@ -426,7 +438,11 @@ export default function Guardians() {
     })
       .then((res) => {
         getUser();
-        handleClose();
+        toast.success("Deleted Successfully !");
+
+        setTimeout(() => {
+          handleClose();
+        }, 2000);
       })
       .catch((err) => {});
   };
@@ -1044,6 +1060,7 @@ export default function Guardians() {
                 </DialogActions>
               </BootstrapDialog>
             </div>
+            <ToastContainer />
           </div>
         </Box>
       </Box>

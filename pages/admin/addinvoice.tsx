@@ -12,7 +12,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 import Autocomplete from "@mui/material/Autocomplete";
 import { useRouter } from "next/router";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
 import MiniDrawer from "../sidebar";
 import axios from "axios";
@@ -455,7 +456,8 @@ export default function Guardians() {
     if (data === false) {
       getUser();
       setOpens(false);
-
+      let gg = user.filter((a: any) => a.id === 47);
+      console.log(gg[0]?.name, "ffffffffffffffffff");
       console.log(
         data,
         "......................................................x"
@@ -463,28 +465,24 @@ export default function Guardians() {
     } else {
       setId(data);
       getUser();
-      setOpens(false);
+      setTimeout(() => {
+        setOpens(false);
+      }, 3000);
 
-      console.log(data, "..................id");
+      console.log(data, "..................idssssssss");
     }
   };
+  let gg = user.filter((a: any) => a.id === id);
+  console.log(gg.length, "..................ggggg");
 
   const handlePopup = (stats: any) => {
     if (stats === false) {
       getItem();
       setSecondPop(false);
-
-      console.log(
-        stats,
-        "......................................................x"
-      );
     } else {
+      console.log(stats, "ssssssss......................x");
       getItem();
       setSecondPop(false);
-    }
-
-    if (stats) {
-      console.log(stats, "statsssssssssssssss");
     }
   };
   // const handleSave = () => {
@@ -578,11 +576,13 @@ export default function Guardians() {
                       <Autocomplete
                         style={{ width: 300 }}
                         fullWidth
-                        // value={value}
                         inputValue={inputValue}
                         onChange={(event, value) => setUserId(value)}
                         // onChange={(event, newValue) => {
                         //   setValue(newValue);
+                        // }}
+                        // defaultValue={{
+                        //   name: `${gg[0]?.name}`,
                         // }}
                         onInputChange={(event, newInputValue) => {
                           setInputValue(newInputValue);
