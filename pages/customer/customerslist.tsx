@@ -22,9 +22,6 @@ import {
   Container,
   Select,
   IconButton,
-  DialogTitle,
-  Dialog,
-  DialogContent,
   OutlinedInput,
   Pagination,
 } from "@mui/material";
@@ -39,13 +36,12 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBin5Fill } from "react-icons/ri";
-import CloseIcon from "@mui/icons-material/Close";
-import styled from "@emotion/styled";
-import AddNewCustomer from "./addNewCustomer";
 import ConfirmBox from "../commoncmp/confirmbox";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AddCustomer from "./addNewCustomer";
+import PreLoader from "../commoncmp/loader";
+import { useRouter } from "next/router";
 function Item(props: BoxProps) {
   const { sx, ...other } = props;
   return <Box sx={{}} {...other} />;
@@ -73,36 +69,6 @@ function usePagination(data: any, itemsPerPage: any) {
   return { next, prev, jump, currentData, currentPage, maxPage };
 }
 
-//dialog box
-const BootstrapDialog = styled(Dialog)(({ theme }) => ({}));
-export interface DialogTitleProps {
-  id: string;
-  children?: React.ReactNode;
-  onClose: () => void;
-}
-function BootstrapDialogTitle(props: DialogTitleProps) {
-  const { children, onClose, ...other } = props;
-  return (
-    <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
-      {children}
-      {onClose ? (
-        <IconButton
-          aria-label="close"
-          onClick={onClose}
-          sx={{
-            position: "absolute",
-            right: 8,
-            top: 8,
-            color: (theme) => theme.palette.grey[500],
-          }}
-        >
-          <CloseIcon />
-        </IconButton>
-      ) : null}
-    </DialogTitle>
-  );
-}
-
 //filter form values
 type FormValues = {
   customerType: number;
@@ -121,7 +87,7 @@ export default function CustomerList() {
   const { register, handleSubmit } = useForm<FormValues>();
   const [deleteConfirmBoxOpen, setdeleteConfirmBoxOpen] = React.useState(false);
   const [newCustOpen, setnewCustOpen] = React.useState(false);
-
+  const router = useRouter();
   useEffect(() => {
     getUser();
     getType();
@@ -199,22 +165,20 @@ export default function CustomerList() {
       setUsers(searchdata);
     } else {
       const filterres = searchdata.filter((item: any) => {
-        return item.firstname
-          .toLowerCase()
-          .includes(e.target.value.toLowerCase());
+        return item.name.toLowerCase().includes(e.target.value.toLowerCase());
       });
       const dtd = filterres;
       setUsers(dtd);
     }
   };
 
-  // pagination
-  // const [row_per_page, set_row_per_page] = useState(5);
-  // function handlerowchange(e: any) {
-  //   set_row_per_page(e.target.value);
-  // }
+  // pagination;
+  const [row_per_page, set_row_per_page] = useState(5);
+  function handlerowchange(e: any) {
+    set_row_per_page(e.target.value);
+  }
   let [page, setPage] = React.useState(1);
-  const PER_PAGE = 5;
+  const PER_PAGE = row_per_page;
   const count = Math.ceil(users.length / PER_PAGE);
   const DATA = usePagination(users, PER_PAGE);
   const handlePageChange = (e: any, p: any) => {
@@ -246,9 +210,14 @@ export default function CustomerList() {
       });
   }
 
+  //open close popup boxes
   function handleNewCustomerOpen() {
     setnewCustOpen(true);
   }
+  const closePoP = (item: any) => {
+    setnewCustOpen(false);
+    getUser();
+  };
 
   return (
     <>
@@ -527,13 +496,7 @@ export default function CustomerList() {
                                               fontSize: "2px",
                                               paddingLeft: "10px",
                                             }}
-                                          >
-                                            {/* {spinner === true ? (
-                                            <CircularProgress color="inherit" />
-                                          ) : (
-                                            ""
-                                          )} */}
-                                          </span>
+                                          ></span>
                                         </Button>
                                       </Grid>
                                     </Grid>
@@ -672,9 +635,7 @@ export default function CustomerList() {
                             <TableCell align="left">
                               {dataitem.customerId}
                             </TableCell>
-                            <TableCell align="left">
-                              {dataitem.firstname + dataitem.lastname}
-                            </TableCell>
+                            <TableCell align="left">{dataitem.name}</TableCell>
                             <TableCell align="left">
                               {dataitem.email1}
                             </TableCell>
@@ -709,7 +670,7 @@ export default function CustomerList() {
                               <Stack direction="row" spacing={1}>
                                 <IconButton>
                                   <Link
-                                    href={"#"}
+                                    href={`/customer/viewcustomer/${dataitem.id}`}
                                     style={{
                                       color: "#26CEB3",
                                     }}
@@ -752,7 +713,7 @@ export default function CustomerList() {
                     color="primary"
                     onChange={handlePageChange}
                   />
-                  {/* <FormControl>
+                  <FormControl>
                     <Select
                       labelId="demo-simple-select-label"
                       id="demo-simple-select"
@@ -764,32 +725,18 @@ export default function CustomerList() {
                       <MenuItem value={20}>20</MenuItem>
                       <MenuItem value={50}>50</MenuItem>
                     </Select>
-                  </FormControl> */}
+                  </FormControl>
                 </Stack>
               </TableContainer>
             </Card>
           </div>
         </Box>
       </Box>
-      {/* <BootstrapDialog
-        onClose={handleClose}
-        aria-labelledby="customized-dialog-title"
-        open={open}
-      >
-        <BootstrapDialogTitle
-          id="customized-dialog-title"
-          onClose={handleClose}
-        >
-          New Customer
-        </BootstrapDialogTitle>
-        <DialogContent dividers>
-          <AddNewCustomer />
-        </DialogContent>
-      </BootstrapDialog> */}
-      <AddCustomer
-        open={newCustOpen}
-        closeDialog={() => setnewCustOpen(false)}
-      />
+      {newCustOpen ? (
+        <AddCustomer open={newCustOpen} closeDialog={closePoP} />
+      ) : (
+        ""
+      )}
       <ConfirmBox
         open={deleteConfirmBoxOpen}
         closeDialog={() => setdeleteConfirmBoxOpen(false)}

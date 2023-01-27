@@ -26,7 +26,7 @@ const style = {
 };
 
 type FormValues = {
-  email: string;
+  email1: string;
 };
 
 export default function ForgotPasswordPage() {
@@ -45,7 +45,7 @@ export default function ForgotPasswordPage() {
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setShowspinner(true);
     setBtnDisabled(true);
-    const reqData = { email: data.email };
+    const reqData = { email1: data.email1 };
     await axios({
       method: "POST",
       url: `${api_url}/forgotpassword`,
@@ -179,18 +179,18 @@ export default function ForgotPasswordPage() {
                     fullWidth
                     size="small"
                     placeholder="Email Address..."
-                    {...register("email", {
+                    {...register("email1", {
                       required: true,
                       pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                     })}
                   />
                   <Typography style={style}>
-                    {errors?.email?.type === "required" && (
+                    {errors?.email1?.type === "required" && (
                       <div>Email field is required **</div>
                     )}
                   </Typography>
                   <Typography style={style}>
-                    {errors?.email?.type === "pattern" && (
+                    {errors?.email1?.type === "pattern" && (
                       <div>Please Enter Valid Email **</div>
                     )}
                   </Typography>

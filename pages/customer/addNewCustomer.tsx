@@ -123,6 +123,7 @@ export default function AddCustomer({
   const [value, setValue] = React.useState(0);
   const [spinner, setshowspinner] = React.useState(false);
   const [opens, setOpen] = React.useState(open);
+  const [parentid, setparentid] = React.useState(0);
 
   const [custtype, setcusttype] = React.useState<any>([]);
   const [btnDisabled, setBtnDisabled] = React.useState(false);
@@ -141,27 +142,8 @@ export default function AddCustomer({
   }
 
   React.useEffect(() => {
-    if (open === true) {
-      setOpen(true);
-    }
-    getUser();
     getType();
   }, []);
-
-  const getUser = async () => {
-    const url = `${api_url}/getuser`;
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          Authorization: auth_token,
-        },
-      });
-      const res = await response.json();
-    } catch (error) {
-      console.log("error", error);
-    }
-  };
 
   //get type
   const getType = async () => {
@@ -183,6 +165,7 @@ export default function AddCustomer({
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<FormValues>();
 
@@ -198,6 +181,7 @@ export default function AddCustomer({
       contactName: data.contactName,
       printUs: data.printUs,
       roleId: 2,
+      parentId: parentid,
     };
     await axios({
       method: "POST",
@@ -211,14 +195,8 @@ export default function AddCustomer({
         if (data.status === 201) {
           setshowspinner(false);
           setBtnDisabled(false);
-          console.log(data.data.data.insertId, "dataaaaaaaaaaaaaaaa");
-          closeDialog(data.data.data.insertId);
-
           toast.success("Customer Added Successfully !");
-
-          setTimeout(() => {
-            setOpen(false);
-          }, 3000);
+          setOpen(false);
         }
       })
       .catch((error) => {
@@ -228,13 +206,14 @@ export default function AddCustomer({
       });
   };
 
-  // console.log(closeDialog, "closeDialog");
   const closeDialogs = () => {
     closeDialog(false);
     setOpen(false);
   };
-  console.log(open, "opennnnnnnnnnnnnn");
-  console.log(opens, "opennnnnnnnnnnnnnsssssssssssssssssssssssssss");
+
+  const Getdata = (item: any) => {
+    setparentid(item.id);
+  };
 
   return (
     <BootstrapDialog
@@ -504,7 +483,7 @@ export default function AddCustomer({
                       </FormGroup>
                       <Stack spacing={1} style={hideshowstyle}>
                         <InputLabel htmlFor="name"></InputLabel>
-                        <AddCustomerCmp />
+                        <AddCustomerCmp Data={Getdata} />
                       </Stack>
                     </Grid>
                   </Grid>
