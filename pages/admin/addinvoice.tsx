@@ -225,6 +225,7 @@ export default function Guardians() {
   const [newCustOpen, setnewCustOpen] = useState(false);
   const [id, setId] = useState<FormValues | any>([]);
   const [date, setDate] = useState<FormValues | any>([]);
+  const [query, setQuery] = useState<FormValues | any>([]);
 
   const [item, setItem] = useState<FormValues | any>([]);
   const [product, setProduct] = useState<FormValues | any>([]);
@@ -325,6 +326,10 @@ export default function Guardians() {
       customerId: userID.id,
     };
     console.log(requestedData, "requestedData");
+    setTimeout(() => {
+      toast.success("Invoice created Successfully !");
+      router.push("/admin/invoices");
+    }, 1000);
 
     await axios({
       method: "POST",
@@ -336,11 +341,11 @@ export default function Guardians() {
     })
       .then((res) => {
         if (!res) {
-          router.push("/admin/invoices");
           reset();
         }
       })
       .catch((err) => {});
+    // window.location.replace("/admin/invoices");
   };
   const getItem = async () => {
     await axios({
@@ -377,6 +382,7 @@ export default function Guardians() {
         return item.name.toLowerCase().includes(e.target.value.toLowerCase());
       });
       const dtd = filterres;
+      console.log(dtd, "filterres");
       setItem(dtd);
     }
   };
@@ -708,7 +714,7 @@ export default function Guardians() {
                     id="customized-dialog-title"
                     onClose={handleCloses}
                   >
-                    Add Items
+                    Add Itemss
                   </BootstrapDialogTitle>
                   <DialogContent dividers>
                     <Box sx={{ width: "100%" }}>
@@ -735,43 +741,46 @@ export default function Guardians() {
                             size="small"
                           >
                             <TableBody>
-                              {item.map((row: any) => {
-                                const isItemSelected = isSelected(row.id);
-                                const labelId = `enhanced-table-checkbox-${row.id}`;
+                              {item &&
+                                item.map((row: any) => {
+                                  const isItemSelected = isSelected(row.id);
+                                  const labelId = `enhanced-table-checkbox-${row.id}`;
 
-                                return (
-                                  <TableRow
-                                    hover
-                                    onClick={(event) =>
-                                      handleClick(event, row.id)
-                                    }
-                                    role="checkbox"
-                                    aria-checked={isItemSelected}
-                                    tabIndex={-1}
-                                    key={row.name}
-                                    selected={isItemSelected}
-                                  >
-                                    <TableCell padding="checkbox"></TableCell>
-                                    <TableCell
-                                      component="th"
-                                      id={labelId}
-                                      scope="row"
-                                      padding="none"
+                                  return (
+                                    <TableRow
+                                      hover
+                                      onClick={(event) =>
+                                        handleClick(event, row.id)
+                                      }
+                                      role="checkbox"
+                                      aria-checked={isItemSelected}
+                                      tabIndex={-1}
+                                      key={row.name}
+                                      selected={isItemSelected}
                                     >
-                                      <div className="table">
-                                        <div>{row.name}</div>
-                                        <div>{row.price}</div>
-                                      </div>
-                                    </TableCell>
-                                    {isItemSelected ? (
-                                      <span className="selectss">selected</span>
-                                    ) : (
-                                      <span className="plus">+</span>
-                                    )}
-                                    {/* <TableCell align="right">{row.protein}</TableCell> */}
-                                  </TableRow>
-                                );
-                              })}
+                                      <TableCell padding="checkbox"></TableCell>
+                                      <TableCell
+                                        component="th"
+                                        id={labelId}
+                                        scope="row"
+                                        padding="none"
+                                      >
+                                        <div className="table">
+                                          <div>{row.name}</div>
+                                          <div>{row.price}</div>
+                                        </div>
+                                      </TableCell>
+                                      {isItemSelected ? (
+                                        <span className="selectss">
+                                          selected
+                                        </span>
+                                      ) : (
+                                        <span className="plus">+</span>
+                                      )}
+                                      {/* <TableCell align="right">{row.protein}</TableCell> */}
+                                    </TableRow>
+                                  );
+                                })}
                             </TableBody>
                           </Table>
                         </TableContainer>
