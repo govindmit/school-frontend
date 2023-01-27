@@ -11,7 +11,8 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 import Autocomplete from "@mui/material/Autocomplete";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
 import MiniDrawer from "../sidebar";
 import axios from "axios";
@@ -271,9 +272,12 @@ export default function AddItem({
       },
     })
       .then((res) => {
-        closeD(res);
         getItem();
         reset();
+        toast.success("Item Added Successfully !");
+        setTimeout(() => {
+          closeD(res);
+        }, 2000);
       })
       .catch((err) => {});
   };
@@ -407,6 +411,7 @@ export default function AddItem({
           </DialogActions>
         </form>
       </BootstrapDialog>
+      <ToastContainer />
     </>
   );
 }
