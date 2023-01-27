@@ -104,7 +104,7 @@ export default function Dashboard(this: any) {
                           <div className="Dtotal">
                             {" "}
                             &nbsp;
-                            <h2 className="dh1">TOTAL USERS</h2>
+                            <h2 className="dh1">TOTAL CUSTOMERS</h2>
                           </div>
                         </div>
                       </Item>
@@ -113,20 +113,17 @@ export default function Dashboard(this: any) {
                       <Item>
                         <div>
                           <div className="dmain">
-                            <h1 className="dhead">1021</h1>
-                            <Image
-                              className="dstud"
-                              src="/cap.png"
-                              alt="Picture of the author"
-                              width={45}
-                              height={42}
-                            />
+                            <h1 className="dhead">$1300</h1>
+                            <AttachMoneyIcon
+                              className="dimg"
+                              color="primary"
+                            ></AttachMoneyIcon>
                           </div>
 
                           <div className="Dtotal">
                             {" "}
                             &nbsp;
-                            <h2 className="dh1">NUMBER OF STUDENTS</h2>
+                            <h2 className="dh1">TOTAL EARNING</h2>
                           </div>
                         </div>
                       </Item>
@@ -136,34 +133,11 @@ export default function Dashboard(this: any) {
                         <div>
                           <div className="dmain">
                             <div>
-                              <h1 className="dhead">1021</h1>
+                              <h1 className="dhead">$1021</h1>
                             </div>
                             <div className="svg3">
-                              <BabyChangingStationIcon
-                                className="dimg"
-                                color="primary"
-                              ></BabyChangingStationIcon>
-                            </div>
-                          </div>
-
-                          <div className="Dtotal">
-                            {" "}
-                            &nbsp;
-                            <h2 className="dh1">TOTAL GUARDIANS</h2>
-                          </div>
-                        </div>
-                      </Item>
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Item>
-                        <div>
-                          <div className="dmain">
-                            <div>
-                              <h1 className="dhead">$123.12</h1>
-                            </div>
-                            <div className="svgl">
                               <AttachMoneyIcon
-                                className="dlimg"
+                                className="dimg"
                                 color="primary"
                               ></AttachMoneyIcon>
                             </div>
@@ -172,7 +146,31 @@ export default function Dashboard(this: any) {
                           <div className="Dtotal">
                             {" "}
                             &nbsp;
-                            <h2 className="dh1">TOTAL REFUND AMOUNT</h2>
+                            <h2 className="dh1">TOTAL CREDITED AMOUNT</h2>
+                          </div>
+                        </div>
+                      </Item>
+                    </Grid>
+                    <Grid item xs={3}>
+                      <Item>
+                        <div className="amo">
+                          <div className="dmain">
+                            <div className="jk">
+                              <h1 className="dheads">15</h1>
+                              <span className="pend">PENDING INVOICES</span>
+                            </div>
+                          </div>
+
+                          <div className="Dtotals">
+                            <div>
+                              <span className="dh2">$2024</span>
+                            </div>
+
+                            <div>
+                              <span className="dh2">
+                                TOTAL OUTSTANDING AMOUNT
+                              </span>
+                            </div>
                           </div>
                         </div>
                       </Item>
@@ -185,8 +183,338 @@ export default function Dashboard(this: any) {
                   <Grid container spacing={2}>
                     <Grid item xs={8} md={7}>
                       <Item>
-                        <span className="dramount">Refund Amount</span>
-                        <DynamicComponentWithNoSSR />
+                        <div className="dtable">
+                          <Grid container spacing={2}>
+                            <Grid item xs={8} md={12}>
+                              <Item>
+                                <div className="Dcredit">
+                                  <h3 className="lcr">Latest Credit Report</h3>
+                                </div>
+                                <Container>
+                                  <Card>
+                                    <TableContainer sx={{ minWidth: 800 }}>
+                                      <Table>
+                                        <TableHead>
+                                          <TableRow>
+                                            <TableCell padding="checkbox">
+                                              <Checkbox />
+                                            </TableCell>
+                                            <TableCell>ID</TableCell>
+                                            <TableCell>CUSTOMER</TableCell>
+                                            <TableCell>DATE</TableCell>
+                                            <TableCell>TOTAL</TableCell>
+                                            <TableCell>BALANCE</TableCell>
+                                          </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                          <TableRow
+                                            hover
+                                            tabIndex={-1}
+                                            role="checkbox"
+                                          >
+                                            <TableCell padding="checkbox">
+                                              <Checkbox />
+                                            </TableCell>
+                                            <TableCell
+                                              component="th"
+                                              scope="row"
+                                              padding="none"
+                                            >
+                                              <TableCell align="left">
+                                                CRD-001
+                                              </TableCell>
+                                            </TableCell>
+                                            <TableCell
+                                              className="dname"
+                                              align="left"
+                                            >
+                                              Gracie Owens
+                                            </TableCell>
+                                            <TableCell
+                                              className="demail"
+                                              align="left"
+                                            >
+                                              JAN 12, 2023{" "}
+                                            </TableCell>
+
+                                            <TableCell
+                                              className="active"
+                                              align="left"
+                                            >
+                                              Rs.768
+                                            </TableCell>
+
+                                            <TableCell align="left">
+                                              $500
+                                            </TableCell>
+                                          </TableRow>
+                                        </TableBody>
+                                        <TableBody>
+                                          <TableRow
+                                            hover
+                                            tabIndex={-1}
+                                            role="checkbox"
+                                          >
+                                            <TableCell padding="checkbox">
+                                              <Checkbox />
+                                            </TableCell>
+                                            <TableCell
+                                              component="th"
+                                              scope="row"
+                                              padding="none"
+                                            >
+                                              <TableCell align="left">
+                                                CRD-002
+                                              </TableCell>
+                                            </TableCell>
+                                            <TableCell
+                                              className="dname"
+                                              align="left"
+                                            >
+                                              Gracie Owens
+                                            </TableCell>
+                                            <TableCell
+                                              className="demail"
+                                              align="left"
+                                            >
+                                              JAN 12, 2023{" "}
+                                            </TableCell>
+
+                                            <TableCell
+                                              className="dpending"
+                                              align="left"
+                                            >
+                                              Rs.768
+                                            </TableCell>
+
+                                            <TableCell align="left">
+                                              $500
+                                            </TableCell>
+                                          </TableRow>
+                                        </TableBody>
+                                        <TableBody>
+                                          <TableRow
+                                            hover
+                                            tabIndex={-1}
+                                            role="checkbox"
+                                          >
+                                            <TableCell padding="checkbox">
+                                              <Checkbox />
+                                            </TableCell>
+                                            <TableCell
+                                              component="th"
+                                              scope="row"
+                                              padding="none"
+                                            >
+                                              <TableCell align="left">
+                                                CRD-003
+                                              </TableCell>
+                                            </TableCell>
+                                            <TableCell
+                                              className="dname"
+                                              align="left"
+                                            >
+                                              Gracie Owens
+                                            </TableCell>
+                                            <TableCell
+                                              className="demail"
+                                              align="left"
+                                            >
+                                              JAN 12, 2023{" "}
+                                            </TableCell>
+
+                                            <TableCell
+                                              className="dpending"
+                                              align="left"
+                                            >
+                                              Rs.768
+                                            </TableCell>
+
+                                            <TableCell align="left">
+                                              $500
+                                            </TableCell>
+                                          </TableRow>
+                                        </TableBody>
+                                        <TableBody>
+                                          <TableRow
+                                            hover
+                                            tabIndex={-1}
+                                            role="checkbox"
+                                          >
+                                            <TableCell padding="checkbox">
+                                              <Checkbox />
+                                            </TableCell>
+                                            <TableCell
+                                              component="th"
+                                              scope="row"
+                                              padding="none"
+                                            >
+                                              <TableCell align="left">
+                                                CRD-004
+                                              </TableCell>
+                                            </TableCell>
+                                            <TableCell
+                                              className="dname"
+                                              align="left"
+                                            >
+                                              Gracie Owens
+                                            </TableCell>
+                                            <TableCell
+                                              className="demail"
+                                              align="left"
+                                            >
+                                              JAN 12, 2023{" "}
+                                            </TableCell>
+
+                                            <TableCell
+                                              className="active"
+                                              align="left"
+                                            >
+                                              Rs.768
+                                            </TableCell>
+
+                                            <TableCell align="left">
+                                              $500
+                                            </TableCell>
+                                          </TableRow>
+                                        </TableBody>
+                                        <TableBody>
+                                          <TableRow
+                                            hover
+                                            tabIndex={-1}
+                                            role="checkbox"
+                                          >
+                                            <TableCell padding="checkbox">
+                                              <Checkbox />
+                                            </TableCell>
+                                            <TableCell
+                                              component="th"
+                                              scope="row"
+                                              padding="none"
+                                            >
+                                              <TableCell align="left">
+                                                CRD-004
+                                              </TableCell>
+                                            </TableCell>
+                                            <TableCell
+                                              className="dname"
+                                              align="left"
+                                            >
+                                              Gracie Owens
+                                            </TableCell>
+                                            <TableCell
+                                              className="demail"
+                                              align="left"
+                                            >
+                                              JAN 12, 2023{" "}
+                                            </TableCell>
+
+                                            <TableCell
+                                              className="active"
+                                              align="left"
+                                            >
+                                              Rs.768
+                                            </TableCell>
+
+                                            <TableCell align="left">
+                                              $500
+                                            </TableCell>
+                                          </TableRow>
+                                        </TableBody>
+                                        <TableBody>
+                                          <TableRow
+                                            hover
+                                            tabIndex={-1}
+                                            role="checkbox"
+                                          >
+                                            <TableCell padding="checkbox">
+                                              <Checkbox />
+                                            </TableCell>
+                                            <TableCell
+                                              component="th"
+                                              scope="row"
+                                              padding="none"
+                                            >
+                                              <TableCell align="left">
+                                                CRD-004
+                                              </TableCell>
+                                            </TableCell>
+                                            <TableCell
+                                              className="dname"
+                                              align="left"
+                                            >
+                                              Gracie Owens
+                                            </TableCell>
+                                            <TableCell
+                                              className="demail"
+                                              align="left"
+                                            >
+                                              JAN 12, 2023{" "}
+                                            </TableCell>
+
+                                            <TableCell
+                                              className="active"
+                                              align="left"
+                                            >
+                                              Rs.768
+                                            </TableCell>
+
+                                            <TableCell align="left">
+                                              $500
+                                            </TableCell>
+                                          </TableRow>
+                                        </TableBody>
+                                        <TableBody>
+                                          <TableRow
+                                            hover
+                                            tabIndex={-1}
+                                            role="checkbox"
+                                          >
+                                            <TableCell padding="checkbox">
+                                              <Checkbox />
+                                            </TableCell>
+                                            <TableCell
+                                              component="th"
+                                              scope="row"
+                                              padding="none"
+                                            >
+                                              <TableCell align="left">
+                                                CRD-004
+                                              </TableCell>
+                                            </TableCell>
+                                            <TableCell
+                                              className="dname"
+                                              align="left"
+                                            >
+                                              Gracie Owens
+                                            </TableCell>
+                                            <TableCell
+                                              className="demail"
+                                              align="left"
+                                            >
+                                              JAN 12, 2023{" "}
+                                            </TableCell>
+
+                                            <TableCell
+                                              className="active"
+                                              align="left"
+                                            >
+                                              Rs.768
+                                            </TableCell>
+
+                                            <TableCell align="left">
+                                              $500
+                                            </TableCell>
+                                          </TableRow>
+                                        </TableBody>
+                                      </Table>
+                                    </TableContainer>
+                                  </Card>
+                                </Container>
+                              </Item>
+                            </Grid>
+                          </Grid>
+                        </div>
                       </Item>
                     </Grid>
                     <Grid item xs={8} md={5}>
@@ -293,237 +621,79 @@ export default function Dashboard(this: any) {
                             <span className="dactive">Active</span>
                           </div>
                         </div>
+                        <div className="Ddiv1">
+                          <div id="dimage">
+                            <Avatar
+                              alt="Remy Sharp"
+                              src="/image.png"
+                              sx={{ width: 50, height: 50 }}
+                            />
+                          </div>
+
+                          <div id="dinfo">
+                            <div className="diinfo">
+                              <span className="dname">Gracie Owens</span>{" "}
+                              &nbsp;&nbsp;
+                              <span className="hh">
+                                gracie@testmailinator.com
+                              </span>
+                            </div>
+                          </div>
+
+                          <div id="dstatus">
+                            <span className="dactive">Active</span>
+                          </div>
+                        </div>
+                        <div className="Ddiv1">
+                          <div id="dimage">
+                            <Avatar
+                              alt="Remy Sharp"
+                              src="/image.png"
+                              sx={{ width: 50, height: 50 }}
+                            />
+                          </div>
+
+                          <div id="dinfo">
+                            <div className="diinfo">
+                              <span className="dname">Gracie Owens</span>{" "}
+                              &nbsp;&nbsp;
+                              <span className="hh">
+                                gracie@testmailinator.com
+                              </span>
+                            </div>
+                          </div>
+
+                          <div id="dstatus">
+                            <span className="dactive">Active</span>
+                          </div>
+                        </div>
+                        <div className="Ddiv1">
+                          <div id="dimage">
+                            <Avatar
+                              alt="Remy Sharp"
+                              src="/image.png"
+                              sx={{ width: 50, height: 50 }}
+                            />
+                          </div>
+
+                          <div id="dinfo">
+                            <div className="diinfo">
+                              <span className="dname">Gracie Owens</span>{" "}
+                              &nbsp;&nbsp;
+                              <span className="hh">
+                                gracie@testmailinator.com
+                              </span>
+                            </div>
+                          </div>
+
+                          <div id="dstatus">
+                            <span className="dactive">Active</span>
+                          </div>
+                        </div>
                       </Item>
                     </Grid>
                   </Grid>
                 </Box>
-              </div>
-              <div className="dtable">
-                <Grid container spacing={2}>
-                  <Grid item xs={8} md={12}>
-                    <Item>
-                      <div className="Dcredit">
-                        <h3>Latest Credit Report</h3>
-                      </div>
-                      <Container>
-                        <Card>
-                          <TableContainer sx={{ minWidth: 800 }}>
-                            <Table>
-                              <TableHead>
-                                <TableRow>
-                                  <TableCell padding="checkbox">
-                                    <Checkbox />
-                                  </TableCell>
-                                  <TableCell>ID</TableCell>
-                                  <TableCell>USER NAME</TableCell>
-                                  <TableCell>EMAIL</TableCell>
-                                  <TableCell>STATUS</TableCell>
-                                  <TableCell>AMOUNT</TableCell>
-                                  <TableCell>INVOICE ID</TableCell>
-                                  <TableCell>ACTION</TableCell>
-                                </TableRow>
-                              </TableHead>
-                              <TableBody>
-                                <TableRow hover tabIndex={-1} role="checkbox">
-                                  <TableCell padding="checkbox">
-                                    <Checkbox />
-                                  </TableCell>
-                                  <TableCell
-                                    component="th"
-                                    scope="row"
-                                    padding="none"
-                                  >
-                                    <TableCell align="left">01</TableCell>
-                                  </TableCell>
-                                  <TableCell className="dname" align="left">
-                                    Gracie Owens
-                                  </TableCell>
-                                  <TableCell className="demail" align="left">
-                                    gracie@testmailinator.com
-                                  </TableCell>
-
-                                  <TableCell className="active" align="left">
-                                    APPROVED
-                                  </TableCell>
-
-                                  <TableCell align="left">$500</TableCell>
-                                  <TableCell align="left">1000001</TableCell>
-                                  <TableCell align="left">
-                                    {/* <Button variant="contained" size="small"> */}
-                                    <div className="dicon">
-                                      <Image
-                                        className="dimg"
-                                        src="/deleteicon.svg"
-                                        alt="Picture of the author"
-                                        width={35}
-                                        height={32}
-                                      />
-                                      <Image
-                                        className="dimg"
-                                        src="/download.svg"
-                                        alt="Picture of the author"
-                                        width={35}
-                                        height={32}
-                                      />
-                                    </div>
-
-                                    {/* </Button> */}
-
-                                    {/* <Button variant="outlined" size="small">
-                                      <FiEdit />
-                                    </Button>
-
-                                    <Button variant="outlined" size="small">
-                                      <RiDeleteBin5Fill />
-                                    </Button>
-                                    <Button variant="outlined" size="small">
-                                      <RiDeleteBin5Fill />
-                                    </Button> */}
-                                  </TableCell>
-                                </TableRow>
-                              </TableBody>
-                              <TableBody>
-                                <TableRow hover tabIndex={-1} role="checkbox">
-                                  <TableCell padding="checkbox">
-                                    <Checkbox />
-                                  </TableCell>
-                                  <TableCell
-                                    component="th"
-                                    scope="row"
-                                    padding="none"
-                                  >
-                                    <TableCell align="left">01</TableCell>
-                                  </TableCell>
-                                  <TableCell className="dname" align="left">
-                                    Gracie Owens
-                                  </TableCell>
-                                  <TableCell className="demail" align="left">
-                                    gracie@testmailinator.com
-                                  </TableCell>
-
-                                  <TableCell className="dpending" align="left">
-                                    PENDING
-                                  </TableCell>
-
-                                  <TableCell align="left">$500</TableCell>
-                                  <TableCell align="left">1000001</TableCell>
-                                  <TableCell align="left">
-                                    <div className="dicon">
-                                      <Image
-                                        className="dimg"
-                                        src="/deleteicon.svg"
-                                        alt="Picture of the author"
-                                        width={35}
-                                        height={32}
-                                      />
-                                      <Image
-                                        className="dimg"
-                                        src="/download.svg"
-                                        alt="Picture of the author"
-                                        width={35}
-                                        height={32}
-                                      />
-                                    </div>
-                                  </TableCell>
-                                </TableRow>
-                              </TableBody>
-                              <TableBody>
-                                <TableRow hover tabIndex={-1} role="checkbox">
-                                  <TableCell padding="checkbox">
-                                    <Checkbox />
-                                  </TableCell>
-                                  <TableCell
-                                    component="th"
-                                    scope="row"
-                                    padding="none"
-                                  >
-                                    <TableCell align="left">01</TableCell>
-                                  </TableCell>
-                                  <TableCell className="dname" align="left">
-                                    Gracie Owens
-                                  </TableCell>
-                                  <TableCell className="demail" align="left">
-                                    gracie@testmailinator.com
-                                  </TableCell>
-
-                                  <TableCell className="dpending" align="left">
-                                    PENDING
-                                  </TableCell>
-
-                                  <TableCell align="left">$500</TableCell>
-                                  <TableCell align="left">1000001</TableCell>
-                                  <TableCell align="left">
-                                    <div className="dicon">
-                                      <Image
-                                        className="dimg"
-                                        src="/deleteicon.svg"
-                                        alt="Picture of the author"
-                                        width={35}
-                                        height={32}
-                                      />
-                                      <Image
-                                        className="dimg"
-                                        src="/download.svg"
-                                        alt="Picture of the author"
-                                        width={35}
-                                        height={32}
-                                      />
-                                    </div>
-                                  </TableCell>
-                                </TableRow>
-                              </TableBody>
-                              <TableBody>
-                                <TableRow hover tabIndex={-1} role="checkbox">
-                                  <TableCell padding="checkbox">
-                                    <Checkbox />
-                                  </TableCell>
-                                  <TableCell
-                                    component="th"
-                                    scope="row"
-                                    padding="none"
-                                  >
-                                    <TableCell align="left">01</TableCell>
-                                  </TableCell>
-                                  <TableCell className="dname" align="left">
-                                    Gracie Owens
-                                  </TableCell>
-                                  <TableCell className="demail" align="left">
-                                    gracie@testmailinator.com
-                                  </TableCell>
-
-                                  <TableCell className="active" align="left">
-                                    APPROVED
-                                  </TableCell>
-
-                                  <TableCell align="left">$500</TableCell>
-                                  <TableCell align="left">1000001</TableCell>
-                                  <TableCell align="left">
-                                    <div className="dicon">
-                                      <Image
-                                        className="dimg"
-                                        src="/deleteicon.svg"
-                                        alt="Picture of the author"
-                                        width={35}
-                                        height={32}
-                                      />
-                                      <Image
-                                        className="dimg"
-                                        src="/download.svg"
-                                        alt="Picture of the author"
-                                        width={35}
-                                        height={32}
-                                      />
-                                    </div>
-                                  </TableCell>
-                                </TableRow>
-                              </TableBody>
-                            </Table>
-                          </TableContainer>
-                        </Card>
-                      </Container>
-                    </Item>
-                  </Grid>
-                </Grid>
               </div>
             </div>
           </div>

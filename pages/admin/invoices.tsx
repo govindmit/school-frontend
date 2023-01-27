@@ -48,13 +48,17 @@ import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useForm, SubmitHandler } from "react-hook-form";
 import {
   setSyntheticLeadingComments,
   setTokenSourceMapRange,
 } from "typescript";
 import Paper from "@mui/material/Paper";
+import { number } from "yup/lib/locale";
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
     padding: theme.spacing(2),
@@ -99,6 +103,9 @@ export interface FormValues {
   option: String;
   firstName: String;
   recievedPay: any;
+  name: String;
+  description: String;
+  price: String;
 }
 function usePagination(data: any, itemsPerPage: any) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -140,6 +147,8 @@ export default function Guardians() {
   const [error, setError] = useState<any>("");
   const [dollerOpen, setDollerOpen] = useState(false);
   const [recievedPay, setRecieved] = useState<FormValues | any>([]);
+  // const [items, setItem] = useState<FormValues | any>([]);
+
   let [page, setPage] = useState(1);
   const [searchdata, setsearchdata] = useState([]);
   const [row_per_page, set_row_per_page] = useState(5);
@@ -153,8 +162,14 @@ export default function Guardians() {
   };
 
   const handleClickOpen = (item: any) => {
-    setRecieved(item);
-    setDollerOpen(true);
+    console.log(item, "itemmmmm");
+    if (item.status == "paid") {
+      setDollerOpen(false);
+      toast.success("Already Paid!");
+    } else {
+      setRecieved(item);
+      setDollerOpen(true);
+    }
   };
   const handleCloses = () => {
     setDollerOpen(false);
@@ -190,8 +205,7 @@ export default function Guardians() {
         setUser(res?.data.data);
         setsearchdata(res?.data.data);
       })
-      .catch((err) => {
-      });
+      .catch((err) => {});
   };
 
   function BootstrapDialogTitle(props: DialogTitleProps) {
@@ -228,10 +242,9 @@ export default function Guardians() {
     let sdate = moment(data.startDate).format("DD/MM/YYYY");
     let edate = moment(data.endDate).format("DD/MM/YYYY");
     var ids: any = [];
-
     if (sdata.length > 0) {
       for (let item of sdata) {
-        ids.push(item?.id);
+        ids.push(item?.customerId);
       }
     }
     let reqData = {
@@ -242,7 +255,6 @@ export default function Guardians() {
       amount: data.Total,
       customer: ids,
     };
-
 
     await axios({
       method: "POST",
@@ -257,10 +269,119 @@ export default function Guardians() {
         reset();
         setUserId("");
       })
-      .catch((err) => {
-      });
+      .catch((err) => {});
   };
 
+  const generateSimplePDF = async (item: any) => {
+    let requested = {
+      id: item.itemId,
+    };
+    await axios({
+      method: "POST",
+      url: `${api_url}/getItembyid`,
+      data: requested,
+
+      headers: {
+        "content-type": "multipart/form-data",
+      },
+    })
+      .then((res) => {
+        // setItem(res?.data.data);
+        let items = res?.data.data;
+        if (res) {
+          setTimeout(() => {
+            var price = 0;
+            for (let d of items) {
+              price = price + d.price;
+            }
+            const doc = new jsPDF("l", "mm", "a4");
+            doc.setFontSize(20);
+
+            doc.text("Qatar International School", 40, 20);
+            doc.setFontSize(10);
+            doc.text("Qatar International School", 40, 25);
+            doc.setFontSize(10);
+            doc.text("United Nations St, West Bay, P.O. Box: 5697", 40, 30);
+            doc.text("Doha, Qatar", 40, 35);
+            doc.text("Telephone: 44833456", 240, 20);
+            doc.text("Website:  www.qis.org", 240, 28);
+            doc.text("Email:  qisfinance@qis.org", 237, 35);
+
+            doc.setFont("courier");
+
+            doc.setFontSize(40);
+
+            doc.text("INVOICE", 120, 60);
+
+            doc.setFontSize(20);
+
+            doc.text("family ID", 30, 90);
+            doc.text(`12`, 100, 90);
+
+            doc.text("Account Number", 30, 100);
+            doc.text("123", 100, 100);
+
+            doc.text("Invoice No", 200, 90);
+            doc.text(`${item.invoiceId}`, 250, 90);
+
+            doc.text("Date", 200, 100);
+            doc.text(`${item.invoiceDate}`, 250, 100);
+
+            const head = [["ITEM", "AMOUNT"]];
+            var data: any = [];
+            // push each tickcet's info into a row
+            // items.map((it: any) => data.push(Object.values(it)));
+            {
+              items && items.length > 1
+                ? items.map((ticket: any) => {
+                    let ticketData = [
+                      ticket.name,
+                      ticket.price,
+
+                      // called date-fns to format the date on the ticket
+                    ];
+                    // push each tickcet's info into a row
+                    data.push(ticketData);
+                  })
+                : data.push([
+                    items && items[0]?.name,
+                    items && items[0]?.price,
+                  ]);
+              // push each tickcet's info into a row
+            }
+            doc.setFontSize(20);
+
+            autoTable(doc, {
+              theme: "plain",
+              margin: { top: 120, left: 50 },
+              tableWidth: 500,
+              styles: { fontSize: 15 },
+              columnStyles: { 0: { halign: "left" } },
+              head: head,
+              body: data,
+
+              didDrawCell: (data: any) => {},
+            });
+            if (items.length > 2) {
+              doc.setFontSize(20);
+              doc.text("Grand Total", 195, 163);
+              doc.setFontSize(15);
+
+              doc.text(`${price}`, 258, 163);
+            } else {
+              doc.setFontSize(20);
+              doc.text("Grand Total", 190, 155);
+              doc.setFontSize(15);
+
+              doc.text(`${price}`, 240, 155);
+            }
+
+            doc.save("Document.pdf");
+          }, 2000);
+        }
+      })
+      .catch((err) => {});
+  };
   useEffect(() => {
     getUser();
   }, []);
@@ -278,10 +399,13 @@ export default function Guardians() {
     })
       .then((res) => {
         getUser();
-        handleCloses();
+        toast.success("Payment Successfully !");
+
+        setTimeout(() => {
+          handleCloses();
+        }, 1000);
       })
-      .catch((err) => {
-      });
+      .catch((err) => {});
   };
 
   const searchItems = (e: any) => {
@@ -314,10 +438,13 @@ export default function Guardians() {
     })
       .then((res) => {
         getUser();
-        handleClose();
+        toast.success("Deleted Successfully !");
+
+        setTimeout(() => {
+          handleClose();
+        }, 2000);
       })
-      .catch((err) => {
-      });
+      .catch((err) => {});
   };
   const handleSend = async () => {
     await axios({
@@ -330,8 +457,7 @@ export default function Guardians() {
       .then((res) => {
         setShare(false);
       })
-      .catch((err) => {
-      });
+      .catch((err) => {});
   };
 
   function handlerowchange(e: any) {
@@ -420,12 +546,6 @@ export default function Guardians() {
                                         onChange={(event, value) =>
                                           setUserId(value)
                                         }
-                                        open={open}
-                                        onOpen={() => {
-                                          if (inputValue && inputValue.length) {
-                                            return setOpen(true);
-                                          }
-                                        }}
                                         inputValue={inputValue}
                                         onInputChange={(e, value, reason) => {
                                           setInputValue(value);
@@ -610,7 +730,7 @@ export default function Guardians() {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {DATA.currentData() &&
+                          {DATA.currentData() && DATA.currentData() ? (
                             DATA.currentData().map((item: any) => (
                               <TableRow hover tabIndex={-1} role="checkbox">
                                 <TableCell padding="checkbox">
@@ -646,6 +766,7 @@ export default function Guardians() {
                                   <div className="btn">
                                     <div className="idiv">
                                       <Image
+                                        onClick={() => generateSimplePDF(item)}
                                         src="/download.svg"
                                         alt="Picture of the author"
                                         width={25}
@@ -696,7 +817,10 @@ export default function Guardians() {
                                   </Button> */}
                                 </TableCell>
                               </TableRow>
-                            ))}
+                            ))
+                          ) : (
+                            <h3>No Record found</h3>
+                          )}
                         </TableBody>
                       </Table>
                       <Stack
@@ -820,7 +944,7 @@ export default function Guardians() {
                               Customer <span className="err_str">*</span>
                             </InputLabel>
                             <OutlinedInput
-                              defaultValue={recievedPay.firstName}
+                              defaultValue={recievedPay.name}
                               type="text"
                               id="name"
                               placeholder="Customer Name..."
@@ -922,7 +1046,7 @@ export default function Guardians() {
                   </Grid>
                   <div className="iadiv">
                     <div className="hh">Total Amount:</div>
-                    <div>$1024.00</div>
+                    <div>${recievedPay.amount}</div>
                   </div>
                 </DialogContent>
                 <DialogActions>
@@ -936,6 +1060,7 @@ export default function Guardians() {
                 </DialogActions>
               </BootstrapDialog>
             </div>
+            <ToastContainer />
           </div>
         </Box>
       </Box>

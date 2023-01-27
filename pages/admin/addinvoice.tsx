@@ -12,7 +12,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 import Autocomplete from "@mui/material/Autocomplete";
 import { useRouter } from "next/router";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
 import MiniDrawer from "../sidebar";
 import axios from "axios";
@@ -224,6 +225,7 @@ export default function Guardians() {
   const [newCustOpen, setnewCustOpen] = useState(false);
   const [id, setId] = useState<FormValues | any>([]);
   const [date, setDate] = useState<FormValues | any>([]);
+  const [query, setQuery] = useState<FormValues | any>([]);
 
   const [item, setItem] = useState<FormValues | any>([]);
   const [product, setProduct] = useState<FormValues | any>([]);
@@ -324,6 +326,10 @@ export default function Guardians() {
       customerId: userID.id,
     };
     console.log(requestedData, "requestedData");
+    setTimeout(() => {
+      toast.success("Invoice created Successfully !");
+      router.push("/admin/invoices");
+    }, 1000);
 
     await axios({
       method: "POST",
@@ -334,11 +340,12 @@ export default function Guardians() {
       },
     })
       .then((res) => {
-        router.push("/admin/invoices");
-
-        reset();
+        if (!res) {
+          reset();
+        }
       })
       .catch((err) => {});
+    // window.location.replace("/admin/invoices");
   };
   const getItem = async () => {
     await axios({
@@ -375,6 +382,7 @@ export default function Guardians() {
         return item.name.toLowerCase().includes(e.target.value.toLowerCase());
       });
       const dtd = filterres;
+      console.log(dtd, "filterres");
       setItem(dtd);
     }
   };
@@ -443,18 +451,31 @@ export default function Guardians() {
     if (data === false) {
       getUser();
       setOpens(false);
+      let gg = user.filter((a: any) => a.id === 47);
+      console.log(gg[0]?.name, "ffffffffffffffffff");
+      console.log(
+        data,
+        "......................................................x"
+      );
     } else {
       setId(data);
       getUser();
-      setOpens(false);
+      setTimeout(() => {
+        setOpens(false);
+      }, 3000);
+
+      console.log(data, "..................idssssssss");
     }
   };
+  let gg = user.filter((a: any) => a.id === id);
+  console.log(gg.length, "..................ggggg");
 
   const handlePopup = (stats: any) => {
     if (stats === false) {
       getItem();
       setSecondPop(false);
     } else {
+      console.log(stats, "ssssssss......................x");
       getItem();
       setSecondPop(false);
     }
@@ -535,11 +556,13 @@ export default function Guardians() {
                       <Autocomplete
                         style={{ width: 300 }}
                         fullWidth
-                        // value={value}
                         inputValue={inputValue}
                         onChange={(event, value) => setUserId(value)}
                         // onChange={(event, newValue) => {
                         //   setValue(newValue);
+                        // }}
+                        // defaultValue={{
+                        //   name: `${gg[0]?.name}`,
                         // }}
                         onInputChange={(event, newInputValue) => {
                           setInputValue(newInputValue);
@@ -691,7 +714,7 @@ export default function Guardians() {
                     id="customized-dialog-title"
                     onClose={handleCloses}
                   >
-                    Add Items
+                    Add Itemss
                   </BootstrapDialogTitle>
                   <DialogContent dividers>
                     <Box sx={{ width: "100%" }}>
@@ -718,43 +741,46 @@ export default function Guardians() {
                             size="small"
                           >
                             <TableBody>
-                              {item.map((row: any) => {
-                                const isItemSelected = isSelected(row.id);
-                                const labelId = `enhanced-table-checkbox-${row.id}`;
+                              {item &&
+                                item.map((row: any) => {
+                                  const isItemSelected = isSelected(row.id);
+                                  const labelId = `enhanced-table-checkbox-${row.id}`;
 
-                                return (
-                                  <TableRow
-                                    hover
-                                    onClick={(event) =>
-                                      handleClick(event, row.id)
-                                    }
-                                    role="checkbox"
-                                    aria-checked={isItemSelected}
-                                    tabIndex={-1}
-                                    key={row.name}
-                                    selected={isItemSelected}
-                                  >
-                                    <TableCell padding="checkbox"></TableCell>
-                                    <TableCell
-                                      component="th"
-                                      id={labelId}
-                                      scope="row"
-                                      padding="none"
+                                  return (
+                                    <TableRow
+                                      hover
+                                      onClick={(event) =>
+                                        handleClick(event, row.id)
+                                      }
+                                      role="checkbox"
+                                      aria-checked={isItemSelected}
+                                      tabIndex={-1}
+                                      key={row.name}
+                                      selected={isItemSelected}
                                     >
-                                      <div className="table">
-                                        <div>{row.name}</div>
-                                        <div>{row.price}</div>
-                                      </div>
-                                    </TableCell>
-                                    {isItemSelected ? (
-                                      <span className="selectss">selected</span>
-                                    ) : (
-                                      <span className="plus">+</span>
-                                    )}
-                                    {/* <TableCell align="right">{row.protein}</TableCell> */}
-                                  </TableRow>
-                                );
-                              })}
+                                      <TableCell padding="checkbox"></TableCell>
+                                      <TableCell
+                                        component="th"
+                                        id={labelId}
+                                        scope="row"
+                                        padding="none"
+                                      >
+                                        <div className="table">
+                                          <div>{row.name}</div>
+                                          <div>{row.price}</div>
+                                        </div>
+                                      </TableCell>
+                                      {isItemSelected ? (
+                                        <span className="selectss">
+                                          selected
+                                        </span>
+                                      ) : (
+                                        <span className="plus">+</span>
+                                      )}
+                                      {/* <TableCell align="right">{row.protein}</TableCell> */}
+                                    </TableRow>
+                                  );
+                                })}
                             </TableBody>
                           </Table>
                         </TableContainer>

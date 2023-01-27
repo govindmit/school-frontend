@@ -68,9 +68,9 @@ h1.dhead {
   display: flex;
 }
 .Dtotal {
-  margin: 0px;
   padding: 0px;
   width: fit-content;
+  margin: 10px;
 }
 
 h2.dh1 {
@@ -157,7 +157,7 @@ span.hh {
   align-items: center;
   letter-spacing: 0.15px;
   color: #1a70c5;
-  margin-left: -101px;
+  margin-left: -158px;
   margin-top: 21px;
 }
 span.dname {
@@ -177,11 +177,11 @@ span.dactive {
   font-weight: 600;
   font-size: 18px;
   line-height: 16px;
-  color: #02c509;
+  color: #5a6873;
 }
 .dtable {
   /* margin-left: 23px; */
-  margin-top: 19px;
+  margin-top: -18px;
 }
 .Dcredit {
   width: fit-content;
@@ -193,7 +193,7 @@ td.MuiTableCell-root.MuiTableCell-body.MuiTableCell-alignLeft.MuiTableCell-sizeM
   font-weight: 600;
   font-size: 14px;
   line-height: 16px;
-  color: #ff4026;
+  color: #5a6873;
 }
 td.MuiTableCell-alignLeft.MuiTableCell-body.MuiTableCell-root.MuiTableCell-sizeMedium.css-1ex1afd-MuiTableCell-root.demail {
   font-family: "Roboto";
@@ -201,7 +201,7 @@ td.MuiTableCell-alignLeft.MuiTableCell-body.MuiTableCell-root.MuiTableCell-sizeM
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
-  color: #1a70c5;
+  color: #5a6873;
 }
 td.MuiTableCell-alignLeft.MuiTableCell-body.MuiTableCell-root.MuiTableCell-sizeMedium.css-1ex1afd-MuiTableCell-root.dname {
   font-family: "Roboto";
@@ -262,4 +262,41 @@ svg.MuiSvgIcon-root.MuiSvgIcon-colorPrimary.MuiSvgIcon-fontSizeMedium.dlimg.css-
 }
 .dvall {
   margin-left: 56%;
+}
+h3.lcr {
+  color: #333333;
+}
+.amo {
+  background: #1a70c5;
+}
+h1.dheads {
+  margin: 0px;
+  padding: 0px;
+  width: -moz-fit-content;
+  width: fit-content;
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 900;
+  font-size: 39px;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+.pend {
+  margin-right: 84px;
+  color: #ffffff;
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+}
+.Dtotals {
+  width: 100%;
+  font-size: 20px;
+  text-align: justify;
+}
+.dh2 {
+  color: #ffffff;
+  font-family: "Roboto";
+  font-style: normal;
+  font-size: 17px;
 }
