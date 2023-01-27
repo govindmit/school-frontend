@@ -44,7 +44,6 @@ export default function AddCustomerCmp({ Data }: { Data: any }) {
     setOpens(false);
     getUser();
   };
-  Data(value);
 
   return (
     <>
@@ -54,12 +53,14 @@ export default function AddCustomerCmp({ Data }: { Data: any }) {
         inputValue={inputValue}
         onChange={(event, newValue) => {
           setValue(newValue);
+          Data(newValue);
         }}
         onInputChange={(event, newInputValue) => {
           setInputValue(newInputValue);
         }}
         options={option}
         getOptionLabel={(option) => option.title || ""}
+        isOptionEqualToValue={(option, title) => option.title === value.title}
         renderInput={(params) => (
           <TextField
             {...params}

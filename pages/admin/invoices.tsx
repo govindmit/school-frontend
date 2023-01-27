@@ -101,7 +101,6 @@ export interface FormValues {
   recievedPay: any;
 }
 function usePagination(data: any, itemsPerPage: any) {
-  console.log(data, "dataaaaaaaaaaaaaaaaaaaaaaaaaaa", itemsPerPage);
   const [currentPage, setCurrentPage] = useState(1);
   const maxPage = Math.ceil(data.length / itemsPerPage);
 
@@ -154,7 +153,6 @@ export default function Guardians() {
   };
 
   const handleClickOpen = (item: any) => {
-    console.log(item);
     setRecieved(item);
     setDollerOpen(true);
   };
@@ -189,12 +187,10 @@ export default function Guardians() {
       },
     })
       .then((res) => {
-        console.log(res, "ressssss");
         setUser(res?.data.data);
         setsearchdata(res?.data.data);
       })
       .catch((err) => {
-        console.log(err, "err");
       });
   };
 
@@ -247,8 +243,6 @@ export default function Guardians() {
       customer: ids,
     };
 
-    console.log(sdata, "sdate");
-    console.log(reqData, "requestedData");
 
     await axios({
       method: "POST",
@@ -259,13 +253,11 @@ export default function Guardians() {
       },
     })
       .then((res) => {
-        console.log(res, "ressssss");
         setUser(res?.data.data);
         reset();
         setUserId("");
       })
       .catch((err) => {
-        console.log(err, "err");
       });
   };
 
@@ -277,7 +269,6 @@ export default function Guardians() {
     handleClose();
   };
   const handleCreate = async (id: any) => {
-    console.log(id, "idddddd");
     await axios({
       method: "PUT",
       url: `${api_url}/updateInvoice/${id}`,
@@ -290,7 +281,6 @@ export default function Guardians() {
         handleCloses();
       })
       .catch((err) => {
-        console.log(err, "err");
       });
   };
 
@@ -307,7 +297,6 @@ export default function Guardians() {
     }
   };
   const handleShare = async (item: any) => {
-    console.log(item.id, "itemmmm");
     setInvoiceId(item?.id);
     setShare(true);
   };
@@ -328,7 +317,6 @@ export default function Guardians() {
         handleClose();
       })
       .catch((err) => {
-        console.log(err, "err");
       });
   };
   const handleSend = async () => {
@@ -343,9 +331,7 @@ export default function Guardians() {
         setShare(false);
       })
       .catch((err) => {
-        console.log(err, "err");
       });
-    console.log("email send");
   };
 
   function handlerowchange(e: any) {
@@ -355,13 +341,10 @@ export default function Guardians() {
   const paid = user.filter((a: any) => a.status == "paid");
   const draft = user.filter((a: any) => a.status == "draft");
 
-  console.log(sdata, "sdata");
   const handleFilter = () => {
     getUser();
-    console.log(user, "click filter");
   };
 
-  console.log(recievedPay, "recievedPay");
   return (
     <>
       <Box sx={{ display: "flex" }}>
