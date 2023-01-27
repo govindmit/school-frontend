@@ -31,8 +31,6 @@ import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import { Button, OutlinedInput } from "@mui/material";
 import Paper from "@mui/material/Paper";
-import ETable from "../table";
-import AddNewCustomer from "../customer/addNewCustomer";
 import AddCustomer from "../customer/addNewCustomer";
 import AddItem from "./additem";
 
@@ -45,10 +43,6 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-// const rowsss = [
-//   createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-//   createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-// ];
 export interface DialogTitleProps {
   id: string;
   children?: React.ReactNode;
@@ -169,11 +163,6 @@ function getComparator<Key extends keyof any>(
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
-
-// Since 2020 all major browsers ensure sort stability with Array.prototype.sort().
-// stableSort() brings sort stability to non-modern browsers (notably IE11). If you
-// only support modern browsers you can replace stableSort(exampleArray, exampleComparator)
-// with exampleArray.slice().sort(exampleComparator)
 function stableSort<T>(
   array: readonly T[],
   comparator: (a: T, b: T) => number
@@ -485,22 +474,7 @@ export default function Guardians() {
       setSecondPop(false);
     }
   };
-  // const handleSave = () => {
-  //   // let cusId = localStorage.getItem("customerId");
-  //   console.log(moment(date).format("DD/MM/YYYY"), "date");
-  //   const requestedData = {
-  //     itemId: selected,
-  //     amount: price,
-  //     status: "pending",
-  //     createdDate: "19/01/2023",
-  //     createdBy: "1",
-  //     invoiceDate: "28/01/2023",
-  //     customerId: id,
-  //   };
-  //   console.log(requestedData, "requestedData");
-  // };
 
-  console.log(user, "userrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
   return (
     <>
       <Box sx={{ display: "flex" }}>

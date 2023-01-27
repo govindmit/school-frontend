@@ -120,6 +120,7 @@ export default function AddCustomer({
   closeDialog: any;
 }) {
   const [value, setValue] = React.useState<any>(0);
+  const [parentid, setparentid] = React.useState(0);
   const [spinner, setshowspinner] = React.useState(false);
   const [custtype, setcusttype] = React.useState<any>([]);
   const [btnDisabled, setBtnDisabled] = React.useState(false);
@@ -202,7 +203,9 @@ export default function AddCustomer({
         setBtnDisabled(false);
       });
   };
-
+  const Getdata = (item: any) => {
+    setparentid(item.id);
+  };
   return (
     <BootstrapDialog
       onClose={closeDialog}
@@ -471,7 +474,7 @@ export default function AddCustomer({
                       </FormGroup>
                       <Stack spacing={1} style={hideshowstyle}>
                         <InputLabel htmlFor="name"></InputLabel>
-                        <AddCustomerCmp />
+                        <AddCustomerCmp Data={Getdata} />
                       </Stack>
                     </Grid>
                   </Grid>

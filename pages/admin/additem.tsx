@@ -252,7 +252,6 @@ export default function AddItem({
     );
   }
   const onclose = () => {
-    console.log("hello");
     closeD(false);
     setSecondPop(false);
   };
@@ -297,7 +296,6 @@ export default function AddItem({
       .catch((err) => {});
   };
 
-  console.log(popup, "startttttttttttttttt");
   return (
     <>
       <BootstrapDialog
