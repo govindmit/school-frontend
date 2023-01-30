@@ -59,6 +59,7 @@ import {
 } from "typescript";
 import Paper from "@mui/material/Paper";
 import { number } from "yup/lib/locale";
+import invoiceService from "../services/invoiceService";
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
     padding: theme.spacing(2),
@@ -194,13 +195,8 @@ export default function Guardians() {
   });
 
   const getUser = async () => {
-    await axios({
-      method: "POST",
-      url: `${api_url}/getInvoice`,
-      headers: {
-        "content-type": "multipart/form-data",
-      },
-    })
+    await invoiceService
+      .getInvoice()
       .then((res) => {
         setUser(res?.data.data);
         setsearchdata(res?.data.data);
@@ -390,13 +386,8 @@ export default function Guardians() {
     handleClose();
   };
   const handleCreate = async (id: any) => {
-    await axios({
-      method: "PUT",
-      url: `${api_url}/updateInvoice/${id}`,
-      headers: {
-        "content-type": "multipart/form-data",
-      },
-    })
+    invoiceService
+      .updateInvoice(id)
       .then((res) => {
         getUser();
         toast.success("Payment Successfully !");
@@ -425,17 +416,8 @@ export default function Guardians() {
     setShare(true);
   };
   const handledelete = async () => {
-    let reqData = {
-      userId: "2",
-    };
-    await axios({
-      method: "DELETE",
-      url: `${api_url}/deleteInvoice/${id}`,
-      data: reqData,
-      headers: {
-        "content-type": "multipart/form-data",
-      },
-    })
+    await invoiceService
+      .deleteInvoice(id)
       .then((res) => {
         getUser();
         toast.success("Deleted Successfully !");
@@ -447,13 +429,8 @@ export default function Guardians() {
       .catch((err) => {});
   };
   const handleSend = async () => {
-    await axios({
-      method: "GET",
-      url: `${api_url}/sendInvoiceEmail/${invoiceId}`,
-      headers: {
-        "content-type": "multipart/form-data",
-      },
-    })
+    await invoiceService
+      .sendInvoiceEmail(invoiceId)
       .then((res) => {
         setShare(false);
       })
@@ -741,7 +718,9 @@ export default function Guardians() {
                                   scope="row"
                                   padding="none"
                                 >
-                                  <TableCell align="left">{item.id}</TableCell>
+                                  <TableCell align="left">
+                                    {item.invoiceId}
+                                  </TableCell>
                                 </TableCell>
                                 <TableCell align="left">{item.name}</TableCell>
                                 <TableCell align="left">
