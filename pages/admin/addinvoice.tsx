@@ -243,7 +243,7 @@ export default function Guardians() {
     const arr = [];
 
     arr.push(id);
-
+    console.log(event, "iddddddddddddddd");
     const selectedIndex = selected.indexOf(id);
     let newSelected: readonly string[] = [];
     if (selectedIndex === -1) {
@@ -745,7 +745,9 @@ export default function Guardians() {
                                 item.map((row: any) => {
                                   const isItemSelected = isSelected(row.id);
                                   const labelId = `enhanced-table-checkbox-${row.id}`;
-
+                                  {
+                                    console.log(row, "idssss");
+                                  }
                                   return (
                                     <TableRow
                                       hover

@@ -174,8 +174,7 @@ export default function EditCustomer({
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setshowspinner(true);
     setBtnDisabled(true);
-
-    console.log(data, "dataaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    console.log(data, "jjjjjjjjjjjjj");
     const reqData = {
       name: data.name,
       email1: data.email1,
@@ -183,7 +182,8 @@ export default function EditCustomer({
       phone1: data.number,
       contactName: data.contactName,
       printUs: data.printUs,
-      status: data.status,
+      status: data.status == 1 ? "1" : data.status == 0 ? "0" : "",
+      typeId: data.customertype,
     };
     await axios({
       method: "PUT",
