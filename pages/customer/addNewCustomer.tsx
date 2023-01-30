@@ -176,8 +176,10 @@ export default function AddCustomer({
       phone1: data.number,
       contactName: data.contactName,
       printUs: data.printUs,
+      status: data.status,
       roleId: 2,
     };
+    console.log(reqData, "reqdataaaa");
     await axios({
       method: "POST",
       url: `${api_url}/addUser`,
@@ -186,11 +188,12 @@ export default function AddCustomer({
         Authorization: auth_token,
       },
     })
-      .then((data) => {
-        if (data.status === 201) {
+      .then((data: any) => {
+        if (data.status === 200) {
           setshowspinner(false);
           setBtnDisabled(false);
           toast.success("Customer Added Successfully !");
+          closeDialog(false);
           setTimeout(() => {
             setOpen(false);
           }, 2000);

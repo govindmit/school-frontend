@@ -83,7 +83,7 @@ export default function CustomerList() {
   const [All, setAll] = useState(0);
   const [searchquery, setsearchquery] = useState("");
   const [searchdata, setsearchdata] = useState([]);
-  const { register, handleSubmit } = useForm<FormValues>();
+  const { register, reset, handleSubmit } = useForm<FormValues>();
   const [deleteConfirmBoxOpen, setdeleteConfirmBoxOpen] = React.useState(false);
   const [newCustOpen, setnewCustOpen] = React.useState(false);
   const [editCustOpen, seteditCustOpen] = React.useState(false);
@@ -132,6 +132,7 @@ export default function CustomerList() {
   //apply filter
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setUsers([]);
+    console.log(data, "......................................h");
     const reqData = {
       status: data.status,
       customerType: data.customerType,
@@ -149,6 +150,7 @@ export default function CustomerList() {
     })
       .then((res) => {
         if (res.status === 200) {
+          reset();
           console.log(res.data.data);
           setUsers(res.data.data);
         }
@@ -214,9 +216,9 @@ export default function CustomerList() {
   function handleNewCustomerOpen() {
     setnewCustOpen(true);
   }
-  const closePoP = () => {
-    setnewCustOpen(false);
+  const closePoP = (data: any) => {
     getUser();
+    setnewCustOpen(false);
   };
 
   //edit customer
@@ -224,8 +226,13 @@ export default function CustomerList() {
     seteditCustOpen(true);
     seteditid(id);
   }
-  const closeEditPoP = () => {
+  const closeEditPoP = (data: any) => {
+    console.log(data, "hhhhhhhhhhh..............s");
     seteditCustOpen(false);
+    getUser();
+  };
+
+  const handleFilter = () => {
     getUser();
   };
 
@@ -331,7 +338,9 @@ export default function CustomerList() {
                             }}
                             {...bindTrigger(popupState)}
                           >
-                            <BiFilterAlt />
+                            <span onClick={() => handleFilter()}>
+                              <BiFilterAlt />
+                            </span>
                             &nbsp; Filter
                           </MenuItem>
                           <Menu {...bindMenu(popupState)}>
@@ -353,10 +362,9 @@ export default function CustomerList() {
                                               labelId="demo-simple-select-label"
                                               id="demo-simple-select"
                                               size="small"
-                                              defaultValue={0}
                                               {...register("customerType")}
                                             >
-                                              <MenuItem value={0}>All</MenuItem>
+                                              <MenuItem>All</MenuItem>
                                               {custtype &&
                                                 custtype.map(
                                                   (data: any, key: any) => {
@@ -383,11 +391,10 @@ export default function CustomerList() {
                                             <Select
                                               labelId="demo-simple-select-label"
                                               id="demo-simple-select"
-                                              defaultValue={2}
                                               {...register("status")}
                                               size="small"
                                             >
-                                              <MenuItem value={2}>All</MenuItem>
+                                              <MenuItem>All</MenuItem>
                                               <MenuItem value={1}>
                                                 Active
                                               </MenuItem>

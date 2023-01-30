@@ -174,6 +174,8 @@ export default function EditCustomer({
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setshowspinner(true);
     setBtnDisabled(true);
+
+    console.log(data, "dataaaaaaaaaaaaaaaaaaaaaaaaaaaa");
     const reqData = {
       name: data.name,
       email1: data.email1,
@@ -181,6 +183,7 @@ export default function EditCustomer({
       phone1: data.number,
       contactName: data.contactName,
       printUs: data.printUs,
+      status: data.status,
     };
     await axios({
       method: "PUT",
@@ -191,11 +194,12 @@ export default function EditCustomer({
       },
     })
       .then((data) => {
-        if (data.status === 201) {
+        if (data.status === 200) {
           setshowspinner(false);
           setBtnDisabled(false);
           toast.success("Customer Updated Successfully !");
           setOpen(false);
+          closeDialogedit(data.status);
         }
       })
       .catch((error) => {
@@ -214,12 +218,14 @@ export default function EditCustomer({
         },
       });
       const res = await response.json();
+
+      console.log(res, "..............................x");
       setValue("name", res.data[0].name);
       setValue("email1", res.data[0].email1);
       setValue("email2", res.data[0].email2);
       setValue("number", res.data[0].phone1);
       setValue("contactName", res.data[0].contactName);
-      setValue("printUs", res.data[0].printUs);
+      setValue("printUs", res.data[0].printus);
     } catch (error) {
       console.log("error", error);
     }
@@ -560,7 +566,7 @@ export default function EditCustomer({
               >
                 <b>Update</b>
                 <span style={{ fontSize: "2px", paddingLeft: "10px" }}>
-                  {spinner === true ? <CircularProgress color="inherit" /> : ""}
+                  {/* {spinner === true ? <CircularProgress color="inherit" /> : ""} */}
                 </span>
               </Button>
             </DialogActions>

@@ -33,7 +33,6 @@ import { Button, OutlinedInput } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import AddCustomer from "../customer/addNewCustomer";
 import AddItem from "./additem";
-import invoicesService from "../services/invoiceService";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -332,15 +331,20 @@ export default function Guardians() {
       router.push("/admin/invoices");
     }, 1000);
 
-    await invoicesService
-      .createInvoice(requestedData)
+    await axios({
+      method: "POST",
+      url: `${api_url}/createInvoice`,
+      data: requestedData,
+      headers: {
+        "content-type": "multipart/form-data",
+      },
+    })
       .then((res) => {
         if (!res) {
           reset();
         }
       })
       .catch((err) => {});
-
     // window.location.replace("/admin/invoices");
   };
   const getItem = async () => {
