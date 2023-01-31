@@ -480,6 +480,7 @@ export default function Guardians() {
       setSecondPop(false);
     }
   };
+  console.log(item, "itemmmmmmmmmmmmmmmmmss");
 
   return (
     <>
@@ -743,6 +744,9 @@ export default function Guardians() {
                             <TableBody>
                               {item &&
                                 item.map((row: any) => {
+                                  {
+                                    console.log(row, "rowwwwwww");
+                                  }
                                   const isItemSelected = isSelected(row.id);
                                   const labelId = `enhanced-table-checkbox-${row.id}`;
                                   {

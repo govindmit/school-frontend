@@ -225,7 +225,7 @@ export default function EditCustomer({
       setValue("email2", res.data[0].email2);
       setValue("number", res.data[0].phone1);
       setValue("contactName", res.data[0].contactName);
-      setValue("printUs", res.data[0].printus);
+      setValue("printUs", res.data[0].printUs);
     } catch (error) {
       console.log("error", error);
     }
