@@ -227,7 +227,6 @@ export default function CustomerList() {
     seteditid(id);
   }
   const closeEditPoP = (data: any) => {
-    console.log(data, "hhhhhhhhhhh..............s");
     seteditCustOpen(false);
     getUser();
   };
@@ -235,6 +234,9 @@ export default function CustomerList() {
   const handleFilter = () => {
     getUser();
   };
+
+  let Active = users.filter((a: any) => a.status == 1);
+  let InActive = users.filter((a: any) => a.status == 0);
 
   return (
     <>
@@ -315,10 +317,10 @@ export default function CustomerList() {
                       ALL ({All})
                     </Item>
                     <Item style={{ marginRight: "15px", fontSize: "15px" }}>
-                      ACTIVE (17){" "}
+                      ACTIVE ({Active.length}){" "}
                     </Item>
                     <Item style={{ marginRight: "15px", fontSize: "15px" }}>
-                      INACTIVE (2){" "}
+                      INACTIVE ({InActive.length}){" "}
                     </Item>
                   </Box>
                   <Stack
@@ -329,20 +331,23 @@ export default function CustomerList() {
                     <PopupState variant="popover" popupId="demo-popup-menu">
                       {(popupState) => (
                         <Box>
-                          <MenuItem
-                            style={{
-                              color: "#1A70C5",
-                              fontWeight: "500",
-                              cursor: "pointer",
-                              marginRight: "5px",
-                            }}
-                            {...bindTrigger(popupState)}
-                          >
-                            <span onClick={() => handleFilter()}>
-                              <BiFilterAlt />
-                            </span>
-                            &nbsp; Filter
-                          </MenuItem>
+                          <div onClick={() => handleFilter()}>
+                            <MenuItem
+                              style={{
+                                color: "#1A70C5",
+                                fontWeight: "500",
+                                cursor: "pointer",
+                                marginRight: "5px",
+                              }}
+                              {...bindTrigger(popupState)}
+                            >
+                              <span>
+                                <BiFilterAlt />
+                              </span>
+                              &nbsp; Filter
+                            </MenuItem>
+                          </div>
+
                           <Menu {...bindMenu(popupState)}>
                             <Container>
                               <Grid style={{ width: "1030px" }}>
@@ -457,6 +462,7 @@ export default function CustomerList() {
                                                 Pant0003
                                               </MenuItem>
                                             </Select>
+                                            "
                                           </FormControl>
                                         </Stack>
                                       </Grid>

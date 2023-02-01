@@ -56,6 +56,9 @@ function a11yProps(index: number) {
 export default function ViewCustomer() {
   const [value, setValue] = React.useState(0);
   const [userDet, setUserDet] = useState<any>([]);
+  const [invoice, setUserinvoice] = useState<any>([]);
+  const [closeinvoice, setCloseinvoice] = useState<any>([]);
+
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -78,9 +81,38 @@ export default function ViewCustomer() {
     }
   };
 
+  const getUserInvoice = async () => {
+    const response = await fetch(`${api_url}/getInvoicebyUser/${customerId}`, {
+      method: "GET",
+      headers: {
+        Authorization: auth_token,
+      },
+    });
+    const res = await response.json();
+    setUserinvoice(res);
+  };
+  const getUserCloseInvoice = async () => {
+    const response = await fetch(
+      `${api_url}/getInvoicebyUser/${customerId}?key=close`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: auth_token,
+        },
+      }
+    );
+    const res = await response.json();
+    console.log(res, "resulttttts");
+    setCloseinvoice(res);
+  };
+
   useEffect(() => {
     getUserDet();
+
+    getUserCloseInvoice();
+    getUserInvoice();
   }, []);
+  console.log(value, "value");
 
   return (
     <>
@@ -299,7 +331,7 @@ export default function ViewCustomer() {
                             aria-label="basic tabs example"
                           >
                             <Tab label="OPEN INVOICES" {...a11yProps(0)} />
-                            <Tab label="CLOSED INVICES" {...a11yProps(1)} />
+                            <Tab label="CLOSED INVOICES" {...a11yProps(1)} />
                           </Tabs>
                         </Box>
                         <TabPanel value={value} index={0}>
@@ -320,14 +352,28 @@ export default function ViewCustomer() {
                                 </TableCell>
                               </TableRow>
                             </TableHead>
-                            <TableBody>
-                              <TableRow hover tabIndex={-1}>
-                                <TableCell align="left">HII</TableCell>
-                                <TableCell align="left">HII</TableCell>
-                                <TableCell align="left">HII</TableCell>
-                                <TableCell align="left">HII</TableCell>
-                              </TableRow>
-                            </TableBody>
+                            {invoice.length > 0 ? (
+                              invoice.map((item: any) => (
+                                <TableBody>
+                                  <TableRow hover tabIndex={-1}>
+                                    <TableCell align="left">
+                                      {item.invoiceId}
+                                    </TableCell>
+                                    <TableCell align="left">
+                                      {item.invoiceDate}
+                                    </TableCell>
+                                    <TableCell align="left">
+                                      {item.amount}
+                                    </TableCell>
+                                    <TableCell align="left">
+                                      {item.amount}
+                                    </TableCell>
+                                  </TableRow>
+                                </TableBody>
+                              ))
+                            ) : (
+                              <h3>No record found</h3>
+                            )}
                           </Table>
                         </TabPanel>
                         <TabPanel value={value} index={1}>
@@ -348,15 +394,28 @@ export default function ViewCustomer() {
                                 </TableCell>
                               </TableRow>
                             </TableHead>
-                            <TableBody>
-                              <TableRow hover tabIndex={-1}>
-                                <TableCell align="left">HII</TableCell>
-                                <TableCell align="left">HII</TableCell>
-                                <TableCell align="left">HII</TableCell>
-                                <TableCell align="left">HII</TableCell>
-                                <TableCell align="left">HII</TableCell>
-                              </TableRow>
-                            </TableBody>
+                            {closeinvoice.length > 0 ? (
+                              closeinvoice.map((item: any) => (
+                                <TableBody>
+                                  <TableRow hover tabIndex={-1}>
+                                    <TableCell align="left">
+                                      {item.invoiceId}
+                                    </TableCell>
+                                    <TableCell align="left">
+                                      {item.invoiceDate}
+                                    </TableCell>
+                                    <TableCell align="left">
+                                      {item.amount}
+                                    </TableCell>
+                                    <TableCell align="left">
+                                      {item.amount}
+                                    </TableCell>
+                                  </TableRow>
+                                </TableBody>
+                              ))
+                            ) : (
+                              <h3>No record found</h3>
+                            )}
                           </Table>
                         </TabPanel>
                       </Box>

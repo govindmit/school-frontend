@@ -243,7 +243,7 @@ export default function Guardians() {
     const arr = [];
 
     arr.push(id);
-
+    console.log(event, "iddddddddddddddd");
     const selectedIndex = selected.indexOf(id);
     let newSelected: readonly string[] = [];
     if (selectedIndex === -1) {
@@ -350,7 +350,7 @@ export default function Guardians() {
   const getItem = async () => {
     await axios({
       method: "GET",
-      url: `${api_url}/getItem`,
+      url: `${api_url}/getItems`,
 
       headers: {
         "content-type": "multipart/form-data",
@@ -480,6 +480,7 @@ export default function Guardians() {
       setSecondPop(false);
     }
   };
+  console.log(item, "itemmmmmmmmmmmmmmmmmss");
 
   return (
     <>
@@ -743,9 +744,14 @@ export default function Guardians() {
                             <TableBody>
                               {item &&
                                 item.map((row: any) => {
+                                  {
+                                    console.log(row, "rowwwwwww");
+                                  }
                                   const isItemSelected = isSelected(row.id);
                                   const labelId = `enhanced-table-checkbox-${row.id}`;
-
+                                  {
+                                    console.log(row, "idssss");
+                                  }
                                   return (
                                     <TableRow
                                       hover
