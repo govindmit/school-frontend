@@ -630,7 +630,7 @@ export default function CustomerList() {
                             </TableCell>
                             <TableCell align="left">{dataitem.name}</TableCell>
                             <TableCell align="left">
-                              <a hre="">{dataitem.email1}</a>
+                              <a href="">{dataitem.email1}</a>
                             </TableCell>
                             <TableCell align="left">
                               <a hre="">{dataitem.email2}</a>
