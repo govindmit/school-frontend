@@ -326,8 +326,8 @@ export default function Guardians() {
       customerId: userID.id,
     };
     console.log(requestedData, "requestedData");
+    toast.success("Invoice created Successfully !");
     setTimeout(() => {
-      toast.success("Invoice created Successfully !");
       router.push("/admin/invoices");
     }, 1000);
 
@@ -480,7 +480,6 @@ export default function Guardians() {
       setSecondPop(false);
     }
   };
-  console.log(item, "itemmmmmmmmmmmmmmmmmss");
 
   return (
     <>

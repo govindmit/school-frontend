@@ -455,6 +455,8 @@ export default function Guardians() {
       },
     })
       .then((res) => {
+        toast.success("Send Invoice Mail Successfully !");
+
         setShare(false);
       })
       .catch((err) => {});
