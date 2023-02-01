@@ -115,6 +115,30 @@ svg.MuiSvgIcon-root.MuiSvgIcon-colorPrimary.MuiSvgIcon-fontSizeMedium.dlimg.css-
   border-radius: 10px; */
   margin-top: 46px;
 }
+.dtable-box {
+  padding: 0px !important;
+}
+
+.data-table-inner {
+  padding-top: 0 !important;
+}
+
+.Dcredit h3 {
+  margin-top: 0;
+  font-size: 20px;
+}
+
+.data-table-inner-item .MuiContainer-root {
+  padding: 0 22px;
+}
+.box-show-no {
+  box-shadow: none !important;
+}
+
+.box-shadow {
+  box-shadow: 0px 0px 14px 6px #eceef4 !important;
+}
+
 .dicon {
   display: inline-flex;
   margin: 0px;
@@ -151,7 +175,9 @@ h3.dluser {
 }
 #dimage {
   margin: 0px;
-  width: 15%;
+  margin-right: 0px;
+  width: 55px;
+  margin-right: 10px;
 }
 #dinfo {
   margin: 0px;
@@ -160,16 +186,31 @@ h3.dluser {
 #dstatus {
   margin: 0px;
   width: 28%;
+  text-align: right;
+}
+#dstatus span {
+  font-size: 14px;
+  color: #02c509;
+  text-transform: uppercase;
 }
 .Ddiv1 {
   height: 68px;
   display: flex;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+}
+.diinfo {
+  display: flex;
+  flex-wrap: wrap;
+}
+.diinfo .dname {
+  width: 100%;
 }
 /* span.hh {
   margin-left: -101px;
   margin-top: 21px;
 } */
-span.hh {
+span.email {
   /* margin-left: -101px; */
   /* margin-top: 21px; */
   font-family: "Roboto";
@@ -179,8 +220,8 @@ span.hh {
   align-items: center;
   letter-spacing: 0.15px;
   color: #1a70c5;
-  margin-left: -158px;
-  margin-top: 21px;
+  margin-left: 0px;
+  margin-top: 0px;
 }
 span.dname {
   font-family: "Roboto";
@@ -249,7 +290,7 @@ span.dramount {
   padding: 0px;
   margin-right: 76%;
 }
-.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation1.css-1633um2-MuiPaper-root {
+.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation1.dashboard-box {
   height: 99% !important;
   padding: 0;
   border-radius: 10px;
