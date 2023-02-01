@@ -249,7 +249,7 @@ export default function CustomerList() {
               direction="row"
               alignItems="center"
               justifyContent="space-between"
-              style={{ padding: "8px" }}
+              style={{ padding: "8px", marginBottom: "15px" }}
             >
               <Stack>
                 <Stack spacing={3}>
@@ -281,16 +281,20 @@ export default function CustomerList() {
                 </Typography>
               </Stack>
               <Button
+                className="button-new"
                 variant="contained"
                 size="small"
                 sx={{ width: 150 }}
                 onClick={handleNewCustomerOpen}
               >
-                <b>New Customer</b>
+                New Customer
               </Button>
             </Stack>
             {/*bread cump */}
-            <Card style={{ margin: "10px", padding: "15px" }}>
+            <Card
+              style={{ margin: "10px", padding: "15px" }}
+              className="box-shadow"
+            >
               <TableContainer>
                 {/*bread cump */}
                 <Stack
@@ -300,6 +304,7 @@ export default function CustomerList() {
                   justifyContent="space-between"
                 >
                   <Box
+                    className="filter-list"
                     sx={{
                       display: "flex",
                       flexDirection: "row",
@@ -307,47 +312,24 @@ export default function CustomerList() {
                       borderRadius: 1,
                     }}
                   >
-                    <Item
-                      style={{
-                        color: "red",
-                        marginRight: "15px",
-                        fontSize: "15px",
-                      }}
-                    >
-                      ALL ({All})
-                    </Item>
-                    <Item style={{ marginRight: "15px", fontSize: "15px" }}>
-                      ACTIVE ({Active.length}){" "}
-                    </Item>
-                    <Item style={{ marginRight: "15px", fontSize: "15px" }}>
-                      INACTIVE ({InActive.length}){" "}
-                    </Item>
+                    <Item className="filter-active">ALL ({All})</Item>
+                    <Item>ACTIVE (17) </Item>
+                    <Item>INACTIVE (2) </Item>
                   </Box>
                   <Stack
                     direction="row"
                     alignItems="center"
-                    style={{ padding: "5px" }}
+                    className="fimport-export-box"
                   >
                     <PopupState variant="popover" popupId="demo-popup-menu">
                       {(popupState) => (
                         <Box>
-                          <div onClick={() => handleFilter()}>
-                            <MenuItem
-                              style={{
-                                color: "#1A70C5",
-                                fontWeight: "500",
-                                cursor: "pointer",
-                                marginRight: "5px",
-                              }}
-                              {...bindTrigger(popupState)}
-                            >
-                              <span>
-                                <BiFilterAlt />
-                              </span>
-                              &nbsp; Filter
-                            </MenuItem>
-                          </div>
-
+                          <MenuItem {...bindTrigger(popupState)}>
+                            <span onClick={() => handleFilter()}>
+                              <BiFilterAlt />
+                            </span>
+                            &nbsp; Filter
+                          </MenuItem>
                           <Menu {...bindMenu(popupState)}>
                             <Container>
                               <Grid style={{ width: "1030px" }}>
@@ -534,15 +516,7 @@ export default function CustomerList() {
                     <PopupState variant="popover" popupId="demo-popup-menu">
                       {(popupState) => (
                         <Box>
-                          <MenuItem
-                            style={{
-                              color: "#1A70C5",
-                              fontWeight: "500",
-                              cursor: "pointer",
-                              marginRight: "5px",
-                            }}
-                            {...bindTrigger(popupState)}
-                          >
+                          <MenuItem {...bindTrigger(popupState)}>
                             Export
                             <KeyboardArrowDownIcon />
                           </MenuItem>
@@ -564,13 +538,8 @@ export default function CustomerList() {
                       {(popupState) => (
                         <Box>
                           <MenuItem
-                            style={{
-                              color: "#1A70C5",
-                              fontWeight: "500",
-                              cursor: "pointer",
-                              marginRight: "5px",
-                            }}
                             {...bindTrigger(popupState)}
+                            style={{ border: "none," }}
                           >
                             Import
                             <KeyboardArrowDownIcon />
@@ -651,6 +620,7 @@ export default function CustomerList() {
                             tabIndex={-1}
                             role="checkbox"
                             key={key}
+                            className="boder-bottom"
                           >
                             <TableCell padding="checkbox">
                               <Checkbox />
@@ -660,10 +630,10 @@ export default function CustomerList() {
                             </TableCell>
                             <TableCell align="left">{dataitem.name}</TableCell>
                             <TableCell align="left">
-                              {dataitem.email1}
+                              <a hre="">{dataitem.email1}</a>
                             </TableCell>
                             <TableCell align="left">
-                              {dataitem.email2}
+                              <a hre="">{dataitem.email2}</a>
                             </TableCell>
                             <TableCell align="left">
                               {dataitem.CustomerType}
@@ -676,7 +646,7 @@ export default function CustomerList() {
                                 <span style={{ color: "#02C509" }}>ACTIVE</span>
                               ) : (
                                 <span style={{ color: "#FF4026" }}>
-                                  IACTIVE
+                                  INACTIVE
                                 </span>
                               )}
                             </TableCell>
@@ -690,8 +660,12 @@ export default function CustomerList() {
                               {dataitem.phone2}
                             </TableCell>
                             <TableCell align="left">
-                              <Stack direction="row" spacing={1}>
-                                <IconButton>
+                              <Stack
+                                className="action"
+                                direction="row"
+                                spacing={1}
+                              >
+                                <IconButton className="action-view">
                                   <Link
                                     href={`/customer/viewcustomer/${dataitem.id}`}
                                     style={{
@@ -702,6 +676,7 @@ export default function CustomerList() {
                                   </Link>
                                 </IconButton>
                                 <IconButton
+                                  className="action-edit"
                                   onClick={() =>
                                     handleEditCustomerOpen(dataitem.id)
                                   }
@@ -709,6 +684,7 @@ export default function CustomerList() {
                                   <FiEdit />
                                 </IconButton>
                                 <IconButton
+                                  className="action-delete"
                                   style={{ color: "#F95A37" }}
                                   onClick={() => openDelete(dataitem)}
                                 >
