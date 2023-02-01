@@ -227,7 +227,6 @@ export default function CustomerList() {
     seteditid(id);
   }
   const closeEditPoP = (data: any) => {
-    console.log(data, "hhhhhhhhhhh..............s");
     seteditCustOpen(false);
     getUser();
   };
@@ -235,6 +234,9 @@ export default function CustomerList() {
   const handleFilter = () => {
     getUser();
   };
+
+  let Active = users.filter((a: any) => a.status == 1);
+  let InActive = users.filter((a: any) => a.status == 0);
 
   return (
     <>
@@ -442,6 +444,7 @@ export default function CustomerList() {
                                                 Pant0003
                                               </MenuItem>
                                             </Select>
+                                            "
                                           </FormControl>
                                         </Stack>
                                       </Grid>
