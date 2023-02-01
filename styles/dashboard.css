@@ -2,7 +2,8 @@
   background: #f5f6f9 !important;
   padding: 22px !important;
   margin: 0px !important;
-  margin-top: 53px !important;
+  margin-top: 0px;
+  margin-top: 79px !important;
 }
 .dashboardGtitle {
   font-family: "Roboto";
@@ -64,13 +65,34 @@ h1.dhead {
   /* margin: -1px; */
   /* padding: 12px; */
 }
+.jk {
+  width: 100%;
+  text-align: left;
+  border-bottom: 1px solid #fff;
+  padding-bottom: 5px;
+}
+.Dtotals div:first-child span {
+  font-size: 40px;
+  font-weight: 600;
+  padding-left: 17px;
+  top: 0;
+}
+.Dtotals .dh2 {
+  font-size: 16px;
+  font-weight: bold;
+  padding-left: 17px;
+  position: relative;
+  top: -9px;
+}
 .dmain {
   display: flex;
+  justify-content: space-between;
+  padding: 0 17px;
 }
 .Dtotal {
   padding: 0px;
   width: fit-content;
-  margin: 10px;
+  margin: 17px;
 }
 
 h2.dh1 {
@@ -229,6 +251,9 @@ span.dramount {
 }
 .MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation1.css-1633um2-MuiPaper-root {
   height: 99% !important;
+  padding: 0;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 img.dstud {
@@ -238,14 +263,19 @@ img.dstud {
 
 svg.MuiSvgIcon-root.dimg.css-ci5apu-MuiSvgIcon-root {
   font-size: 41px !important;
-  margin: 21px !important;
-  margin-left: 51% !important;
+  margin: 0px !important;
+  margin-left: 0 !important;
+  margin-top: 8px !important;
 }
 .svg {
-  margin-left: 143px;
+  margin-left: 0px;
+}
+
+.dmain .svg {
+  margin-left: 0px;
 }
 .svg3 {
-  margin-left: 133px;
+  margin-left: 0px;
 }
 
 svg.MuiSvgIcon-root.MuiSvgIcon-colorPrimary.MuiSvgIcon-fontSizeMedium.dimg.css-jxtyyz {

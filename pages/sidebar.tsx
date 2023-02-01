@@ -23,6 +23,12 @@ import Image from "next/image";
 import { Input } from "@mui/material";
 import { useRouter } from "next/router";
 import { OutlinedInput } from "@mui/material";
+import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
+import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import CreditCardOutlinedIcon from "@mui/icons-material/CreditCardOutlined";
+import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Head from "next/head";
 const drawerWidth = 240;
 
@@ -122,9 +128,9 @@ export default function MiniDrawer() {
                 </Typography>
               </Toolbar>
             </div>
-            <div className="inputBar">
+            <div className="inputBar search-box">
               <OutlinedInput
-                className="inbar"
+                className="inbar search-box-outer"
                 // onChange={(e) => handlechange(e)}
                 id="name"
                 type="text"
@@ -132,7 +138,6 @@ export default function MiniDrawer() {
                 // defaultValue={user?.firstname}
                 // value={user.firstname}
                 placeholder="Search"
-                multiline
               />
             </div>
           </div>
@@ -150,6 +155,7 @@ export default function MiniDrawer() {
         </DrawerHeader> */}
           <List>
             <ListItem
+              className="sidebar-link"
               disablePadding
               sx={{ display: "block" }}
               onClick={() => router.push("/admin/dashboard")}
@@ -168,6 +174,7 @@ export default function MiniDrawer() {
                     justifyContent: "center",
                   }}
                 ></ListItemIcon>
+                <DashboardOutlinedIcon />
                 <ListItemText
                   primary="Dashboard"
                   sx={{ opacity: open ? 1 : 0 }}
@@ -176,6 +183,7 @@ export default function MiniDrawer() {
             </ListItem>
 
             <ListItem
+              className="sidebar-link"
               disablePadding
               sx={{ display: "block" }}
               onClick={() => router.push("/customer/customerslist")}
@@ -194,6 +202,7 @@ export default function MiniDrawer() {
                     justifyContent: "center",
                   }}
                 ></ListItemIcon>
+                <PeopleAltOutlinedIcon />
                 <ListItemText
                   primary="Customers"
                   sx={{ opacity: open ? 1 : 0 }}
@@ -202,6 +211,7 @@ export default function MiniDrawer() {
             </ListItem>
 
             <ListItem
+              className="sidebar-link"
               disablePadding
               sx={{ display: "block" }}
               onClick={() => router.push("/admin/invoices")}
@@ -220,6 +230,7 @@ export default function MiniDrawer() {
                     justifyContent: "center",
                   }}
                 ></ListItemIcon>
+                <DescriptionOutlinedIcon />
                 <ListItemText
                   primary="Invoices"
                   sx={{ opacity: open ? 1 : 0 }}
@@ -227,6 +238,7 @@ export default function MiniDrawer() {
               </ListItemButton>
             </ListItem>
             <ListItem
+              className="sidebar-link"
               disablePadding
               sx={{ display: "block" }}
               onClick={() => router.push("/admin/creditNotes")}
@@ -245,6 +257,8 @@ export default function MiniDrawer() {
                     justifyContent: "center",
                   }}
                 ></ListItemIcon>
+                <CreditCardOutlinedIcon />
+
                 <ListItemText
                   primary="Credit Notes"
                   sx={{ opacity: open ? 1 : 0 }}
@@ -252,6 +266,7 @@ export default function MiniDrawer() {
               </ListItemButton>
             </ListItem>
             <ListItem
+              className="sidebar-link"
               disablePadding
               sx={{ display: "block" }}
               onClick={() => router.push("/activites/activitylist")}
@@ -270,6 +285,7 @@ export default function MiniDrawer() {
                     justifyContent: "center",
                   }}
                 ></ListItemIcon>
+                <TimelineOutlinedIcon />
                 <ListItemText
                   primary="Activity"
                   sx={{ opacity: open ? 1 : 0 }}
@@ -277,6 +293,7 @@ export default function MiniDrawer() {
               </ListItemButton>
             </ListItem>
             <ListItem
+              className="sidebar-link"
               disablePadding
               sx={{ display: "block" }}
               // onClick={() => router.push("/activites/activitylist")}
@@ -295,6 +312,7 @@ export default function MiniDrawer() {
                     justifyContent: "center",
                   }}
                 ></ListItemIcon>
+                <LockOutlinedIcon />
                 <ListItemText
                   primary="Log Out"
                   sx={{ opacity: open ? 1 : 0 }}
