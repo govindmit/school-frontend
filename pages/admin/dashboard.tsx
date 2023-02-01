@@ -80,7 +80,7 @@ export default function Dashboard(this: any) {
                 <Box sx={{ flexGrow: 1 }}>
                   <Grid container spacing={2}>
                     <Grid item xs={3}>
-                      <Item>
+                      <Item className="dashboard-box">
                         <div>
                           <div className="dmain">
                             <div>
@@ -110,7 +110,7 @@ export default function Dashboard(this: any) {
                       </Item>
                     </Grid>
                     <Grid item xs={3}>
-                      <Item>
+                      <Item className="dashboard-box">
                         <div>
                           <div className="dmain">
                             <h1 className="dhead">$1300</h1>
@@ -129,7 +129,7 @@ export default function Dashboard(this: any) {
                       </Item>
                     </Grid>
                     <Grid item xs={3}>
-                      <Item>
+                      <Item className="dashboard-box">
                         <div>
                           <div className="dmain">
                             <div>
@@ -152,7 +152,7 @@ export default function Dashboard(this: any) {
                       </Item>
                     </Grid>
                     <Grid item xs={3}>
-                      <Item>
+                      <Item className="dashboard-box">
                         <div className="amo">
                           <div className="dmain">
                             <div className="jk">
@@ -181,17 +181,22 @@ export default function Dashboard(this: any) {
               <div className="dGraph">
                 <Box sx={{ flexGrow: 1 }}>
                   <Grid container spacing={2}>
-                    <Grid item xs={8} md={7}>
-                      <Item>
+                    <Grid item xs={8} md={7} className="data-table-box">
+                      <Item className="dtable-box">
                         <div className="dtable">
                           <Grid container spacing={2}>
-                            <Grid item xs={8} md={12}>
-                              <Item>
+                            <Grid
+                              item
+                              xs={8}
+                              md={12}
+                              className="data-table-inner"
+                            >
+                              <Item className="data-table-inner-item box-shadow padding-le-ri-zero">
                                 <div className="Dcredit">
                                   <h3 className="lcr">Latest Credit Report</h3>
                                 </div>
                                 <Container>
-                                  <Card>
+                                  <Card className="box-show-no border-round">
                                     <TableContainer sx={{ minWidth: 800 }}>
                                       <Table>
                                         <TableHead>
@@ -517,177 +522,168 @@ export default function Dashboard(this: any) {
                         </div>
                       </Item>
                     </Grid>
-                    <Grid item xs={8} md={5}>
-                      <Item>
-                        <div className="dlhead">
-                          <div>
-                            <h3 className="dluser">Latest Users</h3>
-                          </div>
-                          <div className="dvall">
-                            <Button className="dview" variant="text">
-                              View All
-                            </Button>
-                          </div>
+                    <Grid item xs={8} md={5} className="data-table-inner">
+                      <Item className="box-shadow padding-le-ri-zero">
+                        <div className="Dcredit">
+                          <h3 className="lcr">Latest Users</h3>
+                          <Button className="dview" variant="text">
+                            View All
+                          </Button>
                         </div>
-                        <div className="Ddiv1">
-                          <div id="dimage">
-                            <Avatar
-                              alt="Remy Sharp"
-                              src="/image.png"
-                              sx={{ width: 50, height: 50 }}
-                            />
-                          </div>
+                        <div className="padding-22">
+                          <div className="Ddiv1">
+                            <div id="dimage">
+                              <Avatar
+                                alt="Remy Sharp"
+                                src="/image.png"
+                                sx={{ width: 50, height: 50 }}
+                              />
+                            </div>
 
-                          <div id="dinfo">
-                            <div className="diinfo">
-                              <span className="dname">Gracie Owens</span>{" "}
-                              &nbsp;&nbsp;
-                              <span className="hh">
-                                gracie@testmailinator.com
-                              </span>
+                            <div id="dinfo">
+                              <div className="diinfo">
+                                <span className="dname">Gracie Owens</span>{" "}
+                                <span className="email">
+                                  gracie@testmailinator.com
+                                </span>
+                              </div>
+                            </div>
+
+                            <div id="dstatus">
+                              <span className="dactive">Active</span>
                             </div>
                           </div>
+                          <div className="Ddiv1">
+                            <div id="dimage">
+                              <Avatar
+                                alt="Remy Sharp"
+                                src="/image.png"
+                                sx={{ width: 50, height: 50 }}
+                              />
+                            </div>
 
-                          <div id="dstatus">
-                            <span className="dactive">Active</span>
-                          </div>
-                        </div>
-                        <div className="Ddiv1">
-                          <div id="dimage">
-                            <Avatar
-                              alt="Remy Sharp"
-                              src="/image.png"
-                              sx={{ width: 50, height: 50 }}
-                            />
-                          </div>
+                            <div id="dinfo">
+                              <div className="diinfo">
+                                <span className="dname">Gracie Owens</span>{" "}
+                                <span className="email">
+                                  gracie@testmailinator.com
+                                </span>
+                              </div>
+                            </div>
 
-                          <div id="dinfo">
-                            <div className="diinfo">
-                              <span className="dname">Gracie Owens</span>{" "}
-                              &nbsp;&nbsp;
-                              <span className="hh">
-                                gracie@testmailinator.com
-                              </span>
+                            <div id="dstatus">
+                              <span className="dactive">Active</span>
                             </div>
                           </div>
+                          <div className="Ddiv1">
+                            <div id="dimage">
+                              <Avatar
+                                alt="Remy Sharp"
+                                src="/image.png"
+                                sx={{ width: 50, height: 50 }}
+                              />
+                            </div>
 
-                          <div id="dstatus">
-                            <span className="dactive">Active</span>
-                          </div>
-                        </div>
-                        <div className="Ddiv1">
-                          <div id="dimage">
-                            <Avatar
-                              alt="Remy Sharp"
-                              src="/image.png"
-                              sx={{ width: 50, height: 50 }}
-                            />
-                          </div>
+                            <div id="dinfo">
+                              <div className="diinfo">
+                                <span className="dname">Gracie Owens</span>{" "}
+                                <span className="email">
+                                  gracie@testmailinator.com
+                                </span>
+                              </div>
+                            </div>
 
-                          <div id="dinfo">
-                            <div className="diinfo">
-                              <span className="dname">Gracie Owens</span>{" "}
-                              &nbsp;&nbsp;
-                              <span className="hh">
-                                gracie@testmailinator.com
-                              </span>
+                            <div id="dstatus">
+                              <span className="dactive">Active</span>
                             </div>
                           </div>
+                          <div className="Ddiv1">
+                            <div id="dimage">
+                              <Avatar
+                                alt="Remy Sharp"
+                                src="/image.png"
+                                sx={{ width: 50, height: 50 }}
+                              />
+                            </div>
 
-                          <div id="dstatus">
-                            <span className="dactive">Active</span>
-                          </div>
-                        </div>
-                        <div className="Ddiv1">
-                          <div id="dimage">
-                            <Avatar
-                              alt="Remy Sharp"
-                              src="/image.png"
-                              sx={{ width: 50, height: 50 }}
-                            />
-                          </div>
+                            <div id="dinfo">
+                              <div className="diinfo">
+                                <span className="dname">Gracie Owens</span>{" "}
+                                <span className="email">
+                                  gracie@testmailinator.com
+                                </span>
+                              </div>
+                            </div>
 
-                          <div id="dinfo">
-                            <div className="diinfo">
-                              <span className="dname">Gracie Owens</span>{" "}
-                              &nbsp;&nbsp;
-                              <span className="hh">
-                                gracie@testmailinator.com
-                              </span>
+                            <div id="dstatus">
+                              <span className="dactive">Active</span>
                             </div>
                           </div>
+                          <div className="Ddiv1">
+                            <div id="dimage">
+                              <Avatar
+                                alt="Remy Sharp"
+                                src="/image.png"
+                                sx={{ width: 50, height: 50 }}
+                              />
+                            </div>
 
-                          <div id="dstatus">
-                            <span className="dactive">Active</span>
-                          </div>
-                        </div>
-                        <div className="Ddiv1">
-                          <div id="dimage">
-                            <Avatar
-                              alt="Remy Sharp"
-                              src="/image.png"
-                              sx={{ width: 50, height: 50 }}
-                            />
-                          </div>
+                            <div id="dinfo">
+                              <div className="diinfo">
+                                <span className="dname">Gracie Owens</span>{" "}
+                                <span className="email">
+                                  gracie@testmailinator.com
+                                </span>
+                              </div>
+                            </div>
 
-                          <div id="dinfo">
-                            <div className="diinfo">
-                              <span className="dname">Gracie Owens</span>{" "}
-                              &nbsp;&nbsp;
-                              <span className="hh">
-                                gracie@testmailinator.com
-                              </span>
+                            <div id="dstatus">
+                              <span className="dactive">Active</span>
                             </div>
                           </div>
+                          <div className="Ddiv1">
+                            <div id="dimage">
+                              <Avatar
+                                alt="Remy Sharp"
+                                src="/image.png"
+                                sx={{ width: 50, height: 50 }}
+                              />
+                            </div>
 
-                          <div id="dstatus">
-                            <span className="dactive">Active</span>
-                          </div>
-                        </div>
-                        <div className="Ddiv1">
-                          <div id="dimage">
-                            <Avatar
-                              alt="Remy Sharp"
-                              src="/image.png"
-                              sx={{ width: 50, height: 50 }}
-                            />
-                          </div>
+                            <div id="dinfo">
+                              <div className="diinfo">
+                                <span className="dname">Gracie Owens</span>{" "}
+                                <span className="email">
+                                  gracie@testmailinator.com
+                                </span>
+                              </div>
+                            </div>
 
-                          <div id="dinfo">
-                            <div className="diinfo">
-                              <span className="dname">Gracie Owens</span>{" "}
-                              &nbsp;&nbsp;
-                              <span className="hh">
-                                gracie@testmailinator.com
-                              </span>
+                            <div id="dstatus">
+                              <span className="dactive">Active</span>
                             </div>
                           </div>
-
-                          <div id="dstatus">
-                            <span className="dactive">Active</span>
-                          </div>
-                        </div>
-                        <div className="Ddiv1">
-                          <div id="dimage">
-                            <Avatar
-                              alt="Remy Sharp"
-                              src="/image.png"
-                              sx={{ width: 50, height: 50 }}
-                            />
-                          </div>
-
-                          <div id="dinfo">
-                            <div className="diinfo">
-                              <span className="dname">Gracie Owens</span>{" "}
-                              &nbsp;&nbsp;
-                              <span className="hh">
-                                gracie@testmailinator.com
-                              </span>
+                          <div className="Ddiv1">
+                            <div id="dimage">
+                              <Avatar
+                                alt="Remy Sharp"
+                                src="/image.png"
+                                sx={{ width: 50, height: 50 }}
+                              />
                             </div>
-                          </div>
 
-                          <div id="dstatus">
-                            <span className="dactive">Active</span>
+                            <div id="dinfo">
+                              <div className="diinfo">
+                                <span className="dname">Gracie Owens</span>{" "}
+                                <span className="email">
+                                  gracie@testmailinator.com
+                                </span>
+                              </div>
+                            </div>
+
+                            <div id="dstatus">
+                              <span className="dactive">Active</span>
+                            </div>
                           </div>
                         </div>
                       </Item>
