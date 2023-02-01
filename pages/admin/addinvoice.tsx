@@ -218,6 +218,8 @@ export default function Guardians() {
   const [opens, setOpens] = useState(false);
   const [userID, setUserId] = useState<FormValues | any>([]);
 
+  const [sdates, setDates] = useState<FormValues | any>([]);
+
   const [user, setUser] = useState<FormValues | any>([]);
   const [dollerOpen, setDollerOpen] = useState(false);
   const [popup, setSecondPop] = useState(false);
@@ -480,7 +482,48 @@ export default function Guardians() {
       setSecondPop(false);
     }
   };
+  const handleDraft = async () => {
+    const dates = new Date();
 
+    const invoiceDate = moment(sdates).format("DD/MM/YYYY");
+    const createdDate = moment(dates).format("DD/MM/YYYY");
+
+    console.log(moment(dates).format("DD/MM/YYYY"), "date");
+    const requestedData = {
+      itemId: selected,
+      amount: price,
+      status: "draft",
+      createdDate: createdDate,
+      createdBy: "1",
+      invoiceDate: invoiceDate,
+      customerId: userID.id,
+    };
+
+    await axios({
+      method: "POST",
+      url: `${api_url}/createInvoice`,
+      data: requestedData,
+      headers: {
+        "content-type": "multipart/form-data",
+      },
+    })
+      .then((res) => {
+        toast.success("Invoice created Successfully !");
+        setTimeout(() => {
+          router.push("/admin/invoices");
+        }, 1000);
+        if (!res) {
+          reset();
+          toast.success("All field are required !");
+        }
+      })
+      .catch((err) => {
+        if (err) {
+        }
+        console.log(err.status, "errorrrrrrrrrrrrrrrrrrr");
+      });
+    // console.log(requestedData, "draftssss");
+  };
   return (
     <>
       <Box sx={{ display: "flex" }}>
@@ -500,11 +543,11 @@ export default function Guardians() {
                     <span className="GItitle">CREATE INVOICES</span>
                   </div>
                   <div className="isave">
-                    <BootstrapButton type="submit">
+                    <BootstrapButton onClick={handleDraft} type="button">
                       Save as Draft
                     </BootstrapButton>
 
-                    <BootstrapButton type="button">
+                    <BootstrapButton type="submit">
                       Save & issue
                     </BootstrapButton>
                   </div>
@@ -611,7 +654,6 @@ export default function Guardians() {
                       <InputLabel id="demo-select-small"></InputLabel>
                       &nbsp; &nbsp;
                       <TextField
-                        // onChange={(e) => setDate(e.target.value)}
                         placeholder="Date"
                         fullWidth
                         InputLabelProps={{
@@ -621,6 +663,10 @@ export default function Guardians() {
                         type="date"
                         // defaultValue={values.someDate}
                         {...register("date", {
+                          onChange: (e) => {
+                            setDates(e.target.value);
+                          },
+
                           required: true,
                         })}
                       />

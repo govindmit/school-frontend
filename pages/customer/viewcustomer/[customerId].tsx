@@ -89,6 +89,7 @@ export default function ViewCustomer() {
       },
     });
     const res = await response.json();
+    console.log("hellooooo view", res);
     setUserinvoice(res);
   };
   const getUserCloseInvoice = async () => {
