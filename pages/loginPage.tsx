@@ -106,6 +106,7 @@ export default function LoginPage() {
         <Grid container component="main" sx={{ height: "100vh" }}>
           <CssBaseline />
           <Grid
+            className="header-main"
             item
             xs={false}
             sm={4}
@@ -126,6 +127,7 @@ export default function LoginPage() {
             <AuthRightTemplate />
           </Grid>
           <Grid
+            className="headre-right-main"
             item
             xs={12}
             sm={8}
@@ -150,6 +152,7 @@ export default function LoginPage() {
               </nav>
             </header>
             <Box
+              className="width-full"
               sx={{
                 height: 415,
                 width: 380,
@@ -167,7 +170,14 @@ export default function LoginPage() {
                 <span style={{ color: "#42D5CD" }}>LOGIN &nbsp;</span>
                 NOW!
               </Typography>
-              <Typography variant="body2" style={{ color: "#5F6160" }}>
+              <Typography
+                variant="body2"
+                style={{
+                  color: "#5F6160",
+                  fontSize: "18px",
+                  marginBottom: "20px",
+                }}
+              >
                 Lorem Ipsum is simply dummy text of the printing and typesetting
                 industry.
               </Typography>
@@ -235,7 +245,13 @@ export default function LoginPage() {
                     </Grid>
                   </Grid>
                   <Button
-                    style={{ backgroundColor: "#1A70C5", fontWeight: "900" }}
+                    style={{
+                      backgroundColor: "#1A70C5",
+                      fontWeight: "500",
+                      fontSize: "18px",
+                      textTransform: "capitalize",
+                      marginTop: "20px",
+                    }}
                     type="submit"
                     fullWidth
                     variant="contained"

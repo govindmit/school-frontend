@@ -3,6 +3,62 @@
   justify-content: space-between;
   margin-top: 20px;
   padding: 20px;
+  width: 100%;
+}
+
+.header-main {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  background: url(../public/login-left.png) no-repeat 0 0;
+}
+
+.header-main .header-navbar1 {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.headre-right-main {
+  display: flex;
+  width: 100%;
+  align-content: space-between;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.headre-right-main footer {
+  width: 100%;
+  margin-bottom: 25px;
+}
+
+.headre-right-main footer p {
+  font-size: 16px;
+  color: #0c140f;
+}
+.headre-right-main footer p a {
+  box-shadow: 0px 0px 3px 1px #99999940;
+  width: 53px;
+  height: 53px;
+  border-radius: 100%;
+  display: inline-block;
+  line-height: 53px;
+  text-align: center;
+}
+
+.headre-right-main footer p a svg {
+  font-size: 21px;
+  margin-top: 16px;
+  display: inline-block;
+}
+
+.headre-right-main .width-full {
+  margin-left: 0;
+}
+
+.header-main .header-navbar2 {
+  display: none;
 }
 
 .header-navbar2 {
@@ -66,4 +122,3 @@ footer a {
 
 @media (min-width: 1281px) {
 }
-
