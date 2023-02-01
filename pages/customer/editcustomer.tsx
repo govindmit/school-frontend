@@ -225,7 +225,8 @@ export default function EditCustomer({
       setValue("email2", res.data[0].email2);
       setValue("number", res.data[0].phone1);
       setValue("contactName", res.data[0].contactName);
-      setValue("printUs", res.data[0].printUs);
+      setValue("printUs", res.data[0].printus);
+      setValue("status", res.data[0].status);
     } catch (error) {
       console.log("error", error);
     }
@@ -348,7 +349,6 @@ export default function EditCustomer({
                           <Select
                             labelId="demo-simple-select-label"
                             id="demo-simple-select"
-                            defaultValue={1}
                             size="small"
                             {...register("status")}
                           >

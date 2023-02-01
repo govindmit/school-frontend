@@ -11,7 +11,9 @@ import {
   FormGroup,
   TableContainer,
   TableHead,
+  Menu,
   Button,
+  Breadcrumbs,
   Box,
   Pagination,
   styled,
@@ -19,6 +21,8 @@ import {
   Typography,
   makeStyles,
 } from "@mui/material";
+import { BiFilterAlt } from "react-icons/bi";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { BsTelegram } from "react-icons/bs";
 import { Grid, InputLabel, Stack } from "@mui/material";
 import Modal from "@mui/material/Modal";
@@ -39,7 +43,11 @@ import Image from "next/image";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import Popover from "@mui/material/Popover";
-import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
+import PopupState, {
+  bindTrigger,
+  bindMenu,
+  bindPopover,
+} from "material-ui-popup-state";
 import MenuItem from "@mui/material/MenuItem";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -455,6 +463,8 @@ export default function Guardians() {
       },
     })
       .then((res) => {
+        toast.success("Send Invoice Mail Successfully !");
+
         setShare(false);
       })
       .catch((err) => {});
@@ -478,386 +488,429 @@ export default function Guardians() {
 
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <div className="guardianBar">
-            <div className="bar">
-              <div>
-                <span className="smallHeading">Home</span>&nbsp;
-                <span>&gt;</span> &nbsp;{" "}
-                <span className="secondHeading">Invoices</span>
-                <h1 className="Gtitle">INVOICES</h1>
-              </div>
-              <div className="searchBar">
-                <Link href="/admin/addinvoice">
-                  <BootstrapButton type="button">New Invoice</BootstrapButton>
-                </Link>
-                {/* <Button sx={{ margin: "7px" }} type="button">
-                    Add Guardians
-                  </Button> */}
-              </div>
-            </div>
-            <div className="midBar">
-              <div className="guardianList">
-                <div className="hh">
-                  <span className="fields">All({user.length})</span>
-                  <span className="field">Paid({paid.length})</span>
-                  <span className="field">Un Paid({pending.length})</span>
-                  <span className="field">Draft({draft.length})</span>
-                  {/* <span className="field">Paid(0)</span> */}
-                </div>
-                <div className="ife">
-                  <div className="filter">
-                    <div className="iimg">
-                      <FilterAltOutlinedIcon color="primary"></FilterAltOutlinedIcon>
-                    </div>
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+              style={{ padding: "8px", marginBottom: "15px" }}
+            >
+              <Stack>
+                <Stack spacing={3}>
+                  <Breadcrumbs separator="›" aria-label="breadcrumb">
+                    <Link
+                      key="1"
+                      color="inherit"
+                      href="/"
+                      style={{ color: "#1A70C5", textDecoration: "none" }}
+                    >
+                      Home
+                    </Link>
+                    <Link
+                      key="2"
+                      color="inherit"
+                      href="/"
+                      style={{ color: "#7D86A5", textDecoration: "none" }}
+                    >
+                      Invoices
+                    </Link>
+                  </Breadcrumbs>
+                </Stack>
+                <Typography
+                  variant="h5"
+                  gutterBottom
+                  style={{ fontWeight: "bold", color: "#333333" }}
+                >
+                  INVOICES
+                </Typography>
+              </Stack>
+              <Link href="/admin/addinvoice">
+                <Button
+                  className="button-new"
+                  variant="contained"
+                  size="small"
+                  sx={{ width: 150 }}
+                  // onClick={handleNewCustomerOpen}
+                >
+                  New Invoice
+                </Button>
+              </Link>
+            </Stack>
+            <Card
+              style={{ margin: "10px", padding: "15px" }}
+              className="box-shadow"
+            >
+              <TableContainer>
+                <Stack
+                  style={{ marginBottom: "10px" }}
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="space-between"
+                >
+                  <Box
+                    className="filter-list"
+                    sx={{
+                      display: "flex",
+                      flexDirection: "row",
+                      bgcolor: "background.paper",
+                      borderRadius: 1,
+                    }}
+                  >
+                    <Item className="filter-active">ALL ({user.length})</Item>
+                    <Item>Paid ({paid.length}) </Item>
+                    <Item>Un Paid ({pending.length}) </Item>
+                    <Item>Draft ({draft.length}) </Item>
+                  </Box>
+
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    className="fimport-export-box"
+                  >
                     <PopupState variant="popover" popupId="demo-popup-popover">
                       {(popupState: any) => (
-                        <div className="dd" onClick={() => handleFilter()}>
-                          <span
-                            className="ifliter"
-                            {...bindTrigger(popupState)}
-                          >
-                            FILTER
-                          </span>
-                          <Popover
-                            {...bindPopover(popupState)}
-                            anchorOrigin={{
-                              vertical: "bottom",
-                              horizontal: "center",
-                            }}
-                            transformOrigin={{
-                              vertical: "top",
-                              horizontal: "center",
-                            }}
-                          >
-                            <Typography sx={{ p: 2 }}>
-                              <form onSubmit={handleSubmit(onSubmit)}>
-                                <Grid container spacing={3}>
-                                  <Grid
-                                    className="filterdd"
-                                    item
-                                    xs={12}
-                                    md={3}
-                                  >
-                                    <Stack spacing={1} sx={{ width: 300 }}>
-                                      <InputLabel id="demo-select-small">
-                                        Customer
-                                      </InputLabel>
+                        <Box>
+                          <MenuItem {...bindTrigger(popupState)}>
+                            <div onClick={() => handleFilter()}>
+                              <span>
+                                <BiFilterAlt />
+                              </span>
+                              &nbsp; Filter
+                            </div>
+                          </MenuItem>
+                          <Menu {...bindMenu(popupState)}>
+                            <Container>
+                              <Grid style={{ width: "1030px" }}>
+                                <Typography variant="h5">
+                                  <b>Filter</b>
+                                </Typography>
+                                <form onSubmit={handleSubmit(onSubmit)}>
+                                  <Grid container spacing={3}>
+                                    <Grid
+                                      className="filterdd"
+                                      item
+                                      xs={12}
+                                      md={3}
+                                    >
+                                      <Stack spacing={1} sx={{ width: 300 }}>
+                                        <InputLabel id="demo-select-small">
+                                          Customer
+                                        </InputLabel>
 
-                                      <Autocomplete
-                                        onChange={(event, value) =>
-                                          setUserId(value)
-                                        }
-                                        inputValue={inputValue}
-                                        onInputChange={(e, value, reason) => {
-                                          setInputValue(value);
-
-                                          if (!value) {
-                                            setOpen(false);
+                                        <Autocomplete
+                                          onChange={(event, value) =>
+                                            setUserId(value)
                                           }
-                                        }}
-                                        multiple
-                                        id="free-solo-demo"
-                                        freeSolo
-                                        options={user}
-                                        getOptionLabel={(option: any) =>
-                                          option?.name
-                                        }
-                                        renderInput={(params: any) => (
-                                          <TextField
-                                            {...params}
-                                            placeholder="customer"
-                                          />
-                                        )}
-                                      />
-                                    </Stack>
-                                  </Grid>
+                                          inputValue={inputValue}
+                                          onInputChange={(e, value, reason) => {
+                                            setInputValue(value);
 
-                                  <Grid item xs={12} md={3}>
-                                    <Stack spacing={1}>
-                                      <InputLabel id="demo-select-small">
-                                        Date Range
-                                      </InputLabel>
-                                      <TextField
-                                        InputLabelProps={{
-                                          shrink: true,
-                                          required: true,
-                                        }}
-                                        type="date"
-                                        {...register("startDate")}
+                                            if (!value) {
+                                              setOpen(false);
+                                            }
+                                          }}
+                                          multiple
+                                          id="free-solo-demo"
+                                          freeSolo
+                                          options={user}
+                                          getOptionLabel={(option: any) =>
+                                            option?.name
+                                          }
+                                          renderInput={(params: any) => (
+                                            <TextField
+                                              {...params}
+                                              placeholder="customer"
+                                            />
+                                          )}
+                                        />
+                                      </Stack>
+                                    </Grid>
 
-                                        // defaultValue={values.someDate}
-                                      />
-                                    </Stack>
+                                    <Grid item xs={12} md={3}>
+                                      <Stack spacing={1}>
+                                        <InputLabel id="demo-select-small">
+                                          Date Range
+                                        </InputLabel>
+                                        <TextField
+                                          InputLabelProps={{
+                                            shrink: true,
+                                            required: true,
+                                          }}
+                                          type="date"
+                                          {...register("startDate")}
+                                        />
+                                      </Stack>
+                                    </Grid>
+                                    <Grid item xs={12} md={3}>
+                                      <Stack spacing={1}>
+                                        <InputLabel id="demo-select-small"></InputLabel>
+                                        .
+                                        <TextField
+                                          InputLabelProps={{
+                                            shrink: true,
+                                            required: true,
+                                          }}
+                                          type="date"
+                                          {...register("endDate")}
+                                        />
+                                      </Stack>
+                                    </Grid>
+                                    <Grid item xs={12} md={2}>
+                                      <Stack spacing={1}>
+                                        <InputLabel id="demo-select-small">
+                                          Total
+                                        </InputLabel>
+                                        <OutlinedInput
+                                          fullWidth
+                                          id="Total"
+                                          placeholder="Total"
+                                          multiline
+                                          {...register("Total")}
+                                        />
+                                      </Stack>
+                                    </Grid>
+                                    <Grid item xs={12} md={3}>
+                                      <Stack spacing={1}>
+                                        <InputLabel htmlFor="status">
+                                          Sort
+                                        </InputLabel>
+                                        <Select
+                                          labelId="demo-select-small"
+                                          id="demo-select-small"
+                                          label="Status"
+                                          {...register("sort")}
+                                        >
+                                          <MenuItem value="All"></MenuItem>
+                                          <MenuItem value="ASC">
+                                            Date ASC
+                                          </MenuItem>
+                                          <MenuItem value="DESC">
+                                            Date DESC
+                                          </MenuItem>
+                                        </Select>
+                                      </Stack>
+                                    </Grid>
+                                    <Grid item xs={12} md={3}>
+                                      <Stack spacing={1}>
+                                        <InputLabel id="demo-select-small">
+                                          Status
+                                        </InputLabel>
+                                        <Select
+                                          labelId="demo-select-small"
+                                          id="demo-select-small"
+                                          // value={status}
+                                          label="Status"
+                                          {...register("status")}
+                                          // onChange={handleChange}
+                                        >
+                                          <MenuItem value="All"></MenuItem>
+                                          <MenuItem value="pending">
+                                            Pending
+                                          </MenuItem>
+                                          <MenuItem value="paid">Paid</MenuItem>
+                                        </Select>
+                                      </Stack>
+                                    </Grid>
+                                    <br></br>
                                   </Grid>
-                                  <Grid item xs={12} md={3}>
-                                    <Stack spacing={1}>
-                                      <InputLabel id="demo-select-small"></InputLabel>
-                                      .
-                                      <TextField
-                                        InputLabelProps={{
-                                          shrink: true,
-                                          required: true,
-                                        }}
-                                        type="date"
-                                        {...register("endDate")}
-
-                                        // defaultValue={values.someDate}
-                                      />
-                                    </Stack>
+                                  &nbsp; &nbsp; &nbsp;
+                                  <Grid container spacing={3}>
+                                    <Grid item xs={3} md={3}>
+                                      <Stack spacing={1}>
+                                        <Button
+                                          onClick={popupState.close}
+                                          variant="contained"
+                                          type="submit"
+                                        >
+                                          Apply Filter
+                                        </Button>
+                                      </Stack>
+                                    </Grid>
                                   </Grid>
-                                  <Grid item xs={12} md={2}>
-                                    <Stack spacing={1}>
-                                      <InputLabel id="demo-select-small">
-                                        Total
-                                      </InputLabel>
-                                      <OutlinedInput
-                                        fullWidth
-                                        id="Total"
-                                        placeholder="Total"
-                                        multiline
-                                        {...register("Total")}
-                                      />
-                                    </Stack>
-                                  </Grid>
-                                  <Grid item xs={12} md={3}>
-                                    <Stack spacing={1}>
-                                      <InputLabel htmlFor="status">
-                                        Sort
-                                      </InputLabel>
-                                      <Select
-                                        labelId="demo-select-small"
-                                        id="demo-select-small"
-                                        // value={status}
-                                        label="Status"
-                                        {...register("sort")}
-                                        // onChange={handleChange}
-                                      >
-                                        <MenuItem value="All"></MenuItem>
-                                        <MenuItem value="ASC">
-                                          Date ASC
-                                        </MenuItem>
-                                        <MenuItem value="DESC">
-                                          Date DESC
-                                        </MenuItem>
-                                      </Select>
-                                    </Stack>
-                                  </Grid>
-                                  <Grid item xs={12} md={3}>
-                                    <Stack spacing={1}>
-                                      <InputLabel id="demo-select-small">
-                                        Status
-                                      </InputLabel>
-                                      <Select
-                                        labelId="demo-select-small"
-                                        id="demo-select-small"
-                                        // value={status}
-                                        label="Status"
-                                        {...register("status")}
-                                        // onChange={handleChange}
-                                      >
-                                        <MenuItem value="All"></MenuItem>
-                                        <MenuItem value="pending">
-                                          Pending
-                                        </MenuItem>
-                                        <MenuItem value="paid">Paid</MenuItem>
-                                      </Select>
-                                    </Stack>
-                                  </Grid>
-                                  <br></br>
-                                </Grid>
-                                &nbsp; &nbsp; &nbsp;
-                                <Grid container spacing={3}>
-                                  <Grid item xs={3} md={3}>
-                                    <Stack spacing={1}>
-                                      <Button
-                                        onClick={popupState.close}
-                                        variant="contained"
-                                        type="submit"
-                                      >
-                                        Apply Filter
-                                      </Button>
-                                    </Stack>
-                                  </Grid>
-                                </Grid>
-                              </form>
-                            </Typography>
-                          </Popover>
-                        </div>
+                                </form>
+                              </Grid>
+                            </Container>
+                          </Menu>
+                        </Box>
                       )}
                     </PopupState>
-                  </div>
-                  <div className="export">
-                    <span className="iexport"> EXPORT</span>
-                    <div className="iemg">
-                      <ExpandMoreIcon color="primary"></ExpandMoreIcon>
-                    </div>
-                  </div>
-                  &nbsp;
-                  <div className="export">
-                    <span className="iexport"> Import</span>
-                    <div className="iemg">
-                      <ExpandMoreIcon color="primary"></ExpandMoreIcon>
-                    </div>
-                  </div>
-                  <div className="outLine">
-                    <OutlinedInput
-                      onChange={(e) => searchItems(e)}
-                      id="name"
-                      type="text"
-                      name="name"
-                      // defaultValue={user?.firstname}
-                      // value={user.firstname}
-                      placeholder="Search"
-                      multiline
-                    />
-                  </div>
-                </div>
-
-                <Container>
-                  <Card>
-                    <TableContainer sx={{ minWidth: 800 }}>
-                      <Table>
-                        <TableHead>
-                          <TableRow>
-                            <TableCell padding="checkbox">
-                              <Checkbox />
-                            </TableCell>
-                            <TableCell>INVOICE</TableCell>
-                            <TableCell>CUSTOMER</TableCell>
-                            <TableCell>DATE</TableCell>
-                            <TableCell>EXPECTED PAYMENT DATE</TableCell>
-                            <TableCell>TOTAL</TableCell>
-                            <TableCell>ACTION</TableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {DATA.currentData() && DATA.currentData() ? (
-                            DATA.currentData().map((item: any) => (
-                              <TableRow hover tabIndex={-1} role="checkbox">
-                                <TableCell padding="checkbox">
-                                  <Checkbox />
-                                </TableCell>
-                                <TableCell
-                                  component="th"
-                                  scope="row"
-                                  padding="none"
-                                >
-                                  <TableCell align="left">{item.id}</TableCell>
-                                </TableCell>
-                                <TableCell align="left">{item.name}</TableCell>
-                                <TableCell align="left">
-                                  {/* {item.generate_date_time.slice(0, 10)} */}
-                                  {moment(
-                                    item.createdDate,
-                                    "DD/MM/YYYY"
-                                  ).format("ll")}
-                                </TableCell>
-                                <TableCell align="left">
-                                  {moment(
-                                    item.invoiceDate,
-                                    "DD/MM/YYYY"
-                                  ).format("ll")}
-                                </TableCell>
-
-                                <TableCell align="left">
-                                  $ {item.amount}
-                                </TableCell>
-
-                                <TableCell align="left">
-                                  <div className="btn">
-                                    <div className="idiv">
-                                      <Image
-                                        onClick={() => generateSimplePDF(item)}
-                                        src="/download.svg"
-                                        alt="Picture of the author"
-                                        width={25}
-                                        height={25}
-                                      />
-                                    </div>
-                                    {/* <Button variant="contained" size="small">
-                                      <BiShow />
-                                    </Button> */}
-                                    <div className="idiv">
-                                      <Image
-                                        onClick={() => handleShare(item)}
-                                        src="/share.svg"
-                                        alt="Picture of the author"
-                                        width={25}
-                                        height={25}
-                                      />
-                                    </div>
-                                    {/* <Button variant="outlined" size="small">
-                                      <FiEdit />
-                                    </Button> */}
-                                    <div className="idiv">
-                                      <Image
-                                        onClick={() => handleClickOpen(item)}
-                                        src="/doller.svg"
-                                        alt="Picture of the author"
-                                        width={25}
-                                        height={25}
-                                      />
-                                    </div>
-                                    <div className="idiv">
-                                      <Image
-                                        onClick={() => handleOpen(item.id)}
-                                        src="/deleteicon.svg"
-                                        alt="Picture of the author"
-                                        width={25}
-                                        height={25}
-                                      />
-                                    </div>
-                                  </div>
-
-                                  {/* <Button
-                                    variant="outlined"
-                                    onClick={() => handleOpen(item.id)}
-                                    size="small"
-                                  >
-                                    <RiDeleteBin5Fill />
-                                  </Button> */}
-                                </TableCell>
-                              </TableRow>
-                            ))
-                          ) : (
-                            <h3>No Record found</h3>
-                          )}
-                        </TableBody>
-                      </Table>
-                      <Stack
-                        style={{
-                          marginBottom: "10px",
-                          marginRight: "49px",
-                          marginTop: "10px",
-                        }}
-                        direction="row"
-                        alignItems="right"
-                        justifyContent="space-between"
-                      >
-                        <Pagination
-                          count={count}
-                          page={page}
-                          color="primary"
-                          onChange={handlePageChange}
-                        />
-                        <FormControl>
-                          <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            defaultValue={5}
-                            onChange={handlerowchange}
-                            size="small"
+                    <PopupState variant="popover" popupId="demo-popup-menu">
+                      {(popupState) => (
+                        <Box>
+                          <MenuItem {...bindTrigger(popupState)}>
+                            Export
+                            <KeyboardArrowDownIcon />
+                          </MenuItem>
+                          <Menu {...bindMenu(popupState)}>
+                            <MenuItem onClick={popupState.close}>
+                              Profile
+                            </MenuItem>
+                            <MenuItem onClick={popupState.close}>
+                              My account
+                            </MenuItem>
+                            <MenuItem onClick={popupState.close}>
+                              Logout
+                            </MenuItem>
+                          </Menu>
+                        </Box>
+                      )}
+                    </PopupState>
+                    <PopupState variant="popover" popupId="demo-popup-menu">
+                      {(popupState) => (
+                        <Box>
+                          <MenuItem
+                            {...bindTrigger(popupState)}
+                            style={{ border: "none," }}
                           >
-                            <MenuItem value={5}>5</MenuItem>
-                            <MenuItem value={20}>20</MenuItem>
-                            <MenuItem value={50}>50</MenuItem>
-                          </Select>
-                        </FormControl>
-                      </Stack>
-                    </TableContainer>
-                  </Card>
-                </Container>
-              </div>
-            </div>
+                            Import
+                            <KeyboardArrowDownIcon />
+                          </MenuItem>
+                          <Menu {...bindMenu(popupState)}>
+                            <MenuItem onClick={popupState.close}>
+                              Profile
+                            </MenuItem>
+                            <MenuItem onClick={popupState.close}>
+                              My account
+                            </MenuItem>
+                            <MenuItem onClick={popupState.close}>
+                              Logout
+                            </MenuItem>
+                          </Menu>
+                        </Box>
+                      )}
+                    </PopupState>
+                    <FormControl>
+                      <OutlinedInput
+                        onChange={(e) => searchItems(e)}
+                        id="name"
+                        type="text"
+                        name="name"
+                        placeholder="Search"
+                        multiline
+                      />
+                    </FormControl>
+                  </Stack>
+                </Stack>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell padding="checkbox">
+                        <Checkbox />
+                      </TableCell>
+                      <TableCell>INVOICE</TableCell>
+                      <TableCell>CUSTOMER</TableCell>
+                      <TableCell>DATE</TableCell>
+                      <TableCell>EXPECTED PAYMENT DATE</TableCell>
+                      <TableCell>TOTAL</TableCell>
+                      <TableCell>ACTION</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {DATA.currentData() && DATA.currentData() ? (
+                      DATA.currentData().map((item: any) => (
+                        <TableRow hover tabIndex={-1} role="checkbox">
+                          <TableCell padding="checkbox">
+                            <Checkbox />
+                          </TableCell>
+                          <TableCell component="th" scope="row" padding="none">
+                            <TableCell align="left">{item.invoiceId}</TableCell>
+                          </TableCell>
+                          <TableCell align="left">{item.name}</TableCell>
+                          <TableCell align="left">
+                            {moment(item.createdDate, "DD/MM/YYYY").format(
+                              "ll"
+                            )}
+                          </TableCell>
+                          <TableCell align="left">
+                            {moment(item.invoiceDate, "DD/MM/YYYY").format(
+                              "ll"
+                            )}
+                          </TableCell>
+
+                          <TableCell align="left">$ {item.amount}</TableCell>
+
+                          <TableCell align="left">
+                            <div className="btn">
+                              <div className="idiv">
+                                <Image
+                                  onClick={() => generateSimplePDF(item)}
+                                  src="/download.svg"
+                                  alt="Picture of the author"
+                                  width={25}
+                                  height={25}
+                                />
+                              </div>
+
+                              <div className="idiv">
+                                <Image
+                                  onClick={() => handleShare(item)}
+                                  src="/share.svg"
+                                  alt="Picture of the author"
+                                  width={25}
+                                  height={25}
+                                />
+                              </div>
+
+                              <div className="idiv">
+                                <Image
+                                  onClick={() => handleClickOpen(item)}
+                                  src="/doller.svg"
+                                  alt="Picture of the author"
+                                  width={25}
+                                  height={25}
+                                />
+                              </div>
+                              <div className="idiv">
+                                <Image
+                                  onClick={() => handleOpen(item.id)}
+                                  src="/deleteicon.svg"
+                                  alt="Picture of the author"
+                                  width={25}
+                                  height={25}
+                                />
+                              </div>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <h3>No Record found</h3>
+                    )}
+                  </TableBody>
+                </Table>
+
+                <Stack
+                  style={{
+                    marginBottom: "10px",
+                    marginRight: "49px",
+                    marginTop: "10px",
+                  }}
+                  direction="row"
+                  alignItems="right"
+                  justifyContent="space-between"
+                >
+                  <Pagination
+                    count={count}
+                    page={page}
+                    color="primary"
+                    onChange={handlePageChange}
+                  />
+                  <FormControl>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      defaultValue={5}
+                      onChange={handlerowchange}
+                      size="small"
+                    >
+                      <MenuItem value={5}>5</MenuItem>
+                      <MenuItem value={20}>20</MenuItem>
+                      <MenuItem value={50}>50</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Stack>
+              </TableContainer>
+            </Card>
+
             <Modal
               open={share}
               onClose={handleEmailClose}
@@ -899,10 +952,10 @@ export default function Guardians() {
             >
               <Box sx={style}>
                 <Typography id="modal-modal-title" variant="h6" component="h2">
-                  Delete Customer
+                  Delete Invoice
                 </Typography>
                 <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                  Are you sure want to delete customer from the records.
+                  Are you sure want to delete Invoice from the records.
                   <div className="kk">
                     <Button
                       className="popup"
