@@ -350,7 +350,7 @@ export default function Guardians() {
   const getItem = async () => {
     await axios({
       method: "GET",
-      url: `${api_url}/getItem`,
+      url: `${api_url}/getItems`,
 
       headers: {
         "content-type": "multipart/form-data",
