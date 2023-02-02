@@ -245,7 +245,6 @@ export default function Guardians() {
     const arr = [];
 
     arr.push(id);
-    console.log(event, "iddddddddddddddd");
     const selectedIndex = selected.indexOf(id);
     let newSelected: readonly string[] = [];
     if (selectedIndex === -1) {
@@ -317,7 +316,6 @@ export default function Guardians() {
     const invoiceDate = moment(data.date).format("DD/MM/YYYY");
     const createdDate = moment(dates).format("DD/MM/YYYY");
 
-    console.log(moment(dates).format("DD/MM/YYYY"), "date");
     const requestedData = {
       itemId: selected,
       amount: price,
@@ -327,7 +325,6 @@ export default function Guardians() {
       invoiceDate: invoiceDate,
       customerId: userID.id,
     };
-    console.log(requestedData, "requestedData");
     toast.success("Invoice created Successfully !");
     setTimeout(() => {
       router.push("/admin/invoices");
@@ -367,7 +364,6 @@ export default function Guardians() {
   useEffect(() => {
     let cusId = localStorage.getItem("customerId");
 
-    console.log(cusId, "custID");
     // if (cusId) {
     //   setOpens(false);
     // }
@@ -384,7 +380,6 @@ export default function Guardians() {
         return item.name.toLowerCase().includes(e.target.value.toLowerCase());
       });
       const dtd = filterres;
-      console.log(dtd, "filterres");
       setItem(dtd);
     }
   };
@@ -454,30 +449,21 @@ export default function Guardians() {
       getUser();
       setOpens(false);
       let gg = user.filter((a: any) => a.id === 47);
-      console.log(gg[0]?.name, "ffffffffffffffffff");
-      console.log(
-        data,
-        "......................................................x"
-      );
     } else {
       setId(data);
       getUser();
       setTimeout(() => {
         setOpens(false);
       }, 3000);
-
-      console.log(data, "..................idssssssss");
     }
   };
   let gg = user.filter((a: any) => a.id === id);
-  console.log(gg.length, "..................ggggg");
 
   const handlePopup = (stats: any) => {
     if (stats === false) {
       getItem();
       setSecondPop(false);
     } else {
-      console.log(stats, "ssssssss......................x");
       getItem();
       setSecondPop(false);
     }
@@ -488,7 +474,6 @@ export default function Guardians() {
     const invoiceDate = moment(sdates).format("DD/MM/YYYY");
     const createdDate = moment(dates).format("DD/MM/YYYY");
 
-    console.log(moment(dates).format("DD/MM/YYYY"), "date");
     const requestedData = {
       itemId: selected,
       amount: price,
@@ -520,10 +505,9 @@ export default function Guardians() {
       .catch((err) => {
         if (err) {
         }
-        console.log(err.status, "errorrrrrrrrrrrrrrrrrrr");
       });
-    // console.log(requestedData, "draftssss");
   };
+  console.log(userID, "userIddddddddd");
   return (
     <>
       <Box sx={{ display: "flex" }}>
@@ -600,7 +584,7 @@ export default function Guardians() {
                         style={{ width: 300 }}
                         fullWidth
                         inputValue={inputValue}
-                        onChange={(event, value) => setUserId(value)}
+                        // onChange={(event, value) => setUserId(value)}
                         // onChange={(event, newValue) => {
                         //   setValue(newValue);
                         // }}
@@ -631,17 +615,20 @@ export default function Guardians() {
                             )}
                           </Button>
                         }
-                        // {...register("Customername", {
-                        //   required: true,
-                        // })}
+                        {...register("Customername", {
+                          onChange: (event) => {
+                            setUserId(event);
+                          },
+                          required: true,
+                        })}
                       />
-                      {/* <Typography style={style}>
+                      <Typography style={style}>
                         {errors.Customername ? (
                           <span>Feild is Required **</span>
                         ) : (
                           ""
                         )}
-                      </Typography> */}
+                      </Typography>
                     </div>
                     <div className="invoicedateField">
                       <InputLabel htmlFor="name"></InputLabel>
@@ -789,14 +776,9 @@ export default function Guardians() {
                             <TableBody>
                               {item &&
                                 item.map((row: any) => {
-                                  {
-                                    console.log(row, "rowwwwwww");
-                                  }
                                   const isItemSelected = isSelected(row.id);
                                   const labelId = `enhanced-table-checkbox-${row.id}`;
-                                  {
-                                    console.log(row, "idssss");
-                                  }
+
                                   return (
                                     <TableRow
                                       hover
