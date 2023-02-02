@@ -174,7 +174,6 @@ export default function EditCustomer({
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setshowspinner(true);
     setBtnDisabled(true);
-    console.log(data, "jjjjjjjjjjjjj");
     const reqData = {
       name: data.name,
       email1: data.email1,
@@ -198,7 +197,9 @@ export default function EditCustomer({
           setshowspinner(false);
           setBtnDisabled(false);
           toast.success("Customer Updated Successfully !");
-          setOpen(false);
+          setTimeout(() => {
+            setOpen(false);
+          }, 2000);
           closeDialogedit(data.status);
         }
       })

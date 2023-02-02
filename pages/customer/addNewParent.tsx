@@ -155,7 +155,7 @@ export default function AddNewParent({
       },
     })
       .then((data) => {
-        if (data.status === 201) {
+        if (data) {
           setshowspinner(false);
           setBtnDisabled(false);
           toast.success("Customer Added Successfully !");
