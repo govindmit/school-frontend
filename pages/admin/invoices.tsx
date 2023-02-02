@@ -157,6 +157,8 @@ export default function Guardians() {
   const [recievedPay, setRecieved] = useState<FormValues | any>([]);
   // const [items, setItem] = useState<FormValues | any>([]);
 
+  const [Invoicedata, setInvoice] = useState<FormValues | any>([]);
+
   let [page, setPage] = useState(1);
   const [searchdata, setsearchdata] = useState([]);
   const [row_per_page, set_row_per_page] = useState(5);
@@ -211,6 +213,8 @@ export default function Guardians() {
     })
       .then((res) => {
         setUser(res?.data.data);
+        setInvoice(res?.data.data);
+
         setsearchdata(res?.data.data);
       })
       .catch((err) => {});
@@ -473,12 +477,30 @@ export default function Guardians() {
   function handlerowchange(e: any) {
     set_row_per_page(e.target.value);
   }
-  const pending = user.filter((a: any) => a.status == "pending");
-  const paid = user.filter((a: any) => a.status == "paid");
-  const draft = user.filter((a: any) => a.status == "draft");
+  const pending = Invoicedata.filter((a: any) => a.status == "pending");
+  const paid = Invoicedata.filter((a: any) => a.status == "paid");
+  const draft = Invoicedata.filter((a: any) => a.status == "draft");
 
   const handleFilter = () => {
     getUser();
+  };
+  const handleAll = () => {
+    getUser();
+  };
+  const handlePaid = () => {
+    const paids = Invoicedata.filter((a: any) => a.status == "paid");
+
+    setUser(paids);
+  };
+  const handlePending = () => {
+    const pendings = Invoicedata.filter((a: any) => a.status == "pending");
+
+    setUser(pendings);
+  };
+  const handleDraft = () => {
+    const drafts = Invoicedata.filter((a: any) => a.status == "draft");
+
+    setUser(drafts);
   };
 
   return (
@@ -555,10 +577,22 @@ export default function Guardians() {
                       borderRadius: 1,
                     }}
                   >
-                    <Item className="filter-active">ALL ({user.length})</Item>
-                    <Item>Paid ({paid.length}) </Item>
-                    <Item>Un Paid ({pending.length}) </Item>
-                    <Item>Draft ({draft.length}) </Item>
+                    <Item
+                      onClick={handleAll}
+                      style={{ cursor: "pointer" }}
+                      className="filter-active"
+                    >
+                      ALL ({Invoicedata.length})
+                    </Item>
+                    <Item style={{ cursor: "pointer" }} onClick={handlePaid}>
+                      Paid ({paid.length}){" "}
+                    </Item>
+                    <Item style={{ cursor: "pointer" }} onClick={handlePending}>
+                      Un Paid ({pending.length}){" "}
+                    </Item>
+                    <Item style={{ cursor: "pointer" }} onClick={handleDraft}>
+                      Draft ({draft.length}){" "}
+                    </Item>
                   </Box>
 
                   <Stack
