@@ -189,7 +189,7 @@ export default function AddCustomer({
       },
     })
       .then((data: any) => {
-        if (data.status === 200) {
+        if (data) {
           setshowspinner(false);
           setBtnDisabled(false);
           toast.success("Customer Added Successfully !");
