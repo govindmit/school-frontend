@@ -228,6 +228,7 @@ export default function Guardians() {
   const [id, setId] = useState<FormValues | any>([]);
   const [date, setDate] = useState<FormValues | any>([]);
   const [query, setQuery] = useState<FormValues | any>([]);
+  const [error, setError] = useState<FormValues | any>([]);
 
   const [item, setItem] = useState<FormValues | any>([]);
   const [product, setProduct] = useState<FormValues | any>([]);
@@ -325,10 +326,6 @@ export default function Guardians() {
       invoiceDate: invoiceDate,
       customerId: userID.id,
     };
-    toast.success("Invoice created Successfully !");
-    setTimeout(() => {
-      router.push("/admin/invoices");
-    }, 1000);
 
     await axios({
       method: "POST",
@@ -340,10 +337,21 @@ export default function Guardians() {
     })
       .then((res) => {
         if (!res) {
+          toast.success("something wents wrong !");
+        } else {
           reset();
+          toast.success("Invoice created Successfully !");
+          setTimeout(() => {
+            router.push("/admin/invoices");
+          }, 1000);
         }
       })
-      .catch((err) => {});
+      .catch((err) => {
+        if (err) {
+          setError(err?.response?.data?.message);
+        }
+        // console.log(err.response.data.message, "error");
+      });
     // window.location.replace("/admin/invoices");
   };
   const getItem = async () => {
@@ -470,8 +478,10 @@ export default function Guardians() {
   };
   const handleDraft = async () => {
     const dates = new Date();
-
-    const invoiceDate = moment(sdates).format("DD/MM/YYYY");
+    var invoiceDatesss;
+    if (sdates != "") {
+      invoiceDatesss = moment(sdates).format("DD/MM/YYYY");
+    }
     const createdDate = moment(dates).format("DD/MM/YYYY");
 
     const requestedData = {
@@ -480,9 +490,10 @@ export default function Guardians() {
       status: "draft",
       createdDate: createdDate,
       createdBy: "1",
-      invoiceDate: invoiceDate,
+      invoiceDate: invoiceDatesss,
       customerId: userID.id,
     };
+    console.log(requestedData, "requestedData");
 
     await axios({
       method: "POST",
@@ -504,10 +515,11 @@ export default function Guardians() {
       })
       .catch((err) => {
         if (err) {
+          setError(err?.response?.data?.message);
         }
+        // console.log(err.response.data.message, "error");
       });
   };
-  console.log(userID, "userIddddddddd");
   return (
     <>
       <Box sx={{ display: "flex" }}>
@@ -542,7 +554,17 @@ export default function Guardians() {
               </div>
               <div className="midBar">
                 <div className="guardianList">
-                  <div>Required</div>
+                  <div className="required">
+                    <Typography style={style}>
+                      {errors.date ? (
+                        <span>Invoice Date Feild is Required **</span>
+                      ) : error != "" ? (
+                        <span>{error} **</span>
+                      ) : (
+                        ""
+                      )}
+                    </Typography>
+                  </div>
                   <div className="aititle">
                     <div>
                       {" "}
@@ -584,7 +606,7 @@ export default function Guardians() {
                         style={{ width: 300 }}
                         fullWidth
                         inputValue={inputValue}
-                        // onChange={(event, value) => setUserId(value)}
+                        onChange={(event, value) => setUserId(value)}
                         // onChange={(event, newValue) => {
                         //   setValue(newValue);
                         // }}
@@ -615,12 +637,12 @@ export default function Guardians() {
                             )}
                           </Button>
                         }
-                        {...register("Customername", {
-                          onChange: (event) => {
-                            setUserId(event);
-                          },
-                          required: true,
-                        })}
+                        // {...register("Customername", {
+                        //   onChange: (event) => {
+                        //     setUserId(event);
+                        //   },
+                        //   required: true,
+                        // })}
                       />
                       <Typography style={style}>
                         {errors.Customername ? (
@@ -657,9 +679,6 @@ export default function Guardians() {
                           required: true,
                         })}
                       />
-                      <Typography style={style}>
-                        {errors.date ? <span>Feild is Required **</span> : ""}
-                      </Typography>
                     </div>
                   </div>
                   <div className="invoiceItem">
