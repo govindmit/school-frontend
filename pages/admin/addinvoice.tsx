@@ -228,6 +228,7 @@ export default function Guardians() {
   const [id, setId] = useState<FormValues | any>([]);
   const [date, setDate] = useState<FormValues | any>([]);
   const [query, setQuery] = useState<FormValues | any>([]);
+  const [error, setError] = useState<FormValues | any>([]);
 
   const [item, setItem] = useState<FormValues | any>([]);
   const [product, setProduct] = useState<FormValues | any>([]);
@@ -245,7 +246,6 @@ export default function Guardians() {
     const arr = [];
 
     arr.push(id);
-    console.log(event, "iddddddddddddddd");
     const selectedIndex = selected.indexOf(id);
     let newSelected: readonly string[] = [];
     if (selectedIndex === -1) {
@@ -317,7 +317,6 @@ export default function Guardians() {
     const invoiceDate = moment(data.date).format("DD/MM/YYYY");
     const createdDate = moment(dates).format("DD/MM/YYYY");
 
-    console.log(moment(dates).format("DD/MM/YYYY"), "date");
     const requestedData = {
       itemId: selected,
       amount: price,
@@ -327,11 +326,6 @@ export default function Guardians() {
       invoiceDate: invoiceDate,
       customerId: userID.id,
     };
-    console.log(requestedData, "requestedData");
-    toast.success("Invoice created Successfully !");
-    setTimeout(() => {
-      router.push("/admin/invoices");
-    }, 1000);
 
     await axios({
       method: "POST",
@@ -343,10 +337,21 @@ export default function Guardians() {
     })
       .then((res) => {
         if (!res) {
+          toast.success("something wents wrong !");
+        } else {
           reset();
+          toast.success("Invoice created Successfully !");
+          setTimeout(() => {
+            router.push("/admin/invoices");
+          }, 1000);
         }
       })
-      .catch((err) => {});
+      .catch((err) => {
+        if (err) {
+          setError(err?.response?.data?.message);
+        }
+        // console.log(err.response.data.message, "error");
+      });
     // window.location.replace("/admin/invoices");
   };
   const getItem = async () => {
@@ -367,7 +372,6 @@ export default function Guardians() {
   useEffect(() => {
     let cusId = localStorage.getItem("customerId");
 
-    console.log(cusId, "custID");
     // if (cusId) {
     //   setOpens(false);
     // }
@@ -384,7 +388,6 @@ export default function Guardians() {
         return item.name.toLowerCase().includes(e.target.value.toLowerCase());
       });
       const dtd = filterres;
-      console.log(dtd, "filterres");
       setItem(dtd);
     }
   };
@@ -454,50 +457,43 @@ export default function Guardians() {
       getUser();
       setOpens(false);
       let gg = user.filter((a: any) => a.id === 47);
-      console.log(gg[0]?.name, "ffffffffffffffffff");
-      console.log(
-        data,
-        "......................................................x"
-      );
     } else {
       setId(data);
       getUser();
       setTimeout(() => {
         setOpens(false);
       }, 3000);
-
-      console.log(data, "..................idssssssss");
     }
   };
   let gg = user.filter((a: any) => a.id === id);
-  console.log(gg.length, "..................ggggg");
 
   const handlePopup = (stats: any) => {
     if (stats === false) {
       getItem();
       setSecondPop(false);
     } else {
-      console.log(stats, "ssssssss......................x");
       getItem();
       setSecondPop(false);
     }
   };
   const handleDraft = async () => {
     const dates = new Date();
-
-    const invoiceDate = moment(sdates).format("DD/MM/YYYY");
+    var invoiceDatesss;
+    if (sdates != "") {
+      invoiceDatesss = moment(sdates).format("DD/MM/YYYY");
+    }
     const createdDate = moment(dates).format("DD/MM/YYYY");
 
-    console.log(moment(dates).format("DD/MM/YYYY"), "date");
     const requestedData = {
       itemId: selected,
       amount: price,
       status: "draft",
       createdDate: createdDate,
       createdBy: "1",
-      invoiceDate: invoiceDate,
+      invoiceDate: invoiceDatesss,
       customerId: userID.id,
     };
+    console.log(requestedData, "requestedData");
 
     await axios({
       method: "POST",
@@ -519,10 +515,10 @@ export default function Guardians() {
       })
       .catch((err) => {
         if (err) {
+          setError(err?.response?.data?.message);
         }
-        console.log(err.status, "errorrrrrrrrrrrrrrrrrrr");
+        // console.log(err.response.data.message, "error");
       });
-    // console.log(requestedData, "draftssss");
   };
   return (
     <>
@@ -558,7 +554,17 @@ export default function Guardians() {
               </div>
               <div className="midBar">
                 <div className="guardianList">
-                  <div>Required</div>
+                  <div className="required">
+                    <Typography style={style}>
+                      {errors.date ? (
+                        <span>Invoice Date Feild is Required **</span>
+                      ) : error != "" ? (
+                        <span>{error} **</span>
+                      ) : (
+                        ""
+                      )}
+                    </Typography>
+                  </div>
                   <div className="aititle">
                     <div>
                       {" "}
@@ -632,16 +638,19 @@ export default function Guardians() {
                           </Button>
                         }
                         // {...register("Customername", {
+                        //   onChange: (event) => {
+                        //     setUserId(event);
+                        //   },
                         //   required: true,
                         // })}
                       />
-                      {/* <Typography style={style}>
+                      <Typography style={style}>
                         {errors.Customername ? (
                           <span>Feild is Required **</span>
                         ) : (
                           ""
                         )}
-                      </Typography> */}
+                      </Typography>
                     </div>
                     <div className="invoicedateField">
                       <InputLabel htmlFor="name"></InputLabel>
@@ -670,9 +679,6 @@ export default function Guardians() {
                           required: true,
                         })}
                       />
-                      <Typography style={style}>
-                        {errors.date ? <span>Feild is Required **</span> : ""}
-                      </Typography>
                     </div>
                   </div>
                   <div className="invoiceItem">
@@ -789,14 +795,9 @@ export default function Guardians() {
                             <TableBody>
                               {item &&
                                 item.map((row: any) => {
-                                  {
-                                    console.log(row, "rowwwwwww");
-                                  }
                                   const isItemSelected = isSelected(row.id);
                                   const labelId = `enhanced-table-checkbox-${row.id}`;
-                                  {
-                                    console.log(row, "idssss");
-                                  }
+
                                   return (
                                     <TableRow
                                       hover
