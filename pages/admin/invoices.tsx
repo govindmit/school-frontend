@@ -431,6 +431,8 @@ export default function Guardians() {
       const dtd = filterres;
       setUser(dtd);
     }
+
+    console.log(user == "", "dtddddd");
   };
   const handleShare = async (item: any) => {
     setInvoiceId(item?.id);
@@ -911,7 +913,7 @@ export default function Guardians() {
                     )}
                   </TableBody>
                 </Table>
-
+                {user == "" ? <h3>No Record found</h3> : ""}
                 <Stack
                   style={{
                     marginBottom: "10px",
