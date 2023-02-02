@@ -195,9 +195,11 @@ export default function CustomerList() {
     setDeleteData(data);
   }
   async function deleteUser() {
+    let reqData = { isDeleted: 1 };
     await axios({
       method: "DELETE",
       url: `${api_url}/deleteuser/${deleteData.id}`,
+      data: reqData,
       headers: {
         Authorization: auth_token,
       },
@@ -350,8 +352,9 @@ export default function CustomerList() {
                                               id="demo-simple-select"
                                               size="small"
                                               {...register("customerType")}
+                                              defaultValue={0}
                                             >
-                                              <MenuItem>All</MenuItem>
+                                              <MenuItem value={0}>All</MenuItem>
                                               {custtype &&
                                                 custtype.map(
                                                   (data: any, key: any) => {
@@ -380,8 +383,9 @@ export default function CustomerList() {
                                               id="demo-simple-select"
                                               {...register("status")}
                                               size="small"
+                                              defaultValue={2}
                                             >
-                                              <MenuItem>All</MenuItem>
+                                              <MenuItem value={2}>All</MenuItem>
                                               <MenuItem value={1}>
                                                 Active
                                               </MenuItem>

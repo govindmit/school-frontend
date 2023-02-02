@@ -179,7 +179,6 @@ export default function AddCustomer({
       status: data.status,
       roleId: 2,
     };
-    console.log(reqData, "reqdataaaa");
     await axios({
       method: "POST",
       url: `${api_url}/addUser`,

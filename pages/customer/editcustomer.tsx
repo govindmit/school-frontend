@@ -183,6 +183,7 @@ export default function EditCustomer({
       printUs: data.printUs,
       status: data.status == 1 ? "1" : data.status == 0 ? "0" : "",
       typeId: data.customertype,
+      updatedBy: 1,
     };
     await axios({
       method: "PUT",
@@ -220,7 +221,8 @@ export default function EditCustomer({
       });
       const res = await response.json();
 
-      console.log(res, "..............................x");
+      console.log(res.data[0]);
+
       setValue("name", res.data[0].name);
       setValue("email1", res.data[0].email1);
       setValue("email2", res.data[0].email2);
