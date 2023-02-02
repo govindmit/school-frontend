@@ -732,7 +732,6 @@ export default function Guardians() {
                         size="medium"
                         type="text"
                         id="name"
-                        placeholder="Please select a customer"
                       />
                     </div>
                     <div className="invoiceTotalamount">
@@ -766,7 +765,7 @@ export default function Guardians() {
                     id="customized-dialog-title"
                     onClose={handleCloses}
                   >
-                    Add Itemss
+                    Add Items
                   </BootstrapDialogTitle>
                   <DialogContent dividers>
                     <Box sx={{ width: "100%" }}>
@@ -836,6 +835,7 @@ export default function Guardians() {
                             </TableBody>
                           </Table>
                         </TableContainer>
+                        {item == "" ? <h3>No records found</h3> : ""}
                       </Paper>
                       <div>
                         {selected.length > 0 ? (
