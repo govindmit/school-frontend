@@ -107,6 +107,7 @@ type FormValues = {
   printUs: string;
   status: number;
   type: number;
+  parentId: number;
 };
 
 export default function AddNewParent({
@@ -143,9 +144,9 @@ export default function AddNewParent({
       contactName: data.contactName,
       printUs: data.printUs,
       status: data.status,
-      type: data.type,
+      typeId: data.type,
+      parentId: 0,
     };
-
     await axios({
       method: "POST",
       url: `${api_url}/addUser`,
