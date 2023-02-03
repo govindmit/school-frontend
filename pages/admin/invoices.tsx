@@ -282,7 +282,7 @@ export default function Guardians() {
       .then((res) => {
         setUser(res?.data.data);
         // reset();
-        // setUserId("");
+        setUserId("");
       })
       .catch((err) => {});
   };
