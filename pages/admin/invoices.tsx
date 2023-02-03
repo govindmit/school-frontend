@@ -159,6 +159,7 @@ export default function Guardians() {
   const [status, setStatus] = useState<FormValues | any>([]);
 
   const [note, setNote] = useState<FormValues | any>([]);
+  const [disable, setDisable] = useState<FormValues | any>([]);
 
   const [Invoicedata, setInvoice] = useState<FormValues | any>([]);
 
@@ -510,10 +511,14 @@ export default function Guardians() {
   };
   const handleDraft = () => {
     const drafts = Invoicedata.filter((a: any) => a.status == "draft");
-
+    setDisable(true);
     setUser(drafts);
   };
-
+  const getDefaultValue = () => {
+    if (sdata.length) {
+      return sdata.map((cat: any) => cat.name);
+    }
+  };
   console.log(inputValue, "inputValue");
   return (
     <>
@@ -664,7 +669,7 @@ export default function Guardians() {
                                           renderInput={(params: any) => (
                                             <TextField
                                               {...params}
-                                              placeholder="customer"
+                                              placeholder="Select a customer"
                                             />
                                           )}
                                         />
@@ -677,6 +682,7 @@ export default function Guardians() {
                                           Date Range
                                         </InputLabel>
                                         <TextField
+                                          placeholder="Start"
                                           InputLabelProps={{
                                             shrink: true,
                                             required: true,
@@ -691,6 +697,7 @@ export default function Guardians() {
                                         <InputLabel id="demo-select-small"></InputLabel>
                                         .
                                         <TextField
+                                          placeholder="End"
                                           InputLabelProps={{
                                             shrink: true,
                                             required: true,
@@ -731,10 +738,10 @@ export default function Guardians() {
                                         >
                                           <MenuItem value="All"></MenuItem>
                                           <MenuItem value="ASC">
-                                            Date ASC
+                                            Oldest first
                                           </MenuItem>
                                           <MenuItem value="DESC">
-                                            Date DESC
+                                            Newest first
                                           </MenuItem>
                                         </Select>
                                       </Stack>
@@ -755,11 +762,14 @@ export default function Guardians() {
                                           // {...register("status")}
                                           // onChange={handleChange}
                                         >
-                                          <MenuItem value="All"></MenuItem>
+                                          <MenuItem value="All">ALL</MenuItem>
                                           <MenuItem value="pending">
                                             Pending
                                           </MenuItem>
                                           <MenuItem value="paid">Paid</MenuItem>
+                                          <MenuItem value="draft">
+                                            Draft
+                                          </MenuItem>
                                         </Select>
                                       </Stack>
                                     </Grid>
@@ -892,16 +902,27 @@ export default function Guardians() {
                                   height={25}
                                 />
                               </div>
-
-                              <div className="idiv">
-                                <Image
-                                  onClick={() => handleShare(item)}
-                                  src="/share.svg"
-                                  alt="Picture of the author"
-                                  width={25}
-                                  height={25}
-                                />
-                              </div>
+                              {disable ? (
+                                <div className="idiv">
+                                  <Image
+                                    onClick={() => handleShare(item)}
+                                    src="/share.svg"
+                                    alt="Picture of the author"
+                                    width={25}
+                                    height={25}
+                                  />
+                                </div>
+                              ) : (
+                                <div className="idiv">
+                                  <Image
+                                    onClick={() => handleShare(item)}
+                                    src="/share.svg"
+                                    alt="Picture of the author"
+                                    width={25}
+                                    height={25}
+                                  />
+                                </div>
+                              )}
 
                               <div className="idiv">
                                 <Image
@@ -1121,6 +1142,7 @@ export default function Guardians() {
                           <Stack spacing={1}>
                             <InputLabel htmlFor="name">Amount</InputLabel>
                             <OutlinedInput
+                              disabled
                               defaultValue={recievedPay.amount}
                               type="text"
                               id="name"

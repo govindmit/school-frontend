@@ -33,6 +33,7 @@ import { Button, OutlinedInput } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import AddCustomer from "../customer/addNewCustomer";
 import AddItem from "./additem";
+import Link from "next/link";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -229,6 +230,7 @@ export default function Guardians() {
   const [date, setDate] = useState<FormValues | any>([]);
   const [query, setQuery] = useState<FormValues | any>([]);
   const [error, setError] = useState<FormValues | any>([]);
+  const [invoiceno, setInvoiceNo] = useState();
 
   const [item, setItem] = useState<FormValues | any>([]);
   const [product, setProduct] = useState<FormValues | any>([]);
@@ -325,8 +327,9 @@ export default function Guardians() {
       createdBy: "1",
       invoiceDate: invoiceDate,
       customerId: userID.id,
+      invoiceNo: invoiceno,
     };
-
+    console.log(requestedData, "requestedInvoice");
     await axios({
       method: "POST",
       url: `${api_url}/createInvoice`,
@@ -371,7 +374,7 @@ export default function Guardians() {
 
   useEffect(() => {
     let cusId = localStorage.getItem("customerId");
-
+    invoiceNo();
     // if (cusId) {
     //   setOpens(false);
     // }
@@ -476,6 +479,23 @@ export default function Guardians() {
       setSecondPop(false);
     }
   };
+
+  const invoiceNo = async () => {
+    await axios({
+      method: "GET",
+      url: `${api_url}/getInvoiceNo`,
+      headers: {
+        Authorization: auth_token,
+      },
+    })
+      .then((res) => {
+        // setUser(res?.data.data);
+        setInvoiceNo(res?.data?.invoiceNo);
+        // console.log(res, "response");
+      })
+      .catch((err) => {});
+  };
+  console.log(invoiceno, "invoiceno");
   const handleDraft = async () => {
     const dates = new Date();
     var invoiceDatesss;
@@ -492,8 +512,9 @@ export default function Guardians() {
       createdBy: "1",
       invoiceDate: invoiceDatesss,
       customerId: userID.id,
+      invoiceNo: invoiceno,
     };
-    console.log(requestedData, "requestedData");
+    console.log(requestedData, "requestedDraft");
 
     await axios({
       method: "POST",
@@ -530,7 +551,9 @@ export default function Guardians() {
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="bars">
                 <div>
-                  <span className="smallHeading">Home</span>&nbsp;
+                  <Link href="/admin/dashboard">
+                    <span className="smallHeading">Home</span>&nbsp;
+                  </Link>
                   <span>&gt;</span> &nbsp;{" "}
                   <span className="secondHeading">Create Invoices</span>
                 </div>
@@ -622,7 +645,7 @@ export default function Guardians() {
                           <TextField
                             {...params}
                             variant="outlined"
-                            placeholder="Find or create a parent"
+                            placeholder="Find or create a customer"
                           />
                         )}
                         noOptionsText={
@@ -631,8 +654,7 @@ export default function Guardians() {
                               "Please enter 1 or more character"
                             ) : (
                               <span>
-                                Add &nbsp;<b>{inputValue}</b>&nbsp;as a new
-                                parent
+                                Add &nbsp;<b>{inputValue}</b>&nbsp;as a customer
                               </span>
                             )}
                           </Button>
@@ -653,12 +675,14 @@ export default function Guardians() {
                       </Typography>
                     </div>
                     <div className="invoicedateField">
-                      <InputLabel htmlFor="name"></InputLabel>
+                      <InputLabel></InputLabel>
                       <OutlinedInput
                         type="text"
                         id="name"
                         placeholder="# Generate If blank"
                         fullWidth
+                        onChange={(e: any) => setInvoiceNo(e.target.value)}
+                        value={invoiceno}
                       />
                       <InputLabel id="demo-select-small"></InputLabel>
                       &nbsp; &nbsp;
