@@ -108,6 +108,7 @@ type FormValues = {
   status: number;
   type: number;
   parentId: number;
+  userRole: String;
 };
 
 export default function AddNewParent({
@@ -146,6 +147,7 @@ export default function AddNewParent({
       status: data.status,
       typeId: data.type,
       parentId: 0,
+      userRole: "parent",
     };
     await axios({
       method: "POST",
@@ -159,7 +161,7 @@ export default function AddNewParent({
         if (data) {
           setshowspinner(false);
           setBtnDisabled(false);
-          toast.success("Customer Added Successfully !");
+          toast.success("Parent Added successfully !");
           reset();
           closeDialog(false);
         }
@@ -240,7 +242,7 @@ export default function AddNewParent({
                           defaultValue={name}
                         />
                         {errors.name && (
-                          <span style={style}>Field is Required **</span>
+                          <span style={style}>Field is Required *</span>
                         )}
                       </Stack>
                       <FormGroup>
@@ -270,7 +272,7 @@ export default function AddNewParent({
                           })}
                         />
                         {errors.email1 && (
-                          <span style={style}>Field is Required **</span>
+                          <span style={style}>Field is Required *</span>
                         )}
                       </Stack>
                     </Grid>
@@ -309,7 +311,7 @@ export default function AddNewParent({
                           })}
                         />
                         {errors.phone1 && (
-                          <span style={style}>Field is Required **</span>
+                          <span style={style}>Field is Required *</span>
                         )}
                       </Stack>
                     </Grid>
@@ -487,7 +489,7 @@ export default function AddNewParent({
                           {...register("contactName", { required: true })}
                         />
                         {errors.contactName && (
-                          <span style={style}>Field is Required **</span>
+                          <span style={style}>Field is Required *</span>
                         )}
                       </Stack>
                     </Grid>
@@ -505,7 +507,7 @@ export default function AddNewParent({
                           {...register("printUs", { required: true })}
                         />
                         {errors.printUs && (
-                          <span style={style}>Field is Required **</span>
+                          <span style={style}>Field is Required *</span>
                         )}
                       </Stack>
                     </Grid>

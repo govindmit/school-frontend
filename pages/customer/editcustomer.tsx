@@ -28,7 +28,6 @@ import AddCustomerCmp from "../commoncmp/addCustomerCmp";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useRouter } from "next/router";
 import CloseIcon from "@mui/icons-material/Close";
 import styled from "@emotion/styled";
 const style = {
@@ -75,7 +74,6 @@ interface TabPanelProps {
 
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
-
   return (
     <div
       role="tabpanel"
@@ -121,7 +119,6 @@ export default function EditCustomer({
   open: any;
   closeDialogedit: any;
 }) {
-  const router = useRouter();
   const [selvalue, setselValue] = React.useState(0);
   const [spinner, setshowspinner] = React.useState(false);
   const [opens, setOpen] = React.useState(open);
@@ -211,6 +208,7 @@ export default function EditCustomer({
       });
   };
 
+  let dt;
   const getUserDet = async () => {
     try {
       const response = await fetch(`${api_url}/getuserdetails/${id}`, {
@@ -220,9 +218,6 @@ export default function EditCustomer({
         },
       });
       const res = await response.json();
-
-      console.log(res.data[0]);
-
       setValue("name", res.data[0].name);
       setValue("email1", res.data[0].email1);
       setValue("email2", res.data[0].email2);
@@ -230,6 +225,7 @@ export default function EditCustomer({
       setValue("contactName", res.data[0].contactName);
       setValue("printUs", res.data[0].printus);
       setValue("status", res.data[0].status);
+      dt = res.data[0].status;
     } catch (error) {
       console.log("error", error);
     }
@@ -287,7 +283,7 @@ export default function EditCustomer({
                           })}
                         />
                         {errors.name && (
-                          <span style={style}>Field is Required **</span>
+                          <span style={style}>Field is Required *</span>
                         )}
                       </Stack>
                       <FormGroup>
@@ -317,7 +313,7 @@ export default function EditCustomer({
                           })}
                         />
                         {errors.number && (
-                          <span style={style}>Field is Required **</span>
+                          <span style={style}>Field is Required *</span>
                         )}
                       </Stack>
                     </Grid>
@@ -337,7 +333,7 @@ export default function EditCustomer({
                           })}
                         />
                         {errors.email1 && (
-                          <span style={style}>Field is Required **</span>
+                          <span style={style}>Field is Required *</span>
                         )}
                       </Stack>
                     </Grid>
@@ -532,7 +528,7 @@ export default function EditCustomer({
                           {...register("contactName", { required: true })}
                         />
                         {errors.contactName && (
-                          <span style={style}>Field is Required **</span>
+                          <span style={style}>Field is Required *</span>
                         )}
                       </Stack>
                     </Grid>
@@ -550,7 +546,7 @@ export default function EditCustomer({
                           {...register("printUs", { required: true })}
                         />
                         {errors.printUs && (
-                          <span style={style}>Field is Required **</span>
+                          <span style={style}>Field is Required *</span>
                         )}
                       </Stack>
                     </Grid>

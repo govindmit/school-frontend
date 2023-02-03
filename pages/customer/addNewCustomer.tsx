@@ -108,6 +108,7 @@ type FormValues = {
   contactName: string;
   printUs: string;
   parentId: number;
+  userRole: String;
 };
 
 export default function AddCustomer({
@@ -178,6 +179,8 @@ export default function AddCustomer({
       printUs: data.printUs,
       status: data.status,
       roleId: 2,
+      parentId: parentId,
+      userRole: "customer",
     };
     await axios({
       method: "POST",
@@ -259,7 +262,7 @@ export default function AddCustomer({
                           })}
                         />
                         {errors.name && (
-                          <span style={style}>Field is Required **</span>
+                          <span style={style}>Field is Required *</span>
                         )}
                       </Stack>
                       <FormGroup>
@@ -289,7 +292,7 @@ export default function AddCustomer({
                           })}
                         />
                         {errors.number && (
-                          <span style={style}>Field is Required **</span>
+                          <span style={style}>Field is Required *</span>
                         )}
                       </Stack>
                     </Grid>
@@ -309,7 +312,7 @@ export default function AddCustomer({
                           })}
                         />
                         {errors.email1 && (
-                          <span style={style}>Field is Required **</span>
+                          <span style={style}>Field is Required *</span>
                         )}
                       </Stack>
                     </Grid>
@@ -361,7 +364,7 @@ export default function AddCustomer({
                         <OutlinedInput
                           type="text"
                           id="name"
-                          placeholder="Phone1..."
+                          placeholder="Attention To..."
                           fullWidth
                           size="small"
                         />
@@ -373,7 +376,7 @@ export default function AddCustomer({
                         <OutlinedInput
                           type="text"
                           id="name"
-                          placeholder="Print Us..."
+                          placeholder="Phone..."
                           fullWidth
                           size="small"
                         />
@@ -389,7 +392,7 @@ export default function AddCustomer({
                         <OutlinedInput
                           type="text"
                           id="name"
-                          placeholder="Phone1..."
+                          placeholder="Address1..."
                           fullWidth
                           size="small"
                         />
@@ -401,7 +404,7 @@ export default function AddCustomer({
                         <OutlinedInput
                           type="text"
                           id="name"
-                          placeholder="Print Us..."
+                          placeholder="Address2..."
                           fullWidth
                           size="small"
                         />
@@ -411,25 +414,37 @@ export default function AddCustomer({
                 </Stack>
                 <Stack style={{ marginTop: "20px" }}>
                   <Grid container spacing={2}>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} md={4}>
                       <Stack spacing={1}>
                         <InputLabel htmlFor="name">City</InputLabel>
                         <OutlinedInput
                           type="text"
                           id="name"
-                          placeholder="Phone1..."
+                          placeholder="City..."
                           fullWidth
                           size="small"
                         />
                       </Stack>
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} md={4}>
                       <Stack spacing={1}>
-                        <InputLabel htmlFor="name">State</InputLabel>
+                        <InputLabel htmlFor="name">State/Province</InputLabel>
                         <OutlinedInput
                           type="text"
                           id="name"
-                          placeholder="Print Us..."
+                          placeholder="State..."
+                          fullWidth
+                          size="small"
+                        />
+                      </Stack>
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                      <Stack spacing={1}>
+                        <InputLabel htmlFor="name">Zip/Postal Code</InputLabel>
+                        <OutlinedInput
+                          type="text"
+                          id="name"
+                          placeholder="Postal Code..."
                           fullWidth
                           size="small"
                         />
@@ -505,7 +520,7 @@ export default function AddCustomer({
                           {...register("contactName", { required: true })}
                         />
                         {errors.contactName && (
-                          <span style={style}>Field is Required **</span>
+                          <span style={style}>Field is Required *</span>
                         )}
                       </Stack>
                     </Grid>
@@ -523,7 +538,7 @@ export default function AddCustomer({
                           {...register("printUs", { required: true })}
                         />
                         {errors.printUs && (
-                          <span style={style}>Field is Required **</span>
+                          <span style={style}>Field is Required *</span>
                         )}
                       </Stack>
                     </Grid>

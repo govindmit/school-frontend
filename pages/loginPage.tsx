@@ -136,21 +136,6 @@ export default function LoginPage() {
             elevation={6}
             square
           >
-            <header className="header-navbar1">
-              <Typography></Typography>
-              <nav className="nav-bar">
-                <Link
-                  href="/"
-                  style={{
-                    color: "#1A70C5",
-                    textDecoration: "none",
-                    fontWeight: "bold",
-                  }}
-                >
-                  <BiArrowBack /> Back to Home
-                </Link>
-              </nav>
-            </header>
             <Box
               className="width-full"
               sx={{
@@ -197,14 +182,14 @@ export default function LoginPage() {
 
                   <Typography style={style}>
                     {errors?.email1?.type === "required" && (
-                      <div>Email Field is required **</div>
+                      <div>Email Field is required *</div>
                     )}
                   </Typography>
 
                   <Typography style={style}>
                     {" "}
                     {errors?.email1?.type === "pattern" && (
-                      <div>Please Enter Valid Email **</div>
+                      <div>Please Enter Valid Email *</div>
                     )}
                   </Typography>
                   <Typography style={{ marginTop: "15px" }}>
@@ -222,7 +207,7 @@ export default function LoginPage() {
                   />
                   <Typography style={style}>
                     {errors.password && (
-                      <span>Password Field is Required **</span>
+                      <span>Password Field is Required *</span>
                     )}
                   </Typography>
                   <Grid container style={{ marginTop: "10px" }}>

@@ -134,7 +134,7 @@ export default function ViewCustomer() {
                     <Link
                       key="1"
                       color="inherit"
-                      href="/"
+                      href="/customer/customerslist"
                       style={{ color: "#1A70C5", textDecoration: "none" }}
                     >
                       Home
