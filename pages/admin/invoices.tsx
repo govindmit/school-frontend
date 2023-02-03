@@ -155,7 +155,10 @@ export default function Guardians() {
   const [error, setError] = useState<any>("");
   const [dollerOpen, setDollerOpen] = useState(false);
   const [recievedPay, setRecieved] = useState<FormValues | any>([]);
-  // const [items, setItem] = useState<FormValues | any>([]);
+  const [sort, setSort] = useState<FormValues | any>([]);
+  const [status, setStatus] = useState<FormValues | any>([]);
+
+  const [note, setNote] = useState<FormValues | any>([]);
 
   const [Invoicedata, setInvoice] = useState<FormValues | any>([]);
 
@@ -260,10 +263,10 @@ export default function Guardians() {
       }
     }
     let reqData = {
-      status: data.status,
+      status: status,
       startDate: sdate === "Invalid date" ? "" : sdate,
       endDate: edate === "Invalid date" ? "" : edate,
-      order: data.sort,
+      order: sort,
       amount: data.Total,
       customer: ids,
     };
@@ -278,8 +281,8 @@ export default function Guardians() {
     })
       .then((res) => {
         setUser(res?.data.data);
-        reset();
-        setUserId("");
+        // reset();
+        // setUserId("");
       })
       .catch((err) => {});
   };
@@ -402,15 +405,21 @@ export default function Guardians() {
     handleClose();
   };
   const handleCreate = async (id: any) => {
+    let requestedData = {
+      note: note ? note : null,
+    };
+    console.log(requestedData, "requestedData");
     await axios({
       method: "PUT",
       url: `${api_url}/updateInvoice/${id}`,
+      data: requestedData,
       headers: {
         "content-type": "multipart/form-data",
       },
     })
       .then((res) => {
         getUser();
+        setNote("");
         toast.success("Payment Successfully !");
 
         setTimeout(() => {
@@ -484,7 +493,7 @@ export default function Guardians() {
   const draft = Invoicedata.filter((a: any) => a.status == "draft");
 
   const handleFilter = () => {
-    getUser();
+    // getUser();
   };
   const handleAll = () => {
     getUser();
@@ -505,6 +514,7 @@ export default function Guardians() {
     setUser(drafts);
   };
 
+  console.log(inputValue, "inputValue");
   return (
     <>
       <Box sx={{ display: "flex" }}>
@@ -633,7 +643,7 @@ export default function Guardians() {
                                         </InputLabel>
 
                                         <Autocomplete
-                                          onChange={(event, value) =>
+                                          onChange={(event: any, value: any) =>
                                             setUserId(value)
                                           }
                                           inputValue={inputValue}
@@ -647,7 +657,7 @@ export default function Guardians() {
                                           multiple
                                           id="free-solo-demo"
                                           freeSolo
-                                          options={user}
+                                          options={Invoicedata}
                                           getOptionLabel={(option: any) =>
                                             option?.name
                                           }
@@ -710,10 +720,14 @@ export default function Guardians() {
                                           Sort
                                         </InputLabel>
                                         <Select
+                                          onChange={(e) =>
+                                            setSort(e.target.value)
+                                          }
+                                          value={sort}
                                           labelId="demo-select-small"
                                           id="demo-select-small"
                                           label="Status"
-                                          {...register("sort")}
+                                          // {...register("sort")}
                                         >
                                           <MenuItem value="All"></MenuItem>
                                           <MenuItem value="ASC">
@@ -731,11 +745,14 @@ export default function Guardians() {
                                           Status
                                         </InputLabel>
                                         <Select
+                                          onChange={(e) =>
+                                            setStatus(e.target.value)
+                                          }
                                           labelId="demo-select-small"
                                           id="demo-select-small"
-                                          // value={status}
+                                          value={status}
                                           label="Status"
-                                          {...register("status")}
+                                          // {...register("status")}
                                           // onChange={handleChange}
                                         >
                                           <MenuItem value="All"></MenuItem>
@@ -776,7 +793,7 @@ export default function Guardians() {
                             Export
                             <KeyboardArrowDownIcon />
                           </MenuItem>
-                          <Menu {...bindMenu(popupState)}>
+                          {/* <Menu {...bindMenu(popupState)}>
                             <MenuItem onClick={popupState.close}>
                               Profile
                             </MenuItem>
@@ -786,7 +803,7 @@ export default function Guardians() {
                             <MenuItem onClick={popupState.close}>
                               Logout
                             </MenuItem>
-                          </Menu>
+                          </Menu> */}
                         </Box>
                       )}
                     </PopupState>
@@ -800,7 +817,7 @@ export default function Guardians() {
                             Import
                             <KeyboardArrowDownIcon />
                           </MenuItem>
-                          <Menu {...bindMenu(popupState)}>
+                          {/* <Menu {...bindMenu(popupState)}>
                             <MenuItem onClick={popupState.close}>
                               Profile
                             </MenuItem>
@@ -810,7 +827,7 @@ export default function Guardians() {
                             <MenuItem onClick={popupState.close}>
                               Logout
                             </MenuItem>
-                          </Menu>
+                          </Menu> */}
                         </Box>
                       )}
                     </PopupState>
@@ -1091,9 +1108,10 @@ export default function Guardians() {
                           <Stack spacing={1}>
                             <InputLabel htmlFor="name">Reerence</InputLabel>
                             <OutlinedInput
+                              onChange={(e) => setNote(e.target.value)}
                               type="text"
                               id="name"
-                              placeholder="Alternate Email..."
+                              placeholder="Enter note"
                               fullWidth
                               size="small"
                             />
