@@ -24,6 +24,8 @@ import {
   IconButton,
   OutlinedInput,
   Pagination,
+  Tabs,
+  Tab,
 } from "@mui/material";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -41,9 +43,37 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AddCustomer from "./addNewCustomer";
 import EditCustomer from "./editcustomer";
-function Item(props: BoxProps) {
-  const { sx, ...other } = props;
-  return <Box sx={{}} {...other} />;
+import { useRouter } from "next/router";
+
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+function a11yProps(index: number) {
+  return {
+    id: `simple-tab-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
+  };
 }
 
 //pagination function
@@ -78,16 +108,34 @@ type FormValues = {
 };
 
 export default function CustomerList() {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<any>([]);
   const [custtype, setcusttype] = useState<any>([]);
   const [All, setAll] = useState(0);
+  const [active, setactive] = useState(0);
+  const [inActive, setinActive] = useState(0);
   const [searchquery, setsearchquery] = useState("");
   const [searchdata, setsearchdata] = useState([]);
-  const { register, reset, handleSubmit } = useForm<FormValues>();
   const [deleteConfirmBoxOpen, setdeleteConfirmBoxOpen] = React.useState(false);
   const [newCustOpen, setnewCustOpen] = React.useState(false);
   const [editCustOpen, seteditCustOpen] = React.useState(false);
   const [editid, seteditid] = useState<any>(0);
+  const [value, setValue] = React.useState(0);
+  const { register, handleSubmit } = useForm<FormValues>();
+
+  // verify user login
+  let logintoken: any;
+  const router = useRouter();
+  React.useEffect(() => {
+    logintoken = localStorage.getItem("QIS_loginToken");
+    if (logintoken === undefined || logintoken === null) {
+      router.push("/");
+    }
+  }, []);
+
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+  };
+
   useEffect(() => {
     getUser();
     getType();
@@ -101,12 +149,21 @@ export default function CustomerList() {
         method: "POST",
         headers: {
           Authorization: auth_token,
+          "x-access-token": logintoken,
         },
       });
       const res = await response.json();
-      setUsers(res.data);
-      setsearchdata(res.data);
-      setAll(res.data.length);
+      setUsers(res.data.filter((dt: any) => dt.customerId !== null));
+      setsearchdata(res.data.filter((dt: any) => dt.customerId !== null));
+      setAll(res.data.filter((dt: any) => dt.customerId !== null).length);
+      const activeUser = res.data.filter(
+        (dt: any) => dt.status === 1 && dt.customerId !== null
+      ).length;
+      const inactiveUser = res.data.filter(
+        (dt: any) => dt.status === 0 && dt.customerId !== null
+      ).length;
+      setactive(activeUser);
+      setinActive(inactiveUser);
     } catch (error) {
       console.log("error", error);
     }
@@ -120,6 +177,7 @@ export default function CustomerList() {
         method: "GET",
         headers: {
           Authorization: auth_token,
+          "x-access-token": logintoken,
         },
       });
       const res = await response.json();
@@ -132,7 +190,6 @@ export default function CustomerList() {
   //apply filter
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setUsers([]);
-    console.log(data, "......................................h");
     const reqData = {
       status: data.status,
       customerType: data.customerType,
@@ -146,13 +203,12 @@ export default function CustomerList() {
       data: reqData,
       headers: {
         Authorization: auth_token,
+        "x-access-token": logintoken,
       },
     })
       .then((res) => {
         if (res.status === 200) {
-          reset();
-          console.log(res.data.data);
-          setUsers(res.data.data);
+          setUsers(res.data.data.filter((dt: any) => dt.customerId !== null));
         }
       })
       .catch((error) => {
@@ -163,11 +219,23 @@ export default function CustomerList() {
   // apply searching
   const handleSearch = (e: any) => {
     setsearchquery(e.target.value);
+    console.log(typeof e.target.value);
     if (e.target.value === "") {
       setUsers(searchdata);
     } else {
       const filterres = searchdata.filter((item: any) => {
-        return item.name.toLowerCase().includes(e.target.value.toLowerCase());
+        return (
+          item.customerId
+            ?.toLowerCase()
+            .includes(e.target.value.toLowerCase()) ||
+          item.name.toLowerCase().includes(e.target.value.toLowerCase()) ||
+          item.email1.toLowerCase().includes(e.target.value.toLowerCase()) ||
+          item.contactName
+            .toLowerCase()
+            .includes(e.target.value.toLowerCase()) ||
+          item.printUs.toLowerCase().includes(e.target.value.toLowerCase()) ||
+          `${item.phone1}`.includes(e.target.value)
+        );
       });
       const dtd = filterres;
       setUsers(dtd);
@@ -202,6 +270,7 @@ export default function CustomerList() {
       data: reqData,
       headers: {
         Authorization: auth_token,
+        "x-access-token": logintoken,
       },
     })
       .then((data) => {
@@ -233,12 +302,18 @@ export default function CustomerList() {
     getUser();
   };
 
-  const handleFilter = () => {
+  //tab functionality
+  function handleAll() {
     getUser();
-  };
-
-  let Active = users.filter((a: any) => a.status == 1);
-  let InActive = users.filter((a: any) => a.status == 0);
+  }
+  function handleActive() {
+    const act = users.filter((a: any) => a.status === 1);
+    setUsers(act);
+  }
+  function handleInActive() {
+    const Inact = users.filter((a: any) => a.status === 0);
+    setUsers(Inact);
+  }
 
   return (
     <>
@@ -259,7 +334,7 @@ export default function CustomerList() {
                     <Link
                       key="1"
                       color="inherit"
-                      href="/"
+                      href="/admin/dashboard"
                       style={{ color: "#1A70C5", textDecoration: "none" }}
                     >
                       Home
@@ -305,19 +380,23 @@ export default function CustomerList() {
                   alignItems="center"
                   justifyContent="space-between"
                 >
-                  <Box
-                    className="filter-list"
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                      bgcolor: "background.paper",
-                      borderRadius: 1,
-                    }}
-                  >
-                    <Item className="filter-active">ALL ({All})</Item>
-                    <Item>ACTIVE (17) </Item>
-                    <Item>INACTIVE (2) </Item>
+                  <Box>
+                    <Tabs
+                      value={value}
+                      onChange={handleChange}
+                      aria-label="basic tabs example"
+                    >
+                      <Tab
+                        className="filter-list"
+                        label={`All (${All})`}
+                        {...a11yProps(0)}
+                        onClick={handleAll}
+                      />
+                      <Tab label={`ACTIVE (${active})`} {...a11yProps(1)} onClick={handleActive} />
+                      <Tab label={`INACTIVE (${inActive})`} {...a11yProps(2)} onClick={handleInActive} />
+                    </Tabs>
                   </Box>
+
                   <Stack
                     direction="row"
                     alignItems="center"
@@ -327,9 +406,7 @@ export default function CustomerList() {
                       {(popupState) => (
                         <Box>
                           <MenuItem {...bindTrigger(popupState)}>
-                            <span onClick={() => handleFilter()}>
-                              <BiFilterAlt />
-                            </span>
+                            <BiFilterAlt />
                             &nbsp; Filter
                           </MenuItem>
                           <Menu {...bindMenu(popupState)}>
@@ -399,7 +476,7 @@ export default function CustomerList() {
                                       <Grid item xs={12} md={3}>
                                         <Stack spacing={1}>
                                           <InputLabel htmlFor="sorting">
-                                            Short
+                                            Sort
                                           </InputLabel>
                                           <FormControl fullWidth>
                                             <Select
@@ -410,10 +487,10 @@ export default function CustomerList() {
                                               defaultValue={0}
                                             >
                                               <MenuItem value={0}>
-                                                Created Date Newest First
+                                                Date, Newest First
                                               </MenuItem>
                                               <MenuItem value={1}>
-                                                Created Date Oldest First
+                                                Date, Oldest First
                                               </MenuItem>
 
                                               <MenuItem value={2}>
@@ -435,7 +512,6 @@ export default function CustomerList() {
                                             <Select
                                               labelId="demo-simple-select-label"
                                               id="demo-simple-select"
-                                              //onChange={handleChange}
                                               size="small"
                                             >
                                               <MenuItem value={10}>
@@ -448,7 +524,6 @@ export default function CustomerList() {
                                                 Pant0003
                                               </MenuItem>
                                             </Select>
-                                            "
                                           </FormControl>
                                         </Stack>
                                       </Grid>
@@ -524,7 +599,7 @@ export default function CustomerList() {
                             Export
                             <KeyboardArrowDownIcon />
                           </MenuItem>
-                          <Menu {...bindMenu(popupState)}>
+                          {/* <Menu {...bindMenu(popupState)}>
                             <MenuItem onClick={popupState.close}>
                               Profile
                             </MenuItem>
@@ -534,7 +609,7 @@ export default function CustomerList() {
                             <MenuItem onClick={popupState.close}>
                               Logout
                             </MenuItem>
-                          </Menu>
+                          </Menu> */}
                         </Box>
                       )}
                     </PopupState>
@@ -548,7 +623,7 @@ export default function CustomerList() {
                             Import
                             <KeyboardArrowDownIcon />
                           </MenuItem>
-                          <Menu {...bindMenu(popupState)}>
+                          {/* <Menu {...bindMenu(popupState)}>
                             <MenuItem onClick={popupState.close}>
                               Profile
                             </MenuItem>
@@ -558,7 +633,7 @@ export default function CustomerList() {
                             <MenuItem onClick={popupState.close}>
                               Logout
                             </MenuItem>
-                          </Menu>
+                          </Menu> */}
                         </Box>
                       )}
                     </PopupState>
@@ -593,22 +668,22 @@ export default function CustomerList() {
                         <Typography>EMAIL 2</Typography>
                       </TableCell>
                       <TableCell>
-                        <Typography>COST. TYPE</Typography>
+                        <Typography width={100}>COST. TYPE</Typography>
                       </TableCell>
                       <TableCell>
-                        <Typography>CONT. NAME</Typography>
+                        <Typography width={100}>CONT. NAME</Typography>
                       </TableCell>
                       <TableCell>
                         <Typography>STATUS</Typography>
                       </TableCell>
                       <TableCell>
-                        <Typography>PRINT US</Typography>
+                        <Typography width={100}>PRINT US</Typography>
                       </TableCell>
                       <TableCell>
                         <Typography>PHONE 1</Typography>
                       </TableCell>
                       <TableCell>
-                        <Typography>PHONE 2</Typography>
+                        <Typography width={100}>PHONE 2</Typography>
                       </TableCell>
                       <TableCell>
                         <Typography>ACTION</Typography>
@@ -640,7 +715,9 @@ export default function CustomerList() {
                               <a href="">{dataitem.email2}</a>
                             </TableCell>
                             <TableCell align="left">
-                              {dataitem.CustomerType}
+                              {dataitem.CustomerType !== null
+                                ? dataitem.CustomerType
+                                : "INDIVIDUAL"}
                             </TableCell>
                             <TableCell align="left">
                               {dataitem.contactName}
@@ -701,6 +778,7 @@ export default function CustomerList() {
                       })}
                   </TableBody>
                 </Table>
+                {users == "" ? <h3>No Record found</h3> : ""}
                 <Stack
                   style={{ marginBottom: "10px", marginTop: "10px" }}
                   direction="row"
@@ -749,7 +827,7 @@ export default function CustomerList() {
       <ConfirmBox
         open={deleteConfirmBoxOpen}
         closeDialog={() => setdeleteConfirmBoxOpen(false)}
-        title={deleteData?.firstname}
+        title={deleteData?.name}
         deleteFunction={deleteUser}
       />
       <ToastContainer />

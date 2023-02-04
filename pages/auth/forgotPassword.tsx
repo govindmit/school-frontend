@@ -157,7 +157,7 @@ export default function ForgotPasswordPage() {
                     severity="error"
                     style={{ marginTop: "10px", marginBottom: "10px" }}
                   >
-                    This Email Not Registered!
+                    The email is Not Registered with us !
                   </Alert>
                 ) : (
                   ""
@@ -186,12 +186,12 @@ export default function ForgotPasswordPage() {
                   />
                   <Typography style={style}>
                     {errors?.email1?.type === "required" && (
-                      <div>Email field is required **</div>
+                      <div>Email field is required *</div>
                     )}
                   </Typography>
                   <Typography style={style}>
                     {errors?.email1?.type === "pattern" && (
-                      <div>Please Enter Valid Email **</div>
+                      <div>Please Enter Valid Email *</div>
                     )}
                   </Typography>
                   <Button

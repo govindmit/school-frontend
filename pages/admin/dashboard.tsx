@@ -25,7 +25,7 @@ import Link from "next/link";
 import Image from "next/image";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import MiniDrawer from "../sidebar";
-
+import { useRouter } from "next/router";
 import TasksChart from "../chart";
 import dynamic from "next/dynamic";
 import BabyChangingStationIcon from "@mui/icons-material/BabyChangingStation";
@@ -33,7 +33,16 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 const DynamicComponentWithNoSSR = dynamic(() => import("../chart"), {
   ssr: false,
 });
+
 export default function Dashboard(this: any) {
+  const router = useRouter();
+  React.useEffect(() => {
+    const logintoken = localStorage.getItem("QIS_loginToken");
+    if (logintoken === undefined || logintoken === null) {
+      router.push("/");
+    }
+  }, []);
+
   const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
     ...theme.typography.body2,
@@ -64,7 +73,6 @@ export default function Dashboard(this: any) {
     <>
       <Box sx={{ display: "flex" }}>
         <MiniDrawer />
-
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <div className="dashboardBar">
             <div className="dashboardbar">

@@ -30,6 +30,7 @@ import CreditCardOutlinedIcon from "@mui/icons-material/CreditCardOutlined";
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Head from "next/head";
+import { Stack } from "@mui/system";
 const drawerWidth = 240;
 
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -208,6 +209,25 @@ export default function MiniDrawer() {
                   sx={{ opacity: open ? 1 : 0 }}
                 />
               </ListItemButton>
+              <Stack>
+                <ListItem
+                  style={{ cursor: "pointer" }}
+                  onClick={() => router.push("/customer/custType")}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 7 : "auto",
+                      justifyContent: "center",
+                    }}
+                  ></ListItemIcon>
+                  <PeopleAltOutlinedIcon />
+                  <ListItemText
+                    primary="Customers Type"
+                    sx={{ opacity: open ? 1 : 0 }}
+                  />
+                </ListItem>
+              </Stack>
             </ListItem>
 
             <ListItem
