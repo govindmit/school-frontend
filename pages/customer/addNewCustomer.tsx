@@ -289,10 +289,19 @@ export default function AddCustomer({
                           size="small"
                           {...register("number", {
                             required: true,
+                            pattern: /^[0-9+-]+$/,
+                            minLength: 10,
+                            maxLength: 10,
                           })}
                         />
-                        {errors.number && (
+                        {errors.number?.type === "required" && (
                           <span style={style}>Field is Required *</span>
+                        )}
+                        {errors.number?.type === "pattern" && (
+                          <span style={style}>Enter Valid Number *</span>
+                        )}
+                        {errors.number?.type === "minLength" && (
+                          <span style={style}>Enter Valid Number *</span>
                         )}
                       </Stack>
                     </Grid>
@@ -309,10 +318,16 @@ export default function AddCustomer({
                           size="small"
                           {...register("email1", {
                             required: true,
+                            pattern: /^\S+@\S+$/i,
                           })}
                         />
-                        {errors.email1 && (
+                        {errors.email1?.type === "required" && (
                           <span style={style}>Field is Required *</span>
+                        )}
+                        {errors.email1?.type === "pattern" && (
+                          <span style={style}>
+                            Please enter a valid email address *
+                          </span>
                         )}
                       </Stack>
                     </Grid>

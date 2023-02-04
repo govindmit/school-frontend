@@ -108,7 +108,7 @@ type FormValues = {
 };
 
 export default function CustomerList() {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<any>([]);
   const [custtype, setcusttype] = useState<any>([]);
   const [All, setAll] = useState(0);
   const [active, setactive] = useState(0);
@@ -208,8 +208,7 @@ export default function CustomerList() {
     })
       .then((res) => {
         if (res.status === 200) {
-          console.log(res.data.data);
-          setUsers(res.data.data);
+          setUsers(res.data.data.filter((dt: any) => dt.customerId !== null));
         }
       })
       .catch((error) => {
@@ -225,12 +224,6 @@ export default function CustomerList() {
       setUsers(searchdata);
     } else {
       const filterres = searchdata.filter((item: any) => {
-        console.log(
-          "dkjfh",
-          typeof item.phone1,
-          "hjygtut",
-          typeof parseInt(e.target.value)
-        );
         return (
           item.customerId
             ?.toLowerCase()
@@ -309,12 +302,18 @@ export default function CustomerList() {
     getUser();
   };
 
-  const handleFilter = () => {
+  //tab functionality
+  function handleAll() {
     getUser();
-  };
-
-  let Active = users.filter((a: any) => a.status == 1);
-  let InActive = users.filter((a: any) => a.status == 0);
+  }
+  function handleActive() {
+    const act = users.filter((a: any) => a.status === 1);
+    setUsers(act);
+  }
+  function handleInActive() {
+    const Inact = users.filter((a: any) => a.status === 0);
+    setUsers(Inact);
+  }
 
   return (
     <>
@@ -391,9 +390,10 @@ export default function CustomerList() {
                         className="filter-list"
                         label={`All (${All})`}
                         {...a11yProps(0)}
+                        onClick={handleAll}
                       />
-                      <Tab label={`ACTIVE (${active})`} {...a11yProps(1)} />
-                      <Tab label={`INACTIVE (${inActive})`} {...a11yProps(2)} />
+                      <Tab label={`ACTIVE (${active})`} {...a11yProps(1)} onClick={handleActive} />
+                      <Tab label={`INACTIVE (${inActive})`} {...a11yProps(2)} onClick={handleInActive} />
                     </Tabs>
                   </Box>
 
@@ -406,9 +406,7 @@ export default function CustomerList() {
                       {(popupState) => (
                         <Box>
                           <MenuItem {...bindTrigger(popupState)}>
-                            <span onClick={() => handleFilter()}>
-                              <BiFilterAlt />
-                            </span>
+                            <BiFilterAlt />
                             &nbsp; Filter
                           </MenuItem>
                           <Menu {...bindMenu(popupState)}>
@@ -489,10 +487,10 @@ export default function CustomerList() {
                                               defaultValue={0}
                                             >
                                               <MenuItem value={0}>
-                                                Created Date Newest First
+                                                Date, Newest First
                                               </MenuItem>
                                               <MenuItem value={1}>
-                                                Created Date Oldest First
+                                                Date, Oldest First
                                               </MenuItem>
 
                                               <MenuItem value={2}>
@@ -514,7 +512,6 @@ export default function CustomerList() {
                                             <Select
                                               labelId="demo-simple-select-label"
                                               id="demo-simple-select"
-                                              //onChange={handleChange}
                                               size="small"
                                             >
                                               <MenuItem value={10}>
@@ -527,7 +524,6 @@ export default function CustomerList() {
                                                 Pant0003
                                               </MenuItem>
                                             </Select>
-                                            "
                                           </FormControl>
                                         </Stack>
                                       </Grid>
@@ -603,7 +599,7 @@ export default function CustomerList() {
                             Export
                             <KeyboardArrowDownIcon />
                           </MenuItem>
-                          <Menu {...bindMenu(popupState)}>
+                          {/* <Menu {...bindMenu(popupState)}>
                             <MenuItem onClick={popupState.close}>
                               Profile
                             </MenuItem>
@@ -613,7 +609,7 @@ export default function CustomerList() {
                             <MenuItem onClick={popupState.close}>
                               Logout
                             </MenuItem>
-                          </Menu>
+                          </Menu> */}
                         </Box>
                       )}
                     </PopupState>
@@ -627,7 +623,7 @@ export default function CustomerList() {
                             Import
                             <KeyboardArrowDownIcon />
                           </MenuItem>
-                          <Menu {...bindMenu(popupState)}>
+                          {/* <Menu {...bindMenu(popupState)}>
                             <MenuItem onClick={popupState.close}>
                               Profile
                             </MenuItem>
@@ -637,7 +633,7 @@ export default function CustomerList() {
                             <MenuItem onClick={popupState.close}>
                               Logout
                             </MenuItem>
-                          </Menu>
+                          </Menu> */}
                         </Box>
                       )}
                     </PopupState>
@@ -782,6 +778,7 @@ export default function CustomerList() {
                       })}
                   </TableBody>
                 </Table>
+                {users == "" ? <h3>No Record found</h3> : ""}
                 <Stack
                   style={{ marginBottom: "10px", marginTop: "10px" }}
                   direction="row"
@@ -830,7 +827,7 @@ export default function CustomerList() {
       <ConfirmBox
         open={deleteConfirmBoxOpen}
         closeDialog={() => setdeleteConfirmBoxOpen(false)}
-        title={deleteData?.firstname}
+        title={deleteData?.name}
         deleteFunction={deleteUser}
       />
       <ToastContainer />

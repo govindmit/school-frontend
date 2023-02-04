@@ -225,7 +225,7 @@ export default function EditCustomer({
       setValue("contactName", res.data[0].contactName);
       setValue("printUs", res.data[0].printus);
       setValue("status", res.data[0].status);
-      dt = res.data[0].status;
+      setparentid(res.data[0].parentId)
     } catch (error) {
       console.log("error", error);
     }
@@ -310,10 +310,19 @@ export default function EditCustomer({
                           size="small"
                           {...register("number", {
                             required: true,
+                            pattern: /^[0-9+-]+$/,
+                            minLength: 10,
+                            maxLength: 10,
                           })}
                         />
-                        {errors.number && (
+                        {errors.number?.type === "required" && (
                           <span style={style}>Field is Required *</span>
+                        )}
+                        {errors.number?.type === "pattern" && (
+                          <span style={style}>Enter Valid Number *</span>
+                        )}
+                        {errors.number?.type === "minLength" && (
+                          <span style={style}>Enter Valid Number *</span>
                         )}
                       </Stack>
                     </Grid>
@@ -330,10 +339,16 @@ export default function EditCustomer({
                           size="small"
                           {...register("email1", {
                             required: true,
+                            pattern: /^\S+@\S+$/i,
                           })}
                         />
-                        {errors.email1 && (
+                        {errors.email1?.type === "required" && (
                           <span style={style}>Field is Required *</span>
+                        )}
+                        {errors.email1?.type === "pattern" && (
+                          <span style={style}>
+                            Please enter a valid email address *
+                          </span>
                         )}
                       </Stack>
                     </Grid>

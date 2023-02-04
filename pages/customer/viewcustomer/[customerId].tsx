@@ -22,6 +22,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
 import { api_url, auth_token } from "../../api/hello";
+import EditCustomer from "../editcustomer";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -58,6 +59,8 @@ export default function ViewCustomer() {
   const [userDet, setUserDet] = useState<any>([]);
   const [invoice, setUserinvoice] = useState<any>([]);
   const [closeinvoice, setCloseinvoice] = useState<any>([]);
+  const [editCustOpen, seteditCustOpen] = React.useState(false);
+  const [editid, seteditid] = useState<any>(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -114,6 +117,17 @@ export default function ViewCustomer() {
     getUserInvoice();
   }, []);
   console.log(value, "value");
+
+  //edit customer
+  function handleEditCustomerOpen(id: any) {
+    console.log(id);
+    seteditCustOpen(true);
+    seteditid(id);
+  }
+  const closeEditPoP = (data: any) => {
+    seteditCustOpen(false);
+    getUserDet();
+  };
 
   return (
     <>
@@ -190,7 +204,10 @@ export default function ViewCustomer() {
                         </Typography>
                       </Stack>
                       <Stack>
-                        <Typography style={{ color: "#1A70C5" }}>
+                        <Typography
+                          style={{ color: "#1A70C5", cursor: "pointer" }}
+                          onClick={() => handleEditCustomerOpen(customerId)}
+                        >
                           <b>EDIT</b>
                         </Typography>
                       </Stack>
@@ -262,42 +279,6 @@ export default function ViewCustomer() {
               </Grid>
               <Grid item xs={8}>
                 <Grid item xs={12} md={12}>
-                  <Card sx={{ minWidth: 275 }}>
-                    <CardContent>
-                      <Stack
-                        direction="row"
-                        alignItems="center"
-                        justifyContent="space-between"
-                        style={{ padding: "8px" }}
-                      >
-                        <Stack>
-                          <Typography
-                            variant="h5"
-                            gutterBottom
-                            style={{
-                              fontWeight: "bold",
-                              color: "#333333",
-                            }}
-                          >
-                            Chasing
-                          </Typography>
-                        </Stack>
-                        <Stack>
-                          <Typography style={{ color: "#1A70C5" }}>
-                            ENABLE
-                          </Typography>
-                        </Stack>
-                      </Stack>
-                      <Stack style={{ padding: "8px" }}>
-                        <Typography>
-                          Invoice chasing is not set up. Would you like to
-                          enable invoice chasing?:
-                        </Typography>
-                      </Stack>
-                    </CardContent>
-                  </Card>
-                </Grid>
-                <Grid item xs={12} md={12} style={{ marginTop: "20px" }}>
                   <Card sx={{ minWidth: 275 }}>
                     <CardContent>
                       <Stack
@@ -489,6 +470,15 @@ export default function ViewCustomer() {
         </Box>
       </Box>
       <ToastContainer />
+      {editCustOpen ? (
+        <EditCustomer
+          id={editid}
+          open={editCustOpen}
+          closeDialogedit={closeEditPoP}
+        />
+      ) : (
+        ""
+      )}
     </>
   );
 }

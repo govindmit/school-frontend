@@ -269,10 +269,16 @@ export default function AddNewParent({
                           size="small"
                           {...register("email1", {
                             required: true,
+                            pattern: /^\S+@\S+$/i,
                           })}
                         />
-                        {errors.email1 && (
+                        {errors.email1?.type === "required" && (
                           <span style={style}>Field is Required *</span>
+                        )}
+                        {errors.email1?.type === "pattern" && (
+                          <span style={style}>
+                            Please enter a valid email address *
+                          </span>
                         )}
                       </Stack>
                     </Grid>
@@ -308,10 +314,19 @@ export default function AddNewParent({
                           size="small"
                           {...register("phone1", {
                             required: true,
+                            pattern: /^[0-9+-]+$/,
+                            minLength: 10,
+                            maxLength: 10,
                           })}
                         />
-                        {errors.phone1 && (
+                        {errors.phone1?.type === "required" && (
                           <span style={style}>Field is Required *</span>
+                        )}
+                        {errors.phone1?.type === "pattern" && (
+                          <span style={style}>Enter Valid Number *</span>
+                        )}
+                        {errors.phone1?.type === "minLength" && (
+                          <span style={style}>Enter Valid Number *</span>
                         )}
                       </Stack>
                     </Grid>

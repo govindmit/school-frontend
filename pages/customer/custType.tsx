@@ -23,6 +23,7 @@ import {
   Grid,
   InputLabel,
   OutlinedInput,
+  CircularProgress,
 } from "@mui/material";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -37,6 +38,7 @@ import ConfirmBox from "../commoncmp/confirmbox";
 import styled from "@emotion/styled";
 import { GridCloseIcon } from "@mui/x-data-grid";
 import { useForm, SubmitHandler } from "react-hook-form";
+import EditType from "./editType";
 
 const style = {
   color: "red",
@@ -86,16 +88,18 @@ export default function CustomerTypeList() {
   const [custtype, setcusttype] = useState<any>([]);
   const [All, setAll] = useState(0);
   const [searchquery, setsearchquery] = useState("");
-  const [searchdata, setsearchdata] = useState([]);
+  const [searchdata, setsearchdata] = useState<any>([]);
   const [deleteConfirmBoxOpen, setdeleteConfirmBoxOpen] = React.useState(false);
   const [typeOpen, setTypeOpen] = React.useState(false);
+  const [spinner, setshowspinner] = React.useState(false);
+  const [btnDisabled, setBtnDisabled] = React.useState(false);
   const [edittypeOpen, setedittypeOpen] = React.useState(false);
+  const [editid, seteditid] = useState<any>(0);
 
   const {
     register,
     handleSubmit,
     reset,
-    setValue,
     formState: { errors },
   } = useForm<FormValues>();
 
@@ -109,11 +113,12 @@ export default function CustomerTypeList() {
 
   function handleEditCustomerTypeOpen(id: any) {
     setedittypeOpen(true);
-    getTypeDet(id);
+    seteditid(id);
   }
 
-  const handleEditClose = () => {
+  const closeEditPoP = (data: any) => {
     setedittypeOpen(false);
+    getType();
   };
 
   useEffect(() => {
@@ -139,23 +144,6 @@ export default function CustomerTypeList() {
     }
   };
 
-  //get customers type det
-  const getTypeDet = async (id: any) => {
-    const url = `${api_url}/getTypeDet/${id}`;
-    try {
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          Authorization: auth_token,
-        },
-      });
-      const res = await response.json();
-      setValue("ename", res.data[0].name);
-    } catch (error) {
-      console.log("error", error);
-    }
-  };
-
   // apply searching
   const handleSearch = (e: any) => {
     setsearchquery(e.target.value);
@@ -176,7 +164,6 @@ export default function CustomerTypeList() {
     setdeleteConfirmBoxOpen(true);
     setDeleteData(data);
   }
-
   async function deleteUser() {
     let reqData = { isDeleted: 1 };
     await axios({
@@ -198,6 +185,8 @@ export default function CustomerTypeList() {
   }
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    setshowspinner(true);
+    setBtnDisabled(true);
     const reqData = {
       name: data.name,
     };
@@ -212,6 +201,8 @@ export default function CustomerTypeList() {
       .then((data) => {
         if (data.status === 201) {
           toast.success("Customer Type Added Successfully !");
+          setshowspinner(false);
+          setBtnDisabled(false);
           reset();
           handleClose();
           getType();
@@ -219,6 +210,8 @@ export default function CustomerTypeList() {
       })
       .catch((error) => {
         toast.error("Name Allready Registred !");
+        setshowspinner(false);
+        setBtnDisabled(false);
       });
   };
 
@@ -336,50 +329,52 @@ export default function CustomerTypeList() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {custtype &&
-                      custtype.map((item: any, key: any) => {
-                        return (
-                          <TableRow
-                            hover
-                            tabIndex={-1}
-                            role="checkbox"
-                            //key={key}
-                            className="boder-bottom"
-                          >
-                            <TableCell padding="checkbox">
-                              <Checkbox />
-                            </TableCell>
-                            <TableCell align="left">CUST-000{key}</TableCell>
-                            <TableCell align="left">{item.name}</TableCell>
-                            <TableCell align="left"></TableCell>
-                            <TableCell align="left">
-                              <Stack
-                                className="action"
-                                direction="row"
-                                spacing={1}
+                    {custtype && custtype ? (
+                      custtype.map((item: any, key: any) => (
+                        <TableRow
+                          hover
+                          tabIndex={-1}
+                          role="checkbox"
+                          //key={key}
+                          className="boder-bottom"
+                        >
+                          <TableCell padding="checkbox">
+                            <Checkbox />
+                          </TableCell>
+                          <TableCell align="left">CUST-000{key}</TableCell>
+                          <TableCell align="left">{item.name}</TableCell>
+                          <TableCell align="left"></TableCell>
+                          <TableCell align="left">
+                            <Stack
+                              className="action"
+                              direction="row"
+                              spacing={1}
+                            >
+                              <IconButton
+                                className="action-edit"
+                                onClick={() =>
+                                  handleEditCustomerTypeOpen(item.id)
+                                }
                               >
-                                <IconButton
-                                  className="action-edit"
-                                  onClick={() =>
-                                    handleEditCustomerTypeOpen(item.id)
-                                  }
-                                >
-                                  <FiEdit />
-                                </IconButton>
-                                <IconButton
-                                  className="action-delete"
-                                  style={{ color: "#F95A37" }}
-                                  onClick={() => openDelete(item)}
-                                >
-                                  <RiDeleteBin5Fill />
-                                </IconButton>
-                              </Stack>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
+                                <FiEdit />
+                              </IconButton>
+                              <IconButton
+                                className="action-delete"
+                                style={{ color: "#F95A37" }}
+                                onClick={() => openDelete(item)}
+                              >
+                                <RiDeleteBin5Fill />
+                              </IconButton>
+                            </Stack>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <h3>No Record found</h3>
+                    )}
                   </TableBody>
                 </Table>
+                {custtype == "" ? <h3>No Record found</h3> : ""}
                 <Stack
                   style={{ marginBottom: "10px", marginTop: "10px" }}
                   direction="row"
@@ -437,64 +432,25 @@ export default function CustomerTypeList() {
               size="small"
               sx={{ width: 150 }}
               autoFocus
+              disabled={btnDisabled}
             >
               <b>Create</b>
+              <span style={{ fontSize: "2px", paddingLeft: "10px" }}>
+                {spinner === true ? <CircularProgress color="inherit" /> : ""}
+              </span>
             </Button>
           </DialogActions>
         </form>
       </BootstrapDialog>
-      {/* <BootstrapDialog
-        onClose={handleEditClose}
-        aria-labelledby="customized-dialog-title"
-        open={edittypeOpen}
-      >
-        <BootstrapDialogTitle
-          id="customized-dialog-title"
-          onClose={handleEditClose}
-        >
-          Edit Customer Type
-        </BootstrapDialogTitle>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <DialogContent dividers>
-            <Grid>
-              <Stack>
-                <Grid container spacing={2}>
-                  <Grid item xs={12} md={12}>
-                    <Stack spacing={1}>
-                      <InputLabel htmlFor="ename">
-                        Customer Name<span className="err_str">*</span>
-                      </InputLabel>
-                      <OutlinedInput
-                        type="text"
-                        id="ename"
-                        fullWidth
-                        size="small"
-                        {...register("ename", {
-                          required: true,
-                        })}
-                      />
-                      {errors.ename && (
-                        <span style={style}>Field is Required *</span>
-                      )}
-                    </Stack>
-                  </Grid>
-                </Grid>
-              </Stack>
-            </Grid>
-          </DialogContent>
-          <DialogActions>
-            <Button
-              type="submit"
-              variant="contained"
-              size="small"
-              sx={{ width: 150 }}
-              autoFocus
-            >
-              <b>Create</b>
-            </Button>
-          </DialogActions>
-        </form>
-      </BootstrapDialog> */}
+      {edittypeOpen ? (
+        <EditType
+          id={editid}
+          open={edittypeOpen}
+          closeDialogedit={closeEditPoP}
+        />
+      ) : (
+        ""
+      )}
       <ConfirmBox
         open={deleteConfirmBoxOpen}
         closeDialog={() => setdeleteConfirmBoxOpen(false)}
