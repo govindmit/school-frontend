@@ -11,14 +11,13 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 import Autocomplete from "@mui/material/Autocomplete";
-import { useRouter } from "next/router";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
-import MiniDrawer from "../sidebar";
+import MiniDrawer from "../../sidebar";
 import axios from "axios";
 import TextField from "@mui/material/TextField";
-import { api_url, auth_token, base_url } from "../api/hello";
+import { api_url, auth_token, base_url } from "../../api/hello";
 import moment from "moment";
 import Image from "next/image";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -31,9 +30,10 @@ import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import { Button, OutlinedInput } from "@mui/material";
 import Paper from "@mui/material/Paper";
-import AddCustomer from "../customer/addNewCustomer";
-import AddItem from "./additem";
+import AddCustomer from "../../customer/addNewCustomer";
+import AddItem from "../additem";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -214,8 +214,6 @@ interface EnhancedTableProps {
 }
 export default function Guardians() {
   let localUrl = process.env.NEXT_PUBLIC_BASE_URL;
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState<any>({});
   const [opens, setOpens] = useState(false);
   const [userID, setUserId] = useState<FormValues | any>([]);
 
@@ -225,13 +223,10 @@ export default function Guardians() {
   const [dollerOpen, setDollerOpen] = useState(false);
   const [popup, setSecondPop] = useState(false);
   const [inputValue, setInputValue] = useState<FormValues | any>([]);
-  const [newCustOpen, setnewCustOpen] = useState(false);
   const [id, setId] = useState<FormValues | any>([]);
-  const [date, setDate] = useState<FormValues | any>([]);
-  const [query, setQuery] = useState<FormValues | any>([]);
   const [error, setError] = useState<FormValues | any>([]);
   const [invoiceno, setInvoiceNo] = useState();
-
+  const [invoice, setInvoice] = useState<FormValues | any>([]);
   const [item, setItem] = useState<FormValues | any>([]);
   const [product, setProduct] = useState<FormValues | any>([]);
   const [selected, setSelected] = useState<readonly string[]>([]);
@@ -242,6 +237,9 @@ export default function Guardians() {
     reset,
     formState: { errors },
   } = useForm<FormValues>();
+
+  const router = useRouter();
+  const { invoiceId } = router.query;
 
   setSecondPop;
   const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
@@ -311,7 +309,6 @@ export default function Guardians() {
   const onclose = () => {
     setSecondPop(false);
   };
-  const router = useRouter();
 
   const onSubmit: SubmitHandler<FormValues> = async (data: any) => {
     const dates = new Date();
@@ -329,7 +326,6 @@ export default function Guardians() {
       customerId: userID.id,
       invoiceNo: invoiceno,
     };
-    console.log(requestedData, "requestedInvoice");
     await axios({
       method: "POST",
       url: `${api_url}/createInvoice`,
@@ -374,10 +370,11 @@ export default function Guardians() {
 
   useEffect(() => {
     let cusId = localStorage.getItem("customerId");
-    invoiceNo();
+    invoiceDataById();
     // if (cusId) {
     //   setOpens(false);
     // }
+    getItems();
     getUser();
     getItem();
   }, []);
@@ -396,6 +393,29 @@ export default function Guardians() {
   };
   const handleItem = () => {
     setDollerOpen(true);
+  };
+  const getItems = async () => {
+    invoiceDataById();
+
+    console.log(invoice ? invoice : "hello", ".......................g");
+    // let requested = {
+    //   id: invoice[0]?.itemId,
+    // };
+    // await axios({
+    //   method: "POST",
+    //   url: `${api_url}/getItembyid`,
+    //   data: requested,
+
+    //   headers: {
+    //     "content-type": "multipart/form-data",
+    //   },
+    // })
+    //   .then((res) => {
+    //     setProduct(res?.data.data);
+    //     console.log(res, "........................h");
+    //     handleCloses();
+    //   })
+    //   .catch((err) => {});
   };
 
   const handleCreate = async () => {
@@ -438,20 +458,7 @@ export default function Guardians() {
       })
       .catch((err) => {});
   };
-  const handleSearch = (e: any) => {
-    setInputValue(e.target.value);
-    if (e.target.value === "") {
-      setInputValue("");
-    } else {
-      const filterres =
-        user &&
-        user.filter((item: any) => {
-          return item.firstName.includes(e.target.value.toLowerCase());
-        });
-      const dtd = filterres;
-      setUser(dtd);
-    }
-  };
+
   const handleClickOpen = () => {
     setOpens(true);
   };
@@ -480,22 +487,41 @@ export default function Guardians() {
     }
   };
 
-  const invoiceNo = async () => {
+  const invoiceDataById = async () => {
     await axios({
-      method: "GET",
-      url: `${api_url}/getInvoiceNo`,
+      method: "POST",
+      url: `${api_url}/getInvoice/${invoiceId}`,
       headers: {
         Authorization: auth_token,
       },
     })
       .then((res) => {
-        // setUser(res?.data.data);
+        setInvoice(res?.data.data);
+        if (res) {
+          let requested = {
+            id: res?.data.data[0]?.itemId,
+          };
+          axios({
+            method: "POST",
+            url: `${api_url}/getItembyid`,
+            data: requested,
+
+            headers: {
+              "content-type": "multipart/form-data",
+            },
+          })
+            .then((res) => {
+              setProduct(res?.data.data);
+              console.log(res, "........................h");
+            })
+            .catch((err) => {});
+        }
+        setUser(res?.data.data);
         setInvoiceNo(res?.data?.invoiceNo);
-        // console.log(res, "response");
+        console.log(res, "response");
       })
       .catch((err) => {});
   };
-  console.log(invoiceno, "invoiceno");
   const handleDraft = async () => {
     const dates = new Date();
     var invoiceDatesss;
@@ -514,7 +540,6 @@ export default function Guardians() {
       customerId: userID.id,
       invoiceNo: invoiceno,
     };
-    console.log(requestedData, "requestedDraft");
 
     await axios({
       method: "POST",
@@ -630,9 +655,6 @@ export default function Guardians() {
                         fullWidth
                         inputValue={inputValue}
                         onChange={(event, value) => setUserId(value)}
-                        // onChange={(event, newValue) => {
-                        //   setValue(newValue);
-                        // }}
                         // defaultValue={{
                         //   name: `${gg[0]?.name}`,
                         // }}
@@ -640,7 +662,13 @@ export default function Guardians() {
                           setInputValue(newInputValue);
                         }}
                         options={user}
-                        getOptionLabel={(option: any) => option.name}
+                        value={invoice[0]?.name}
+                        // getOptionLabel={(option: any) => option.name}
+                        getOptionLabel={(option: any) => option.name || ""}
+                        isOptionEqualToValue={(option: any, title) =>
+                          option.name
+                        }
+                        // getOptionLabel={(option) => `${option.name}`}
                         renderInput={(params) => (
                           <TextField
                             {...params}
@@ -682,7 +710,7 @@ export default function Guardians() {
                         placeholder="# Generate If blank"
                         fullWidth
                         onChange={(e: any) => setInvoiceNo(e.target.value)}
-                        value={invoiceno}
+                        value={invoice[0]?.invoiceId}
                       />
                       <InputLabel id="demo-select-small"></InputLabel>
                       &nbsp; &nbsp;

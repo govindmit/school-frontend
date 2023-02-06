@@ -48,6 +48,8 @@ import PopupState, {
   bindMenu,
   bindPopover,
 } from "material-ui-popup-state";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import MenuItem from "@mui/material/MenuItem";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -150,6 +152,9 @@ export default function Guardians() {
   const [share, setShare] = useState(false);
   const [invoiceId, setInvoiceId] = useState();
   const [sdata, setUserId] = useState<FormValues | any>([]);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+
   const [id, setId] = useState();
   const [inputValue, setInputValue] = useState("");
   const [error, setError] = useState<any>("");
@@ -159,7 +164,9 @@ export default function Guardians() {
   const [status, setStatus] = useState<FormValues | any>([]);
 
   const [note, setNote] = useState<FormValues | any>([]);
-  const [disable, setDisable] = useState<FormValues | any>([]);
+  const [disable, setDisable] = useState<FormValues | any>(false);
+
+  const [paiddisable, setPaidDisable] = useState<FormValues | any>(false);
 
   const [Invoicedata, setInvoice] = useState<FormValues | any>([]);
 
@@ -255,10 +262,10 @@ export default function Guardians() {
   } = useForm<FormValues>();
 
   const onSubmit: SubmitHandler<FormValues> = async (data: any) => {
-    let sdate = moment(data.startDate).format("DD/MM/YYYY");
-    let edate = moment(data.endDate).format("DD/MM/YYYY");
+    let sdate = moment(startDate).format("DD/MM/YYYY");
+    let edate = moment(endDate).format("DD/MM/YYYY");
     var ids: any = [];
-    if (sdata.length > 0) {
+    if (sdata?.length > 0) {
       for (let item of sdata) {
         ids.push(item?.customerId);
       }
@@ -269,8 +276,9 @@ export default function Guardians() {
       endDate: edate === "Invalid date" ? "" : edate,
       order: sort,
       amount: data.Total,
-      customer: ids,
+      customer: ids ? ids : "",
     };
+    console.log(sdate, "startDate", edate, "endDate");
 
     await axios({
       method: "POST",
@@ -288,6 +296,15 @@ export default function Guardians() {
       .catch((err) => {});
   };
 
+  const handleReset = () => {
+    reset();
+    setSort("");
+    setStatus("");
+    setUserId("");
+    setStartDate(null);
+    setEndDate(null);
+    console.log(sdata, "sdataaaa");
+  };
   const generateSimplePDF = async (item: any) => {
     let requested = {
       id: item.itemId,
@@ -436,8 +453,23 @@ export default function Guardians() {
       setUser(searchdata);
     } else {
       const filterres = user.filter((item: any) => {
-        return item.name.toLowerCase().includes(e.target.value.toLowerCase());
+        return (
+          item.name.toLowerCase().includes(e.target.value.toLowerCase()) ||
+          `${item.amount}`.includes(e.target.value) ||
+          item.invoiceId
+            ?.toLowerCase()
+            .includes(e.target.value.toLowerCase()) ||
+          moment(item?.invoiceDate, "DD/MM/YYYY")
+            .format("ll")
+            .toLowerCase()
+            .includes(e.target.value.toLowerCase()) ||
+          moment(item?.createdDate, "DD/MM/YYYY")
+            .format("ll")
+            .toLowerCase()
+            .includes(e.target.value.toLowerCase())
+        );
       });
+
       const dtd = filterres;
       setUser(dtd);
     }
@@ -489,29 +521,36 @@ export default function Guardians() {
   function handlerowchange(e: any) {
     set_row_per_page(e.target.value);
   }
-  const pending = Invoicedata.filter((a: any) => a.status == "pending");
-  const paid = Invoicedata.filter((a: any) => a.status == "paid");
-  const draft = Invoicedata.filter((a: any) => a.status == "draft");
+  const pending = Invoicedata?.filter((a: any) => a.status == "pending");
+  const paid = Invoicedata?.filter((a: any) => a.status == "paid");
+  const draft = Invoicedata?.filter((a: any) => a.status == "draft");
 
   const handleFilter = () => {
     // getUser();
   };
   const handleAll = () => {
+    setDisable(false);
+    setPaidDisable(false);
+
     getUser();
   };
   const handlePaid = () => {
     const paids = Invoicedata.filter((a: any) => a.status == "paid");
-
+    setDisable(false);
+    setPaidDisable(true);
     setUser(paids);
   };
   const handlePending = () => {
     const pendings = Invoicedata.filter((a: any) => a.status == "pending");
+    setDisable(false);
+    setPaidDisable(false);
 
     setUser(pendings);
   };
   const handleDraft = () => {
     const drafts = Invoicedata.filter((a: any) => a.status == "draft");
     setDisable(true);
+
     setUser(drafts);
   };
   const getDefaultValue = () => {
@@ -519,6 +558,10 @@ export default function Guardians() {
       return sdata.map((cat: any) => cat.name);
     }
   };
+  const handleChange = (date: any) => {
+    setStartDate(date);
+  };
+
   console.log(inputValue, "inputValue");
   return (
     <>
@@ -647,21 +690,21 @@ export default function Guardians() {
                                           Customer
                                         </InputLabel>
 
-                                        <Autocomplete
+                                        {/* <Autocomplete
+                                          style={{ width: 300 }}
+                                          fullWidth
                                           onChange={(event: any, value: any) =>
                                             setUserId(value)
                                           }
                                           inputValue={inputValue}
                                           onInputChange={(e, value, reason) => {
                                             setInputValue(value);
-
-                                            if (!value) {
-                                              setOpen(false);
-                                            }
                                           }}
+                                          //   if (!value) {
+                                          //     setOpen(false);
+                                          //   }
                                           multiple
                                           id="free-solo-demo"
-                                          freeSolo
                                           options={Invoicedata}
                                           getOptionLabel={(option: any) =>
                                             option?.name
@@ -670,6 +713,28 @@ export default function Guardians() {
                                             <TextField
                                               {...params}
                                               placeholder="Select a customer"
+                                            />
+                                          )}
+                                        /> */}
+                                        <Autocomplete
+                                          multiple
+                                          id="tags-outlined"
+                                          options={Invoicedata}
+                                          getOptionLabel={(option: any) =>
+                                            option?.name
+                                          }
+                                          onChange={(
+                                            event: any,
+                                            value: any
+                                          ) => {
+                                            setUserId(value);
+                                          }}
+                                          // filterSelectedOptions={false}
+                                          renderInput={(params) => (
+                                            <TextField
+                                              {...params}
+                                              variant="outlined"
+                                              placeholder="Categories"
                                             />
                                           )}
                                         />
@@ -681,14 +746,16 @@ export default function Guardians() {
                                         <InputLabel id="demo-select-small">
                                           Date Range
                                         </InputLabel>
-                                        <TextField
-                                          placeholder="Start"
-                                          InputLabelProps={{
-                                            shrink: true,
-                                            required: true,
-                                          }}
-                                          type="date"
-                                          {...register("startDate")}
+
+                                        <DatePicker
+                                          className="myDatePicker"
+                                          selected={startDate}
+                                          onChange={(date: any) =>
+                                            setStartDate(date)
+                                          }
+                                          name="startDate"
+                                          dateFormat="MM/dd/yyyy"
+                                          placeholderText="Start Date"
                                         />
                                       </Stack>
                                     </Grid>
@@ -696,14 +763,15 @@ export default function Guardians() {
                                       <Stack spacing={1}>
                                         <InputLabel id="demo-select-small"></InputLabel>
                                         .
-                                        <TextField
-                                          placeholder="End"
-                                          InputLabelProps={{
-                                            shrink: true,
-                                            required: true,
-                                          }}
-                                          type="date"
-                                          {...register("endDate")}
+                                        <DatePicker
+                                          className="myDatePicker"
+                                          selected={endDate}
+                                          onChange={(date: any) =>
+                                            setEndDate(date)
+                                          }
+                                          name="startDate"
+                                          dateFormat="MM/dd/yyyy"
+                                          placeholderText="End Date"
                                         />
                                       </Stack>
                                     </Grid>
@@ -727,6 +795,7 @@ export default function Guardians() {
                                           Sort
                                         </InputLabel>
                                         <Select
+                                          defaultValue="none"
                                           onChange={(e) =>
                                             setSort(e.target.value)
                                           }
@@ -736,7 +805,9 @@ export default function Guardians() {
                                           label="Status"
                                           // {...register("sort")}
                                         >
-                                          <MenuItem value="All"></MenuItem>
+                                          <MenuItem value="">
+                                            <em>None</em>
+                                          </MenuItem>
                                           <MenuItem value="ASC">
                                             Oldest first
                                           </MenuItem>
@@ -777,6 +848,17 @@ export default function Guardians() {
                                   </Grid>
                                   &nbsp; &nbsp; &nbsp;
                                   <Grid container spacing={3}>
+                                    <Grid item xs={3} md={3}>
+                                      <Stack spacing={1}>
+                                        <Button
+                                          onClick={handleReset}
+                                          variant="contained"
+                                          // type="submit"
+                                        >
+                                          reset Filter
+                                        </Button>
+                                      </Stack>
+                                    </Grid>
                                     <Grid item xs={3} md={3}>
                                       <Stack spacing={1}>
                                         <Button
@@ -848,7 +930,6 @@ export default function Guardians() {
                         type="text"
                         name="name"
                         placeholder="Search"
-                        multiline
                       />
                     </FormControl>
                   </Stack>
@@ -875,7 +956,16 @@ export default function Guardians() {
                             <Checkbox />
                           </TableCell>
                           <TableCell component="th" scope="row" padding="none">
-                            <TableCell align="left">{item.invoiceId}</TableCell>
+                            <Link
+                              href={`/admin/editInvoice/${item.id}`}
+                              style={{
+                                color: "#26CEB3",
+                              }}
+                            >
+                              <TableCell align="left">
+                                {item.invoiceId}
+                              </TableCell>
+                            </Link>
                           </TableCell>
                           <TableCell align="left">{item.name}</TableCell>
                           <TableCell align="left">
@@ -889,31 +979,33 @@ export default function Guardians() {
                             )}
                           </TableCell>
 
-                          <TableCell align="left">$ {item.amount}</TableCell>
+                          <TableCell align="left">$ {item.amount}.00</TableCell>
 
                           <TableCell align="left">
                             <div className="btn">
-                              <div className="idiv">
-                                <Image
-                                  onClick={() => generateSimplePDF(item)}
-                                  src="/download.svg"
-                                  alt="Picture of the author"
-                                  width={25}
-                                  height={25}
-                                />
-                              </div>
                               {disable ? (
-                                <div className="idiv">
+                                <Button className="idiv" disabled={true}>
                                   <Image
-                                    onClick={() => handleShare(item)}
-                                    src="/share.svg"
+                                    onClick={() => generateSimplePDF(item)}
+                                    src="/download.svg"
                                     alt="Picture of the author"
                                     width={25}
                                     height={25}
                                   />
-                                </div>
+                                </Button>
                               ) : (
-                                <div className="idiv">
+                                <Button className="idiv">
+                                  <Image
+                                    onClick={() => generateSimplePDF(item)}
+                                    src="/download.svg"
+                                    alt="Picture of the author"
+                                    width={25}
+                                    height={25}
+                                  />
+                                </Button>
+                              )}
+                              {disable || paiddisable ? (
+                                <Button className="idiv" disabled={true}>
                                   <Image
                                     onClick={() => handleShare(item)}
                                     src="/share.svg"
@@ -921,19 +1013,43 @@ export default function Guardians() {
                                     width={25}
                                     height={25}
                                   />
-                                </div>
+                                </Button>
+                              ) : (
+                                <Button className="idiv">
+                                  <Image
+                                    onClick={() => handleShare(item)}
+                                    src="/share.svg"
+                                    alt="Picture of the author"
+                                    width={25}
+                                    height={25}
+                                  />
+                                </Button>
                               )}
 
-                              <div className="idiv">
-                                <Image
-                                  onClick={() => handleClickOpen(item)}
-                                  src="/doller.svg"
-                                  alt="Picture of the author"
-                                  width={25}
-                                  height={25}
-                                />
-                              </div>
-                              <div className="idiv">
+                              {disable || paiddisable ? (
+                                <Button className="idiv" disabled={true}>
+                                  {/* <div className="idiv"> */}
+                                  <Image
+                                    onClick={() => handleClickOpen(item)}
+                                    src="/doller.svg"
+                                    alt="Picture of the author"
+                                    width={25}
+                                    height={25}
+                                  />
+                                  {/* </div> */}
+                                </Button>
+                              ) : (
+                                <Button className="idiv">
+                                  <Image
+                                    onClick={() => handleClickOpen(item)}
+                                    src="/doller.svg"
+                                    alt="Picture of the author"
+                                    width={25}
+                                    height={25}
+                                  />
+                                </Button>
+                              )}
+                              <Button className="idiv">
                                 <Image
                                   onClick={() => handleOpen(item.id)}
                                   src="/deleteicon.svg"
@@ -941,7 +1057,7 @@ export default function Guardians() {
                                   width={25}
                                   height={25}
                                 />
-                              </div>
+                              </Button>
                             </div>
                           </TableCell>
                         </TableRow>
@@ -1104,7 +1220,9 @@ export default function Guardians() {
                         </Grid>
                         <Grid item xs={12} md={6}>
                           <Stack spacing={1}>
-                            <InputLabel htmlFor="name">Method</InputLabel>
+                            <InputLabel htmlFor="name">
+                              Method <span className="err_str">*</span>
+                            </InputLabel>
                             <Select
                               labelId="demo-select-small"
                               id="demo-select-small"
@@ -1117,7 +1235,10 @@ export default function Guardians() {
                               </MenuItem>
                               <MenuItem value="Debit Card">Debit Card</MenuItem>
                               <MenuItem value="AMFX">AMFX</MenuItem>
-                              <MenuItem value="Cash">Cash on Delivery</MenuItem>
+                              <MenuItem value="Cash">Cash</MenuItem>
+                              <MenuItem value="Cashd">
+                                Cash on Delivery
+                              </MenuItem>
                             </Select>
                           </Stack>
                         </Grid>
@@ -1140,7 +1261,9 @@ export default function Guardians() {
                         </Grid>
                         <Grid item xs={12} md={6}>
                           <Stack spacing={1}>
-                            <InputLabel htmlFor="name">Amount</InputLabel>
+                            <InputLabel htmlFor="name">
+                              Amount <span className="err_str">*</span>
+                            </InputLabel>
                             <OutlinedInput
                               disabled
                               defaultValue={recievedPay.amount}
@@ -1154,28 +1277,28 @@ export default function Guardians() {
                         </Grid>
                       </Grid>
                     </Stack>
-                    <FormGroup>
+                    {/* <FormGroup>
                       <FormControlLabel
                         control={<Checkbox defaultChecked />}
                         label="Want to use credit balance $100"
                       />
-                    </FormGroup>
+                    </FormGroup> */}
                     <div>
                       <h5 className="apply">Apply Payment</h5>
                     </div>
                     <div className="iadiv">
                       <div className="hh">Invoice Amount:</div>
-                      <div>${recievedPay.amount}</div>
+                      <div>${recievedPay.amount}.00</div>
                     </div>
                     <div className="iadiv">
                       <div className="hh">Total Credit Balance:</div>
-                      <div>$100.00</div>
+                      <div>$0</div>
                     </div>
                     &nbsp;
                   </Grid>
                   <div className="iadiv">
                     <div className="hh">Total Amount:</div>
-                    <div>${recievedPay.amount}</div>
+                    <div>${recievedPay.amount}.00</div>
                   </div>
                 </DialogContent>
                 <DialogActions>
