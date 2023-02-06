@@ -198,7 +198,7 @@ export default function Dashboard(this: any) {
                                 <Container>
                                   <Card className="box-show-no border-round">
                                     <TableContainer sx={{ minWidth: 800 }}>
-                                      <Table>
+                                      <Table className="dasboard-table">
                                         <TableHead>
                                           <TableRow>
                                             <TableCell padding="checkbox">

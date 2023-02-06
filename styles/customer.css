@@ -1,1 +1,33 @@
+#demo-popup-menu
+  .MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation1.MuiMenu-paper.MuiPaper-elevation8.MuiPopover-paper {
+  position: absolute;
+  left: 290px !important;
+  width: calc(100% - 353px);
+  background: #eee;
+  top: 264px !important;
+  box-shadow: none;
+  text-align: left;
+  padding: 25px;
+}
 
+.MuiContainer-root.MuiContainer-maxWidthLg.filter-box {
+  width: 100%;
+  max-width: 100%;
+}
+
+.form-filter label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #5a6873;
+}
+
+.form-filter
+  .MuiFormControl-root.MuiFormControl-fullWidth
+  .MuiInputBase-formControl {
+  background: #fff;
+  height: 56px;
+}
+
+.MuiAutocomplete-endAdornment {
+  top: calc(26% - 14px) !important;
+}

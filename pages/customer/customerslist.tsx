@@ -331,13 +331,19 @@ export default function CustomerList() {
                             &nbsp; Filter
                           </MenuItem>
                           <Menu {...bindMenu(popupState)}>
-                            <Container>
-                              <Grid style={{ width: "1030px" }}>
+                            <Container
+                              className="filter-box"
+                              style={{ padding: "0" }}
+                            >
+                              <Grid>
                                 <Typography variant="h5">
                                   <b>Filter</b>
                                 </Typography>
                                 <form onSubmit={handleSubmit(onSubmit)}>
-                                  <Stack style={{ marginTop: "10px" }}>
+                                  <Stack
+                                    style={{ marginTop: "10px" }}
+                                    className="form-filter"
+                                  >
                                     <Grid container spacing={2}>
                                       <Grid item xs={12} md={3}>
                                         <Stack spacing={1}>
@@ -444,7 +450,6 @@ export default function CustomerList() {
                                                 Pant0003
                                               </MenuItem>
                                             </Select>
-                                            "
                                           </FormControl>
                                         </Stack>
                                       </Grid>
@@ -485,7 +490,10 @@ export default function CustomerList() {
                                       <Grid
                                         item
                                         xs={12}
-                                        style={{ marginBottom: "10px" }}
+                                        style={{
+                                          marginBottom: "10px",
+                                          marginTop: "15px",
+                                        }}
                                       >
                                         <Button
                                           size="small"
@@ -520,17 +528,6 @@ export default function CustomerList() {
                             Export
                             <KeyboardArrowDownIcon />
                           </MenuItem>
-                          <Menu {...bindMenu(popupState)}>
-                            <MenuItem onClick={popupState.close}>
-                              Profile
-                            </MenuItem>
-                            <MenuItem onClick={popupState.close}>
-                              My account
-                            </MenuItem>
-                            <MenuItem onClick={popupState.close}>
-                              Logout
-                            </MenuItem>
-                          </Menu>
                         </Box>
                       )}
                     </PopupState>
@@ -544,17 +541,6 @@ export default function CustomerList() {
                             Import
                             <KeyboardArrowDownIcon />
                           </MenuItem>
-                          <Menu {...bindMenu(popupState)}>
-                            <MenuItem onClick={popupState.close}>
-                              Profile
-                            </MenuItem>
-                            <MenuItem onClick={popupState.close}>
-                              My account
-                            </MenuItem>
-                            <MenuItem onClick={popupState.close}>
-                              Logout
-                            </MenuItem>
-                          </Menu>
                         </Box>
                       )}
                     </PopupState>

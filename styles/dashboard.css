@@ -173,6 +173,15 @@ h3.dluser {
   padding: 0px;
   height: fit-content;
 }
+
+.dasboard-table td {
+  border-bottom: 1px solid #eee !important;
+}
+
+.dasboard-table th td {
+  border: none !important;
+}
+
 #dimage {
   margin: 0px;
   margin-right: 0px;
