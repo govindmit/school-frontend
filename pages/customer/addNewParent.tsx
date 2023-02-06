@@ -238,11 +238,15 @@ export default function AddNewParent({
                           size="small"
                           {...register("name", {
                             required: true,
+                            validate: (value) => { return !!value.trim() }
                           })}
                           defaultValue={name}
                         />
-                        {errors.name && (
+                        {errors.name?.type === "required" && (
                           <span style={style}>Field is Required *</span>
+                        )}
+                        {errors.name?.type === "validate" && (
+                          <span style={style}>Name can't be blank *</span>
                         )}
                       </Stack>
                       <FormGroup>
@@ -326,6 +330,9 @@ export default function AddNewParent({
                           <span style={style}>Enter Valid Number *</span>
                         )}
                         {errors.phone1?.type === "minLength" && (
+                          <span style={style}>Enter Valid Number *</span>
+                        )}
+                        {errors.phone1?.type === "maxLength" && (
                           <span style={style}>Enter Valid Number *</span>
                         )}
                       </Stack>
@@ -501,10 +508,13 @@ export default function AddNewParent({
                           placeholder="Contact Name..."
                           fullWidth
                           size="small"
-                          {...register("contactName", { required: true })}
+                          {...register("contactName", { required: true, validate: (value) => { return !!value.trim() } })}
                         />
-                        {errors.contactName && (
+                        {errors.contactName?.type === "required" && (
                           <span style={style}>Field is Required *</span>
+                        )}
+                        {errors.contactName?.type === "validate" && (
+                          <span style={style}>Field can't be blank *</span>
                         )}
                       </Stack>
                     </Grid>
@@ -519,10 +529,13 @@ export default function AddNewParent({
                           placeholder="Print Us..."
                           fullWidth
                           size="small"
-                          {...register("printUs", { required: true })}
+                          {...register("printUs", { required: true, validate: (value) => { return !!value.trim() } })}
                         />
-                        {errors.printUs && (
+                        {errors.printUs?.type === "required" && (
                           <span style={style}>Field is Required *</span>
+                        )}
+                        {errors.printUs?.type === "validate" && (
+                          <span style={style}>Field can't be blank *</span>
                         )}
                       </Stack>
                     </Grid>

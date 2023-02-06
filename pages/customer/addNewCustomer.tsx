@@ -123,6 +123,8 @@ export default function AddCustomer({
   const [opens, setOpen] = React.useState(open);
   const [custtype, setcusttype] = React.useState<any>([]);
   const [parentId, setparentId] = React.useState<any>(0);
+  const [parentid, setparentid] = React.useState(0);
+  const [parentname, setparentname] = React.useState<any>("");
   const [btnDisabled, setBtnDisabled] = React.useState(false);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -259,10 +261,14 @@ export default function AddCustomer({
                           size="small"
                           {...register("name", {
                             required: true,
+                            validate: (value) => { return !!value.trim() }
                           })}
                         />
-                        {errors.name && (
+                        {errors.name?.type === "required" && (
                           <span style={style}>Field is Required *</span>
+                        )}
+                        {errors.name?.type === "validate" && (
+                          <span style={style}>Name can't be blank *</span>
                         )}
                       </Stack>
                       <FormGroup>
@@ -303,6 +309,9 @@ export default function AddCustomer({
                         {errors.number?.type === "minLength" && (
                           <span style={style}>Enter Valid Number *</span>
                         )}
+                        {errors.number?.type === "maxLength" && (
+                          <span style={style}>Enter Valid Number *</span>
+                        )}
                       </Stack>
                     </Grid>
                     <Grid item xs={12} md={6}>
@@ -319,12 +328,18 @@ export default function AddCustomer({
                           {...register("email1", {
                             required: true,
                             pattern: /^\S+@\S+$/i,
+                            validate: (value) => { return !!value.trim() }
                           })}
                         />
                         {errors.email1?.type === "required" && (
                           <span style={style}>Field is Required *</span>
                         )}
                         {errors.email1?.type === "pattern" && (
+                          <span style={style}>
+                            Please enter a valid email address *
+                          </span>
+                        )}
+                        {errors.email1?.type === "validate" && (
                           <span style={style}>
                             Please enter a valid email address *
                           </span>
@@ -514,7 +529,7 @@ export default function AddCustomer({
                       </FormGroup>
                       <Stack spacing={1} style={hideshowstyle}>
                         <InputLabel htmlFor="name"></InputLabel>
-                        <AddCustomerCmp Data={Getdata} />
+                        <AddCustomerCmp Data={Getdata} PId={parentid} pname={parentname} />
                       </Stack>
                     </Grid>
                   </Grid>
@@ -532,10 +547,13 @@ export default function AddCustomer({
                           placeholder="Contact Name..."
                           fullWidth
                           size="small"
-                          {...register("contactName", { required: true })}
+                          {...register("contactName", { required: true, validate: (value) => { return !!value.trim() } })}
                         />
-                        {errors.contactName && (
+                        {errors.contactName?.type === "required" && (
                           <span style={style}>Field is Required *</span>
+                        )}
+                        {errors.contactName?.type === "validate" && (
+                          <span style={style}>Field can't be blank *</span>
                         )}
                       </Stack>
                     </Grid>
@@ -550,10 +568,13 @@ export default function AddCustomer({
                           placeholder="Print Us..."
                           fullWidth
                           size="small"
-                          {...register("printUs", { required: true })}
+                          {...register("printUs", { required: true, validate: (value) => { return !!value.trim() } })}
                         />
-                        {errors.printUs && (
+                        {errors.printUs?.type === "required" && (
                           <span style={style}>Field is Required *</span>
+                        )}
+                        {errors.printUs?.type === "validate" && (
+                          <span style={style}>Field can't be blank *</span>
                         )}
                       </Stack>
                     </Grid>
