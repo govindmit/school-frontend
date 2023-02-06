@@ -50,6 +50,7 @@ interface TabPanelProps {
   index: number;
   value: number;
 }
+
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
   return (
@@ -105,11 +106,15 @@ type FormValues = {
   phoneNumber: number;
   contactName: string;
   sorting: number;
+  ParentId: string;
 };
 
 export default function CustomerList() {
+
   const [users, setUsers] = useState<any>([]);
   const [custtype, setcusttype] = useState<any>([]);
+  const [hh, setData] = useState<any>([]);
+
   const [All, setAll] = useState(0);
   const [active, setactive] = useState(0);
   const [inActive, setinActive] = useState(0);
@@ -121,6 +126,28 @@ export default function CustomerList() {
   const [editid, seteditid] = useState<any>(0);
   const [value, setValue] = React.useState(0);
   const { register, handleSubmit } = useForm<FormValues>();
+  const [custType, setCustType] = useState<any>(0);
+  const [custStatus, setcustStatus] = useState<any>(2);
+  const [sort, setsort] = useState<any>(0);
+  const [conctName, setconctName] = useState<any>("");
+  const [phoneNum, setphoneNum] = useState<any>("");
+  const [pId, setpId] = useState<any>(0);
+  const [parentId, setparentId] = useState<any>("");
+  const [checked, setChecked] = React.useState(false);
+  const [openCSV, setopenCSV] = React.useState(false);
+
+  function handleCheck(e: any) {
+    setChecked(e.target.checked);
+  }
+
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+  };
+
+  useEffect(() => {
+    getUser();
+    getType();
+  }, []);
 
   // verify user login
   let logintoken: any;
@@ -130,15 +157,6 @@ export default function CustomerList() {
     if (logintoken === undefined || logintoken === null) {
       router.push("/");
     }
-  }, []);
-
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
-  };
-
-  useEffect(() => {
-    getUser();
-    getType();
   }, []);
 
   //get customers(users) list
@@ -153,9 +171,11 @@ export default function CustomerList() {
         },
       });
       const res = await response.json();
+      setData(res.data.filter((dt: any) => dt.customerId !== null))
       setUsers(res.data.filter((dt: any) => dt.customerId !== null));
       setsearchdata(res.data.filter((dt: any) => dt.customerId !== null));
       setAll(res.data.filter((dt: any) => dt.customerId !== null).length);
+      setparentId(res.data.filter((dt: any) => dt.GeneratedParentId !== null));
       const activeUser = res.data.filter(
         (dt: any) => dt.status === 1 && dt.customerId !== null
       ).length;
@@ -191,11 +211,12 @@ export default function CustomerList() {
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setUsers([]);
     const reqData = {
-      status: data.status,
-      customerType: data.customerType,
-      contactName: data.contactName,
-      number: data.phoneNumber,
-      sorting: data.sorting,
+      status: custStatus,
+      customerType: custType,
+      contactName: conctName,
+      number: phoneNum,
+      sorting: sort,
+      ParentId: pId,
     };
     await axios({
       method: "POST",
@@ -215,6 +236,16 @@ export default function CustomerList() {
         console.log(error);
       });
   };
+
+  //reset filter value
+  function ResetFilterValue() {
+    setCustType(0);
+    setcustStatus(2);
+    setsort(0);
+    setconctName("");
+    setphoneNum("");
+    setpId(0)
+  }
 
   // apply searching
   const handleSearch = (e: any) => {
@@ -307,16 +338,25 @@ export default function CustomerList() {
     getUser();
   }
   function handleActive() {
-    const act = users.filter((a: any) => a.status === 1);
+    const act = hh.filter((a: any) => a.status === 1);
     setUsers(act);
   }
   function handleInActive() {
-    const Inact = users.filter((a: any) => a.status === 0);
+    const Inact = hh.filter((a: any) => a.status === 0);
     setUsers(Inact);
+  }
+  // Export CSV
+
+  function ExportCSV() {
+    setopenCSV(true)
+    setTimeout(() => {
+      setopenCSV(false);
+    }, 2000);
   }
 
   return (
     <>
+
       <Box sx={{ display: "flex" }}>
         <MiniDrawer />
         <Box component="main" sx={{ flexGrow: 1 }}>
@@ -428,8 +468,10 @@ export default function CustomerList() {
                                               labelId="demo-simple-select-label"
                                               id="demo-simple-select"
                                               size="small"
-                                              {...register("customerType")}
-                                              defaultValue={0}
+                                              onChange={(e: any) =>
+                                                setCustType(e.target.value)
+                                              }
+                                              value={custType}
                                             >
                                               <MenuItem value={0}>All</MenuItem>
                                               {custtype &&
@@ -458,9 +500,11 @@ export default function CustomerList() {
                                             <Select
                                               labelId="demo-simple-select-label"
                                               id="demo-simple-select"
-                                              {...register("status")}
                                               size="small"
-                                              defaultValue={2}
+                                              onChange={(e: any) =>
+                                                setcustStatus(e.target.value)
+                                              }
+                                              value={custStatus}
                                             >
                                               <MenuItem value={2}>All</MenuItem>
                                               <MenuItem value={1}>
@@ -483,8 +527,11 @@ export default function CustomerList() {
                                               labelId="demo-simple-select-label"
                                               id="demo-simple-select"
                                               size="small"
-                                              {...register("sorting")}
-                                              defaultValue={0}
+                                              value={sort}
+                                              onChange={(e: any) =>
+                                                setsort(e.target.value)
+                                              }
+
                                             >
                                               <MenuItem value={0}>
                                                 Date, Newest First
@@ -513,16 +560,20 @@ export default function CustomerList() {
                                               labelId="demo-simple-select-label"
                                               id="demo-simple-select"
                                               size="small"
+                                              value={pId}
+                                              onChange={(e: any) =>
+                                                setpId(e.target.value)
+                                              }
                                             >
-                                              <MenuItem value={10}>
-                                                Pant0001
+                                              <MenuItem value={0}>
+                                                All
                                               </MenuItem>
-                                              <MenuItem value={20}>
-                                                Pant0002
-                                              </MenuItem>
-                                              <MenuItem value={30}>
-                                                Pant0003
-                                              </MenuItem>
+                                              {parentId && parentId.map((datas: any, key: any) => {
+                                                return (<MenuItem key={key}
+                                                  value={datas.id}>
+                                                  {datas.GeneratedParentId}
+                                                </MenuItem>)
+                                              })}
                                             </Select>
                                           </FormControl>
                                         </Stack>
@@ -539,7 +590,11 @@ export default function CustomerList() {
                                               placeholder="Phone Number..."
                                               fullWidth
                                               size="small"
-                                              {...register("phoneNumber")}
+                                              // {...register("phoneNumber")}
+                                              value={phoneNum}
+                                              onChange={(e: any) =>
+                                                setphoneNum(e.target.value)
+                                              }
                                             />
                                           </FormControl>
                                         </Stack>
@@ -557,6 +612,10 @@ export default function CustomerList() {
                                               fullWidth
                                               size="small"
                                               {...register("contactName")}
+                                              value={conctName}
+                                              onChange={(e: any) =>
+                                                setconctName(e.target.value)
+                                              }
                                             />
                                           </FormControl>
                                         </Stack>
@@ -582,6 +641,22 @@ export default function CustomerList() {
                                             }}
                                           ></span>
                                         </Button>
+                                        &nbsp;&nbsp;
+                                        <Button
+                                          size="small"
+                                          variant="contained"
+                                          color="primary"
+                                          sx={{ width: 150 }}
+                                          onClick={ResetFilterValue}
+                                        >
+                                          <b>Reset Filter</b>
+                                          <span
+                                            style={{
+                                              fontSize: "2px",
+                                              paddingLeft: "10px",
+                                            }}
+                                          ></span>
+                                        </Button>
                                       </Grid>
                                     </Grid>
                                   </Stack>
@@ -595,7 +670,7 @@ export default function CustomerList() {
                     <PopupState variant="popover" popupId="demo-popup-menu">
                       {(popupState) => (
                         <Box>
-                          <MenuItem {...bindTrigger(popupState)}>
+                          <MenuItem {...bindTrigger(popupState)} onClick={ExportCSV}>
                             Export
                             <KeyboardArrowDownIcon />
                           </MenuItem>
@@ -653,7 +728,7 @@ export default function CustomerList() {
                   <TableHead>
                     <TableRow>
                       <TableCell padding="checkbox">
-                        <Checkbox />
+                        <Checkbox onChange={handleCheck} />
                       </TableCell>
                       <TableCell>
                         <Typography>ID</Typography>
@@ -702,7 +777,7 @@ export default function CustomerList() {
                             className="boder-bottom"
                           >
                             <TableCell padding="checkbox">
-                              <Checkbox />
+                              <Checkbox checked={checked} value={dataitem.id} />
                             </TableCell>
                             <TableCell align="left">
                               {dataitem.customerId}

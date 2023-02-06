@@ -123,8 +123,12 @@ export default function EditCustomer({
   const [spinner, setshowspinner] = React.useState(false);
   const [opens, setOpen] = React.useState(open);
   const [parentid, setparentid] = React.useState(0);
+  const [parentname, setparentname] = React.useState<any>("");
   const [custtype, setcusttype] = React.useState<any>([]);
   const [btnDisabled, setBtnDisabled] = React.useState(false);
+  const [checked, setChecked] = React.useState(false);
+  const [status, setstatus] = React.useState<any>("");
+  const [custType, setcustType] = React.useState<any>("");
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setselValue(newValue);
   };
@@ -139,10 +143,17 @@ export default function EditCustomer({
     };
   }
 
+  if (parentid > 0) {
+    var hideshowstyle = {
+      display: "block",
+    };
+  }
+
   React.useEffect(() => {
     getType();
     getUserDet();
-  }, []);
+    getParentDet();
+  }, [status]);
 
   //get type
   const getType = async () => {
@@ -160,6 +171,45 @@ export default function EditCustomer({
       console.log("error", error);
     }
   };
+  //get user details
+  const getUserDet = async () => {
+    try {
+      const response = await fetch(`${api_url}/getuserdetails/${id}`, {
+        method: "GET",
+        headers: {
+          Authorization: auth_token,
+        },
+      });
+      const res = await response.json();
+      setValue("name", res.data[0].name);
+      setValue("email1", res.data[0].email1);
+      setValue("email2", res.data[0].email2);
+      setValue("number", res.data[0].phone1);
+      setValue("contactName", res.data[0].contactName);
+      setValue("printUs", res.data[0].printus);
+      setparentid(res.data[0].parentId)
+      setstatus(res.data[0].status);
+      setcustType(res.data[0].typeId);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  //get parent
+  const getParentDet = async () => {
+    try {
+      const response = await fetch(`${api_url}/getuserbypid/${parentid}`, {
+        method: "GET",
+        headers: {
+          Authorization: auth_token,
+        },
+      });
+      const res = await response.json();
+      setparentname(res.data[0].name)
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
 
   const {
     register,
@@ -168,6 +218,7 @@ export default function EditCustomer({
     formState: { errors },
   } = useForm<FormValues>();
 
+  // submit data
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setshowspinner(true);
     setBtnDisabled(true);
@@ -180,6 +231,7 @@ export default function EditCustomer({
       printUs: data.printUs,
       status: data.status == 1 ? "1" : data.status == 0 ? "0" : "",
       typeId: data.customertype,
+      parentId: parentid,
       updatedBy: 1,
     };
     await axios({
@@ -208,36 +260,13 @@ export default function EditCustomer({
       });
   };
 
-  let dt;
-  const getUserDet = async () => {
-    try {
-      const response = await fetch(`${api_url}/getuserdetails/${id}`, {
-        method: "GET",
-        headers: {
-          Authorization: auth_token,
-        },
-      });
-      const res = await response.json();
-      setValue("name", res.data[0].name);
-      setValue("email1", res.data[0].email1);
-      setValue("email2", res.data[0].email2);
-      setValue("number", res.data[0].phone1);
-      setValue("contactName", res.data[0].contactName);
-      setValue("printUs", res.data[0].printus);
-      setValue("status", res.data[0].status);
-      setparentid(res.data[0].parentId)
-    } catch (error) {
-      console.log("error", error);
-    }
-  };
-
   const closeDialogs = () => {
     closeDialogedit(false);
     setOpen(false);
   };
 
   const Getdata = (item: any) => {
-    setparentid(item.id);
+    setparentid(item && item.id);
   };
 
   return (
@@ -360,15 +389,16 @@ export default function EditCustomer({
                       <Stack spacing={1}>
                         <InputLabel htmlFor="name">Status</InputLabel>
                         <FormControl fullWidth>
-                          <Select
+                          {status !== '' ? (<Select
                             labelId="demo-simple-select-label"
                             id="demo-simple-select"
                             size="small"
                             {...register("status")}
+                            defaultValue={status}
                           >
                             <MenuItem value={1}>Active</MenuItem>
                             <MenuItem value={0}>InActive</MenuItem>
-                          </Select>
+                          </Select>) : ("loading......")}
                         </FormControl>
                       </Stack>
                     </Grid>
@@ -489,7 +519,7 @@ export default function EditCustomer({
                             labelId="demo-simple-select-label"
                             id="demo-simple-select"
                             size="small"
-                            defaultValue={0}
+                            defaultValue={custType}
                             {...register("customertype")}
                           >
                             <MenuItem value={0}>Individual</MenuItem>
@@ -515,6 +545,7 @@ export default function EditCustomer({
                           control={
                             <Checkbox
                               onChange={(e) => setCheck(e.target.checked)}
+                              defaultChecked={checked}
                             />
                           }
                           label="Belongs to a parent customer"
@@ -522,7 +553,7 @@ export default function EditCustomer({
                       </FormGroup>
                       <Stack spacing={1} style={hideshowstyle}>
                         <InputLabel htmlFor="name"></InputLabel>
-                        <AddCustomerCmp Data={Getdata} />
+                        <AddCustomerCmp Data={Getdata} PId={parentid} pname={parentname} />
                       </Stack>
                     </Grid>
                   </Grid>
@@ -580,7 +611,7 @@ export default function EditCustomer({
               >
                 <b>Update</b>
                 <span style={{ fontSize: "2px", paddingLeft: "10px" }}>
-                  {/* {spinner === true ? <CircularProgress color="inherit" /> : ""} */}
+                  {spinner === true ? <CircularProgress color="inherit" /> : ""}
                 </span>
               </Button>
             </DialogActions>
@@ -590,4 +621,5 @@ export default function EditCustomer({
       </DialogContent>
     </BootstrapDialog>
   );
+
 }
