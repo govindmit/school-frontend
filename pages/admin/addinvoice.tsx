@@ -34,6 +34,11 @@ import Paper from "@mui/material/Paper";
 import AddCustomer from "../customer/addNewCustomer";
 import AddItem from "./additem";
 import Link from "next/link";
+// import DatePicker from "react-datepicker";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import "react-datepicker/dist/react-datepicker.css";
+import InputIcon from "react-multi-date-picker/components/input_icon";
+import DatePicker from "react-multi-date-picker";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -220,6 +225,7 @@ export default function Guardians() {
   const [userID, setUserId] = useState<FormValues | any>([]);
 
   const [sdates, setDates] = useState<FormValues | any>([]);
+  const [Invoicedates, setInvoiceDate] = useState(null);
 
   const [user, setUser] = useState<FormValues | any>([]);
   const [dollerOpen, setDollerOpen] = useState(false);
@@ -703,6 +709,19 @@ export default function Guardians() {
                           required: true,
                         })}
                       />
+                      {/* <DatePicker
+                        render={<InputIcon />}
+                        customInput={<CalendarTodayIcon />}
+                        className="myDatePicker"
+                        selected={Invoicedates}
+                        onChange={(date: any) => setInvoiceDate(date)}
+                        dayClassName={() => "example-datepicker-day-class"}
+                        popperClassName="example-datepicker-class"
+                        todayButton="TODAY"
+                        name="startDate"
+                        dateFormat="MM/dd/yyyy"
+                        placeholderText="Invoice Date"
+                      /> */}
                     </div>
                   </div>
                   <div className="invoiceItem">

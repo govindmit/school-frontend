@@ -19,6 +19,8 @@ import {
   styled,
   OutlinedInput,
   Typography,
+  Tabs,
+  Tab,
   makeStyles,
 } from "@mui/material";
 import { BiFilterAlt } from "react-icons/bi";
@@ -94,6 +96,12 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
+function a11yProps(index: number) {
+  return {
+    id: `simple-tab-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
+  };
+}
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
@@ -154,13 +162,14 @@ export default function Guardians() {
   const [sdata, setUserId] = useState<FormValues | any>([]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [value, setValue] = useState(0);
 
   const [id, setId] = useState();
   const [inputValue, setInputValue] = useState("");
   const [error, setError] = useState<any>("");
   const [dollerOpen, setDollerOpen] = useState(false);
   const [recievedPay, setRecieved] = useState<FormValues | any>([]);
-  const [sort, setSort] = useState<FormValues | any>([]);
+  const [sort, setSort] = useState<FormValues | any>("ASC");
   const [status, setStatus] = useState<FormValues | any>([]);
 
   const [note, setNote] = useState<FormValues | any>([]);
@@ -174,13 +183,6 @@ export default function Guardians() {
   const [searchdata, setsearchdata] = useState([]);
   const [row_per_page, set_row_per_page] = useState(5);
   const [searchquery, setsearchquery] = useState("");
-  const PER_PAGE = 5;
-  const count = Math.ceil(user.length / PER_PAGE);
-  const DATA = usePagination(user, PER_PAGE);
-  const handlePageChange = (e: any, p: any) => {
-    setPage(p);
-    DATA.jump(p);
-  };
 
   const handleClickOpen = (item: any) => {
     console.log(item, "itemmmmm");
@@ -275,10 +277,9 @@ export default function Guardians() {
       startDate: sdate === "Invalid date" ? "" : sdate,
       endDate: edate === "Invalid date" ? "" : edate,
       order: sort,
-      amount: data.Total,
+      amount: data.Total.replace("$", ""),
       customer: ids ? ids : "",
     };
-    console.log(sdate, "startDate", edate, "endDate");
 
     await axios({
       method: "POST",
@@ -521,6 +522,14 @@ export default function Guardians() {
   function handlerowchange(e: any) {
     set_row_per_page(e.target.value);
   }
+
+  const PER_PAGE = row_per_page;
+  const count = Math.ceil(user.length / PER_PAGE);
+  const DATA = usePagination(user, PER_PAGE);
+  const handlePageChange = (e: any, p: any) => {
+    setPage(p);
+    DATA.jump(p);
+  };
   const pending = Invoicedata?.filter((a: any) => a.status == "pending");
   const paid = Invoicedata?.filter((a: any) => a.status == "paid");
   const draft = Invoicedata?.filter((a: any) => a.status == "draft");
@@ -560,6 +569,10 @@ export default function Guardians() {
   };
   const handleChange = (date: any) => {
     setStartDate(date);
+  };
+
+  const handleChanges = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
   };
 
   console.log(inputValue, "inputValue");
@@ -628,31 +641,34 @@ export default function Guardians() {
                   alignItems="center"
                   justifyContent="space-between"
                 >
-                  <Box
-                    className="filter-list"
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                      bgcolor: "background.paper",
-                      borderRadius: 1,
-                    }}
-                  >
-                    <Item
-                      onClick={handleAll}
-                      style={{ cursor: "pointer" }}
-                      className="filter-active"
+                  <Box>
+                    <Tabs
+                      value={value}
+                      onChange={handleChanges}
+                      aria-label="basic tabs example"
                     >
-                      ALL ({Invoicedata.length})
-                    </Item>
-                    <Item style={{ cursor: "pointer" }} onClick={handlePaid}>
-                      Paid ({paid.length}){" "}
-                    </Item>
-                    <Item style={{ cursor: "pointer" }} onClick={handlePending}>
-                      Un Paid ({pending.length}){" "}
-                    </Item>
-                    <Item style={{ cursor: "pointer" }} onClick={handleDraft}>
-                      Draft ({draft.length}){" "}
-                    </Item>
+                      <Tab
+                        className="filter-list"
+                        label={`All (${Invoicedata.length})`}
+                        {...a11yProps(0)}
+                        onClick={handleAll}
+                      />
+                      <Tab
+                        label={`Paid (${paid.length})`}
+                        {...a11yProps(1)}
+                        onClick={handlePaid}
+                      />
+                      <Tab
+                        label={`Un Paid  (${pending.length})`}
+                        {...a11yProps(2)}
+                        onClick={handlePending}
+                      />
+                      <Tab
+                        label={`Draft (${draft.length})`}
+                        {...a11yProps(3)}
+                        onClick={handleDraft}
+                      />
+                    </Tabs>
                   </Box>
 
                   <Stack
@@ -805,14 +821,14 @@ export default function Guardians() {
                                           label="Status"
                                           // {...register("sort")}
                                         >
-                                          <MenuItem value="">
+                                          {/* <MenuItem value={sort}>
                                             <em>None</em>
-                                          </MenuItem>
+                                          </MenuItem> */}
                                           <MenuItem value="ASC">
-                                            Oldest first
+                                            Date, Oldest First
                                           </MenuItem>
                                           <MenuItem value="DESC">
-                                            Newest first
+                                            Date, Newest First
                                           </MenuItem>
                                         </Select>
                                       </Stack>
@@ -955,18 +971,34 @@ export default function Guardians() {
                           <TableCell padding="checkbox">
                             <Checkbox />
                           </TableCell>
-                          <TableCell component="th" scope="row" padding="none">
-                            <Link
-                              href={`/admin/editInvoice/${item.id}`}
-                              style={{
-                                color: "#26CEB3",
-                              }}
+                          {disable ? (
+                            <TableCell
+                              component="th"
+                              scope="row"
+                              padding="none"
+                            >
+                              <Link
+                                href={`/admin/editInvoice/${item.id}`}
+                                style={{
+                                  color: "#26CEB3",
+                                }}
+                              >
+                                <TableCell align="left">
+                                  {item.invoiceId}
+                                </TableCell>
+                              </Link>
+                            </TableCell>
+                          ) : (
+                            <TableCell
+                              component="th"
+                              scope="row"
+                              padding="none"
                             >
                               <TableCell align="left">
                                 {item.invoiceId}
                               </TableCell>
-                            </Link>
-                          </TableCell>
+                            </TableCell>
+                          )}
                           <TableCell align="left">{item.name}</TableCell>
                           <TableCell align="left">
                             {moment(item.createdDate, "DD/MM/YYYY").format(
