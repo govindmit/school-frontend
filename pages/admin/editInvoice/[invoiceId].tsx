@@ -220,6 +220,7 @@ export default function Guardians() {
 
   const [sdates, setDates] = useState<FormValues | any>([]);
   const [Invoicedates, setInvoiceDate] = useState(null);
+  const [value, setValue] = useState<any>({ id: null, title: null });
 
   const [user, setUser] = useState<FormValues | any>([]);
   const [dollerOpen, setDollerOpen] = useState(false);
@@ -232,7 +233,10 @@ export default function Guardians() {
   const [item, setItem] = useState<FormValues | any>([]);
   const [product, setProduct] = useState<FormValues | any>([]);
   const [selected, setSelected] = useState<readonly string[]>([]);
+  // const [itemId, setItemId] = useState<readonly string[]>([]);
 
+  // var itemId: { id: number }[] = [];
+  // console.log(itemId, "....................................ids");
   const {
     register,
     handleSubmit,
@@ -266,6 +270,7 @@ export default function Guardians() {
     setSelected(newSelected);
     getItem();
   };
+
   const style = {
     color: "red",
     fontSize: "12px",
@@ -313,39 +318,47 @@ export default function Guardians() {
   };
 
   const onSubmit: SubmitHandler<FormValues> = async (data: any) => {
+    // const invoiceDate = moment(data.date).format("DD/MM/YYYY");
+    // const createdDate = moment(dates).format("DD/MM/YYYY");
+
+    var itemId: any[] = [];
     const dates = new Date();
+    var invoiceDatesss = "";
+    if (Invoicedates) {
+      invoiceDatesss = moment(Invoicedates).format("DD/MM/YYYY");
+    } else {
+      invoiceDatesss = invoice[0]?.invoiceDate;
+    }
 
-    const invoiceDate = moment(data.date).format("DD/MM/YYYY");
+    for (let row of product) {
+      itemId.push(row.id);
+    }
     const createdDate = moment(dates).format("DD/MM/YYYY");
-
     const requestedData = {
-      itemId: selected,
+      itemId: itemId,
       amount: price,
       status: "pending",
-      createdDate: createdDate,
+      createdDate: invoice[0]?.createdDate,
       createdBy: "1",
-      invoiceDate: invoiceDate,
-      customerId: userID.id,
-      invoiceNo: invoiceno,
+      invoiceDate: invoiceDatesss,
+      customerId: userID.id ? userID.id : invoice[0]?.customerId,
+      invoiceNo: invoiceno ? invoiceno : invoice[0]?.invoiceId,
+      updatedAt: createdDate,
+      updatedBy: "1",
     };
     await axios({
-      method: "POST",
-      url: `${api_url}/createInvoice`,
+      method: "PUT",
+      url: `${api_url}/editInvoice/${invoiceId}`,
       data: requestedData,
       headers: {
         "content-type": "multipart/form-data",
       },
     })
       .then((res) => {
-        if (!res) {
-          toast.success("something wents wrong !");
-        } else {
-          reset();
-          toast.success("Invoice created Successfully !");
-          setTimeout(() => {
-            router.push("/admin/invoices");
-          }, 1000);
-        }
+        toast.success("Invoice updated Successfully !");
+        setTimeout(() => {
+          router.push("/admin/invoices");
+        }, 1000);
       })
       .catch((err) => {
         if (err) {
@@ -353,7 +366,7 @@ export default function Guardians() {
         }
         // console.log(err.response.data.message, "error");
       });
-    // window.location.replace("/admin/invoices");
+    // console.log(requestedData, "requestedData");
   };
   const getItem = async () => {
     await axios({
@@ -370,12 +383,21 @@ export default function Guardians() {
       .catch((err) => {});
   };
 
+  var option: { id: number; title: string }[] = [];
+  user &&
+    user.map((data: any, key: any) => {
+      return option.push({
+        id: data.id,
+        title: data.name,
+      });
+    });
   useEffect(() => {
     let cusId = localStorage.getItem("customerId");
     invoiceDataById();
     // if (cusId) {
     //   setOpens(false);
     // }
+
     getItems();
     getUser();
     getItem();
@@ -399,7 +421,6 @@ export default function Guardians() {
   const getItems = async () => {
     invoiceDataById();
 
-    console.log(invoice ? invoice : "hello", ".......................g");
     // let requested = {
     //   id: invoice[0]?.itemId,
     // };
@@ -499,6 +520,10 @@ export default function Guardians() {
     })
       .then((res) => {
         setInvoice(res?.data.data);
+        setValue({
+          id: res?.data.data[0].id,
+          title: res?.data.data[0].name,
+        });
         if (res) {
           let requested = {
             id: res?.data.data[0]?.itemId,
@@ -514,58 +539,55 @@ export default function Guardians() {
           })
             .then((res) => {
               setProduct(res?.data.data);
-              for (let row of res?.data.data) {
-                var data = isSelected(row.name);
-                console.log(data, row.id, "........................h");
-              }
             })
             .catch((err) => {});
         }
         setUser(res?.data.data);
         setInvoiceNo(res?.data?.invoiceNo);
-        console.log(res, "response");
       })
       .catch((err) => {});
   };
 
-  // console.log(isItemSelected, "selecteddd");
-
   const handleDraft = async () => {
+    var itemId: any[] = [];
     const dates = new Date();
-    var invoiceDatesss;
-    if (sdates != "") {
-      invoiceDatesss = moment(sdates).format("DD/MM/YYYY");
+    var invoiceDatesss = "";
+    if (Invoicedates) {
+      invoiceDatesss = moment(Invoicedates).format("DD/MM/YYYY");
+    } else {
+      invoiceDatesss = invoice[0]?.invoiceDate;
+    }
+
+    for (let row of product) {
+      itemId.push(row.id);
     }
     const createdDate = moment(dates).format("DD/MM/YYYY");
-
     const requestedData = {
-      itemId: selected,
+      itemId: itemId,
       amount: price,
       status: "draft",
-      createdDate: createdDate,
+      createdDate: invoice[0]?.createdDate,
       createdBy: "1",
       invoiceDate: invoiceDatesss,
-      customerId: userID.id,
-      invoiceNo: invoiceno,
+      customerId: userID.id ? userID.id : invoice[0]?.customerId,
+      invoiceNo: invoiceno ? invoiceno : invoice[0]?.invoiceId,
+      updatedAt: createdDate,
+      updatedBy: "1",
     };
-
+    console.log(requestedData, "requestedData");
     await axios({
-      method: "POST",
-      url: `${api_url}/createInvoice`,
+      method: "PUT",
+      url: `${api_url}/editInvoice/${invoiceId}`,
       data: requestedData,
       headers: {
         "content-type": "multipart/form-data",
       },
     })
       .then((res) => {
-        toast.success("Invoice created Successfully !");
+        toast.success("Invoice updated Successfully !");
         setTimeout(() => {
           router.push("/admin/invoices");
         }, 1000);
-        if (!res) {
-          reset();
-          toast.success("All field are required !");
-        }
       })
       .catch((err) => {
         if (err) {
@@ -588,11 +610,11 @@ export default function Guardians() {
                     <span className="smallHeading">Home</span>&nbsp;
                   </Link>
                   <span>&gt;</span> &nbsp;{" "}
-                  <span className="secondHeading">Create Invoices</span>
+                  <span className="secondHeading">Edit Invoices</span>
                 </div>
                 <div className="cinvoice">
                   <div>
-                    <span className="GItitle">CREATE INVOICES</span>
+                    <span className="GItitle">EDIT INVOICES</span>
                   </div>
                   <div className="isave">
                     <BootstrapButton onClick={handleDraft} type="button">
@@ -600,7 +622,7 @@ export default function Guardians() {
                     </BootstrapButton>
 
                     <BootstrapButton type="submit">
-                      Save & issue
+                      Save as issue
                     </BootstrapButton>
                   </div>
                   {/* <Button sx={{ margin: "7px" }} type="button">
@@ -661,6 +683,43 @@ export default function Guardians() {
                       <Autocomplete
                         style={{ width: 300 }}
                         fullWidth
+                        value={value}
+                        inputValue={inputValue}
+                        onChange={(event, newValue) => {
+                          setValue(newValue);
+                          setUserId(newValue);
+                        }}
+                        onInputChange={(event, newInputValue) => {
+                          setInputValue(newInputValue);
+                        }}
+                        options={option}
+                        getOptionLabel={(option) => option.title || ""}
+                        isOptionEqualToValue={(option, title) =>
+                          option.title === value.title
+                        }
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            variant="outlined"
+                            placeholder="Find or create a parent"
+                          />
+                        )}
+                        noOptionsText={
+                          <Button onClick={handleClickOpen}>
+                            {inputValue === "" ? (
+                              "Please enter 1 or more character"
+                            ) : (
+                              <span>
+                                Add &nbsp;<b>{inputValue}</b>&nbsp;as a new
+                                parent
+                              </span>
+                            )}
+                          </Button>
+                        }
+                      />
+                      {/* <Autocomplete
+                        style={{ width: 300 }}
+                        fullWidth
                         inputValue={inputValue}
                         onChange={(event, value) => setUserId(value)}
                         // defaultValue={{
@@ -701,7 +760,7 @@ export default function Guardians() {
                         //   },
                         //   required: true,
                         // })}
-                      />
+                      /> */}
                       <Typography style={style}>
                         {errors.Customername ? (
                           <span>Feild is Required **</span>
@@ -718,36 +777,10 @@ export default function Guardians() {
                         placeholder="# Generate If blank"
                         fullWidth
                         onChange={(e: any) => setInvoiceNo(e.target.value)}
-                        value={invoice[0]?.invoiceId}
+                        value={!invoiceno ? invoice[0]?.invoiceId : invoiceno}
                       />
                       <InputLabel id="demo-select-small"></InputLabel>
                       &nbsp; &nbsp;
-                      {/* <TextField
-                        // placeholder="Date"
-                        fullWidth
-                        InputLabelProps={{
-                          shrink: true,
-                          required: true,
-                        }}
-                        type="date"
-                        // defaultValue={values.someDate}
-                        {...register("date", {
-                          onChange: (e) => {
-                            setDates(e.target.value);
-                          },
-
-                          required: true,
-                        })}
-                      /> */}
-                      {/* <DatePicker
-                        className="myDatePicker"
-                        selected={Invoicedates}
-                        onChange={(date: any) => setInvoiceDate(date)}
-                        name="startDate"
-                        dateFormat="MM/dd/yyyy"
-                        placehol
-                        derText="End Date"
-                      /> */}
                       <DatePicker
                         className="myDatePicker"
                         selected={Invoicedates}
