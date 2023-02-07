@@ -121,6 +121,7 @@ export default function AddCustomer({
 }) {
   const [value, setValue] = React.useState<any>(0);
   const [parentid, setparentid] = React.useState(0);
+  const [parentname, setparentname] = React.useState<any>("");
   const [spinner, setshowspinner] = React.useState(false);
   const [custtype, setcusttype] = React.useState<any>([]);
   const [btnDisabled, setBtnDisabled] = React.useState(false);
@@ -474,7 +475,7 @@ export default function AddCustomer({
                       </FormGroup>
                       <Stack spacing={1} style={hideshowstyle}>
                         <InputLabel htmlFor="name"></InputLabel>
-                        <AddCustomerCmp Data={Getdata} />
+                        <AddCustomerCmp Data={Getdata} PId={parentid} pname={parentname} />
                       </Stack>
                     </Grid>
                   </Grid>
