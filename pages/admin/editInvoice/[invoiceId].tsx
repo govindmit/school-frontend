@@ -34,7 +34,8 @@ import AddCustomer from "../../customer/addNewCustomer";
 import AddItem from "../additem";
 import Link from "next/link";
 import { useRouter } from "next/router";
-
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
     padding: theme.spacing(2),
@@ -218,6 +219,7 @@ export default function Guardians() {
   const [userID, setUserId] = useState<FormValues | any>([]);
 
   const [sdates, setDates] = useState<FormValues | any>([]);
+  const [Invoicedates, setInvoiceDate] = useState(null);
 
   const [user, setUser] = useState<FormValues | any>([]);
   const [dollerOpen, setDollerOpen] = useState(false);
@@ -512,7 +514,10 @@ export default function Guardians() {
           })
             .then((res) => {
               setProduct(res?.data.data);
-              console.log(res, "........................h");
+              for (let row of res?.data.data) {
+                var data = isSelected(row.name);
+                console.log(data, row.id, "........................h");
+              }
             })
             .catch((err) => {});
         }
@@ -522,6 +527,9 @@ export default function Guardians() {
       })
       .catch((err) => {});
   };
+
+  // console.log(isItemSelected, "selecteddd");
+
   const handleDraft = async () => {
     const dates = new Date();
     var invoiceDatesss;
@@ -714,8 +722,8 @@ export default function Guardians() {
                       />
                       <InputLabel id="demo-select-small"></InputLabel>
                       &nbsp; &nbsp;
-                      <TextField
-                        placeholder="Date"
+                      {/* <TextField
+                        // placeholder="Date"
                         fullWidth
                         InputLabelProps={{
                           shrink: true,
@@ -730,6 +738,23 @@ export default function Guardians() {
 
                           required: true,
                         })}
+                      /> */}
+                      {/* <DatePicker
+                        className="myDatePicker"
+                        selected={Invoicedates}
+                        onChange={(date: any) => setInvoiceDate(date)}
+                        name="startDate"
+                        dateFormat="MM/dd/yyyy"
+                        placehol
+                        derText="End Date"
+                      /> */}
+                      <DatePicker
+                        className="myDatePicker"
+                        selected={Invoicedates}
+                        onChange={(date: any) => setInvoiceDate(date)}
+                        name="startDate"
+                        dateFormat="MM/dd/yyyy"
+                        placeholderText={invoice[0]?.invoiceDate}
                       />
                     </div>
                   </div>
@@ -847,6 +872,12 @@ export default function Guardians() {
                               {item &&
                                 item.map((row: any) => {
                                   const isItemSelected = isSelected(row.id);
+                                  {
+                                    console.log(
+                                      isItemSelected,
+                                      "selectedddmap"
+                                    );
+                                  }
                                   const labelId = `enhanced-table-checkbox-${row.id}`;
 
                                   return (
