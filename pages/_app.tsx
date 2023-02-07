@@ -7,6 +7,7 @@ import "../styles/dashboard.css";
 import "../styles/customer.css";
 import "../styles/globals.css";
 import "../styles/addinvoice.css";
+import "../styles/globals.css";
 import { useState } from "react";
 
 export default function App({ Component, pageProps }: AppProps) {

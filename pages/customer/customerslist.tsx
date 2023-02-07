@@ -110,7 +110,6 @@ type FormValues = {
 };
 
 export default function CustomerList() {
-
   const [users, setUsers] = useState<any>([]);
   const [custtype, setcusttype] = useState<any>([]);
   const [hh, setData] = useState<any>([]);
@@ -171,7 +170,7 @@ export default function CustomerList() {
         },
       });
       const res = await response.json();
-      setData(res.data.filter((dt: any) => dt.customerId !== null))
+      setData(res.data.filter((dt: any) => dt.customerId !== null));
       setUsers(res.data.filter((dt: any) => dt.customerId !== null));
       setsearchdata(res.data.filter((dt: any) => dt.customerId !== null));
       setAll(res.data.filter((dt: any) => dt.customerId !== null).length);
@@ -244,7 +243,7 @@ export default function CustomerList() {
     setsort(0);
     setconctName("");
     setphoneNum("");
-    setpId(0)
+    setpId(0);
   }
 
   // apply searching
@@ -348,7 +347,7 @@ export default function CustomerList() {
   // Export CSV
 
   function ExportCSV() {
-    setopenCSV(true)
+    setopenCSV(true);
     setTimeout(() => {
       setopenCSV(false);
     }, 2000);
@@ -356,7 +355,6 @@ export default function CustomerList() {
 
   return (
     <>
-
       <Box sx={{ display: "flex" }}>
         <MiniDrawer />
         <Box component="main" sx={{ flexGrow: 1 }}>
@@ -432,8 +430,16 @@ export default function CustomerList() {
                         {...a11yProps(0)}
                         onClick={handleAll}
                       />
-                      <Tab label={`ACTIVE (${active})`} {...a11yProps(1)} onClick={handleActive} />
-                      <Tab label={`INACTIVE (${inActive})`} {...a11yProps(2)} onClick={handleInActive} />
+                      <Tab
+                        label={`ACTIVE (${active})`}
+                        {...a11yProps(1)}
+                        onClick={handleActive}
+                      />
+                      <Tab
+                        label={`INACTIVE (${inActive})`}
+                        {...a11yProps(2)}
+                        onClick={handleInActive}
+                      />
                     </Tabs>
                   </Box>
 
@@ -531,7 +537,6 @@ export default function CustomerList() {
                                               onChange={(e: any) =>
                                                 setsort(e.target.value)
                                               }
-
                                             >
                                               <MenuItem value={0}>
                                                 Date, Newest First
@@ -565,15 +570,22 @@ export default function CustomerList() {
                                                 setpId(e.target.value)
                                               }
                                             >
-                                              <MenuItem value={0}>
-                                                All
-                                              </MenuItem>
-                                              {parentId && parentId.map((datas: any, key: any) => {
-                                                return (<MenuItem key={key}
-                                                  value={datas.id}>
-                                                  {datas.GeneratedParentId}
-                                                </MenuItem>)
-                                              })}
+                                              <MenuItem value={0}>All</MenuItem>
+                                              {parentId &&
+                                                parentId.map(
+                                                  (datas: any, key: any) => {
+                                                    return (
+                                                      <MenuItem
+                                                        key={key}
+                                                        value={datas.id}
+                                                      >
+                                                        {
+                                                          datas.GeneratedParentId
+                                                        }
+                                                      </MenuItem>
+                                                    );
+                                                  }
+                                                )}
                                             </Select>
                                           </FormControl>
                                         </Stack>
@@ -670,7 +682,10 @@ export default function CustomerList() {
                     <PopupState variant="popover" popupId="demo-popup-menu">
                       {(popupState) => (
                         <Box>
-                          <MenuItem {...bindTrigger(popupState)} onClick={ExportCSV}>
+                          <MenuItem
+                            {...bindTrigger(popupState)}
+                            onClick={ExportCSV}
+                          >
                             Export
                             <KeyboardArrowDownIcon />
                           </MenuItem>

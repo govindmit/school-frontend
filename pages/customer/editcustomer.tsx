@@ -187,7 +187,7 @@ export default function EditCustomer({
       setValue("number", res.data[0].phone1);
       setValue("contactName", res.data[0].contactName);
       setValue("printUs", res.data[0].printus);
-      setparentid(res.data[0].parentId)
+      setparentid(res.data[0].parentId);
       setstatus(res.data[0].status);
       setcustType(res.data[0].typeId);
     } catch (error) {
@@ -205,7 +205,7 @@ export default function EditCustomer({
         },
       });
       const res = await response.json();
-      setparentname(res.data[0].name)
+      setparentname(res.data[0].name);
     } catch (error) {
       console.log("error", error);
     }
@@ -389,16 +389,20 @@ export default function EditCustomer({
                       <Stack spacing={1}>
                         <InputLabel htmlFor="name">Status</InputLabel>
                         <FormControl fullWidth>
-                          {status !== '' ? (<Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            size="small"
-                            {...register("status")}
-                            defaultValue={status}
-                          >
-                            <MenuItem value={1}>Active</MenuItem>
-                            <MenuItem value={0}>InActive</MenuItem>
-                          </Select>) : ("loading......")}
+                          {status !== "" ? (
+                            <Select
+                              labelId="demo-simple-select-label"
+                              id="demo-simple-select"
+                              size="small"
+                              {...register("status")}
+                              defaultValue={status}
+                            >
+                              <MenuItem value={1}>Active</MenuItem>
+                              <MenuItem value={0}>InActive</MenuItem>
+                            </Select>
+                          ) : (
+                            "loading......"
+                          )}
                         </FormControl>
                       </Stack>
                     </Grid>
@@ -553,7 +557,11 @@ export default function EditCustomer({
                       </FormGroup>
                       <Stack spacing={1} style={hideshowstyle}>
                         <InputLabel htmlFor="name"></InputLabel>
-                        <AddCustomerCmp Data={Getdata} PId={parentid} pname={parentname} />
+                        <AddCustomerCmp
+                          Data={Getdata}
+                          PId={parentid}
+                          pname={parentname}
+                        />
                       </Stack>
                     </Grid>
                   </Grid>
@@ -621,5 +629,4 @@ export default function EditCustomer({
       </DialogContent>
     </BootstrapDialog>
   );
-
 }
