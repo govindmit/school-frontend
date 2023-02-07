@@ -12,7 +12,6 @@ import {
   Typography,
   Stack,
   Breadcrumbs,
-  BoxProps,
   FormControl,
   TextField,
   Menu,
@@ -44,31 +43,8 @@ import "react-toastify/dist/ReactToastify.css";
 import AddCustomer from "./addNewCustomer";
 import EditCustomer from "./editcustomer";
 import { useRouter } from "next/router";
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
+import { CSVDownload } from "react-csv";
+import Loader from "../commoncmp/myload";
 
 function a11yProps(index: number) {
   return {
@@ -110,11 +86,9 @@ type FormValues = {
 };
 
 export default function CustomerList() {
-
   const [users, setUsers] = useState<any>([]);
   const [custtype, setcusttype] = useState<any>([]);
-  const [hh, setData] = useState<any>([]);
-
+  const [tabFilterData, settabFilterData] = useState<any>([]);
   const [All, setAll] = useState(0);
   const [active, setactive] = useState(0);
   const [inActive, setinActive] = useState(0);
@@ -125,7 +99,6 @@ export default function CustomerList() {
   const [editCustOpen, seteditCustOpen] = React.useState(false);
   const [editid, seteditid] = useState<any>(0);
   const [value, setValue] = React.useState(0);
-  const { register, handleSubmit } = useForm<FormValues>();
   const [custType, setCustType] = useState<any>(0);
   const [custStatus, setcustStatus] = useState<any>(2);
   const [sort, setsort] = useState<any>(0);
@@ -134,11 +107,9 @@ export default function CustomerList() {
   const [pId, setpId] = useState<any>(0);
   const [parentId, setparentId] = useState<any>("");
   const [checked, setChecked] = React.useState(false);
-  const [openCSV, setopenCSV] = React.useState(false);
+  const [OpenCSV, setOpenCSV] = React.useState(false);
+  const { register, handleSubmit } = useForm<FormValues>();
 
-  function handleCheck(e: any) {
-    setChecked(e.target.checked);
-  }
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -171,8 +142,8 @@ export default function CustomerList() {
         },
       });
       const res = await response.json();
-      setData(res.data.filter((dt: any) => dt.customerId !== null))
       setUsers(res.data.filter((dt: any) => dt.customerId !== null));
+      settabFilterData(res.data.filter((dt: any) => dt.customerId !== null))
       setsearchdata(res.data.filter((dt: any) => dt.customerId !== null));
       setAll(res.data.filter((dt: any) => dt.customerId !== null).length);
       setparentId(res.data.filter((dt: any) => dt.GeneratedParentId !== null));
@@ -323,7 +294,7 @@ export default function CustomerList() {
     setnewCustOpen(false);
   };
 
-  //edit customer
+  //edit customer popup
   function handleEditCustomerOpen(id: any) {
     seteditCustOpen(true);
     seteditid(id);
@@ -338,25 +309,117 @@ export default function CustomerList() {
     getUser();
   }
   function handleActive() {
-    const act = hh.filter((a: any) => a.status === 1);
+    const act = tabFilterData.filter((a: any) => a.status === 1);
     setUsers(act);
   }
   function handleInActive() {
-    const Inact = hh.filter((a: any) => a.status === 0);
+    const Inact = tabFilterData.filter((a: any) => a.status === 0);
     setUsers(Inact);
   }
-  // Export CSV
 
-  function ExportCSV() {
-    setopenCSV(true)
-    setTimeout(() => {
-      setopenCSV(false);
-    }, 2000);
+  //check uncheck functionality
+  const [userinfo, setUserInfo] = useState<any>({
+    id: [],
+  });
+  const handleChanges = (e: any) => {
+    const { value, checked } = e.target;
+    const { id } = userinfo;
+    if (checked) {
+      setUserInfo({
+        id: [...id, value],
+      });
+    }
+    else {
+      setUserInfo({
+        id: id.filter((e: any) => e !== value),
+      });
+    }
+  };
+
+  function handleCheck(e: any) {
+    var isChecked = e.target.checked;
+    setChecked(isChecked)
+    // var item = e.target.value;
+    // console.log(item);
   }
+
+  // console.log(checked);
+  // console.log(userinfo.id);
+
+
+  // Export to CSV
+  const [mydata, setmydata] = useState<any>("")
+  const [myload, setmyload] = useState(false)
+  function ExportCSV() {
+    let datas: {
+      name: string; email1: string; email2: string;
+      phone1: number; phone2: number, CustomerType: string;
+      contactName: string; printUs: string, status: string
+    }[] = [];
+    if (userinfo.id.length > 0) {
+      const ids = userinfo.id.join(",");
+      const getUserByMultipleids = async () => {
+        setmyload(true);
+        const url = `${api_url}/getuserbymultipleid/${ids}`;
+        try {
+          const response = await fetch(url, {
+            method: "get",
+            headers: {
+              Authorization: auth_token,
+              "x-access-token": logintoken,
+            },
+          });
+          const res = await response.json();
+          if (res.data) {
+            setmyload(false);
+            res.data.map((item: any, key: any) => {
+              datas.push({
+                name: item.name,
+                email1: item.email1,
+                email2: item.email2,
+                phone1: item.phone1,
+                phone2: item.phone2,
+                CustomerType: item.CustomerType,
+                contactName: item.contactName,
+                printUs: item.printUs,
+                status: item.status === 1 ? "Active" : "InActive"
+              })
+            })
+            setmydata(datas);
+            setOpenCSV(true);
+            setTimeout(() => {
+              setOpenCSV(false);
+              setUserInfo({
+                id: []
+              })
+            }, 1000);
+          }
+        } catch (error) {
+          console.log("error", error);
+        }
+      };
+      getUserByMultipleids();
+    } else {
+      toast.error("Please Select Atleast One Customer !", {
+        position: toast.POSITION.TOP_CENTER
+      });
+    }
+  }
+  const headers = [
+    { label: "Name", key: "name" },
+    { label: "Email", key: "email1" },
+    { label: "Alternate Email", key: "email2" },
+    { label: "Phone Number", key: "phone1" },
+    { label: "Altername Number", key: "phone2" },
+    { label: "Contact Name ", key: "contactName" },
+    { label: "Print Us ", key: "printUs" },
+    { label: "Customer Type ", key: "CustomerType" },
+    { label: "status", key: "status" },
+  ];
 
   return (
     <>
-
+      {OpenCSV && mydata.length > 0 ? <CSVDownload data={mydata} headers={headers} /> : ""}
       <Box sx={{ display: "flex" }}>
         <MiniDrawer />
         <Box component="main" sx={{ flexGrow: 1 }}>
@@ -404,7 +467,7 @@ export default function CustomerList() {
                 sx={{ width: 150 }}
                 onClick={handleNewCustomerOpen}
               >
-                New Customer
+                <b>New Customer</b>
               </Button>
             </Stack>
             {/*bread cump */}
@@ -436,7 +499,6 @@ export default function CustomerList() {
                       <Tab label={`INACTIVE (${inActive})`} {...a11yProps(2)} onClick={handleInActive} />
                     </Tabs>
                   </Box>
-
                   <Stack
                     direction="row"
                     alignItems="center"
@@ -590,7 +652,6 @@ export default function CustomerList() {
                                               placeholder="Phone Number..."
                                               fullWidth
                                               size="small"
-                                              // {...register("phoneNumber")}
                                               value={phoneNum}
                                               onChange={(e: any) =>
                                                 setphoneNum(e.target.value)
@@ -724,135 +785,140 @@ export default function CustomerList() {
                   </Stack>
                 </Stack>
                 {/*bread cump */}
-                <Table style={{ marginTop: "20px" }}>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell padding="checkbox">
-                        <Checkbox onChange={handleCheck} />
-                      </TableCell>
-                      <TableCell>
-                        <Typography>ID</Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography>NAME</Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography>EMAIL 1</Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography>EMAIL 2</Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography width={100}>COST. TYPE</Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography width={100}>CONT. NAME</Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography>STATUS</Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography width={100}>PRINT US</Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography>PHONE 1</Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography width={100}>PHONE 2</Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography>ACTION</Typography>
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {DATA.currentData() &&
-                      DATA.currentData().map((dataitem: any, key: any) => {
-                        return (
-                          <TableRow
-                            hover
-                            tabIndex={-1}
-                            role="checkbox"
-                            key={key}
-                            className="boder-bottom"
-                          >
-                            <TableCell padding="checkbox">
-                              <Checkbox checked={checked} value={dataitem.id} />
-                            </TableCell>
-                            <TableCell align="left">
-                              {dataitem.customerId}
-                            </TableCell>
-                            <TableCell align="left">{dataitem.name}</TableCell>
-                            <TableCell align="left">
-                              <a href="">{dataitem.email1}</a>
-                            </TableCell>
-                            <TableCell align="left">
-                              <a href="">{dataitem.email2}</a>
-                            </TableCell>
-                            <TableCell align="left">
-                              {dataitem.CustomerType !== null
-                                ? dataitem.CustomerType
-                                : "INDIVIDUAL"}
-                            </TableCell>
-                            <TableCell align="left">
-                              {dataitem.contactName}
-                            </TableCell>
-                            <TableCell align="left">
-                              {dataitem.status === 1 ? (
-                                <span style={{ color: "#02C509" }}>ACTIVE</span>
-                              ) : (
-                                <span style={{ color: "#FF4026" }}>
-                                  INACTIVE
-                                </span>
-                              )}
-                            </TableCell>
-                            <TableCell align="left">
-                              {dataitem.printUs}
-                            </TableCell>
-                            <TableCell align="left">
-                              {dataitem.phone1}
-                            </TableCell>
-                            <TableCell align="left">
-                              {dataitem.phone2}
-                            </TableCell>
-                            <TableCell align="left">
-                              <Stack
-                                className="action"
-                                direction="row"
-                                spacing={1}
-                              >
-                                <IconButton className="action-view">
-                                  <Link
-                                    href={`/customer/viewcustomer/${dataitem.id}`}
-                                    style={{
-                                      color: "#26CEB3",
-                                    }}
+                {myload ? <Loader /> :
+                  <Table style={{ marginTop: "20px" }}>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell padding="checkbox">
+                          <Checkbox onChange={handleCheck} />
+                        </TableCell>
+                        <TableCell>
+                          <Typography>ID</Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography>NAME</Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography>EMAIL 1</Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography>EMAIL 2</Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography width={100}>COST. TYPE</Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography width={100}>CONT. NAME</Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography>STATUS</Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography width={100}>PRINT US</Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography>PHONE 1</Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography width={100}>PHONE 2</Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography>ACTION</Typography>
+                        </TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {DATA.currentData() &&
+                        DATA.currentData().map((dataitem: any, key: any) => {
+                          return (
+                            <TableRow
+                              hover
+                              tabIndex={-1}
+                              role="checkbox"
+                              key={key}
+                              className="boder-bottom"
+                            >
+                              <TableCell padding="checkbox">
+                                <Checkbox
+                                  onChange={handleChanges} value={dataitem.id}
+                                  //checked={checked}
+                                  id={`check` + key}
+                                />
+                              </TableCell>
+                              <TableCell align="left">
+                                {dataitem.customerId}
+                              </TableCell>
+                              <TableCell align="left">{dataitem.name}</TableCell>
+                              <TableCell align="left">
+                                <a href="">{dataitem.email1}</a>
+                              </TableCell>
+                              <TableCell align="left">
+                                <a href="">{dataitem.email2}</a>
+                              </TableCell>
+                              <TableCell align="left">
+                                {dataitem.CustomerType !== null
+                                  ? dataitem.CustomerType
+                                  : "INDIVIDUAL"}
+                              </TableCell>
+                              <TableCell align="left">
+                                {dataitem.contactName}
+                              </TableCell>
+                              <TableCell align="left">
+                                {dataitem.status === 1 ? (
+                                  <span style={{ color: "#02C509" }}>ACTIVE</span>
+                                ) : (
+                                  <span style={{ color: "#FF4026" }}>
+                                    INACTIVE
+                                  </span>
+                                )}
+                              </TableCell>
+                              <TableCell align="left">
+                                {dataitem.printUs}
+                              </TableCell>
+                              <TableCell align="left">
+                                {dataitem.phone1}
+                              </TableCell>
+                              <TableCell align="left">
+                                {dataitem.phone2}
+                              </TableCell>
+                              <TableCell align="left">
+                                <Stack
+                                  className="action"
+                                  direction="row"
+                                  spacing={1}
+                                >
+                                  <IconButton className="action-view">
+                                    <Link
+                                      href={`/customer/viewcustomer/${dataitem.id}`}
+                                      style={{
+                                        color: "#26CEB3",
+                                      }}
+                                    >
+                                      <BiShow />
+                                    </Link>
+                                  </IconButton>
+                                  <IconButton
+                                    className="action-edit"
+                                    onClick={() =>
+                                      handleEditCustomerOpen(dataitem.id)
+                                    }
                                   >
-                                    <BiShow />
-                                  </Link>
-                                </IconButton>
-                                <IconButton
-                                  className="action-edit"
-                                  onClick={() =>
-                                    handleEditCustomerOpen(dataitem.id)
-                                  }
-                                >
-                                  <FiEdit />
-                                </IconButton>
-                                <IconButton
-                                  className="action-delete"
-                                  style={{ color: "#F95A37" }}
-                                  onClick={() => openDelete(dataitem)}
-                                >
-                                  <RiDeleteBin5Fill />
-                                </IconButton>
-                              </Stack>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
-                  </TableBody>
-                </Table>
+                                    <FiEdit />
+                                  </IconButton>
+                                  <IconButton
+                                    className="action-delete"
+                                    style={{ color: "#F95A37" }}
+                                    onClick={() => openDelete(dataitem)}
+                                  >
+                                    <RiDeleteBin5Fill />
+                                  </IconButton>
+                                </Stack>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
+                    </TableBody>
+                  </Table>}
                 {users == "" ? <h3>No Record found</h3> : ""}
                 <Stack
                   style={{ marginBottom: "10px", marginTop: "10px" }}
