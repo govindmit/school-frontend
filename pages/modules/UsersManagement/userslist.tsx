@@ -465,7 +465,7 @@ export default function UsersList() {
                                 variant="contained"
                                 size="small"
                                 sx={{ width: 150 }}
-                                onClick={handleNewCustomerOpen}
+                                onClick={() => router.push("/usermanagement/addnewuser")}
                             >
                                 <b>New User</b>
                             </Button>
@@ -524,31 +524,16 @@ export default function UsersList() {
                                                 <Typography>ID</Typography>
                                             </TableCell>
                                             <TableCell>
-                                                <Typography>NAME</Typography>
+                                                <Typography>USER NAME</Typography>
                                             </TableCell>
                                             <TableCell>
-                                                <Typography>EMAIL 1</Typography>
+                                                <Typography>EMAIL</Typography>
                                             </TableCell>
                                             <TableCell>
-                                                <Typography>EMAIL 2</Typography>
+                                                <Typography>PHONE NO</Typography>
                                             </TableCell>
                                             <TableCell>
-                                                <Typography width={100}>COST. TYPE</Typography>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography width={100}>CONT. NAME</Typography>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography>STATUS</Typography>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography width={100}>PRINT US</Typography>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography>PHONE 1</Typography>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography width={100}>PHONE 2</Typography>
+                                                <Typography>ROLE</Typography>
                                             </TableCell>
                                             <TableCell>
                                                 <Typography>ACTION</Typography>
@@ -584,30 +569,7 @@ export default function UsersList() {
                                                             <a href="">{dataitem.email2}</a>
                                                         </TableCell>
                                                         <TableCell align="left">
-                                                            {dataitem.CustomerType !== null
-                                                                ? dataitem.CustomerType
-                                                                : "INDIVIDUAL"}
-                                                        </TableCell>
-                                                        <TableCell align="left">
-                                                            {dataitem.contactName}
-                                                        </TableCell>
-                                                        <TableCell align="left">
-                                                            {dataitem.status === 1 ? (
-                                                                <span style={{ color: "#02C509" }}>ACTIVE</span>
-                                                            ) : (
-                                                                <span style={{ color: "#FF4026" }}>
-                                                                    INACTIVE
-                                                                </span>
-                                                            )}
-                                                        </TableCell>
-                                                        <TableCell align="left">
                                                             {dataitem.printUs}
-                                                        </TableCell>
-                                                        <TableCell align="left">
-                                                            {dataitem.phone1}
-                                                        </TableCell>
-                                                        <TableCell align="left">
-                                                            {dataitem.phone2}
                                                         </TableCell>
                                                         <TableCell align="left">
                                                             <Stack
