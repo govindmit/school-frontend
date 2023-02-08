@@ -18,7 +18,6 @@ import {
   TextField,
   Pagination,
   IconButton,
-  SelectChangeEvent,
   Tabs,
   Tab,
   Menu,
@@ -31,18 +30,17 @@ import React, { useEffect, useState } from "react";
 import { BiFilterAlt, BiShow } from "react-icons/bi";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBin5Fill } from "react-icons/ri";
-import { useTheme } from "@mui/material/styles";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import MiniDrawer from "../sidebar";
-import { BoxProps } from "@mui/system";
-import { api_url, auth_token, base_url } from "../api/hello";
+import { api_url, auth_token } from "../api/hello";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ConfirmBox from "./confirmbox";
 import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
+import AddActivity from "./addActivity";
+import EditActivity from "./editActivity";
+import ConfirmBox from "../commoncmp/confirmbox";
 
 function a11yProps(index: number) {
   return {
@@ -50,7 +48,6 @@ function a11yProps(index: number) {
     "aria-controls": `simple-tabpanel-${index}`,
   };
 }
-
 //pagination function
 function usePagination(data: any, itemsPerPage: any) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -72,45 +69,27 @@ function usePagination(data: any, itemsPerPage: any) {
   }
   return { next, prev, jump, currentData, currentPage, maxPage };
 }
-
 //filter form values
 type FormValues = {
   customerType: number;
   status: number;
-  phoneNumber: number;
-  contactName: string;
-  sorting: number;
-  ParentId: string;
 };
 
 export default function ActivityList() {
-  const [activites, setactivites] = useState([]);
+  const [activites, setactivites] = useState<any>([]);
   const [searchquery, setsearchquery] = useState("");
   const [searchdata, setsearchdata] = useState([]);
-  const [alldata, setalldata] = useState(0);
-  const [open, setOpen] = React.useState(false);
-  const [users, setUsers] = useState<any>([]);
-  const [custtype, setcusttype] = useState<any>([]);
-  const [tabFilterData, settabFilterData] = useState<any>([]);
   const [All, setAll] = useState(0);
-  const [active, setactive] = useState(0);
-  const [inActive, setinActive] = useState(0);
+  const [Upcommig, setUpcommig] = useState(0);
+  const [Past, setPast] = useState(0);
+  const [Current, setCurrent] = useState(0);
+  const [newActivityOpen, setnewActivityOpen] = React.useState(false);
+  const [editActivityOpen, seteditActivityOpen] = React.useState(false);
+  const [tabFilterData, settabFilterData] = useState<any>([]);
   const [deleteConfirmBoxOpen, setdeleteConfirmBoxOpen] = React.useState(false);
-  const [newCustOpen, setnewCustOpen] = React.useState(false);
-  const [editCustOpen, seteditCustOpen] = React.useState(false);
-  const [editid, seteditid] = useState<any>(0);
   const [value, setValue] = React.useState(0);
-  const [custType, setCustType] = useState<any>(0);
-  const [custStatus, setcustStatus] = useState<any>(2);
-  const [sort, setsort] = useState<any>(0);
-  const [conctName, setconctName] = useState<any>("");
-  const [phoneNum, setphoneNum] = useState<any>("");
-  const [pId, setpId] = useState<any>(0);
-  const [parentId, setparentId] = useState<any>("");
-  const [checked, setChecked] = React.useState(false);
-  const [OpenCSV, setOpenCSV] = React.useState(false);
+  const [editid, seteditid] = useState<any>(0);
   const { register, handleSubmit } = useForm<FormValues>();
-
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -130,8 +109,8 @@ export default function ActivityList() {
   }, []);
 
 
-  //get ACTIVITY data
-  const url = `${api_url}/getactivity`;
+  //get activites
+  const url = `${api_url}/getActivity`;
   const fetchData = async () => {
     try {
       const response = await fetch(url, {
@@ -140,12 +119,11 @@ export default function ActivityList() {
         },
       });
       const json = await response.json();
-      //console.log(json.data);
       setactivites(json.data);
       setsearchdata(json.data);
-      setalldata(json.data.length);
+      setAll(json.data.length);
     } catch (error) {
-      //console.log("error", error);
+      console.log("error", error);
     }
   };
 
@@ -163,11 +141,11 @@ export default function ActivityList() {
     }
   };
 
+  //pagination
   const [row_per_page, set_row_per_page] = useState(5);
   function handlerowchange(e: any) {
     set_row_per_page(e.target.value);
   }
-  //pagination
   let [page, setPage] = useState(1);
   const PER_PAGE = row_per_page;
   const count = Math.ceil(activites.length / PER_PAGE);
@@ -180,7 +158,7 @@ export default function ActivityList() {
   //delete user
   const [deleteData, setDeleteData] = useState<any>({});
   function openDelete(data: any) {
-    setOpen(true);
+    setdeleteConfirmBoxOpen(true);
     setDeleteData(data);
   }
   async function deleteUser() {
@@ -194,13 +172,30 @@ export default function ActivityList() {
       .then((data) => {
         console.log("Success:", data);
         toast.success("Activity Deleted Successfully !");
-        setOpen(false);
+        setdeleteConfirmBoxOpen(false);
         fetchData();
       })
       .catch((error) => {
         console.error("Error:", error);
       });
   }
+
+  // add activity from popup 
+  function handleNewActivityFormOpen() {
+    setnewActivityOpen(true);
+  }
+  const closePoP = (data: any) => {
+    setnewActivityOpen(false);
+  };
+
+  //edit activity popup
+  function handleEditActivityOpen(id: any) {
+    seteditActivityOpen(true);
+    seteditid(id);
+  }
+  const closeEditPoP = (data: any) => {
+    seteditActivityOpen(false);
+  };
 
   return (
     <>
@@ -249,7 +244,7 @@ export default function ActivityList() {
                 variant="contained"
                 size="small"
                 sx={{ width: 150 }}
-              //onClick={handleNewCustomerOpen}
+                onClick={handleNewActivityFormOpen}
               >
                 <b>Add New Activity</b>
               </Button>
@@ -269,26 +264,33 @@ export default function ActivityList() {
                 >
                   <Box>
                     <Tabs
-                      //value={value}
-                      //onChange={handleChange}
+                      value={value}
+                      onChange={handleChange}
                       aria-label="basic tabs example"
                     >
                       <Tab
                         className="filter-list"
-                        label={`All (10})`}
+                        label={`All (${All})`}
                         {...a11yProps(0)}
-                      //onClick={handleAll}
+                      // onClick={handleAll}
                       />
-                      <Tab label={`Upcomming(17)`} {...a11yProps(1)}
+                      <Tab
+                        label={`Upcomming ()`}
+                        {...a11yProps(1)}
                       //onClick={handleActive}
                       />
-                      <Tab label={`Past (10)`} {...a11yProps(2)}
-                      //onClick={handleInActive} 
+                      <Tab
+                        label={`Past ()`}
+                        {...a11yProps(2)}
+                      //onClick={handleInActive}
                       />
-                      <Tab label={`Current (10)`} {...a11yProps(3)}
-                      //onClick={handleInActive} 
+                      <Tab
+                        label={`Current ()`}
+                        {...a11yProps(3)}
+                      //onClick={handleInActive}
                       />
                     </Tabs>
+
                   </Box>
                   <Stack
                     direction="row"
@@ -487,11 +489,9 @@ export default function ActivityList() {
                           name,
                           price,
                           type,
-                          startdate,
+                          startDate,
                           status,
-                          enddate,
-                          description,
-                          image,
+                          endDate,
                         } = item;
                         return (
                           <TableRow
@@ -507,10 +507,10 @@ export default function ActivityList() {
                               1
                             </TableCell >
                             <TableCell align="left">{name}</TableCell>
-                            <TableCell align="left">{type}</TableCell>
-                            <TableCell align="left">{startdate}</TableCell>
-                            <TableCell align="left">{enddate}</TableCell>
-                            <TableCell align="left">{status}</TableCell>
+                            <TableCell align="left">{type === 1 ? "Paid" : "Free"}</TableCell>
+                            <TableCell align="left">{startDate}</TableCell>
+                            <TableCell align="left">{endDate}</TableCell>
+                            <TableCell align="left">{status === 1 ? "Active" : "Draft"}</TableCell>
                             <TableCell align="left">{price}</TableCell>
                             <TableCell align="left">
                               <Stack direction="row" spacing={1} className="action">
@@ -526,16 +526,16 @@ export default function ActivityList() {
                                 </IconButton>
                                 <IconButton
                                   className="action-edit"
-                                // onClick={() =>
-                                //   handleEditCustomerOpen(dataitem.id)
-                                // }
+                                  onClick={() =>
+                                    handleEditActivityOpen(item.id)
+                                  }
                                 >
                                   <FiEdit />
                                 </IconButton>
                                 <IconButton
                                   className="action-delete"
                                   style={{ color: "#F95A37" }}
-                                //onClick={() => openDelete(dataitem)}
+                                  onClick={() => openDelete(item)}
                                 >
                                   <RiDeleteBin5Fill />
                                 </IconButton>
@@ -547,7 +547,7 @@ export default function ActivityList() {
                   </TableBody>
                 </Table>
                 {/* } */}
-                {/* {users == "" ? <h3>No Record found</h3> : ""} */}
+                {activites == "" ? <h3>No Record found</h3> : ""}
                 <Stack
                   style={{ marginBottom: "10px", marginTop: "10px" }}
                   direction="row"
@@ -579,26 +579,28 @@ export default function ActivityList() {
           </div>
         </Box>
       </Box>
-      {/* {newCustOpen ? (
-        <AddCustomer open={newCustOpen} closeDialog={closePoP} />
+      {newActivityOpen ? (
+        <AddActivity open={newActivityOpen} closeDialog={closePoP} />
       ) : (
         ""
       )}
-      {editCustOpen ? (
-        <EditCustomer
+
+      {editActivityOpen ? (
+        <EditActivity
           id={editid}
-          open={editCustOpen}
+          open={editActivityOpen}
           closeDialogedit={closeEditPoP}
         />
       ) : (
         ""
       )}
+
       <ConfirmBox
         open={deleteConfirmBoxOpen}
         closeDialog={() => setdeleteConfirmBoxOpen(false)}
         title={deleteData?.name}
         deleteFunction={deleteUser}
-      /> */}
+      />
       <ToastContainer />
     </>
   );
