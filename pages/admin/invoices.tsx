@@ -788,6 +788,7 @@ export default function Guardians() {
                                           name="startDate"
                                           dateFormat="MM/dd/yyyy"
                                           placeholderText="End Date"
+                                          minDate={startDate}
                                         />
                                       </Stack>
                                     </Grid>

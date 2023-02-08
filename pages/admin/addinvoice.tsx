@@ -34,11 +34,9 @@ import Paper from "@mui/material/Paper";
 import AddCustomer from "../customer/addNewCustomer";
 import AddItem from "./additem";
 import Link from "next/link";
-// import DatePicker from "react-datepicker";
+import DatePicker from "react-datepicker";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import "react-datepicker/dist/react-datepicker.css";
-import InputIcon from "react-multi-date-picker/components/input_icon";
-import DatePicker from "react-multi-date-picker";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -322,7 +320,7 @@ export default function Guardians() {
   const onSubmit: SubmitHandler<FormValues> = async (data: any) => {
     const dates = new Date();
 
-    const invoiceDate = moment(data.date).format("DD/MM/YYYY");
+    const invoiceDate = moment(Invoicedates).format("DD/MM/YYYY");
     const createdDate = moment(dates).format("DD/MM/YYYY");
 
     const requestedData = {
@@ -505,8 +503,8 @@ export default function Guardians() {
   const handleDraft = async () => {
     const dates = new Date();
     var invoiceDatesss;
-    if (sdates != "") {
-      invoiceDatesss = moment(sdates).format("DD/MM/YYYY");
+    if (Invoicedates != "") {
+      invoiceDatesss = moment(Invoicedates).format("DD/MM/YYYY");
     }
     const createdDate = moment(dates).format("DD/MM/YYYY");
 
@@ -546,6 +544,14 @@ export default function Guardians() {
         }
         // console.log(err.response.data.message, "error");
       });
+  };
+  const filterDays = (date: any) => {
+    // Disable Weekends
+    if (date.getDate() < 10) {
+      return false;
+    } else {
+      return true;
+    }
   };
   return (
     <>
@@ -692,7 +698,7 @@ export default function Guardians() {
                       />
                       <InputLabel id="demo-select-small"></InputLabel>
                       &nbsp; &nbsp;
-                      <TextField
+                      {/* <TextField
                         placeholder="Date"
                         fullWidth
                         InputLabelProps={{
@@ -708,20 +714,24 @@ export default function Guardians() {
 
                           required: true,
                         })}
-                      />
+                      /> */}
                       {/* <DatePicker
-                        render={<InputIcon />}
-                        customInput={<CalendarTodayIcon />}
                         className="myDatePicker"
-                        selected={Invoicedates}
                         onChange={(date: any) => setInvoiceDate(date)}
-                        dayClassName={() => "example-datepicker-day-class"}
-                        popperClassName="example-datepicker-class"
-                        todayButton="TODAY"
                         name="startDate"
                         dateFormat="MM/dd/yyyy"
                         placeholderText="Invoice Date"
                       /> */}
+                      <DatePicker
+                        className="myDatePicker"
+                        selected={Invoicedates}
+                        onChange={(date: any) => setInvoiceDate(date)}
+                        name="Date"
+                        dateFormat="MM/dd/yyyy"
+                        placeholderText="Date"
+                        // filterDate={filterDays}
+                        minDate={new Date()}
+                      />
                     </div>
                   </div>
                   <div className="invoiceItem">
