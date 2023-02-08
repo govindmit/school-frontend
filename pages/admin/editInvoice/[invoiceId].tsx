@@ -567,12 +567,12 @@ export default function Guardians() {
       amount: price,
       status: "draft",
       createdDate: invoice[0]?.createdDate,
-      createdBy: "1",
+      createdBy: 1,
       invoiceDate: invoiceDatesss,
       customerId: userID.id ? userID.id : invoice[0]?.customerId,
       invoiceNo: invoiceno ? invoiceno : invoice[0]?.invoiceId,
       updatedAt: createdDate,
-      updatedBy: "1",
+      updatedBy: 1,
     };
     console.log(requestedData, "requestedData");
     await axios({
