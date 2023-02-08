@@ -698,30 +698,6 @@ export default function Guardians() {
                       />
                       <InputLabel id="demo-select-small"></InputLabel>
                       &nbsp; &nbsp;
-                      {/* <TextField
-                        placeholder="Date"
-                        fullWidth
-                        InputLabelProps={{
-                          shrink: true,
-                          required: true,
-                        }}
-                        type="date"
-                        // defaultValue={values.someDate}
-                        {...register("date", {
-                          onChange: (e) => {
-                            setDates(e.target.value);
-                          },
-
-                          required: true,
-                        })}
-                      /> */}
-                      {/* <DatePicker
-                        className="myDatePicker"
-                        onChange={(date: any) => setInvoiceDate(date)}
-                        name="startDate"
-                        dateFormat="MM/dd/yyyy"
-                        placeholderText="Invoice Date"
-                      /> */}
                       <DatePicker
                         className="myDatePicker"
                         selected={Invoicedates}

@@ -24,6 +24,7 @@ import {
   Grid,
   InputLabel,
 } from "@mui/material";
+import moment from "moment";
 import Box from "@mui/material/Box";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -108,7 +109,6 @@ export default function ActivityList() {
     }
   }, []);
 
-
   //get activites
   const url = `${api_url}/getActivity`;
   const fetchData = async () => {
@@ -164,7 +164,7 @@ export default function ActivityList() {
   async function deleteUser() {
     await axios({
       method: "DELETE",
-      url: `${api_url}deleteactivity/${deleteData.id}`,
+      url: `${api_url}/deleteactivity/${deleteData.id}`,
       headers: {
         Authorization: auth_token,
       },
@@ -180,12 +180,13 @@ export default function ActivityList() {
       });
   }
 
-  // add activity from popup 
+  // add activity from popup
   function handleNewActivityFormOpen() {
     setnewActivityOpen(true);
   }
   const closePoP = (data: any) => {
     setnewActivityOpen(false);
+    fetchData();
   };
 
   //edit activity popup
@@ -194,6 +195,8 @@ export default function ActivityList() {
     seteditid(id);
   }
   const closeEditPoP = (data: any) => {
+    fetchData();
+
     seteditActivityOpen(false);
   };
 
@@ -272,25 +275,24 @@ export default function ActivityList() {
                         className="filter-list"
                         label={`All (${All})`}
                         {...a11yProps(0)}
-                      // onClick={handleAll}
+                        // onClick={handleAll}
                       />
                       <Tab
                         label={`Upcomming ()`}
                         {...a11yProps(1)}
-                      //onClick={handleActive}
+                        //onClick={handleActive}
                       />
                       <Tab
                         label={`Past ()`}
                         {...a11yProps(2)}
-                      //onClick={handleInActive}
+                        //onClick={handleInActive}
                       />
                       <Tab
                         label={`Current ()`}
                         {...a11yProps(3)}
-                      //onClick={handleInActive}
+                        //onClick={handleInActive}
                       />
                     </Tabs>
-
                   </Box>
                   <Stack
                     direction="row"
@@ -325,10 +327,10 @@ export default function ActivityList() {
                                               labelId="demo-simple-select-label"
                                               id="demo-simple-select"
                                               size="small"
-                                            // onChange={(e: any) =>
-                                            //   setCustType(e.target.value)
-                                            // }
-                                            // value={custType}
+                                              // onChange={(e: any) =>
+                                              //   setCustType(e.target.value)
+                                              // }
+                                              // value={custType}
                                             >
                                               {/* <MenuItem value={0}>All</MenuItem>
                                               {custtype &&
@@ -358,10 +360,10 @@ export default function ActivityList() {
                                               labelId="demo-simple-select-label"
                                               id="demo-simple-select"
                                               size="small"
-                                            // onChange={(e: any) =>
-                                            //   setcustStatus(e.target.value)
-                                            // }
-                                            // value={custStatus}
+                                              // onChange={(e: any) =>
+                                              //   setcustStatus(e.target.value)
+                                              // }
+                                              // value={custStatus}
                                             >
                                               <MenuItem value={2}>All</MenuItem>
                                               <MenuItem value={1}>
@@ -401,7 +403,7 @@ export default function ActivityList() {
                                           variant="contained"
                                           color="primary"
                                           sx={{ width: 150 }}
-                                        //onClick={ResetFilterValue}
+                                          //onClick={ResetFilterValue}
                                         >
                                           <b>Reset Filter</b>
                                           <span
@@ -424,8 +426,9 @@ export default function ActivityList() {
                     <PopupState variant="popover" popupId="demo-popup-menu">
                       {(popupState) => (
                         <Box>
-                          <MenuItem {...bindTrigger(popupState)}
-                          //onClick={ExportCSV}
+                          <MenuItem
+                            {...bindTrigger(popupState)}
+                            //onClick={ExportCSV}
                           >
                             Export
                             {/* <KeyboardArrowDownIcon /> */}
@@ -489,9 +492,9 @@ export default function ActivityList() {
                           name,
                           price,
                           type,
-                          startDate,
+                          startdate,
                           status,
-                          endDate,
+                          enddate,
                         } = item;
                         return (
                           <TableRow
@@ -503,17 +506,29 @@ export default function ActivityList() {
                             <TableCell padding="checkbox">
                               <Checkbox />
                             </TableCell>
-                            <TableCell align="left">
-                              1
-                            </TableCell >
+                            <TableCell align="left">{id}</TableCell>
                             <TableCell align="left">{name}</TableCell>
-                            <TableCell align="left">{type === 1 ? "Paid" : "Free"}</TableCell>
-                            <TableCell align="left">{startDate}</TableCell>
-                            <TableCell align="left">{endDate}</TableCell>
-                            <TableCell align="left">{status === 1 ? "Active" : "Draft"}</TableCell>
+                            <TableCell align="left">
+                              {type.charAt(0).toUpperCase() + type.slice(1)}
+                            </TableCell>
+                            <TableCell align="left">
+                              {" "}
+                              {moment(startdate, "DD/MM/YYYY").format("ll")}
+                            </TableCell>
+                            <TableCell align="left">
+                              {" "}
+                              {moment(enddate, "DD/MM/YYYY").format("ll")}
+                            </TableCell>
+                            <TableCell align="left">
+                              {status.toUpperCase()}
+                            </TableCell>
                             <TableCell align="left">{price}</TableCell>
                             <TableCell align="left">
-                              <Stack direction="row" spacing={1} className="action">
+                              <Stack
+                                direction="row"
+                                spacing={1}
+                                className="action"
+                              >
                                 <IconButton className="action-view">
                                   <Link
                                     href={`/customer/viewcustomer/${id}`}
