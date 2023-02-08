@@ -142,10 +142,6 @@ export default function CustomerList() {
         },
       });
       const res = await response.json();
-<<<<<<< HEAD
-=======
-      setData(res.data.filter((dt: any) => dt.customerId !== null));
->>>>>>> 3383f3504c0ef6935ed46ce310a50e2bfc1adc84
       setUsers(res.data.filter((dt: any) => dt.customerId !== null));
       settabFilterData(res.data.filter((dt: any) => dt.customerId !== null))
       setsearchdata(res.data.filter((dt: any) => dt.customerId !== null));
@@ -355,7 +351,6 @@ export default function CustomerList() {
   const [mydata, setmydata] = useState<any>("")
   const [myload, setmyload] = useState(false)
   function ExportCSV() {
-<<<<<<< HEAD
     let datas: {
       name: string; email1: string; email2: string;
       phone1: number; phone2: number, CustomerType: string;
@@ -409,12 +404,6 @@ export default function CustomerList() {
         position: toast.POSITION.TOP_CENTER
       });
     }
-=======
-    setopenCSV(true);
-    setTimeout(() => {
-      setopenCSV(false);
-    }, 2000);
->>>>>>> 3383f3504c0ef6935ed46ce310a50e2bfc1adc84
   }
   const headers = [
     { label: "Name", key: "name" },
@@ -430,10 +419,7 @@ export default function CustomerList() {
 
   return (
     <>
-<<<<<<< HEAD
       {OpenCSV && mydata.length > 0 ? <CSVDownload data={mydata} headers={headers} /> : ""}
-=======
->>>>>>> 3383f3504c0ef6935ed46ce310a50e2bfc1adc84
       <Box sx={{ display: "flex" }}>
         <MiniDrawer />
         <Box component="main" sx={{ flexGrow: 1 }}>
@@ -982,20 +968,24 @@ export default function CustomerList() {
           </div>
         </Box>
       </Box>
-      {newCustOpen ? (
-        <AddCustomer open={newCustOpen} closeDialog={closePoP} />
-      ) : (
-        ""
-      )}
-      {editCustOpen ? (
-        <EditCustomer
-          id={editid}
-          open={editCustOpen}
-          closeDialogedit={closeEditPoP}
-        />
-      ) : (
-        ""
-      )}
+      {
+        newCustOpen ? (
+          <AddCustomer open={newCustOpen} closeDialog={closePoP} />
+        ) : (
+          ""
+        )
+      }
+      {
+        editCustOpen ? (
+          <EditCustomer
+            id={editid}
+            open={editCustOpen}
+            closeDialogedit={closeEditPoP}
+          />
+        ) : (
+          ""
+        )
+      }
       <ConfirmBox
         open={deleteConfirmBoxOpen}
         closeDialog={() => setdeleteConfirmBoxOpen(false)}
