@@ -576,7 +576,7 @@ export default function Guardians() {
     };
     console.log(requestedData, "requestedData");
     await axios({
-      method: "PUT",
+      method: "POST",
       url: `${api_url}/editInvoice/${invoiceId}`,
       data: requestedData,
       headers: {
