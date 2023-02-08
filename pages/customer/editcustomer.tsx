@@ -28,7 +28,6 @@ import AddCustomerCmp from "../commoncmp/addCustomerCmp";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useRouter } from "next/router";
 import CloseIcon from "@mui/icons-material/Close";
 import styled from "@emotion/styled";
 const style = {
@@ -75,7 +74,6 @@ interface TabPanelProps {
 
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
-
   return (
     <div
       role="tabpanel"
@@ -121,7 +119,6 @@ export default function EditCustomer({
   open: any;
   closeDialogedit: any;
 }) {
-  const router = useRouter();
   const [selvalue, setselValue] = React.useState(0);
   const [spinner, setshowspinner] = React.useState(false);
   const [opens, setOpen] = React.useState(open);
@@ -174,7 +171,6 @@ export default function EditCustomer({
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setshowspinner(true);
     setBtnDisabled(true);
-    console.log(data, "jjjjjjjjjjjjj");
     const reqData = {
       name: data.name,
       email1: data.email1,
@@ -184,6 +180,7 @@ export default function EditCustomer({
       printUs: data.printUs,
       status: data.status == 1 ? "1" : data.status == 0 ? "0" : "",
       typeId: data.customertype,
+      updatedBy: 1,
     };
     await axios({
       method: "PUT",
@@ -198,7 +195,9 @@ export default function EditCustomer({
           setshowspinner(false);
           setBtnDisabled(false);
           toast.success("Customer Updated Successfully !");
-          setOpen(false);
+          setTimeout(() => {
+            setOpen(false);
+          }, 2000);
           closeDialogedit(data.status);
         }
       })
@@ -209,6 +208,7 @@ export default function EditCustomer({
       });
   };
 
+  let dt;
   const getUserDet = async () => {
     try {
       const response = await fetch(`${api_url}/getuserdetails/${id}`, {
@@ -218,14 +218,14 @@ export default function EditCustomer({
         },
       });
       const res = await response.json();
-
-      console.log(res, "..............................x");
       setValue("name", res.data[0].name);
       setValue("email1", res.data[0].email1);
       setValue("email2", res.data[0].email2);
       setValue("number", res.data[0].phone1);
       setValue("contactName", res.data[0].contactName);
-      setValue("printUs", res.data[0].printUs);
+      setValue("printUs", res.data[0].printus);
+      setValue("status", res.data[0].status);
+      setparentid(res.data[0].parentId)
     } catch (error) {
       console.log("error", error);
     }
@@ -283,7 +283,7 @@ export default function EditCustomer({
                           })}
                         />
                         {errors.name && (
-                          <span style={style}>Field is Required **</span>
+                          <span style={style}>Field is Required *</span>
                         )}
                       </Stack>
                       <FormGroup>
@@ -310,10 +310,19 @@ export default function EditCustomer({
                           size="small"
                           {...register("number", {
                             required: true,
+                            pattern: /^[0-9+-]+$/,
+                            minLength: 10,
+                            maxLength: 10,
                           })}
                         />
-                        {errors.number && (
-                          <span style={style}>Field is Required **</span>
+                        {errors.number?.type === "required" && (
+                          <span style={style}>Field is Required *</span>
+                        )}
+                        {errors.number?.type === "pattern" && (
+                          <span style={style}>Enter Valid Number *</span>
+                        )}
+                        {errors.number?.type === "minLength" && (
+                          <span style={style}>Enter Valid Number *</span>
                         )}
                       </Stack>
                     </Grid>
@@ -330,10 +339,16 @@ export default function EditCustomer({
                           size="small"
                           {...register("email1", {
                             required: true,
+                            pattern: /^\S+@\S+$/i,
                           })}
                         />
-                        {errors.email1 && (
-                          <span style={style}>Field is Required **</span>
+                        {errors.email1?.type === "required" && (
+                          <span style={style}>Field is Required *</span>
+                        )}
+                        {errors.email1?.type === "pattern" && (
+                          <span style={style}>
+                            Please enter a valid email address *
+                          </span>
                         )}
                       </Stack>
                     </Grid>
@@ -348,7 +363,6 @@ export default function EditCustomer({
                           <Select
                             labelId="demo-simple-select-label"
                             id="demo-simple-select"
-                            defaultValue={1}
                             size="small"
                             {...register("status")}
                           >
@@ -529,7 +543,7 @@ export default function EditCustomer({
                           {...register("contactName", { required: true })}
                         />
                         {errors.contactName && (
-                          <span style={style}>Field is Required **</span>
+                          <span style={style}>Field is Required *</span>
                         )}
                       </Stack>
                     </Grid>
@@ -547,7 +561,7 @@ export default function EditCustomer({
                           {...register("printUs", { required: true })}
                         />
                         {errors.printUs && (
-                          <span style={style}>Field is Required **</span>
+                          <span style={style}>Field is Required *</span>
                         )}
                       </Stack>
                     </Grid>

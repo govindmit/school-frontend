@@ -107,6 +107,8 @@ type FormValues = {
   printUs: string;
   status: number;
   type: number;
+  parentId: number;
+  userRole: String;
 };
 
 export default function AddNewParent({
@@ -143,9 +145,10 @@ export default function AddNewParent({
       contactName: data.contactName,
       printUs: data.printUs,
       status: data.status,
-      type: data.type,
+      typeId: data.type,
+      parentId: 0,
+      userRole: "parent",
     };
-
     await axios({
       method: "POST",
       url: `${api_url}/addUser`,
@@ -155,10 +158,10 @@ export default function AddNewParent({
       },
     })
       .then((data) => {
-        if (data.status === 201) {
+        if (data) {
           setshowspinner(false);
           setBtnDisabled(false);
-          toast.success("Customer Added Successfully !");
+          toast.success("Parent Added successfully !");
           reset();
           closeDialog(false);
         }
@@ -239,7 +242,7 @@ export default function AddNewParent({
                           defaultValue={name}
                         />
                         {errors.name && (
-                          <span style={style}>Field is Required **</span>
+                          <span style={style}>Field is Required *</span>
                         )}
                       </Stack>
                       <FormGroup>
@@ -266,10 +269,16 @@ export default function AddNewParent({
                           size="small"
                           {...register("email1", {
                             required: true,
+                            pattern: /^\S+@\S+$/i,
                           })}
                         />
-                        {errors.email1 && (
-                          <span style={style}>Field is Required **</span>
+                        {errors.email1?.type === "required" && (
+                          <span style={style}>Field is Required *</span>
+                        )}
+                        {errors.email1?.type === "pattern" && (
+                          <span style={style}>
+                            Please enter a valid email address *
+                          </span>
                         )}
                       </Stack>
                     </Grid>
@@ -305,10 +314,19 @@ export default function AddNewParent({
                           size="small"
                           {...register("phone1", {
                             required: true,
+                            pattern: /^[0-9+-]+$/,
+                            minLength: 10,
+                            maxLength: 10,
                           })}
                         />
-                        {errors.phone1 && (
-                          <span style={style}>Field is Required **</span>
+                        {errors.phone1?.type === "required" && (
+                          <span style={style}>Field is Required *</span>
+                        )}
+                        {errors.phone1?.type === "pattern" && (
+                          <span style={style}>Enter Valid Number *</span>
+                        )}
+                        {errors.phone1?.type === "minLength" && (
+                          <span style={style}>Enter Valid Number *</span>
                         )}
                       </Stack>
                     </Grid>
@@ -486,7 +504,7 @@ export default function AddNewParent({
                           {...register("contactName", { required: true })}
                         />
                         {errors.contactName && (
-                          <span style={style}>Field is Required **</span>
+                          <span style={style}>Field is Required *</span>
                         )}
                       </Stack>
                     </Grid>
@@ -504,7 +522,7 @@ export default function AddNewParent({
                           {...register("printUs", { required: true })}
                         />
                         {errors.printUs && (
-                          <span style={style}>Field is Required **</span>
+                          <span style={style}>Field is Required *</span>
                         )}
                       </Stack>
                     </Grid>

@@ -1,4 +1,6 @@
 #demo-popup-menu
+  .MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation1.MuiMenu-paper.MuiPaper-elevation8.MuiPopover-paper,
+#demo-popup-popover
   .MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation1.MuiMenu-paper.MuiPaper-elevation8.MuiPopover-paper {
   position: absolute;
   left: 290px !important;
@@ -10,7 +12,8 @@
   padding: 25px;
 }
 
-.MuiContainer-root.MuiContainer-maxWidthLg.filter-box {
+.MuiContainer-root.MuiContainer-maxWidthLg.filter-box,
+.MuiContainer-root.MuiContainer-maxWidthLg {
   width: 100%;
   max-width: 100%;
 }
@@ -23,11 +26,22 @@
 
 .form-filter
   .MuiFormControl-root.MuiFormControl-fullWidth
-  .MuiInputBase-formControl {
+  .MuiInputBase-formControl,
+.form-filter
+  .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-formControl,
+.form-filter
+  .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-multiline,
+.form-filter
+  .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary {
   background: #fff;
   height: 56px;
 }
 
 .MuiAutocomplete-endAdornment {
   top: calc(26% - 14px) !important;
+}
+
+.MuiContainer-root.MuiContainer-maxWidthLg {
+  max-width: 100%;
+  padding: 0;
 }

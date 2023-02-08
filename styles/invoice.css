@@ -15,8 +15,10 @@
   font-size: 24px;
   line-height: 28px;
   text-transform: uppercase;
-
   color: #333333;
+}
+.action-th {
+  width: 200px;
 }
 span.smallHeading {
   font-family: "Roboto";
@@ -29,6 +31,13 @@ span.smallHeading {
   flex: none;
   order: 0;
   flex-grow: 0;
+}
+
+.ISBOX.popup.send.MuiBox-root.css-1wnsr1i {
+  background: #ffffff;
+  box-shadow: none;
+  border-radius: 8px;
+  border: none;
 }
 span.secondHeading {
   font-family: "Roboto";
@@ -234,7 +243,7 @@ span.iexport {
   padding: 0px;
 }
 h3.ehead {
-  margin: 11px;
+  margin: 0px;
   font-family: "Roboto";
   font-style: normal;
   font-weight: 500;
@@ -243,9 +252,16 @@ h3.ehead {
   letter-spacing: 0.15px;
   color: #5a6873;
 }
-.Isend {
-  margin: 14px;
+
+.ISBOX.popup.send.MuiBox-root.css-1wnsr1i .Isend > div:first-child > h3 {
+  padding: 15px 15px;
+  border-bottom: 1px solid #eee;
 }
+
+.ISBOX.popup.send.MuiBox-root.css-1wnsr1i .Isend > div .eshead {
+  padding: 0 18px;
+}
+
 svg.telegram {
   /* height: 31px; */
   font-size: 42px;
@@ -254,10 +270,11 @@ svg.telegram {
 }
 .sendEmailBox {
   display: flex;
-  background: "#EFF3FD";
-  height: "8vh";
   width: 100%;
-  background-color: "#EFF3FD";
+  background: #eff3fd;
+  margin-bottom: 35px;
+  margin-top: 35px;
+  align-items: center;
 }
 h3.eshead {
   font-family: "Roboto";
@@ -266,6 +283,97 @@ h3.eshead {
   font-size: 18px;
   line-height: 21px;
   color: #5f6160;
+}
+h5.apply {
+  margin: 3px 0;
+  font-size: 16px;
+  padding: -1px;
+}
+
+#modal-modal-description {
+  padding: 7px 25px 22px;
+}
+
+.kk button {
+  position: static !important;
+  width: auto !important;
+}
+
+.kk {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.iadiv .red {
+  color: #f95a37;
+}
+
+.popup.MuiBox-root {
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+.popup.MuiBox-root #modal-modal-title {
+  padding: 14px 25px 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+body .hh {
+  width: 171px;
+}
+
+.total-amount {
+  padding-top: 10px;
+  border-top: 1px solid #ccc;
+  display: flex;
+}
+
+.iadiv {
+  display: flex;
+  margin-bottom: 7px;
+}
+
+.hh {
+  font-size: 16px;
+  color: #5a6873;
+}
+
+h5.apply {
+  margin: 3px;
+  font-size: 16px;
+  padding: -1px;
+  padding-top: 13px;
+  padding-bottom: 3px;
+  color: #26ceb3;
+}
+
+.popup input {
+  height: 37px;
+}
+
+.want span {
+  color: rgb(90, 104, 115);
+  margin-top: 8px;
+}
+
+.popup .demo-select-small {
+  height: 37px;
+  line-height: 37px;
+}
+
+.sendEmailBox svg {
+  fill: #1a70c5;
+  width: 56px;
+  height: 56px;
+  float: left;
+}
+
+.sendEmailBox h3 {
+  color: #5f6160;
+  font-weight: 400;
+  margin: 0 0 0 7px;
 }
 
 .css-1mfccow {
