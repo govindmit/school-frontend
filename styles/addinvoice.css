@@ -13,12 +13,20 @@ span.GItitle {
 .isave {
   margin-left: 53%;
 }
+.iatitle.flex {
+  display: flex;
+}
 .aititle {
   display: flex;
 }
-.iatitle {
-  /* width: 22%; */
-  display: grid;
+
+.invoive-img {
+  margin-right: 17px;
+}
+.itele span {
+  width: 100%;
+  display: inline-block;
+  line-height: 30px;
 }
 span.iahead {
   font-family: "Roboto";
@@ -29,6 +37,10 @@ span.iahead {
   letter-spacing: 0.853923px;
   color: #000000;
 }
+.aititle {
+  display: flex;
+  justify-content: space-between;
+}
 span.line {
   font-family: "Roboto";
   font-style: normal;
@@ -37,10 +49,15 @@ span.line {
   line-height: 20px;
   color: #333333;
 }
-.itele {
-  display: grid;
-  margin-left: 46%;
+
+.icenter {
+  margin: 25px 0 50px;
 }
+
+.itele {
+  text-align: right;
+}
+
 span.iainvoice {
   font-family: "Roboto";
   font-style: normal;
@@ -56,17 +73,33 @@ span.iainvoice {
   margin-top: 44px;
 }
 .ickks {
-  display: inline-flex;
-  margin: 26px;
+  display: flex;
+  margin: 0 0 32px;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.invoiceItem {
+  margin-top: 10px;
+  display: inline-block;
   width: 100%;
 }
-.invoicedateField {
-  margin-left: 56%;
+
+.invoiceItem th {
+  background: #f5f5f5;
+  box-shadow: none;
 }
+
+.invoiceItem .MuiPaper-root.MuiPaper-elevation {
+  box-shadow: none;
+  border-bottom: none;
+}
+
 button.MuiButtonBase-root.MuiButton-root.MuiButton-text.MuiButton-textPrimary.MuiButton-sizeMedium.MuiButton-textSizeMedium.itembtn.css-1gwix6k-MuiButtonBase-root-MuiButton-root {
   background: #13c710;
   border: 1.5px solid #13c710;
   border-radius: 5px;
+  padding: 10px 25px;
 }
 .MuiInputBase-root.invoiceNote.css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root {
   width: 399px;
@@ -74,17 +107,30 @@ button.MuiButtonBase-root.MuiButton-root.MuiButton-text.MuiButton-textPrimary.Mu
 }
 .invoiceSubTotal {
   display: flex;
-  /* margin-left: 24px; */
+  margin-left: 0px;
+  justify-content: space-between;
 }
-.invoiceTotalamount {
-  display: grid;
-  margin-left: 48%;
+
+.invoice-name-detail span {
+  width: 100%;
+  display: inline-block;
+  line-height: 29px;
 }
+
+.total {
+  width: 100%;
+  display: flex;
+}
+.amount {
+  display: flex;
+  margin-top: 16px;
+}
+
 .sdiv {
   display: flex;
 }
 .sidiv {
-  width: 152px;
+  width: 200px;
 }
 span.select {
   margin-left: 230px;
@@ -125,6 +171,14 @@ span.selectss {
   /* height: 65%; */
 }
 
+.sdiv {
+  border: 1px solid #eaeaea;
+  padding: 20px 20px;
+  flex-wrap: wrap;
+}
+
+.grey-button {
+  background: #696969 !important;
 .err_str {
   color: red;
 }
@@ -196,4 +250,5 @@ span.selectss {
   border-top: 0px;
   text-align: right;
   margin-right: 20px;
+
 }

@@ -1,4 +1,4 @@
-import { TableHead, styled } from "@mui/material";
+import { TableHead, styled, Breadcrumbs } from "@mui/material";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
@@ -271,9 +271,10 @@ export default function Guardians() {
     getItem();
   };
   const style = {
-    color: "red",
-    fontSize: "12px",
-    fontWeight: "bold",
+    color: "#F95A37",
+    fontSize: "16px",
+    fontWeight: "500",
+    marginBottom: "20px",
   };
 
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
@@ -560,66 +561,96 @@ export default function Guardians() {
 
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <div className="guardianBar">
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="bars">
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+              style={{ padding: "8px", marginBottom: "15px" }}
+            >
+              <Stack>
+                <Stack spacing={3}>
+                  <Breadcrumbs separator="›" aria-label="breadcrumb">
+                    <Link
+                      key="1"
+                      color="inherit"
+                      href="/"
+                      style={{ color: "#1A70C5", textDecoration: "none" }}
+                    >
+                      Home
+                    </Link>
+                    <Link
+                      key="2"
+                      color="inherit"
+                      href="/"
+                      style={{ color: "#7D86A5", textDecoration: "none" }}
+                    >
+                      Create Invoices
+                    </Link>
+                  </Breadcrumbs>
+                </Stack>
+                <Typography
+                  variant="h5"
+                  gutterBottom
+                  style={{ fontWeight: "bold", color: "#333333" }}
+                >
+                  Create Invoices
+                </Typography>
+              </Stack>
+              <div className="cinvoice">
                 <div>
-                  <Link href="/admin/dashboard">
-                    <span className="smallHeading">Home</span>&nbsp;
-                  </Link>
-                  <span>&gt;</span> &nbsp;{" "}
-                  <span className="secondHeading">Create Invoices</span>
-                </div>
-                <div className="cinvoice">
-                  <div>
-                    <span className="GItitle">CREATE INVOICES</span>
-                  </div>
-                  <div className="isave">
-                    <BootstrapButton onClick={handleDraft} type="button">
-                      Save as Draft
-                    </BootstrapButton>
+                  <BootstrapButton
+                    onClick={handleDraft}
+                    type="button"
+                    className="grey-button"
+                  >
+                    Save as Draft
+                  </BootstrapButton>
 
-                    <BootstrapButton type="submit">
-                      Save & issue
-                    </BootstrapButton>
-                  </div>
-                  {/* <Button sx={{ margin: "7px" }} type="button">
+                  <BootstrapButton type="submit">Save & issue</BootstrapButton>
+                </div>
+                {/* <Button sx={{ margin: "7px" }} type="button">
                     Add Guardians
                   </Button> */}
-                </div>
               </div>
+            </Stack>
+            <form onSubmit={handleSubmit(onSubmit)}>
               <div className="midBar">
-                <div className="guardianList">
-                  <div className="required">
+                <div className="guardianList" style={{ padding: "50px" }}>
+                  <div className="required" style={{ textAlign: "right" }}>
                     <Typography style={style}>
                       {errors.date ? (
                         <span>Invoice Date Feild is Required **</span>
                       ) : error != "" ? (
-                        <span>{error} **</span>
+                        <span></span>
                       ) : (
                         ""
                       )}
                     </Typography>
                   </div>
                   <div className="aititle">
-                    <div>
-                      {" "}
-                      <Image
-                        className="iaimg"
-                        src="/favicon.ico"
-                        alt="Picture of the author"
-                        width={65}
-                        height={62}
-                      />
-                    </div>
-                    <div className="iatitle">
-                      <span className="iahead">Qatar International School</span>
-                      <span className="line">
-                        Qatar international school W.L.L
-                      </span>
-                      <span className="line">
-                        United Nations St, West Bay, P.O. Box: 5697
-                      </span>
-                      <span className="line">Doha, Qatar</span>
+                    <div className="iatitle flex">
+                      <div className="invoive-img">
+                        {" "}
+                        <Image
+                          className="iaimg"
+                          src="/favicon.ico"
+                          alt="Picture of the author"
+                          width={65}
+                          height={62}
+                        />
+                      </div>
+                      <div className="invoice-name-detail">
+                        <span className="iahead">
+                          Qatar International School
+                        </span>
+                        <span className="line">
+                          Qatar international school W.L.L
+                        </span>
+                        <span className="line">
+                          United Nations St, West Bay, P.O. Box: 5697
+                        </span>
+                        <span className="line">Doha, Qatar</span>
+                      </div>
                     </div>
                     <div className="itele">
                       <span className="Tline">Telephone: 443434343</span>
@@ -636,6 +667,10 @@ export default function Guardians() {
                     <div className="ickk">
                       <InputLabel htmlFor="name">
                         Customer <span className="err_str">*</span>
+                        <div
+                          className="required"
+                          style={{ textAlign: "right" }}
+                        ></div>
                       </InputLabel>
                       <Autocomplete
                         style={{ width: 300 }}
@@ -678,6 +713,9 @@ export default function Guardians() {
                         //   required: true,
                         // })}
                       />
+                      <Typography style={style}>
+                        <span>{error} </span>
+                      </Typography>
                       <Typography style={style}>
                         {errors.Customername ? (
                           <span>Feild is Required **</span>
@@ -769,12 +807,17 @@ export default function Guardians() {
                         <div>$ &nbsp;{price}.00</div>
                       </div>
                       <div className="sdiv">
-                        <div className="sidiv">Total</div>
-                        <div>$ &nbsp;{price}.00</div>
-                      </div>
-                      <div className="sdiv">
-                        <div className="sidiv">Amount Paid</div>
-                        <div>$ &nbsp;0.00</div>
+
+                        <div class="total">
+                          <div className="sidiv">Total</div>
+                          <div>$ &nbsp;{price}</div>
+                        </div>
+
+                        <div class="amount">
+                          <div className="sidiv">Amount Paid</div>
+                          <div>$ &nbsp;0.00</div>
+                        </div>
+
                       </div>
                       <div className="sdiv">
                         <div className="sidiv">Balance Due</div>
