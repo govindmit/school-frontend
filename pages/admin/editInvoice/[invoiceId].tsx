@@ -1,4 +1,4 @@
-import { TableHead, styled, Breadcrumbs } from "@mui/material";
+import { TableHead, styled } from "@mui/material";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
@@ -11,14 +11,13 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 import Autocomplete from "@mui/material/Autocomplete";
-import { useRouter } from "next/router";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
-import MiniDrawer from "../sidebar";
+import MiniDrawer from "../../sidebar";
 import axios from "axios";
 import TextField from "@mui/material/TextField";
-import { api_url, auth_token, base_url } from "../api/hello";
+import { api_url, auth_token, base_url } from "../../api/hello";
 import moment from "moment";
 import Image from "next/image";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -31,13 +30,12 @@ import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import { Button, OutlinedInput } from "@mui/material";
 import Paper from "@mui/material/Paper";
-import AddCustomer from "../customer/addNewCustomer";
-import AddItem from "./additem";
+import AddCustomer from "../../customer/addNewCustomer";
+import AddItem from "../additem";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import DatePicker from "react-datepicker";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import "react-datepicker/dist/react-datepicker.css";
-
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
     padding: theme.spacing(2),
@@ -217,35 +215,37 @@ interface EnhancedTableProps {
 }
 export default function Guardians() {
   let localUrl = process.env.NEXT_PUBLIC_BASE_URL;
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState<any>({});
   const [opens, setOpens] = useState(false);
   const [userID, setUserId] = useState<FormValues | any>([]);
 
   const [sdates, setDates] = useState<FormValues | any>([]);
   const [Invoicedates, setInvoiceDate] = useState(null);
+  const [value, setValue] = useState<any>({ id: null, title: null });
 
   const [user, setUser] = useState<FormValues | any>([]);
   const [dollerOpen, setDollerOpen] = useState(false);
   const [popup, setSecondPop] = useState(false);
   const [inputValue, setInputValue] = useState<FormValues | any>([]);
-  const [newCustOpen, setnewCustOpen] = useState(false);
   const [id, setId] = useState<FormValues | any>([]);
-  const [date, setDate] = useState<FormValues | any>([]);
-  const [query, setQuery] = useState<FormValues | any>([]);
   const [error, setError] = useState<FormValues | any>([]);
   const [invoiceno, setInvoiceNo] = useState();
-
+  const [invoice, setInvoice] = useState<FormValues | any>([]);
   const [item, setItem] = useState<FormValues | any>([]);
   const [product, setProduct] = useState<FormValues | any>([]);
   const [selected, setSelected] = useState<readonly string[]>([]);
+  // const [itemId, setItemId] = useState<readonly string[]>([]);
 
+  // var itemId: { id: number }[] = [];
+  // console.log(itemId, "....................................ids");
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm<FormValues>();
+
+  const router = useRouter();
+  const { invoiceId } = router.query;
 
   setSecondPop;
   const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
@@ -270,11 +270,11 @@ export default function Guardians() {
     setSelected(newSelected);
     getItem();
   };
+
   const style = {
-    color: "#F95A37",
-    fontSize: "16px",
-    fontWeight: "500",
-    marginBottom: "20px",
+    color: "red",
+    fontSize: "12px",
+    fontWeight: "bold",
   };
 
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
@@ -316,43 +316,49 @@ export default function Guardians() {
   const onclose = () => {
     setSecondPop(false);
   };
-  const router = useRouter();
 
   const onSubmit: SubmitHandler<FormValues> = async (data: any) => {
+    // const invoiceDate = moment(data.date).format("DD/MM/YYYY");
+    // const createdDate = moment(dates).format("DD/MM/YYYY");
+
+    var itemId: any[] = [];
     const dates = new Date();
+    var invoiceDatesss = "";
+    if (Invoicedates) {
+      invoiceDatesss = moment(Invoicedates).format("DD/MM/YYYY");
+    } else {
+      invoiceDatesss = invoice[0]?.invoiceDate;
+    }
 
-    const invoiceDate = moment(Invoicedates).format("DD/MM/YYYY");
+    for (let row of product) {
+      itemId.push(row.id);
+    }
     const createdDate = moment(dates).format("DD/MM/YYYY");
-
     const requestedData = {
-      itemId: selected,
+      itemId: itemId,
       amount: price,
       status: "pending",
-      createdDate: createdDate,
+      createdDate: invoice[0]?.createdDate,
       createdBy: "1",
-      invoiceDate: invoiceDate,
-      customerId: userID.id,
-      invoiceNo: invoiceno,
+      invoiceDate: invoiceDatesss,
+      customerId: userID.id ? userID.id : invoice[0]?.customerId,
+      invoiceNo: invoiceno ? invoiceno : invoice[0]?.invoiceId,
+      updatedAt: createdDate,
+      updatedBy: "1",
     };
-    console.log(requestedData, "requestedInvoice");
     await axios({
-      method: "POST",
-      url: `${api_url}/createInvoice`,
+      method: "PUT",
+      url: `${api_url}/editInvoice/${invoiceId}`,
       data: requestedData,
       headers: {
         "content-type": "multipart/form-data",
       },
     })
       .then((res) => {
-        if (!res) {
-          toast.success("something wents wrong !");
-        } else {
-          reset();
-          toast.success("Invoice created Successfully !");
-          setTimeout(() => {
-            router.push("/admin/invoices");
-          }, 1000);
-        }
+        toast.success("Invoice updated Successfully !");
+        setTimeout(() => {
+          router.push("/admin/invoices");
+        }, 1000);
       })
       .catch((err) => {
         if (err) {
@@ -360,7 +366,7 @@ export default function Guardians() {
         }
         // console.log(err.response.data.message, "error");
       });
-    // window.location.replace("/admin/invoices");
+    // console.log(requestedData, "requestedData");
   };
   const getItem = async () => {
     await axios({
@@ -377,12 +383,22 @@ export default function Guardians() {
       .catch((err) => {});
   };
 
+  var option: { id: number; title: string }[] = [];
+  user &&
+    user.map((data: any, key: any) => {
+      return option.push({
+        id: data.id,
+        title: data.name,
+      });
+    });
   useEffect(() => {
     let cusId = localStorage.getItem("customerId");
-    invoiceNo();
+    invoiceDataById();
     // if (cusId) {
     //   setOpens(false);
     // }
+
+    getItems();
     getUser();
     getItem();
   }, []);
@@ -401,6 +417,28 @@ export default function Guardians() {
   };
   const handleItem = () => {
     setDollerOpen(true);
+  };
+  const getItems = async () => {
+    invoiceDataById();
+
+    // let requested = {
+    //   id: invoice[0]?.itemId,
+    // };
+    // await axios({
+    //   method: "POST",
+    //   url: `${api_url}/getItembyid`,
+    //   data: requested,
+
+    //   headers: {
+    //     "content-type": "multipart/form-data",
+    //   },
+    // })
+    //   .then((res) => {
+    //     setProduct(res?.data.data);
+    //     console.log(res, "........................h");
+    //     handleCloses();
+    //   })
+    //   .catch((err) => {});
   };
 
   const handleCreate = async () => {
@@ -443,20 +481,7 @@ export default function Guardians() {
       })
       .catch((err) => {});
   };
-  const handleSearch = (e: any) => {
-    setInputValue(e.target.value);
-    if (e.target.value === "") {
-      setInputValue("");
-    } else {
-      const filterres =
-        user &&
-        user.filter((item: any) => {
-          return item.firstName.includes(e.target.value.toLowerCase());
-        });
-      const dtd = filterres;
-      setUser(dtd);
-    }
-  };
+
   const handleClickOpen = () => {
     setOpens(true);
   };
@@ -485,59 +510,84 @@ export default function Guardians() {
     }
   };
 
-  const invoiceNo = async () => {
+  const invoiceDataById = async () => {
     await axios({
-      method: "GET",
-      url: `${api_url}/getInvoiceNo`,
+      method: "POST",
+      url: `${api_url}/getInvoice/${invoiceId}`,
       headers: {
         Authorization: auth_token,
       },
     })
       .then((res) => {
-        // setUser(res?.data.data);
+        setInvoice(res?.data.data);
+        setValue({
+          id: res?.data.data[0].id,
+          title: res?.data.data[0].name,
+        });
+        if (res) {
+          let requested = {
+            id: res?.data.data[0]?.itemId,
+          };
+          axios({
+            method: "POST",
+            url: `${api_url}/getItembyid`,
+            data: requested,
+
+            headers: {
+              "content-type": "multipart/form-data",
+            },
+          })
+            .then((res) => {
+              setProduct(res?.data.data);
+            })
+            .catch((err) => {});
+        }
+        setUser(res?.data.data);
         setInvoiceNo(res?.data?.invoiceNo);
-        // console.log(res, "response");
       })
       .catch((err) => {});
   };
-  console.log(invoiceno, "invoiceno");
+
   const handleDraft = async () => {
+    var itemId: any[] = [];
     const dates = new Date();
-    var invoiceDatesss;
-    if (Invoicedates != "") {
+    var invoiceDatesss = "";
+    if (Invoicedates) {
       invoiceDatesss = moment(Invoicedates).format("DD/MM/YYYY");
+    } else {
+      invoiceDatesss = invoice[0]?.invoiceDate;
+    }
+
+    for (let row of product) {
+      itemId.push(row.id);
     }
     const createdDate = moment(dates).format("DD/MM/YYYY");
-
     const requestedData = {
-      itemId: selected,
+      itemId: itemId,
       amount: price,
       status: "draft",
-      createdDate: createdDate,
-      createdBy: "1",
+      createdDate: invoice[0]?.createdDate,
+      createdBy: 1,
       invoiceDate: invoiceDatesss,
-      customerId: userID.id,
-      invoiceNo: invoiceno,
+      customerId: userID.id ? userID.id : invoice[0]?.customerId,
+      invoiceNo: invoiceno ? invoiceno : invoice[0]?.invoiceId,
+      updatedAt: createdDate,
+      updatedBy: 1,
     };
-    console.log(requestedData, "requestedDraft");
-
+    console.log(requestedData, "requestedData");
     await axios({
       method: "POST",
-      url: `${api_url}/createInvoice`,
+      url: `${api_url}/editInvoice/${invoiceId}`,
       data: requestedData,
       headers: {
         "content-type": "multipart/form-data",
       },
     })
       .then((res) => {
-        toast.success("Invoice created Successfully !");
+        toast.success("Invoice updated Successfully !");
         setTimeout(() => {
           router.push("/admin/invoices");
         }, 1000);
-        if (!res) {
-          reset();
-          toast.success("All field are required !");
-        }
       })
       .catch((err) => {
         if (err) {
@@ -546,14 +596,6 @@ export default function Guardians() {
         // console.log(err.response.data.message, "error");
       });
   };
-  const filterDays = (date: any) => {
-    // Disable Weekends
-    if (date.getDate() < 10) {
-      return false;
-    } else {
-      return true;
-    }
-  };
   return (
     <>
       <Box sx={{ display: "flex" }}>
@@ -561,96 +603,66 @@ export default function Guardians() {
 
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <div className="guardianBar">
-            <Stack
-              direction="row"
-              alignItems="center"
-              justifyContent="space-between"
-              style={{ padding: "8px", marginBottom: "15px" }}
-            >
-              <Stack>
-                <Stack spacing={3}>
-                  <Breadcrumbs separator="›" aria-label="breadcrumb">
-                    <Link
-                      key="1"
-                      color="inherit"
-                      href="/"
-                      style={{ color: "#1A70C5", textDecoration: "none" }}
-                    >
-                      Home
-                    </Link>
-                    <Link
-                      key="2"
-                      color="inherit"
-                      href="/"
-                      style={{ color: "#7D86A5", textDecoration: "none" }}
-                    >
-                      Create Invoices
-                    </Link>
-                  </Breadcrumbs>
-                </Stack>
-                <Typography
-                  variant="h5"
-                  gutterBottom
-                  style={{ fontWeight: "bold", color: "#333333" }}
-                >
-                  Create Invoices
-                </Typography>
-              </Stack>
-              <div className="cinvoice">
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="bars">
                 <div>
-                  <BootstrapButton
-                    onClick={handleDraft}
-                    type="button"
-                    className="grey-button"
-                  >
-                    Save as Draft
-                  </BootstrapButton>
-
-                  <BootstrapButton type="submit">Save & issue</BootstrapButton>
+                  <Link href="/admin/dashboard">
+                    <span className="smallHeading">Home</span>&nbsp;
+                  </Link>
+                  <span>&gt;</span> &nbsp;{" "}
+                  <span className="secondHeading">Edit Invoices</span>
                 </div>
-                {/* <Button sx={{ margin: "7px" }} type="button">
+                <div className="cinvoice">
+                  <div>
+                    <span className="GItitle">EDIT INVOICES</span>
+                  </div>
+                  <div className="isave">
+                    <BootstrapButton onClick={handleDraft} type="button">
+                      Save as Draft
+                    </BootstrapButton>
+
+                    <BootstrapButton type="submit">
+                      Save as issue
+                    </BootstrapButton>
+                  </div>
+                  {/* <Button sx={{ margin: "7px" }} type="button">
                     Add Guardians
                   </Button> */}
+                </div>
               </div>
-            </Stack>
-            <form onSubmit={handleSubmit(onSubmit)}>
               <div className="midBar">
-                <div className="guardianList" style={{ padding: "50px" }}>
-                  <div className="required" style={{ textAlign: "right" }}>
+                <div className="guardianList">
+                  <div className="required">
                     <Typography style={style}>
                       {errors.date ? (
                         <span>Invoice Date Feild is Required **</span>
                       ) : error != "" ? (
-                        <span></span>
+                        <span>{error} **</span>
                       ) : (
                         ""
                       )}
                     </Typography>
                   </div>
                   <div className="aititle">
-                    <div className="iatitle flex">
-                      <div className="invoive-img">
-                        {" "}
-                        <Image
-                          className="iaimg"
-                          src="/favicon.ico"
-                          alt="Picture of the author"
-                          width={65}
-                          height={62}
-                        />
-                      </div>
-                      <div className="invoice-name-detail">
-                        <span className="iahead">
-                          Qatar International School
-                        </span>
-                        <span className="line">
-                          Qatar international school W.L.L
-                        </span>
-                        <span className="line">
-                          United Nations St, West Bay, P.O. Box: 5697
-                        </span>
-                        <span className="line">Doha, Qatar</span>
-                      </div>
+                    <div>
+                      {" "}
+                      <Image
+                        className="iaimg"
+                        src="/favicon.ico"
+                        alt="Picture of the author"
+                        width={65}
+                        height={62}
+                      />
+                    </div>
+                    <div className="iatitle">
+                      <span className="iahead">Qatar International School</span>
+                      <span className="line">
+                        Qatar international school W.L.L
+                      </span>
+                      <span className="line">
+                        United Nations St, West Bay, P.O. Box: 5697
+                      </span>
+                      <span className="line">Doha, Qatar</span>
                     </div>
                     <div className="itele">
                       <span className="Tline">Telephone: 443434343</span>
@@ -667,19 +679,49 @@ export default function Guardians() {
                     <div className="ickk">
                       <InputLabel htmlFor="name">
                         Customer <span className="err_str">*</span>
-                        <div
-                          className="required"
-                          style={{ textAlign: "right" }}
-                        ></div>
                       </InputLabel>
                       <Autocomplete
                         style={{ width: 300 }}
                         fullWidth
+                        value={value}
+                        inputValue={inputValue}
+                        onChange={(event, newValue) => {
+                          setValue(newValue);
+                          setUserId(newValue);
+                        }}
+                        onInputChange={(event, newInputValue) => {
+                          setInputValue(newInputValue);
+                        }}
+                        options={option}
+                        getOptionLabel={(option) => option.title || ""}
+                        isOptionEqualToValue={(option, title) =>
+                          option.title === value.title
+                        }
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            variant="outlined"
+                            placeholder="Find or create a parent"
+                          />
+                        )}
+                        noOptionsText={
+                          <Button onClick={handleClickOpen}>
+                            {inputValue === "" ? (
+                              "Please enter 1 or more character"
+                            ) : (
+                              <span>
+                                Add &nbsp;<b>{inputValue}</b>&nbsp;as a new
+                                parent
+                              </span>
+                            )}
+                          </Button>
+                        }
+                      />
+                      {/* <Autocomplete
+                        style={{ width: 300 }}
+                        fullWidth
                         inputValue={inputValue}
                         onChange={(event, value) => setUserId(value)}
-                        // onChange={(event, newValue) => {
-                        //   setValue(newValue);
-                        // }}
                         // defaultValue={{
                         //   name: `${gg[0]?.name}`,
                         // }}
@@ -687,7 +729,13 @@ export default function Guardians() {
                           setInputValue(newInputValue);
                         }}
                         options={user}
-                        getOptionLabel={(option: any) => option.name}
+                        value={invoice[0]?.name}
+                        // getOptionLabel={(option: any) => option.name}
+                        getOptionLabel={(option: any) => option.name || ""}
+                        isOptionEqualToValue={(option: any, title) =>
+                          option.name
+                        }
+                        // getOptionLabel={(option) => `${option.name}`}
                         renderInput={(params) => (
                           <TextField
                             {...params}
@@ -712,10 +760,7 @@ export default function Guardians() {
                         //   },
                         //   required: true,
                         // })}
-                      />
-                      <Typography style={style}>
-                        <span>{error} </span>
-                      </Typography>
+                      /> */}
                       <Typography style={style}>
                         {errors.Customername ? (
                           <span>Feild is Required **</span>
@@ -732,7 +777,7 @@ export default function Guardians() {
                         placeholder="# Generate If blank"
                         fullWidth
                         onChange={(e: any) => setInvoiceNo(e.target.value)}
-                        value={invoiceno}
+                        value={!invoiceno ? invoice[0]?.invoiceId : invoiceno}
                       />
                       <InputLabel id="demo-select-small"></InputLabel>
                       &nbsp; &nbsp;
@@ -740,11 +785,9 @@ export default function Guardians() {
                         className="myDatePicker"
                         selected={Invoicedates}
                         onChange={(date: any) => setInvoiceDate(date)}
-                        name="Date"
+                        name="startDate"
                         dateFormat="MM/dd/yyyy"
-                        placeholderText="Date"
-                        // filterDate={filterDays}
-                        minDate={new Date()}
+                        placeholderText={invoice[0]?.invoiceDate}
                       />
                     </div>
                   </div>
@@ -807,15 +850,12 @@ export default function Guardians() {
                         <div>$ &nbsp;{price}.00</div>
                       </div>
                       <div className="sdiv">
-                        <div className="total">
-                          <div className="sidiv">Total</div>
-                          <div>$ &nbsp;{price}</div>
-                        </div>
-
-                        <div className="amount">
-                          <div className="sidiv">Amount Paid</div>
-                          <div>$ &nbsp;0.00</div>
-                        </div>
+                        <div className="sidiv">Total</div>
+                        <div>$ &nbsp;{price}.00</div>
+                      </div>
+                      <div className="sdiv">
+                        <div className="sidiv">Amount Paid</div>
+                        <div>$ &nbsp;0.00</div>
                       </div>
                       <div className="sdiv">
                         <div className="sidiv">Balance Due</div>
@@ -865,6 +905,12 @@ export default function Guardians() {
                               {item &&
                                 item.map((row: any) => {
                                   const isItemSelected = isSelected(row.id);
+                                  {
+                                    console.log(
+                                      isItemSelected,
+                                      "selectedddmap"
+                                    );
+                                  }
                                   const labelId = `enhanced-table-checkbox-${row.id}`;
 
                                   return (
