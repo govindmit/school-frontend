@@ -1003,7 +1003,6 @@ export default function Guardians() {
 
                           <TableCell align="left" className="action-td">
                             <div className="btn">
-
                               <div className="idiv">
                                 <Image
                                   onClick={() => generateSimplePDF(item)}
@@ -1057,7 +1056,6 @@ export default function Guardians() {
                                 </Button>
                               )}
 
-
                               {disable || paiddisable ? (
                                 <Button className="idiv" disabled={true}>
                                   {/* <div className="idiv"> */}
@@ -1082,7 +1080,6 @@ export default function Guardians() {
                                 </Button>
                               )}
                               <Button className="idiv">
-
                                 <Image
                                   onClick={() => handleOpen(item.id)}
                                   src="/deleteicon.svg"
@@ -1207,7 +1204,6 @@ export default function Guardians() {
                 <BootstrapDialogTitle
                   id="customized-dialog-title"
                   onClose={handleCloses}
-                  style={{ color: "#5A6873" }}
                 >
                   Recieve Payment
                 </BootstrapDialogTitle>
@@ -1326,10 +1322,8 @@ export default function Guardians() {
                       <div>${recievedPay.amount}.00</div>
                     </div>
                     <div className="iadiv">
-
                       <div className="hh red">Total Credit Balance:</div>
                       <div>$0.00</div>
-
                     </div>
                   </Grid>
                   <div className="total-amount">
