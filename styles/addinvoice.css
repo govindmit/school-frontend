@@ -179,6 +179,7 @@ span.selectss {
 
 .grey-button {
   background: #696969 !important;
+}
 .err_str {
   color: red;
 }
@@ -250,5 +251,4 @@ span.selectss {
   border-top: 0px;
   text-align: right;
   margin-right: 20px;
-
 }
