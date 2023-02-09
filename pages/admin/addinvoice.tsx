@@ -802,12 +802,12 @@ export default function Guardians() {
                         <div>$ &nbsp;{price}</div>
                       </div>
                       <div className="sdiv">
-                        <div class="total">
+                        <div className="total">
                           <div className="sidiv">Total</div>
                           <div>$ &nbsp;{price}</div>
                         </div>
 
-                        <div class="amount">
+                        <div className="amount">
                           <div className="sidiv">Amount Paid</div>
                           <div>$ &nbsp;0.00</div>
                         </div>
