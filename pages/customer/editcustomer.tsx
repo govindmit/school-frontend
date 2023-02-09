@@ -309,10 +309,14 @@ export default function EditCustomer({
                           size="small"
                           {...register("name", {
                             required: true,
+                            validate: (value) => { return !!value.trim() }
                           })}
                         />
-                        {errors.name && (
+                        {errors.name?.type === "required" && (
                           <span style={style}>Field is Required *</span>
+                        )}
+                        {errors.name?.type === "validate" && (
+                          <span style={style}>Field can't be blank *</span>
                         )}
                       </Stack>
                       <FormGroup>
