@@ -689,11 +689,14 @@ export default function Guardians() {
                           </MenuItem>
                           <Menu {...bindMenu(popupState)}>
                             <Container>
-                              <Grid style={{ width: "1030px" }}>
+                              <Grid>
                                 <Typography variant="h5">
                                   <b>Filter</b>
                                 </Typography>
-                                <form onSubmit={handleSubmit(onSubmit)}>
+                                <form
+                                  onSubmit={handleSubmit(onSubmit)}
+                                  className="form-filter"
+                                >
                                   <Grid container spacing={3}>
                                     <Grid
                                       className="filterdd"
@@ -701,7 +704,7 @@ export default function Guardians() {
                                       xs={12}
                                       md={3}
                                     >
-                                      <Stack spacing={1} sx={{ width: 300 }}>
+                                      <Stack spacing={1} sx={{}}>
                                         <InputLabel id="demo-select-small">
                                           Customer
                                         </InputLabel>
@@ -962,45 +965,29 @@ export default function Guardians() {
                       <TableCell>DATE</TableCell>
                       <TableCell>EXPECTED PAYMENT DATE</TableCell>
                       <TableCell>TOTAL</TableCell>
-                      <TableCell>ACTION</TableCell>
+                      <TableCell className="action-th">ACTION</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     {DATA.currentData() && DATA.currentData() ? (
                       DATA.currentData().map((item: any) => (
-                        <TableRow hover tabIndex={-1} role="checkbox">
+                        <TableRow
+                          hover
+                          tabIndex={-1}
+                          role="checkbox"
+                          className="boder-bottom"
+                        >
                           <TableCell padding="checkbox">
                             <Checkbox />
                           </TableCell>
-                          {disable ? (
-                            <TableCell
-                              component="th"
-                              scope="row"
-                              padding="none"
-                            >
-                              <Link
-                                href={`/admin/editInvoice/${item.id}`}
-                                style={{
-                                  color: "#26CEB3",
-                                }}
-                              >
-                                <TableCell align="left">
-                                  {item.invoiceId}
-                                </TableCell>
-                              </Link>
-                            </TableCell>
-                          ) : (
-                            <TableCell
-                              component="th"
-                              scope="row"
-                              padding="none"
-                            >
-                              <TableCell align="left">
-                                {item.invoiceId}
-                              </TableCell>
-                            </TableCell>
-                          )}
-                          <TableCell align="left">{item.name}</TableCell>
+
+                          <TableCell component="th" scope="row" padding="none">
+                            <TableCell align="left">{item.invoiceId}</TableCell>
+                          </TableCell>
+                          <TableCell align="left">
+                            <b>{item.name}</b>
+                          </TableCell>
+
                           <TableCell align="left">
                             {moment(item.createdDate, "DD/MM/YYYY").format(
                               "ll"
@@ -1014,8 +1001,18 @@ export default function Guardians() {
 
                           <TableCell align="left">$ {item.amount}.00</TableCell>
 
-                          <TableCell align="left">
+                          <TableCell align="left" className="action-td">
                             <div className="btn">
+                              <div className="idiv">
+                                <Image
+                                  onClick={() => generateSimplePDF(item)}
+                                  src="/download.svg"
+                                  alt="Picture of the author"
+                                  width={35}
+                                  height={35}
+                                />
+                              </div>
+
                               {disable ? (
                                 <Button className="idiv" disabled={true}>
                                   <Image
@@ -1043,8 +1040,8 @@ export default function Guardians() {
                                     onClick={() => handleShare(item)}
                                     src="/share.svg"
                                     alt="Picture of the author"
-                                    width={25}
-                                    height={25}
+                                    width={35}
+                                    height={35}
                                   />
                                 </Button>
                               ) : (
@@ -1053,8 +1050,8 @@ export default function Guardians() {
                                     onClick={() => handleShare(item)}
                                     src="/share.svg"
                                     alt="Picture of the author"
-                                    width={25}
-                                    height={25}
+                                    width={35}
+                                    height={35}
                                   />
                                 </Button>
                               )}
@@ -1066,8 +1063,8 @@ export default function Guardians() {
                                     onClick={() => handleClickOpen(item)}
                                     src="/doller.svg"
                                     alt="Picture of the author"
-                                    width={25}
-                                    height={25}
+                                    width={35}
+                                    height={35}
                                   />
                                   {/* </div> */}
                                 </Button>
@@ -1077,8 +1074,8 @@ export default function Guardians() {
                                     onClick={() => handleClickOpen(item)}
                                     src="/doller.svg"
                                     alt="Picture of the author"
-                                    width={25}
-                                    height={25}
+                                    width={35}
+                                    height={35}
                                   />
                                 </Button>
                               )}
@@ -1087,8 +1084,8 @@ export default function Guardians() {
                                   onClick={() => handleOpen(item.id)}
                                   src="/deleteicon.svg"
                                   alt="Picture of the author"
-                                  width={25}
-                                  height={25}
+                                  width={35}
+                                  height={35}
                                 />
                               </Button>
                             </div>
@@ -1140,7 +1137,7 @@ export default function Guardians() {
               aria-labelledby="modal-modal-title"
               aria-describedby="modal-modal-description"
             >
-              <Box sx={style} className="ISBOX">
+              <Box sx={style} className="ISBOX popup send">
                 <div className="Isend">
                   <div>
                     <h3 className="ehead">Send Document</h3>
@@ -1173,7 +1170,7 @@ export default function Guardians() {
               aria-labelledby="modal-modal-title"
               aria-describedby="modal-modal-description"
             >
-              <Box sx={style}>
+              <Box sx={style} className="popup">
                 <Typography id="modal-modal-title" variant="h6" component="h2">
                   Delete Invoice
                 </Typography>
@@ -1210,7 +1207,7 @@ export default function Guardians() {
                 >
                   Recieve Payment
                 </BootstrapDialogTitle>
-                <DialogContent dividers>
+                <DialogContent dividers className="popup">
                   <Grid>
                     <Stack>
                       <Grid container spacing={2}>
@@ -1314,6 +1311,7 @@ export default function Guardians() {
                       <FormControlLabel
                         control={<Checkbox defaultChecked />}
                         label="Want to use credit balance $100"
+                        className="want"
                       />
                     </FormGroup> */}
                     <div>
@@ -1324,12 +1322,11 @@ export default function Guardians() {
                       <div>${recievedPay.amount}.00</div>
                     </div>
                     <div className="iadiv">
-                      <div className="hh">Total Credit Balance:</div>
-                      <div>$0</div>
+                      <div className="hh red">Total Credit Balance:</div>
+                      <div>$0.00</div>
                     </div>
-                    &nbsp;
                   </Grid>
-                  <div className="iadiv">
+                  <div className="total-amount">
                     <div className="hh">Total Amount:</div>
                     <div>${recievedPay.amount}.00</div>
                   </div>

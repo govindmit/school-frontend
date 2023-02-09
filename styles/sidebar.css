@@ -166,11 +166,27 @@ body .guardianBar {
   color: #7d86a5;
 }
 
-.button-new {
+body .button-new {
   width: 201px;
   height: 50px;
   font-size: 18px;
   font-weight: 500;
+}
+
+.text-grey {
+  color: rgba(0, 0, 0, 0.6) !important;
+}
+
+body h3.MuiTypography-h3 {
+  font-size: 24px;
+  color: #333333;
+}
+
+body h4.MuiTypography-h4 {
+  font-size: 20px;
+  color: #333333;
+  font-weight: bold;
+  text-transform: capitalize;
 }
 
 .filter-list > div {
