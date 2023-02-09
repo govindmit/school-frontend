@@ -43,79 +43,94 @@ type FormValues = {
     email: string;
     number: number;
     roleid: number;
+    previlegs: Array<string>;
 };
 
 export default function AddNewUser() {
     const [roles, setroles] = React.useState<any>([])
+    let permitions: { Dashboard?: any; Invoices?: any; SalesInvoices?: any; Activites?: any; Customers?: any; Cumposers?: any }[] = [];
+    const [onDashboard, setonDashboard] = React.useState(false);
+    const [Dashboardchecked, setDashboardchecked] = React.useState<any>({
+        canView: false,
+        canAdd: false,
+        canEdit: false,
+        canDelete: false
+    });
+    if (onDashboard) {
+        permitions.push({
+            Dashboard: Dashboardchecked
+        })
+    }
+
+    const [onInvoice, setonInvoice] = React.useState(false);
+    const [Invoicechecked, setInvoicechecked] = React.useState<any>({
+        canView: false,
+        canAdd: false,
+        canEdit: false,
+        canDelete: false
+    });
+    if (onInvoice) {
+        permitions.push({
+            Invoices: Invoicechecked
+        })
+    }
+
+    const [onActivity, setonActivity] = React.useState(false);
+    const [Activitychecked, setActivitychecked] = React.useState<any>({
+        canView: false,
+        canAdd: false,
+        canEdit: false,
+        canDelete: false
+    });
+    if (onActivity) {
+        permitions.push({
+            Activites: Activitychecked
+        })
+    }
+
+    const [onCustomer, setonCustomer] = React.useState(false);
+    const [Customerchecked, setCustomerchecked] = React.useState<any>({
+        canView: false,
+        canAdd: false,
+        canEdit: false,
+        canDelete: false
+    });
+    if (onCustomer) {
+        permitions.push({
+            Customers: Customerchecked
+        })
+    }
+
+    const [onComposer, setonComposer] = React.useState(false);
+    const [Composerchecked, setComposerchecked] = React.useState<any>({
+        canView: false,
+        canAdd: false,
+        canEdit: false,
+        canDelete: false
+    });
+
+    if (onComposer) {
+        permitions.push({
+            Cumposers: Customerchecked
+        })
+    }
+
+    const [onSalesInvoice, setonSalesInvoice] = React.useState(false);
+    const [SalesInvoicechecked, setSalesInvoicechecked] = React.useState<any>({
+        canView: false,
+        canAdd: false,
+        canEdit: false,
+        canDelete: false
+    });
+    if (onSalesInvoice) {
+        permitions.push({
+            SalesInvoices: SalesInvoicechecked
+        })
+    }
 
     React.useEffect(() => {
         UserService.GetRoles().then(response => setroles(response));
     }, []);
-
-    const [checked, setChecked] = React.useState<any>({
-        dashboardcheck: false,
-        invoicescheck: false,
-    });
-
-    const [previlegs, setprevilegs] = React.useState<any>({
-        dashboard_permition: 0,
-        invoice_permition: 0,
-        activity_permition: 0,
-        customer_permition: 0,
-        sales_inv_permition: 0,
-        composer_permition: 0
-    });
-
-    const handleChange = (event: any) => {
-        if (event.target.checked === true && event.target.name === "dashboard") {
-            setChecked({
-                dashboardcheck: event.target.checked,
-            })
-            setprevilegs({
-                dashboard_permition: 1, invoice_permition: 0,
-                activity_permition: 0,
-                customer_permition: 0,
-                sales_inv_permition: 0,
-                composer_permition: 0
-            });
-        } else {
-            setChecked({
-                dashboardcheck: event.target.checked,
-            })
-            setprevilegs({
-                dashboard_permition: 0, activity_permition: 0,
-                customer_permition: 0,
-                sales_inv_permition: 0,
-                composer_permition: 0
-            });
-        }
-        // if (event.target.checked === true && event.target.name === "invoices") {
-        //     setChecked({
-        //         invoicescheck: event.target.checked,
-        //     })
-        //     setprevilegs({
-        //         dashboard_permition: 0, invoice_permition: 1,
-        //         activity_permition: 0,
-        //         customer_permition: 0,
-        //         sales_inv_permition: 0,
-        //         composer_permition: 0
-        //     });
-        // } else {
-        //     setChecked({
-        //         invoicescheck: event.target.checked,
-        //     })
-        //     setprevilegs({
-        //         dashboard_permition: 0, invoice_permition: 0,
-        //         activity_permition: 0,
-        //         customer_permition: 0,
-        //         sales_inv_permition: 0,
-        //         composer_permition: 0
-        //     });
-        // }
-    };
-
-    // console.log(previlegs);
-
 
     const {
         register,
@@ -125,14 +140,14 @@ export default function AddNewUser() {
     } = useForm<FormValues>();
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
-        console.log(data); return false;
-        // setshowspinner(true);
-        //setBtnDisabled(true);
         const reqData = {
             name: data.name,
-            email: data.email,
-            phone: data.number,
+            email1: data.email,
+            phone1: data.number,
             roleId: data.roleid,
+            previlegs: permitions,
+            status: 1,
+            userRole: "user"
         };
         await axios({
             method: "POST",
@@ -144,17 +159,12 @@ export default function AddNewUser() {
         })
             .then((data: any) => {
                 if (data) {
-                    //setshowspinner(false);
-                    //setBtnDisabled(false);
-                    toast.success("Customer Added Successfully !");
+                    toast.success("User Added Successfully !");
                     reset();
-
                 }
             })
             .catch((error) => {
                 toast.error("Email Allready Registred !");
-                //setshowspinner(false);
-                //setBtnDisabled(false);
             });
     };
 
@@ -369,7 +379,7 @@ export default function AddNewUser() {
                                     <Card sx={{ minWidth: 275 }}>
                                         <CardContent>
                                             <Typography><b>Manage Permillage for this user</b></Typography>
-                                            <Box sx={{ width: "100%" }}>
+                                            <Box sx={{ width: "100%" }} style={{ marginTop: "10px" }}>
                                                 <Stack
                                                     direction="row"
                                                     alignItems="center"
@@ -382,21 +392,35 @@ export default function AddNewUser() {
                                                             DASHBOARD
                                                         </Stack>
                                                         <span style={{ color: "#333333" }}>
-                                                            OFF
+                                                            {onDashboard ? (<span style={{ color: "#1976d2" }}>ON</span>) : "OFF"}
                                                         </span>
                                                     </Stack>
                                                     <Switch
-                                                        checked={checked.dashboardcheck}
-                                                        onChange={handleChange}
+                                                        checked={onDashboard}
+                                                        onChange={e => setonDashboard(e.target.checked)}
                                                         name="dashboard"
                                                         inputProps={{ 'aria-label': 'controlled' }}
                                                     />
                                                 </Stack>
+                                                {onDashboard ? (<Stack direction="row" style={{ marginTop: "10px" }} >
+                                                    <FormGroup>
+                                                        <FormControlLabel control={<Checkbox checked={Dashboardchecked.canView} onChange={e => setDashboardchecked({ ...Dashboardchecked, canView: e.target.checked })} />} label="Can View" />
+                                                    </FormGroup>
+                                                    <FormGroup>
+                                                        <FormControlLabel control={<Checkbox checked={Dashboardchecked.canAdd} onChange={e => setDashboardchecked({ ...Dashboardchecked, canAdd: e.target.checked })} />} label="Can Add" />
+                                                    </FormGroup>
+                                                    <FormGroup>
+                                                        <FormControlLabel control={<Checkbox checked={Dashboardchecked.canEdit} onChange={e => setDashboardchecked({ ...Dashboardchecked, canEdit: e.target.checked })} />} label="Can Edit" />
+                                                    </FormGroup>
+                                                    <FormGroup>
+                                                        <FormControlLabel control={<Checkbox checked={Dashboardchecked.canDelete} onChange={e => setDashboardchecked({ ...Dashboardchecked, canDelete: e.target.checked })} />} label="Can Delete" />
+                                                    </FormGroup>
+                                                </Stack>) : ""}
                                                 <Stack
                                                     direction="row"
                                                     alignItems="center"
                                                     justifyContent="space-between"
-                                                    style={{ backgroundColor: "#F0F4FF", padding: "10px", marginTop: "10px" }}
+                                                    style={{ backgroundColor: "#F0F4FF", padding: "10px", marginTop: "15px" }}
 
                                                 >
                                                     <Stack>
@@ -404,21 +428,35 @@ export default function AddNewUser() {
                                                             INVOICE
                                                         </Stack>
                                                         <span style={{ color: "#333333" }}>
-                                                            OFF
+                                                            {onInvoice ? (<span style={{ color: "#1976d2" }}>ON</span>) : "OFF"}
                                                         </span>
                                                     </Stack>
                                                     <Switch
-                                                        checked={checked.invoicescheck}
-                                                        onChange={handleChange}
+                                                        checked={onInvoice}
+                                                        onChange={e => setonInvoice(e.target.checked)}
                                                         inputProps={{ 'aria-label': 'controlled' }}
                                                         name="invoices"
                                                     />
                                                 </Stack>
+                                                {onInvoice ? (<Stack direction="row" style={{ marginTop: "10px" }} >
+                                                    <FormGroup>
+                                                        <FormControlLabel control={<Checkbox checked={Invoicechecked.canView} onChange={e => setInvoicechecked({ ...Invoicechecked, canView: e.target.checked })} />} label="Can View" />
+                                                    </FormGroup>
+                                                    <FormGroup>
+                                                        <FormControlLabel control={<Checkbox checked={Invoicechecked.canAdd} onChange={e => setInvoicechecked({ ...Invoicechecked, canAdd: e.target.checked })} />} label="Can Add" />
+                                                    </FormGroup>
+                                                    <FormGroup>
+                                                        <FormControlLabel control={<Checkbox checked={Invoicechecked.canEdit} onChange={e => setInvoicechecked({ ...Invoicechecked, canEdit: e.target.checked })} />} label="Can Edit" />
+                                                    </FormGroup>
+                                                    <FormGroup>
+                                                        <FormControlLabel control={<Checkbox checked={Invoicechecked.canDelete} onChange={e => setInvoicechecked({ ...Invoicechecked, canDelete: e.target.checked })} />} label="Can Delete" />
+                                                    </FormGroup>
+                                                </Stack>) : ""}
                                                 <Stack
                                                     direction="row"
                                                     alignItems="center"
                                                     justifyContent="space-between"
-                                                    style={{ backgroundColor: "#F0F4FF", padding: "10px", marginTop: "10px" }}
+                                                    style={{ backgroundColor: "#F0F4FF", padding: "10px", marginTop: "15px" }}
 
                                                 >
                                                     <Stack>
@@ -426,20 +464,34 @@ export default function AddNewUser() {
                                                             SALES INVOICE
                                                         </Stack>
                                                         <span style={{ color: "#333333" }}>
-                                                            OFF
+                                                            {onSalesInvoice ? (<span style={{ color: "#1976d2" }}>ON</span>) : "OFF"}
                                                         </span>
                                                     </Stack>
                                                     <Switch
-                                                        //checked={checked}
-                                                        onChange={handleChange}
+                                                        checked={onSalesInvoice}
+                                                        onChange={e => setonSalesInvoice(e.target.checked)}
                                                         inputProps={{ 'aria-label': 'controlled' }}
                                                     />
                                                 </Stack>
+                                                {onSalesInvoice ? (<Stack direction="row" style={{ marginTop: "10px" }} >
+                                                    <FormGroup>
+                                                        <FormControlLabel control={<Checkbox checked={SalesInvoicechecked.canView} onChange={e => setSalesInvoicechecked({ ...SalesInvoicechecked, canView: e.target.checked })} />} label="Can View" />
+                                                    </FormGroup>
+                                                    <FormGroup>
+                                                        <FormControlLabel control={<Checkbox checked={SalesInvoicechecked.canAdd} onChange={e => setSalesInvoicechecked({ ...SalesInvoicechecked, canAdd: e.target.checked })} />} label="Can Add" />
+                                                    </FormGroup>
+                                                    <FormGroup>
+                                                        <FormControlLabel control={<Checkbox checked={SalesInvoicechecked.canEdit} onChange={e => setSalesInvoicechecked({ ...SalesInvoicechecked, canEdit: e.target.checked })} />} label="Can Edit" />
+                                                    </FormGroup>
+                                                    <FormGroup>
+                                                        <FormControlLabel control={<Checkbox checked={SalesInvoicechecked.canDelete} onChange={e => setSalesInvoicechecked({ ...SalesInvoicechecked, canDelete: e.target.checked })} />} label="Can Delete" />
+                                                    </FormGroup>
+                                                </Stack>) : ""}
                                                 <Stack
                                                     direction="row"
                                                     alignItems="center"
                                                     justifyContent="space-between"
-                                                    style={{ backgroundColor: "#F0F4FF", padding: "10px", marginTop: "10px" }}
+                                                    style={{ backgroundColor: "#F0F4FF", padding: "10px", marginTop: "15px" }}
 
                                                 >
                                                     <Stack>
@@ -447,20 +499,35 @@ export default function AddNewUser() {
                                                             ACTIVITY
                                                         </Stack>
                                                         <span style={{ color: "#333333" }}>
-                                                            OFF
+                                                            {onActivity ? (<span style={{ color: "#1976d2" }}>ON</span>) : "OFF"}
                                                         </span>
                                                     </Stack>
                                                     <Switch
-                                                        //checked={checked}
-                                                        onChange={handleChange}
+                                                        checked={onActivity}
+                                                        onChange={e => setonActivity(e.target.checked)}
                                                         inputProps={{ 'aria-label': 'controlled' }}
+                                                        name="activity"
                                                     />
                                                 </Stack>
+                                                {onActivity ? (<Stack direction="row" style={{ marginTop: "10px" }} >
+                                                    <FormGroup>
+                                                        <FormControlLabel control={<Checkbox checked={Activitychecked.canView} onChange={e => setActivitychecked({ ...Activitychecked, canView: e.target.checked })} />} label="Can View" />
+                                                    </FormGroup>
+                                                    <FormGroup>
+                                                        <FormControlLabel control={<Checkbox checked={Activitychecked.canAdd} onChange={e => setActivitychecked({ ...Activitychecked, canAdd: e.target.checked })} />} label="Can Add" />
+                                                    </FormGroup>
+                                                    <FormGroup>
+                                                        <FormControlLabel control={<Checkbox checked={Activitychecked.canEdit} onChange={e => setActivitychecked({ ...Activitychecked, canEdit: e.target.checked })} />} label="Can Edit" />
+                                                    </FormGroup>
+                                                    <FormGroup>
+                                                        <FormControlLabel control={<Checkbox checked={Activitychecked.canDelete} onChange={e => setActivitychecked({ ...Activitychecked, canDelete: e.target.checked })} />} label="Can Delete" />
+                                                    </FormGroup>
+                                                </Stack>) : ""}
                                                 <Stack
                                                     direction="row"
                                                     alignItems="center"
                                                     justifyContent="space-between"
-                                                    style={{ backgroundColor: "#F0F4FF", padding: "10px", marginTop: "10px" }}
+                                                    style={{ backgroundColor: "#F0F4FF", padding: "10px", marginTop: "15px" }}
 
                                                 >
                                                     <Stack>
@@ -468,31 +535,34 @@ export default function AddNewUser() {
                                                             CUSTOMER
                                                         </Stack>
                                                         <span style={{ color: "#333333" }}>
-                                                            OFF
+                                                            {onCustomer ? (<span style={{ color: "#1976d2" }}>ON</span>) : "OFF"}
                                                         </span>
                                                     </Stack>
                                                     <Switch
-                                                        //checked={checked}
-                                                        onChange={handleChange}
+                                                        checked={onCustomer}
+                                                        onChange={e => setonCustomer(e.target.checked)}
                                                         inputProps={{ 'aria-label': 'controlled' }}
                                                     />
                                                 </Stack>
-                                                <Stack direction="row" style={{ marginTop: "10px" }} >
+                                                {onCustomer ? (<Stack direction="row" style={{ marginTop: "10px" }} >
                                                     <FormGroup>
-                                                        <FormControlLabel control={<Checkbox defaultChecked />} label="Can View" />
+                                                        <FormControlLabel control={<Checkbox checked={Customerchecked.canView} onChange={e => setCustomerchecked({ ...Customerchecked, canView: e.target.checked })} />} label="Can View" />
                                                     </FormGroup>
                                                     <FormGroup>
-                                                        <FormControlLabel control={<Checkbox defaultChecked />} label="Can Edit" />
+                                                        <FormControlLabel control={<Checkbox checked={Customerchecked.canAdd} onChange={e => setCustomerchecked({ ...Customerchecked, canAdd: e.target.checked })} />} label="Can Add" />
                                                     </FormGroup>
                                                     <FormGroup>
-                                                        <FormControlLabel control={<Checkbox defaultChecked />} label="Can Delete" />
+                                                        <FormControlLabel control={<Checkbox checked={Customerchecked.canEdit} onChange={e => setCustomerchecked({ ...Customerchecked, canEdit: e.target.checked })} />} label="Can Edit" />
                                                     </FormGroup>
-                                                </Stack>
+                                                    <FormGroup>
+                                                        <FormControlLabel control={<Checkbox checked={Customerchecked.canDelete} onChange={e => setCustomerchecked({ ...Customerchecked, canDelete: e.target.checked })} />} label="Can Delete" />
+                                                    </FormGroup>
+                                                </Stack>) : ""}
                                                 <Stack
                                                     direction="row"
                                                     alignItems="center"
                                                     justifyContent="space-between"
-                                                    style={{ backgroundColor: "#F0F4FF", padding: "10px", marginTop: "10px" }}
+                                                    style={{ backgroundColor: "#F0F4FF", padding: "10px", marginTop: "15px" }}
 
                                                 >
                                                     <Stack>
@@ -500,15 +570,29 @@ export default function AddNewUser() {
                                                             COMPOSER
                                                         </Stack>
                                                         <span style={{ color: "#333333" }}>
-                                                            OFF
+                                                            {onComposer ? (<span style={{ color: "#1976d2" }}>ON</span>) : "OFF"}
                                                         </span>
                                                     </Stack>
                                                     <Switch
-                                                        // checked={checked}
-                                                        onChange={handleChange}
+                                                        checked={onComposer}
+                                                        onChange={e => setonComposer(e.target.checked)}
                                                         inputProps={{ 'aria-label': 'controlled' }}
                                                     />
                                                 </Stack>
+                                                {onComposer ? (<Stack direction="row" style={{ marginTop: "10px" }} >
+                                                    <FormGroup>
+                                                        <FormControlLabel control={<Checkbox checked={Composerchecked.canView} onChange={e => setComposerchecked({ ...Composerchecked, canView: e.target.checked })} />} label="Can View" />
+                                                    </FormGroup>
+                                                    <FormGroup>
+                                                        <FormControlLabel control={<Checkbox checked={Composerchecked.canAdd} onChange={e => setComposerchecked({ ...Composerchecked, canAdd: e.target.checked })} />} label="Can Add" />
+                                                    </FormGroup>
+                                                    <FormGroup>
+                                                        <FormControlLabel control={<Checkbox checked={Composerchecked.canEdit} onChange={e => setComposerchecked({ ...Composerchecked, canEdit: e.target.checked })} />} label="Can Edit" />
+                                                    </FormGroup>
+                                                    <FormGroup>
+                                                        <FormControlLabel control={<Checkbox checked={Composerchecked.canDelete} onChange={e => setComposerchecked({ ...Composerchecked, canDelete: e.target.checked })} />} label="Can Delete" />
+                                                    </FormGroup>
+                                                </Stack>) : ""}
                                             </Box>
                                         </CardContent>
                                     </Card>
