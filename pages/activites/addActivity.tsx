@@ -11,6 +11,8 @@ import {
   DialogContent,
   DialogTitle,
   Stack,
+  Typography,
+  Menu,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -21,6 +23,11 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import styled from "@emotion/styled";
 import { GridCloseIcon } from "@mui/x-data-grid";
+import MenuItem from "@mui/material/MenuItem";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import moment from "moment";
 
 const style = {
   color: "red",
@@ -77,9 +84,7 @@ enum statusEnum {
 
 type FormValues = {
   name: string;
-  type: typeEnum;
-  image: any;
-  shortdescription: string;
+  type: string;
   description: string;
   price: number;
   startDate: string;
@@ -98,30 +103,37 @@ export default function AddActivity({
   const [spinner, setshowspinner] = useState(false);
   const [btnDisabled, setBtnDisabled] = useState(false);
   const [opens, setOpen] = React.useState(open);
+  const [type, setType] = useState<FormValues | any>(null);
+  const [status, setStatus] = useState<FormValues | any>(null);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>();
 
+  console.log(errors, "errorssss");
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setshowspinner(true);
     setBtnDisabled(true);
+    const sDate = moment(startDate).format("DD/MM/YYYY");
+    const eDate = moment(endDate).format("DD/MM/YYYY");
+
     const reqData = {
       name: data.name,
       type: data.type,
-      description: data.description,
-      shortdescription: data.shortdescription,
-      image: data.image[0],
-      startdate: data.startDate,
-      enddate: data.endDate,
+      startdate: sDate,
+      enddate: eDate,
       status: data.status,
       price: data.price,
     };
     const end_point = "addactivity";
+
+    console.log(reqData, "reqdata");
     await axios({
       method: "POST",
-      url: api_url + end_point,
+      url: `${api_url}/addactivity`,
       data: reqData,
       headers: {
         Authorization: auth_token,
@@ -132,11 +144,9 @@ export default function AddActivity({
         if (data.status === 201) {
           setshowspinner(false);
           setBtnDisabled(false);
+          closeDialog(false);
+
           toast.success("Activity Added Successfully !");
-          const redirect = () => {
-            router.push("/activites/activitylist");
-          };
-          setTimeout(redirect, 2000);
         }
       })
       .catch((error) => {
@@ -150,7 +160,11 @@ export default function AddActivity({
     closeDialog(false);
     setOpen(false);
   };
-
+  const style = {
+    color: "red",
+    fontSize: "12px",
+    fontWeight: "bold",
+  };
   return (
     <BootstrapDialog
       onClose={closeDialog}
@@ -168,14 +182,22 @@ export default function AddActivity({
                 <Grid container spacing={2}>
                   <Grid item xs={12} md={12}>
                     <Stack spacing={1}>
-                      <InputLabel htmlFor="name">Activity Name <span className="err_str">*</span></InputLabel>
+                      <InputLabel htmlFor="name">
+                        Activity Name <span className="err_str">*</span>
+                      </InputLabel>
                       <OutlinedInput
                         type="text"
                         id="name"
                         placeholder="Activity name ..."
                         fullWidth
                         size="small"
+                        {...register("name", {
+                          required: true,
+                        })}
                       />
+                      <Typography style={style}>
+                        {errors.name && <span>Name Feild is Required **</span>}
+                      </Typography>
                     </Stack>
                   </Grid>
                 </Grid>
@@ -185,25 +207,53 @@ export default function AddActivity({
                   <Grid item xs={12} md={6}>
                     <Stack spacing={1}>
                       <InputLabel htmlFor="name">Type</InputLabel>
-                      <OutlinedInput
-                        type="text"
-                        id="name"
-                        placeholder="Phone..."
-                        fullWidth
-                        size="small"
-                      />
+                      <Select
+                        defaultValue="none"
+                        value={type}
+                        id="type"
+                        labelId="demo-select-small"
+                        label="Status"
+                        {...register("type", {
+                          onChange: (e) => {
+                            setType(e.target.value);
+                          },
+                          required: true,
+                        })}
+                      >
+                        <MenuItem value="Free">Free</MenuItem>
+                        <MenuItem value="Paid">Paid</MenuItem>
+                      </Select>
+                      <Typography style={style}>
+                        {errors.type && <span>Type Feild is Required **</span>}
+                      </Typography>
                     </Stack>
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <Stack spacing={1}>
                       <InputLabel htmlFor="name">Status</InputLabel>
-                      <OutlinedInput
-                        type="text"
-                        id="name"
-                        placeholder="Address1..."
-                        fullWidth
-                        size="small"
-                      />
+                      <Select
+                        defaultValue="none"
+                        // onChange={(e) => setStatus(e.target.value)}
+                        value={status}
+                        labelId="demo-select-small"
+                        id="demo-select-small"
+                        label="Status"
+                        {...register("status", {
+                          onChange: (e) => {
+                            setStatus(e.target.value);
+                          },
+                          required: true,
+                        })}
+                      >
+                        <MenuItem value="Upcoming">Upcoming</MenuItem>
+                        <MenuItem value="Past">Past</MenuItem>
+                        <MenuItem value="Current">Current</MenuItem>
+                      </Select>
+                      <Typography style={style}>
+                        {errors.status && (
+                          <span>status Feild is Required **</span>
+                        )}
+                      </Typography>
                     </Stack>
                   </Grid>
                 </Grid>
@@ -213,24 +263,27 @@ export default function AddActivity({
                   <Grid item xs={12} md={6}>
                     <Stack spacing={1}>
                       <InputLabel htmlFor="name">Start Date</InputLabel>
-                      <OutlinedInput
-                        type="text"
-                        id="name"
-                        placeholder="City..."
-                        fullWidth
-                        size="small"
+                      <DatePicker
+                        className="myDatePicker"
+                        selected={startDate}
+                        onChange={(date: any) => setStartDate(date)}
+                        name="startDate"
+                        dateFormat="MM/dd/yyyy"
+                        placeholderText="Start Date"
                       />
                     </Stack>
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <Stack spacing={1}>
                       <InputLabel htmlFor="name">End Date*</InputLabel>
-                      <OutlinedInput
-                        type="text"
-                        id="name"
-                        placeholder="State..."
-                        fullWidth
-                        size="small"
+                      <DatePicker
+                        className="myDatePicker"
+                        selected={endDate}
+                        onChange={(date: any) => setEndDate(date)}
+                        name="startDate"
+                        dateFormat="MM/dd/yyyy"
+                        placeholderText="End Date"
+                        minDate={startDate}
                       />
                     </Stack>
                   </Grid>
@@ -240,14 +293,24 @@ export default function AddActivity({
                 <Grid container spacing={2}>
                   <Grid item xs={12} md={12}>
                     <Stack spacing={1}>
-                      <InputLabel htmlFor="name">Ammount<span className="err_str">*</span></InputLabel>
+                      <InputLabel htmlFor="name">
+                        Ammount<span className="err_str">*</span>
+                      </InputLabel>
                       <OutlinedInput
                         type="text"
-                        id="name"
+                        id="amount"
                         placeholder="Activity name ..."
                         fullWidth
                         size="small"
+                        {...register("price", {
+                          required: true,
+                        })}
                       />
+                      <Typography style={style}>
+                        {errors.price && (
+                          <span>Amount Feild is Required **</span>
+                        )}
+                      </Typography>
                     </Stack>
                   </Grid>
                 </Grid>
@@ -273,6 +336,5 @@ export default function AddActivity({
         </Box>
       </DialogContent>
     </BootstrapDialog>
-
   );
 }
