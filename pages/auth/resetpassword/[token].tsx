@@ -38,7 +38,10 @@ export default function ResetPasswordPage() {
   const [btnDisabled, setBtnDisabled] = React.useState(false);
 
   const formSchema = Yup.object().shape({
-    password: Yup.string().required("Password is Required"),
+    password: Yup.string().required("Password is Required").matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/,
+      "Password should have at least 8 character and contain one uppercase, one lowercase, one number and one special character"
+    ),
     confirmpassword: Yup.string()
       .required("Confirm Password is Required")
       .oneOf(
@@ -164,7 +167,9 @@ export default function ResetPasswordPage() {
                     size="small"
                     type="password"
                     placeholder="********"
-                    {...register("password")}
+                    {...register("password", {
+                      required: true,
+                    })}
                   />
                   <Typography style={style}>
                     {errors.password?.message}

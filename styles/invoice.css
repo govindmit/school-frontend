@@ -404,3 +404,7 @@ h5.apply {
 span.field {
   width: 74px;
 }
+input.myDatePicker {
+  width: 100%;
+  height: 57px;
+}

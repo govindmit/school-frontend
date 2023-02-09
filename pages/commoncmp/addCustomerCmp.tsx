@@ -4,11 +4,11 @@ import React, { useEffect, useState } from "react";
 import { api_url, auth_token } from "../api/hello";
 import AddNewParent from "../customer/addNewParent";
 
-export default function AddCustomerCmp({ Data }: { Data: any }) {
+export default function AddCustomerCmp({ Data, PId, pname }: { Data: any, PId: any, pname: any }) {
   const [users, setUsers] = useState<any>([]);
   const [opens, setOpens] = React.useState(false);
   const [inputValue, setInputValue] = useState("");
-  const [value, setValue] = useState<any>({});
+  const [value, setValue] = useState<any>({ id: PId, title: pname });
 
   useEffect(() => {
     getUser();

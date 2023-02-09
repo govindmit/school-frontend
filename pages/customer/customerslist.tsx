@@ -12,7 +12,6 @@ import {
   Typography,
   Stack,
   Breadcrumbs,
-  BoxProps,
   FormControl,
   TextField,
   Menu,
@@ -44,30 +43,8 @@ import "react-toastify/dist/ReactToastify.css";
 import AddCustomer from "./addNewCustomer";
 import EditCustomer from "./editcustomer";
 import { useRouter } from "next/router";
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
+import { CSVDownload } from "react-csv";
+import Loader from "../commoncmp/myload";
 
 function a11yProps(index: number) {
   return {
@@ -105,11 +82,13 @@ type FormValues = {
   phoneNumber: number;
   contactName: string;
   sorting: number;
+  ParentId: string;
 };
 
 export default function CustomerList() {
   const [users, setUsers] = useState<any>([]);
   const [custtype, setcusttype] = useState<any>([]);
+  const [tabFilterData, settabFilterData] = useState<any>([]);
   const [All, setAll] = useState(0);
   const [active, setactive] = useState(0);
   const [inActive, setinActive] = useState(0);
@@ -120,7 +99,26 @@ export default function CustomerList() {
   const [editCustOpen, seteditCustOpen] = React.useState(false);
   const [editid, seteditid] = useState<any>(0);
   const [value, setValue] = React.useState(0);
+  const [custType, setCustType] = useState<any>(0);
+  const [custStatus, setcustStatus] = useState<any>(2);
+  const [sort, setsort] = useState<any>(0);
+  const [conctName, setconctName] = useState<any>("");
+  const [phoneNum, setphoneNum] = useState<any>("");
+  const [pId, setpId] = useState<any>(0);
+  const [parentId, setparentId] = useState<any>("");
+  const [checked, setChecked] = React.useState(false);
+  const [OpenCSV, setOpenCSV] = React.useState(false);
   const { register, handleSubmit } = useForm<FormValues>();
+
+
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+  };
+
+  useEffect(() => {
+    getUser();
+    getType();
+  }, []);
 
   // verify user login
   let logintoken: any;
@@ -130,15 +128,6 @@ export default function CustomerList() {
     if (logintoken === undefined || logintoken === null) {
       router.push("/");
     }
-  }, []);
-
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
-  };
-
-  useEffect(() => {
-    getUser();
-    getType();
   }, []);
 
   //get customers(users) list
@@ -154,8 +143,10 @@ export default function CustomerList() {
       });
       const res = await response.json();
       setUsers(res.data.filter((dt: any) => dt.customerId !== null));
+      settabFilterData(res.data.filter((dt: any) => dt.customerId !== null))
       setsearchdata(res.data.filter((dt: any) => dt.customerId !== null));
       setAll(res.data.filter((dt: any) => dt.customerId !== null).length);
+      setparentId(res.data.filter((dt: any) => dt.GeneratedParentId !== null));
       const activeUser = res.data.filter(
         (dt: any) => dt.status === 1 && dt.customerId !== null
       ).length;
@@ -191,11 +182,12 @@ export default function CustomerList() {
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setUsers([]);
     const reqData = {
-      status: data.status,
-      customerType: data.customerType,
-      contactName: data.contactName,
-      number: data.phoneNumber,
-      sorting: data.sorting,
+      status: custStatus,
+      customerType: custType,
+      contactName: conctName,
+      number: phoneNum,
+      sorting: sort,
+      ParentId: pId,
     };
     await axios({
       method: "POST",
@@ -215,6 +207,16 @@ export default function CustomerList() {
         console.log(error);
       });
   };
+
+  //reset filter value
+  function ResetFilterValue() {
+    setCustType(0);
+    setcustStatus(2);
+    setsort(0);
+    setconctName("");
+    setphoneNum("");
+    setpId(0);
+  }
 
   // apply searching
   const handleSearch = (e: any) => {
@@ -292,7 +294,7 @@ export default function CustomerList() {
     setnewCustOpen(false);
   };
 
-  //edit customer
+  //edit customer popup
   function handleEditCustomerOpen(id: any) {
     seteditCustOpen(true);
     seteditid(id);
@@ -307,16 +309,117 @@ export default function CustomerList() {
     getUser();
   }
   function handleActive() {
-    const act = users.filter((a: any) => a.status === 1);
+    const act = tabFilterData.filter((a: any) => a.status === 1);
     setUsers(act);
   }
   function handleInActive() {
-    const Inact = users.filter((a: any) => a.status === 0);
+    const Inact = tabFilterData.filter((a: any) => a.status === 0);
     setUsers(Inact);
   }
 
+  //check uncheck functionality
+  const [userinfo, setUserInfo] = useState<any>({
+    id: [],
+  });
+  const handleChanges = (e: any) => {
+    const { value, checked } = e.target;
+    const { id } = userinfo;
+    if (checked) {
+      setUserInfo({
+        id: [...id, value],
+      });
+    }
+    else {
+      setUserInfo({
+        id: id.filter((e: any) => e !== value),
+      });
+    }
+  };
+
+  function handleCheck(e: any) {
+    var isChecked = e.target.checked;
+    setChecked(isChecked)
+    // var item = e.target.value;
+    // console.log(item);
+  }
+
+  // console.log(checked);
+  // console.log(userinfo.id);
+
+
+  // Export to CSV
+  const [mydata, setmydata] = useState<any>("")
+  const [myload, setmyload] = useState(false)
+  function ExportCSV() {
+    let datas: {
+      name: string; email1: string; email2: string;
+      phone1: number; phone2: number, CustomerType: string;
+      contactName: string; printUs: string, status: string
+    }[] = [];
+    if (userinfo.id.length > 0) {
+      const ids = userinfo.id.join(",");
+      const getUserByMultipleids = async () => {
+        setmyload(true);
+        const url = `${api_url}/getuserbymultipleid/${ids}`;
+        try {
+          const response = await fetch(url, {
+            method: "get",
+            headers: {
+              Authorization: auth_token,
+              "x-access-token": logintoken,
+            },
+          });
+          const res = await response.json();
+          if (res.data) {
+            setmyload(false);
+            res.data.map((item: any, key: any) => {
+              datas.push({
+                name: item.name,
+                email1: item.email1,
+                email2: item.email2,
+                phone1: item.phone1,
+                phone2: item.phone2,
+                CustomerType: item.CustomerType,
+                contactName: item.contactName,
+                printUs: item.printUs,
+                status: item.status === 1 ? "Active" : "InActive"
+              })
+            })
+            setmydata(datas);
+            setOpenCSV(true);
+            setTimeout(() => {
+              setOpenCSV(false);
+              setUserInfo({
+                id: []
+              })
+            }, 1000);
+          }
+        } catch (error) {
+          console.log("error", error);
+        }
+      };
+      getUserByMultipleids();
+    } else {
+      toast.error("Please Select Atleast One Customer !", {
+        position: toast.POSITION.TOP_CENTER
+      });
+    }
+  }
+  const headers = [
+    { label: "Name", key: "name" },
+    { label: "Email", key: "email1" },
+    { label: "Alternate Email", key: "email2" },
+    { label: "Phone Number", key: "phone1" },
+    { label: "Altername Number", key: "phone2" },
+    { label: "Contact Name ", key: "contactName" },
+    { label: "Print Us ", key: "printUs" },
+    { label: "Customer Type ", key: "CustomerType" },
+    { label: "status", key: "status" },
+  ];
+
   return (
     <>
+      {OpenCSV && mydata.length > 0 ? <CSVDownload data={mydata} headers={headers} /> : ""}
       <Box sx={{ display: "flex" }}>
         <MiniDrawer />
         <Box component="main" sx={{ flexGrow: 1 }}>
@@ -364,7 +467,7 @@ export default function CustomerList() {
                 sx={{ width: 150 }}
                 onClick={handleNewCustomerOpen}
               >
-                New Customer
+                <b>New Customer</b>
               </Button>
             </Stack>
             {/*bread cump */}
@@ -404,7 +507,6 @@ export default function CustomerList() {
                       />
                     </Tabs>
                   </Box>
-
                   <Stack
                     direction="row"
                     alignItems="center"
@@ -442,8 +544,10 @@ export default function CustomerList() {
                                               labelId="demo-simple-select-label"
                                               id="demo-simple-select"
                                               size="small"
-                                              {...register("customerType")}
-                                              defaultValue={0}
+                                              onChange={(e: any) =>
+                                                setCustType(e.target.value)
+                                              }
+                                              value={custType}
                                             >
                                               <MenuItem value={0}>All</MenuItem>
                                               {custtype &&
@@ -472,9 +576,11 @@ export default function CustomerList() {
                                             <Select
                                               labelId="demo-simple-select-label"
                                               id="demo-simple-select"
-                                              {...register("status")}
                                               size="small"
-                                              defaultValue={2}
+                                              onChange={(e: any) =>
+                                                setcustStatus(e.target.value)
+                                              }
+                                              value={custStatus}
                                             >
                                               <MenuItem value={2}>All</MenuItem>
                                               <MenuItem value={1}>
@@ -497,8 +603,10 @@ export default function CustomerList() {
                                               labelId="demo-simple-select-label"
                                               id="demo-simple-select"
                                               size="small"
-                                              {...register("sorting")}
-                                              defaultValue={0}
+                                              value={sort}
+                                              onChange={(e: any) =>
+                                                setsort(e.target.value)
+                                              }
                                             >
                                               <MenuItem value={0}>
                                                 Date, Newest First
@@ -527,16 +635,27 @@ export default function CustomerList() {
                                               labelId="demo-simple-select-label"
                                               id="demo-simple-select"
                                               size="small"
+                                              value={pId}
+                                              onChange={(e: any) =>
+                                                setpId(e.target.value)
+                                              }
                                             >
-                                              <MenuItem value={10}>
-                                                Pant0001
-                                              </MenuItem>
-                                              <MenuItem value={20}>
-                                                Pant0002
-                                              </MenuItem>
-                                              <MenuItem value={30}>
-                                                Pant0003
-                                              </MenuItem>
+                                              <MenuItem value={0}>All</MenuItem>
+                                              {parentId &&
+                                                parentId.map(
+                                                  (datas: any, key: any) => {
+                                                    return (
+                                                      <MenuItem
+                                                        key={key}
+                                                        value={datas.id}
+                                                      >
+                                                        {
+                                                          datas.GeneratedParentId
+                                                        }
+                                                      </MenuItem>
+                                                    );
+                                                  }
+                                                )}
                                             </Select>
                                           </FormControl>
                                         </Stack>
@@ -553,7 +672,10 @@ export default function CustomerList() {
                                               placeholder="Phone Number..."
                                               fullWidth
                                               size="small"
-                                              {...register("phoneNumber")}
+                                              value={phoneNum}
+                                              onChange={(e: any) =>
+                                                setphoneNum(e.target.value)
+                                              }
                                             />
                                           </FormControl>
                                         </Stack>
@@ -571,6 +693,10 @@ export default function CustomerList() {
                                               fullWidth
                                               size="small"
                                               {...register("contactName")}
+                                              value={conctName}
+                                              onChange={(e: any) =>
+                                                setconctName(e.target.value)
+                                              }
                                             />
                                           </FormControl>
                                         </Stack>
@@ -599,6 +725,22 @@ export default function CustomerList() {
                                             }}
                                           ></span>
                                         </Button>
+                                        &nbsp;&nbsp;
+                                        <Button
+                                          size="small"
+                                          variant="contained"
+                                          color="primary"
+                                          sx={{ width: 150 }}
+                                          onClick={ResetFilterValue}
+                                        >
+                                          <b>Reset Filter</b>
+                                          <span
+                                            style={{
+                                              fontSize: "2px",
+                                              paddingLeft: "10px",
+                                            }}
+                                          ></span>
+                                        </Button>
                                       </Grid>
                                     </Grid>
                                   </Stack>
@@ -612,7 +754,10 @@ export default function CustomerList() {
                     <PopupState variant="popover" popupId="demo-popup-menu">
                       {(popupState) => (
                         <Box>
-                          <MenuItem {...bindTrigger(popupState)}>
+                          <MenuItem
+                            {...bindTrigger(popupState)}
+                            onClick={ExportCSV}
+                          >
                             Export
                             <KeyboardArrowDownIcon />
                           </MenuItem>
@@ -644,135 +789,140 @@ export default function CustomerList() {
                   </Stack>
                 </Stack>
                 {/*bread cump */}
-                <Table style={{ marginTop: "20px" }}>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell padding="checkbox">
-                        <Checkbox />
-                      </TableCell>
-                      <TableCell>
-                        <Typography>ID</Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography>NAME</Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography>EMAIL 1</Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography>EMAIL 2</Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography width={100}>COST. TYPE</Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography width={100}>CONT. NAME</Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography>STATUS</Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography width={100}>PRINT US</Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography>PHONE 1</Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography width={100}>PHONE 2</Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography>ACTION</Typography>
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {DATA.currentData() &&
-                      DATA.currentData().map((dataitem: any, key: any) => {
-                        return (
-                          <TableRow
-                            hover
-                            tabIndex={-1}
-                            role="checkbox"
-                            key={key}
-                            className="boder-bottom"
-                          >
-                            <TableCell padding="checkbox">
-                              <Checkbox />
-                            </TableCell>
-                            <TableCell align="left">
-                              {dataitem.customerId}
-                            </TableCell>
-                            <TableCell align="left">{dataitem.name}</TableCell>
-                            <TableCell align="left">
-                              <a href="">{dataitem.email1}</a>
-                            </TableCell>
-                            <TableCell align="left">
-                              <a href="">{dataitem.email2}</a>
-                            </TableCell>
-                            <TableCell align="left">
-                              {dataitem.CustomerType !== null
-                                ? dataitem.CustomerType
-                                : "INDIVIDUAL"}
-                            </TableCell>
-                            <TableCell align="left">
-                              {dataitem.contactName}
-                            </TableCell>
-                            <TableCell align="left">
-                              {dataitem.status === 1 ? (
-                                <span style={{ color: "#02C509" }}>ACTIVE</span>
-                              ) : (
-                                <span style={{ color: "#FF4026" }}>
-                                  INACTIVE
-                                </span>
-                              )}
-                            </TableCell>
-                            <TableCell align="left">
-                              {dataitem.printUs}
-                            </TableCell>
-                            <TableCell align="left">
-                              {dataitem.phone1}
-                            </TableCell>
-                            <TableCell align="left">
-                              {dataitem.phone2}
-                            </TableCell>
-                            <TableCell align="left">
-                              <Stack
-                                className="action"
-                                direction="row"
-                                spacing={1}
-                              >
-                                <IconButton className="action-view">
-                                  <Link
-                                    href={`/customer/viewcustomer/${dataitem.id}`}
-                                    style={{
-                                      color: "#26CEB3",
-                                    }}
+                {myload ? <Loader /> :
+                  <Table style={{ marginTop: "20px" }}>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell padding="checkbox">
+                          <Checkbox onChange={handleCheck} />
+                        </TableCell>
+                        <TableCell>
+                          <Typography>ID</Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography>NAME</Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography>EMAIL 1</Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography>EMAIL 2</Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography width={100}>COST. TYPE</Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography width={100}>CONT. NAME</Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography>STATUS</Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography width={100}>PRINT US</Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography>PHONE 1</Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography width={100}>PHONE 2</Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography>ACTION</Typography>
+                        </TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {DATA.currentData() &&
+                        DATA.currentData().map((dataitem: any, key: any) => {
+                          return (
+                            <TableRow
+                              hover
+                              tabIndex={-1}
+                              role="checkbox"
+                              key={key}
+                              className="boder-bottom"
+                            >
+                              <TableCell padding="checkbox">
+                                <Checkbox
+                                  onChange={handleChanges} value={dataitem.id}
+                                  //checked={checked}
+                                  id={`check` + key}
+                                />
+                              </TableCell>
+                              <TableCell align="left">
+                                {dataitem.customerId}
+                              </TableCell>
+                              <TableCell align="left">{dataitem.name}</TableCell>
+                              <TableCell align="left">
+                                <a href="">{dataitem.email1}</a>
+                              </TableCell>
+                              <TableCell align="left">
+                                <a href="">{dataitem.email2}</a>
+                              </TableCell>
+                              <TableCell align="left">
+                                {dataitem.CustomerType !== null
+                                  ? dataitem.CustomerType
+                                  : "INDIVIDUAL"}
+                              </TableCell>
+                              <TableCell align="left">
+                                {dataitem.contactName}
+                              </TableCell>
+                              <TableCell align="left">
+                                {dataitem.status === 1 ? (
+                                  <span style={{ color: "#02C509" }}>ACTIVE</span>
+                                ) : (
+                                  <span style={{ color: "#FF4026" }}>
+                                    INACTIVE
+                                  </span>
+                                )}
+                              </TableCell>
+                              <TableCell align="left">
+                                {dataitem.printUs}
+                              </TableCell>
+                              <TableCell align="left">
+                                {dataitem.phone1}
+                              </TableCell>
+                              <TableCell align="left">
+                                {dataitem.phone2}
+                              </TableCell>
+                              <TableCell align="left">
+                                <Stack
+                                  className="action"
+                                  direction="row"
+                                  spacing={1}
+                                >
+                                  <IconButton className="action-view">
+                                    <Link
+                                      href={`/customer/viewcustomer/${dataitem.id}`}
+                                      style={{
+                                        color: "#26CEB3",
+                                      }}
+                                    >
+                                      <BiShow />
+                                    </Link>
+                                  </IconButton>
+                                  <IconButton
+                                    className="action-edit"
+                                    onClick={() =>
+                                      handleEditCustomerOpen(dataitem.id)
+                                    }
                                   >
-                                    <BiShow />
-                                  </Link>
-                                </IconButton>
-                                <IconButton
-                                  className="action-edit"
-                                  onClick={() =>
-                                    handleEditCustomerOpen(dataitem.id)
-                                  }
-                                >
-                                  <FiEdit />
-                                </IconButton>
-                                <IconButton
-                                  className="action-delete"
-                                  style={{ color: "#F95A37" }}
-                                  onClick={() => openDelete(dataitem)}
-                                >
-                                  <RiDeleteBin5Fill />
-                                </IconButton>
-                              </Stack>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
-                  </TableBody>
-                </Table>
+                                    <FiEdit />
+                                  </IconButton>
+                                  <IconButton
+                                    className="action-delete"
+                                    style={{ color: "#F95A37" }}
+                                    onClick={() => openDelete(dataitem)}
+                                  >
+                                    <RiDeleteBin5Fill />
+                                  </IconButton>
+                                </Stack>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
+                    </TableBody>
+                  </Table>}
                 {users == "" ? <h3>No Record found</h3> : ""}
                 <Stack
                   style={{ marginBottom: "10px", marginTop: "10px" }}
@@ -805,20 +955,24 @@ export default function CustomerList() {
           </div>
         </Box>
       </Box>
-      {newCustOpen ? (
-        <AddCustomer open={newCustOpen} closeDialog={closePoP} />
-      ) : (
-        ""
-      )}
-      {editCustOpen ? (
-        <EditCustomer
-          id={editid}
-          open={editCustOpen}
-          closeDialogedit={closeEditPoP}
-        />
-      ) : (
-        ""
-      )}
+      {
+        newCustOpen ? (
+          <AddCustomer open={newCustOpen} closeDialog={closePoP} />
+        ) : (
+          ""
+        )
+      }
+      {
+        editCustOpen ? (
+          <EditCustomer
+            id={editid}
+            open={editCustOpen}
+            closeDialogedit={closeEditPoP}
+          />
+        ) : (
+          ""
+        )
+      }
       <ConfirmBox
         open={deleteConfirmBoxOpen}
         closeDialog={() => setdeleteConfirmBoxOpen(false)}
