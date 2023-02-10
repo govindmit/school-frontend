@@ -222,6 +222,8 @@ export default function Guardians() {
   const [opens, setOpens] = useState(false);
   const [userID, setUserId] = useState<FormValues | any>([]);
 
+  const [itemError, setItemError] = useState("");
+
   const [sdates, setDates] = useState<FormValues | any>([]);
   const [Invoicedates, setInvoiceDate] = useState(null);
 
@@ -234,7 +236,10 @@ export default function Guardians() {
   const [date, setDate] = useState<FormValues | any>([]);
   const [query, setQuery] = useState<FormValues | any>([]);
   const [error, setError] = useState<FormValues | any>([]);
-  const [invoiceno, setInvoiceNo] = useState();
+  const [Dateerror, setDateError] = useState("");
+  const [invoiceError, setInvoiceError] = useState("");
+
+  const [invoiceno, setInvoiceNo] = useState<FormValues | any>([]);
 
   const [item, setItem] = useState<FormValues | any>([]);
   const [product, setProduct] = useState<FormValues | any>([]);
@@ -266,8 +271,14 @@ export default function Guardians() {
         selected.slice(selectedIndex + 1)
       );
     }
+    console.log(newSelected.length, "newSelected");
 
     setSelected(newSelected);
+    if (newSelected.length === 0) {
+      setItemError("item field is required");
+    } else {
+      setItemError("");
+    }
     getItem();
   };
   const style = {
@@ -324,6 +335,18 @@ export default function Guardians() {
     const invoiceDate = moment(Invoicedates).format("DD/MM/YYYY");
     const createdDate = moment(dates).format("DD/MM/YYYY");
 
+    if (selected.length < 1) {
+      setItemError("item field is required");
+    } else {
+      setItemError("");
+    }
+
+    if (invoiceDate === "Invalid date") {
+      setDateError("invoiceDate field is required");
+    } else {
+      setDateError("");
+    }
+
     const requestedData = {
       itemId: selected,
       amount: price,
@@ -376,7 +399,7 @@ export default function Guardians() {
       })
       .catch((err) => {});
   };
-
+  console.log(Dateerror, "Dateerror");
   useEffect(() => {
     let cusId = localStorage.getItem("customerId");
     invoiceNo();
@@ -500,7 +523,7 @@ export default function Guardians() {
       })
       .catch((err) => {});
   };
-  console.log(invoiceno, "invoiceno");
+
   const handleDraft = async () => {
     const dates = new Date();
     var invoiceDatesss;
@@ -509,50 +532,84 @@ export default function Guardians() {
     } else {
     }
     const createdDate = moment(dates).format("DD/MM/YYYY");
+    if (selected.length < 1) {
+      setItemError("item field is required");
+    } else {
+      setItemError("");
+    }
 
-    const requestedData = {
-      itemId: selected,
-      amount: price,
-      status: "draft",
-      createdDate: createdDate,
-      createdBy: "1",
-      invoiceDate: invoiceDatesss == "Invalid date" ? "" : invoiceDatesss,
-      customerId: userID.id,
-      invoiceNo: invoiceno,
-    };
-    console.log(requestedData, "requestedDraft");
+    if (invoiceDatesss === "Invalid date") {
+      setDateError("invoiceDate field is required");
+    } else {
+      setDateError("");
+    }
+    if (!Dateerror && !itemError) {
+      const requestedData = {
+        itemId: selected,
+        amount: price,
+        status: "draft",
+        createdDate: createdDate,
+        createdBy: "1",
+        invoiceDate: invoiceDatesss == "Invalid date" ? "" : invoiceDatesss,
+        customerId: userID?.id,
+        invoiceNo: invoiceno,
+      };
 
-    await axios({
-      method: "POST",
-      url: `${api_url}/createInvoice`,
-      data: requestedData,
-      headers: {
-        "content-type": "multipart/form-data",
-      },
-    })
-      .then((res) => {
-        toast.success("Invoice created Successfully !");
-        setTimeout(() => {
-          router.push("/admin/invoices");
-        }, 1000);
-        if (!res) {
-          reset();
-          toast.success("All field are required !");
-        }
+      await axios({
+        method: "POST",
+        url: `${api_url}/createInvoice`,
+        data: requestedData,
+        headers: {
+          "content-type": "multipart/form-data",
+        },
       })
-      .catch((err) => {
-        if (err) {
-          setError(err?.response?.data?.message);
-        }
-        // console.log(err.response.data.message, "error");
-      });
+        .then((res) => {
+          toast.success("Invoice created Successfully !");
+          setTimeout(() => {
+            router.push("/admin/invoices");
+          }, 1000);
+          if (!res) {
+            reset();
+            toast.success("All field are required !");
+          }
+        })
+        .catch((err) => {
+          if (err) {
+            setError(err?.response?.data?.message);
+          }
+          // console.log(err.response.data.message, "error");
+        });
+    }
   };
+
   const filterDays = (date: any) => {
     // Disable Weekends
     if (date.getDate() < 10) {
       return false;
     } else {
       return true;
+    }
+  };
+  const handleChange = (value: any) => {
+    setUserId(value);
+    if (value) {
+      setError("");
+    }
+  };
+  const handleDate = (date: any) => {
+    setInvoiceDate(date);
+    if (date) {
+      setDateError("");
+    } else {
+      setDateError("invoiceDate field is required");
+    }
+  };
+  const handleInvoice = (data: any) => {
+    if (data) {
+      setInvoiceError("");
+      setInvoiceNo(data);
+    } else {
+      setInvoiceError("invoice no is required");
     }
   };
   return (
@@ -679,7 +736,8 @@ export default function Guardians() {
                         style={{ width: 300 }}
                         fullWidth
                         inputValue={inputValue}
-                        onChange={(event, value) => setUserId(value)}
+                        // onChange={(event, value) => setUserId(value)}
+                        onChange={(event, value) => handleChange(value)}
                         // onChange={(event, newValue) => {
                         //   setValue(newValue);
                         // }}
@@ -729,22 +787,20 @@ export default function Guardians() {
                         id="name"
                         placeholder="# Generate If blank"
                         fullWidth
-                        onChange={(e: any) => setInvoiceNo(e.target.value)}
+                        // onChange={(e: any) => setInvoiceNo(e.target.value)}
+                        onChange={(e: any) => handleInvoice(e.target.value)}
                         value={invoiceno}
                       />
                       <Typography style={style}>
-                        <span>
-                          {error === "invoiceNo field is required"
-                            ? "Invoice no field is required"
-                            : ""}{" "}
-                        </span>
+                        <span>{invoiceError ? invoiceError : ""} </span>
                       </Typography>
                       <InputLabel id="demo-select-small"></InputLabel>
                       &nbsp; &nbsp;
                       <DatePicker
                         className="myDatePicker"
                         selected={Invoicedates}
-                        onChange={(date: any) => setInvoiceDate(date)}
+                        // onChange={(date: any) => setInvoiceDate(date)}
+                        onChange={(date: any) => handleDate(date)}
                         name="Date"
                         dateFormat="MM/dd/yyyy"
                         placeholderText="Date"
@@ -752,11 +808,7 @@ export default function Guardians() {
                         minDate={new Date()}
                       />
                       <Typography style={style}>
-                        <span>
-                          {error === "invoiceDate field is required"
-                            ? error
-                            : ""}{" "}
-                        </span>
+                        <span>{Dateerror ? Dateerror : ""} </span>
                       </Typography>
                     </div>
                   </div>
@@ -801,9 +853,7 @@ export default function Guardians() {
                       </BootstrapButton>
                     </div>
                     <Typography style={style}>
-                      <span>
-                        {error === "item field is required" ? error : ""}{" "}
-                      </span>
+                      <span>{itemError ? itemError : ""} </span>
                     </Typography>
                   </div>
                   &nbsp;&nbsp;
