@@ -170,7 +170,7 @@ export default function Guardians() {
   const [dollerOpen, setDollerOpen] = useState(false);
   const [recievedPay, setRecieved] = useState<FormValues | any>([]);
   const [sort, setSort] = useState<FormValues | any>("ASC");
-  const [status, setStatus] = useState<FormValues | any>([]);
+  const [status, setStatus] = useState<FormValues | any>("All");
 
   const [note, setNote] = useState<FormValues | any>([]);
   const [disable, setDisable] = useState<FormValues | any>(false);
@@ -299,8 +299,8 @@ export default function Guardians() {
 
   const handleReset = () => {
     reset();
-    setSort("");
-    setStatus("");
+    setSort("ASC");
+    setStatus("All");
     setUserId("");
     setStartDate(null);
     setEndDate(null);
@@ -853,7 +853,7 @@ export default function Guardians() {
                                           // {...register("status")}
                                           // onChange={handleChange}
                                         >
-                                          <MenuItem value="All">ALL</MenuItem>
+                                          <MenuItem value="All">All</MenuItem>
                                           <MenuItem value="pending">
                                             Pending
                                           </MenuItem>
@@ -982,7 +982,17 @@ export default function Guardians() {
                           </TableCell>
 
                           <TableCell component="th" scope="row" padding="none">
-                            <TableCell align="left">{item.invoiceId}</TableCell>
+                            {disable ? (
+                              <Link href={`/admin/editInvoice/${item.id}`}>
+                                <TableCell align="left">
+                                  {item.invoiceId}
+                                </TableCell>
+                              </Link>
+                            ) : (
+                              <TableCell align="left">
+                                {item.invoiceId}
+                              </TableCell>
+                            )}
                           </TableCell>
                           <TableCell align="left">
                             <b>{item.name}</b>
@@ -1003,24 +1013,14 @@ export default function Guardians() {
 
                           <TableCell align="left" className="action-td">
                             <div className="btn">
-                              <div className="idiv">
-                                <Image
-                                  onClick={() => generateSimplePDF(item)}
-                                  src="/download.svg"
-                                  alt="Picture of the author"
-                                  width={35}
-                                  height={35}
-                                />
-                              </div>
-
                               {disable ? (
                                 <Button className="idiv" disabled={true}>
                                   <Image
                                     onClick={() => generateSimplePDF(item)}
                                     src="/download.svg"
                                     alt="Picture of the author"
-                                    width={25}
-                                    height={25}
+                                    width={35}
+                                    height={35}
                                   />
                                 </Button>
                               ) : (
@@ -1029,8 +1029,8 @@ export default function Guardians() {
                                     onClick={() => generateSimplePDF(item)}
                                     src="/download.svg"
                                     alt="Picture of the author"
-                                    width={25}
-                                    height={25}
+                                    width={35}
+                                    height={35}
                                   />
                                 </Button>
                               )}
