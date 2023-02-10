@@ -254,9 +254,9 @@ export default function EditActivity() {
     <>
       <Box sx={{ display: "flex" }}>
         <MiniDrawer />
-        <Box component="main" sx={{ flexGrow: 1 }}>
+
+        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <div className="guardianBar">
-            {/*bread cump */}
             <Stack
               direction="row"
               alignItems="center"
@@ -269,7 +269,7 @@ export default function EditActivity() {
                     <Link
                       key="1"
                       color="inherit"
-                      href="/usermanagement/users"
+                      href="/"
                       style={{ color: "#1A70C5", textDecoration: "none" }}
                     >
                       Home
@@ -280,7 +280,7 @@ export default function EditActivity() {
                       href="/"
                       style={{ color: "#7D86A5", textDecoration: "none" }}
                     >
-                      My Account
+                      Activities
                     </Link>
                   </Breadcrumbs>
                 </Stack>
@@ -293,185 +293,188 @@ export default function EditActivity() {
                 </Typography>
               </Stack>
             </Stack>
-            {/*bread cump */}
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <Grid>
-                <Stack style={{ marginTop: "10px" }}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="name">
-                          Activity Name <span className="err_str">*</span>
-                        </InputLabel>
-                        <OutlinedInput
-                          type="text"
-                          id="name"
-                          placeholder="Activity name ..."
-                          fullWidth
-                          size="small"
-                          {...register("name", {
-                            required: true,
-                          })}
-                        />
-                      </Stack>
+            <Card
+              style={{ margin: "10px", padding: "15px" }}
+              className="box-shadow"
+            >
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <Grid>
+                  <Stack style={{ marginTop: "10px" }}>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} md={6}>
+                        <Stack spacing={1}>
+                          <InputLabel htmlFor="name">
+                            Activity Name <span className="err_str">*</span>
+                          </InputLabel>
+                          <OutlinedInput
+                            type="text"
+                            id="name"
+                            placeholder="Activity name ..."
+                            fullWidth
+                            size="small"
+                            {...register("name", {
+                              required: true,
+                            })}
+                          />
+                        </Stack>
+                      </Grid>
                     </Grid>
-                  </Grid>
-                </Stack>
-                <Stack style={{ marginTop: "20px" }}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={3}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="name">Type</InputLabel>
-                        <Select
-                          defaultValue="none"
-                          value={type}
-                          id="type"
-                          onChange={(e) => setType(e.target.value)}
-                          labelId="demo-select-small"
-                          label="Status"
-                          // {...register("type", {
-                          //   onChange: (event) => {
-                          //     setType(event.target.value);
-                          //   },
-                          //   required: true,
-                          // })}
-                          // {...register("sort")}
-                        >
-                          {/* <MenuItem value={sort}>
-                                            <em>None</em>
-                                          </MenuItem> */}
-                          <MenuItem value="Free">Free</MenuItem>
-                          <MenuItem value="Paid">Paid</MenuItem>
-                        </Select>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={3}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="name">Status</InputLabel>
-                        <Select
-                          defaultValue="none"
-                          onChange={(e) => setStatus(e.target.value)}
-                          value={status}
-                          labelId="demo-select-small"
-                          id="demo-select-small"
-                          label="Status"
+                  </Stack>
+                  <Stack style={{ marginTop: "20px" }}>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} md={3}>
+                        <Stack spacing={1}>
+                          <InputLabel htmlFor="name">Type</InputLabel>
+                          <Select
+                            defaultValue="none"
+                            value={type}
+                            id="type"
+                            onChange={(e) => setType(e.target.value)}
+                            labelId="demo-select-small"
+                            label="Status"
+                            // {...register("type", {
+                            //   onChange: (event) => {
+                            //     setType(event.target.value);
+                            //   },
+                            //   required: true,
+                            // })}
+                            // {...register("sort")}
+                          >
+                            {/* <MenuItem value={sort}>
+                                    <em>None</em>
+                                  </MenuItem> */}
+                            <MenuItem value="Free">Free</MenuItem>
+                            <MenuItem value="Paid">Paid</MenuItem>
+                          </Select>
+                        </Stack>
+                      </Grid>
+                      <Grid item xs={12} md={3}>
+                        <Stack spacing={1}>
+                          <InputLabel htmlFor="name">Status</InputLabel>
+                          <Select
+                            defaultValue="none"
+                            onChange={(e) => setStatus(e.target.value)}
+                            value={status}
+                            labelId="demo-select-small"
+                            id="demo-select-small"
+                            label="Status"
 
-                          // {...register("sort")}
-                        >
-                          {/* <MenuItem value={sort}>
-                                            <em>None</em>
-                                          </MenuItem> */}
-                          <MenuItem value="Upcoming">Upcoming</MenuItem>
-                          <MenuItem value="Past">Past</MenuItem>
-                          <MenuItem value="Current">Current</MenuItem>
-                        </Select>
-                      </Stack>
+                            // {...register("sort")}
+                          >
+                            {/* <MenuItem value={sort}>
+                                    <em>None</em>
+                                  </MenuItem> */}
+                            <MenuItem value="Upcoming">Upcoming</MenuItem>
+                            <MenuItem value="Past">Past</MenuItem>
+                            <MenuItem value="Current">Current</MenuItem>
+                          </Select>
+                        </Stack>
+                      </Grid>
                     </Grid>
-                  </Grid>
-                </Stack>
-                <Stack style={{ marginTop: "20px" }}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={3}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="name">Start Date</InputLabel>
-                        <DatePicker
-                          className="myDatePicker"
-                          selected={startDate}
-                          onChange={(date: any) => setStartDate(date)}
-                          name="startDate"
-                          dateFormat="MM/dd/yyyy"
-                          placeholderText={Activity[0]?.startDate}
-                        />
-                      </Stack>
+                  </Stack>
+                  <Stack style={{ marginTop: "20px" }}>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} md={3}>
+                        <Stack spacing={1}>
+                          <InputLabel htmlFor="name">Start Date</InputLabel>
+                          <DatePicker
+                            className="myDatePicker"
+                            selected={startDate}
+                            onChange={(date: any) => setStartDate(date)}
+                            name="startDate"
+                            dateFormat="MM/dd/yyyy"
+                            placeholderText={Activity[0]?.startDate}
+                          />
+                        </Stack>
+                      </Grid>
+                      <Grid item xs={12} md={3}>
+                        <Stack spacing={1}>
+                          <InputLabel htmlFor="name">End Date*</InputLabel>
+                          <DatePicker
+                            className="myDatePicker"
+                            selected={endDate}
+                            onChange={(date: any) => setEndDate(date)}
+                            name="startDate"
+                            dateFormat="MM/dd/yyyy"
+                            placeholderText={Activity[0]?.endDate}
+                            minDate={startDate}
+                          />
+                        </Stack>
+                      </Grid>
                     </Grid>
-                    <Grid item xs={12} md={3}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="name">End Date*</InputLabel>
-                        <DatePicker
-                          className="myDatePicker"
-                          selected={endDate}
-                          onChange={(date: any) => setEndDate(date)}
-                          name="startDate"
-                          dateFormat="MM/dd/yyyy"
-                          placeholderText={Activity[0]?.endDate}
-                          minDate={startDate}
-                        />
-                      </Stack>
+                  </Stack>
+                  <Stack style={{ marginTop: "20px" }}>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} md={6}>
+                        <Stack spacing={1}>
+                          <InputLabel htmlFor="name">
+                            Ammount<span className="err_str">*</span>
+                          </InputLabel>
+                          <OutlinedInput
+                            type="text"
+                            id="price"
+                            placeholder="Activity name ..."
+                            fullWidth
+                            size="small"
+                            {...register("price", {
+                              required: true,
+                            })}
+                          />
+                        </Stack>
+                      </Grid>
                     </Grid>
-                  </Grid>
-                </Stack>
-                <Stack style={{ marginTop: "20px" }}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="name">
-                          Ammount<span className="err_str">*</span>
-                        </InputLabel>
-                        <OutlinedInput
-                          type="text"
-                          id="price"
-                          placeholder="Activity name ..."
-                          fullWidth
-                          size="small"
-                          {...register("price", {
-                            required: true,
-                          })}
-                        />
-                      </Stack>
+                  </Stack>
+                  <Stack style={{ marginTop: "20px" }}>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} md={6}>
+                        <Stack spacing={1}>
+                          <InputLabel htmlFor="name">
+                            Short Description<span className="err_str">*</span>
+                          </InputLabel>
+                          <QuillNoSSRWrapper
+                            modules={modules}
+                            formats={formats}
+                            theme="snow"
+                            onChange={setContent}
+                            value={content}
+                          />
+                        </Stack>
+                      </Grid>
                     </Grid>
-                  </Grid>
-                </Stack>
-                <Stack style={{ marginTop: "20px" }}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="name">
-                          Short Description<span className="err_str">*</span>
-                        </InputLabel>
-                        <QuillNoSSRWrapper
-                          modules={modules}
-                          formats={formats}
-                          theme="snow"
-                          onChange={setContent}
-                          value={content}
-                        />
-                      </Stack>
+                  </Stack>
+                  <Stack style={{ marginTop: "20px" }}>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} md={6}>
+                        <Stack spacing={1}>
+                          <InputLabel htmlFor="name">
+                            Description<span className="err_str">*</span>
+                          </InputLabel>
+                          <QuillNoSSRWrapper
+                            modules={modules}
+                            formats={formats}
+                            theme="snow"
+                            value={descontent}
+                            onChange={setDesContent}
+                          />
+                        </Stack>
+                      </Grid>
                     </Grid>
-                  </Grid>
-                </Stack>
-                <Stack style={{ marginTop: "20px" }}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="name">
-                          Description<span className="err_str">*</span>
-                        </InputLabel>
-                        <QuillNoSSRWrapper
-                          modules={modules}
-                          formats={formats}
-                          theme="snow"
-                          value={descontent}
-                          onChange={setDesContent}
-                        />
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </Stack>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  size="small"
-                  sx={{ width: 150, marginTop: 5 }}
-                  autoFocus
-                >
-                  <b>Save</b>
-                </Button>
-              </Grid>
-            </form>
+                  </Stack>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    size="small"
+                    sx={{ width: 150, marginTop: 5 }}
+                    autoFocus
+                  >
+                    <b>Save</b>
+                  </Button>
+                </Grid>
+              </form>
+            </Card>
           </div>
         </Box>
       </Box>
-      <ToastContainer />
     </>
   );
 }

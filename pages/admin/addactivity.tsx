@@ -220,9 +220,9 @@ export default function AddNewActivity() {
     <>
       <Box sx={{ display: "flex" }}>
         <MiniDrawer />
-        <Box component="main" sx={{ flexGrow: 1 }}>
+
+        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <div className="guardianBar">
-            {/*bread cump */}
             <Stack
               direction="row"
               alignItems="center"
@@ -235,7 +235,7 @@ export default function AddNewActivity() {
                     <Link
                       key="1"
                       color="inherit"
-                      href="/usermanagement/users"
+                      href="/"
                       style={{ color: "#1A70C5", textDecoration: "none" }}
                     >
                       Home
@@ -246,7 +246,7 @@ export default function AddNewActivity() {
                       href="/"
                       style={{ color: "#7D86A5", textDecoration: "none" }}
                     >
-                      My Account
+                      Activities
                     </Link>
                   </Breadcrumbs>
                 </Stack>
@@ -255,204 +255,207 @@ export default function AddNewActivity() {
                   gutterBottom
                   style={{ fontWeight: "bold", color: "#333333" }}
                 >
-                  NEW ACTIVITY
+                  VIEW ACTIVITY
                 </Typography>
               </Stack>
             </Stack>
-            {/*bread cump */}
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <Grid>
-                <Stack style={{ marginTop: "10px" }}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="name">
-                          Activity Name <span className="err_str">*</span>
-                        </InputLabel>
-                        <OutlinedInput
-                          type="text"
-                          id="name"
-                          placeholder="Activity name ..."
-                          fullWidth
-                          size="small"
-                          {...register("name", {
-                            required: true,
-                          })}
-                        />
-                        <Typography style={style}>
-                          {errors.name && (
-                            <span>Name Feild is Required **</span>
-                          )}
-                        </Typography>
-                      </Stack>
+            <Card
+              style={{ margin: "10px", padding: "15px" }}
+              className="box-shadow"
+            >
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <Grid>
+                  <Stack style={{ marginTop: "10px" }}>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} md={6}>
+                        <Stack spacing={1}>
+                          <InputLabel htmlFor="name">
+                            Activity Name <span className="err_str">*</span>
+                          </InputLabel>
+                          <OutlinedInput
+                            type="text"
+                            id="name"
+                            placeholder="Activity name ..."
+                            fullWidth
+                            size="small"
+                            {...register("name", {
+                              required: true,
+                            })}
+                          />
+                          <Typography style={style}>
+                            {errors.name && (
+                              <span>Name Feild is Required **</span>
+                            )}
+                          </Typography>
+                        </Stack>
+                      </Grid>
                     </Grid>
-                  </Grid>
-                </Stack>
-                <Stack style={{ marginTop: "20px" }}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={3}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="name">Type</InputLabel>
-                        <Select
-                          defaultValue="none"
-                          value={type}
-                          id="type"
-                          labelId="demo-select-small"
-                          label="Status"
-                          {...register("type", {
-                            onChange: (e) => {
-                              setType(e.target.value);
-                            },
-                            required: true,
-                          })}
-                        >
-                          <MenuItem value="Free">Free</MenuItem>
-                          <MenuItem value="Paid">Paid</MenuItem>
-                        </Select>
-                        <Typography style={style}>
-                          {errors.type && (
-                            <span>Type Feild is Required **</span>
-                          )}
-                        </Typography>
-                      </Stack>
+                  </Stack>
+                  <Stack style={{ marginTop: "20px" }}>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} md={3}>
+                        <Stack spacing={1}>
+                          <InputLabel htmlFor="name">Type</InputLabel>
+                          <Select
+                            defaultValue="none"
+                            value={type}
+                            id="type"
+                            labelId="demo-select-small"
+                            label="Status"
+                            {...register("type", {
+                              onChange: (e) => {
+                                setType(e.target.value);
+                              },
+                              required: true,
+                            })}
+                          >
+                            <MenuItem value="Free">Free</MenuItem>
+                            <MenuItem value="Paid">Paid</MenuItem>
+                          </Select>
+                          <Typography style={style}>
+                            {errors.type && (
+                              <span>Type Feild is Required **</span>
+                            )}
+                          </Typography>
+                        </Stack>
+                      </Grid>
+                      <Grid item xs={12} md={3}>
+                        <Stack spacing={1}>
+                          <InputLabel htmlFor="name">Status</InputLabel>
+                          <Select
+                            defaultValue="none"
+                            // onChange={(e) => setStatus(e.target.value)}
+                            value={status}
+                            labelId="demo-select-small"
+                            id="demo-select-small"
+                            label="Status"
+                            {...register("status", {
+                              onChange: (e) => {
+                                setStatus(e.target.value);
+                              },
+                              required: true,
+                            })}
+                          >
+                            <MenuItem value="Upcoming">Upcoming</MenuItem>
+                            <MenuItem value="Past">Past</MenuItem>
+                            <MenuItem value="Current">Current</MenuItem>
+                          </Select>
+                          <Typography style={style}>
+                            {errors.status && (
+                              <span>status Feild is Required **</span>
+                            )}
+                          </Typography>
+                        </Stack>
+                      </Grid>
                     </Grid>
-                    <Grid item xs={12} md={3}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="name">Status</InputLabel>
-                        <Select
-                          defaultValue="none"
-                          // onChange={(e) => setStatus(e.target.value)}
-                          value={status}
-                          labelId="demo-select-small"
-                          id="demo-select-small"
-                          label="Status"
-                          {...register("status", {
-                            onChange: (e) => {
-                              setStatus(e.target.value);
-                            },
-                            required: true,
-                          })}
-                        >
-                          <MenuItem value="Upcoming">Upcoming</MenuItem>
-                          <MenuItem value="Past">Past</MenuItem>
-                          <MenuItem value="Current">Current</MenuItem>
-                        </Select>
-                        <Typography style={style}>
-                          {errors.status && (
-                            <span>status Feild is Required **</span>
-                          )}
-                        </Typography>
-                      </Stack>
+                  </Stack>
+                  <Stack style={{ marginTop: "20px" }}>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} md={3}>
+                        <Stack spacing={1}>
+                          <InputLabel htmlFor="name">Start Date</InputLabel>
+                          <DatePicker
+                            className="myDatePicker"
+                            selected={startDate}
+                            onChange={(date: any) => setStartDate(date)}
+                            name="startDate"
+                            dateFormat="MM/dd/yyyy"
+                            placeholderText="Start Date"
+                          />
+                        </Stack>
+                      </Grid>
+                      <Grid item xs={12} md={3}>
+                        <Stack spacing={1}>
+                          <InputLabel htmlFor="name">End Date*</InputLabel>
+                          <DatePicker
+                            className="myDatePicker"
+                            selected={endDate}
+                            onChange={(date: any) => setEndDate(date)}
+                            name="startDate"
+                            dateFormat="MM/dd/yyyy"
+                            placeholderText="End Date"
+                            minDate={startDate}
+                          />
+                        </Stack>
+                      </Grid>
                     </Grid>
-                  </Grid>
-                </Stack>
-                <Stack style={{ marginTop: "20px" }}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={3}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="name">Start Date</InputLabel>
-                        <DatePicker
-                          className="myDatePicker"
-                          selected={startDate}
-                          onChange={(date: any) => setStartDate(date)}
-                          name="startDate"
-                          dateFormat="MM/dd/yyyy"
-                          placeholderText="Start Date"
-                        />
-                      </Stack>
+                  </Stack>
+                  <Stack style={{ marginTop: "20px" }}>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} md={6}>
+                        <Stack spacing={1}>
+                          <InputLabel htmlFor="name">
+                            Ammount<span className="err_str">*</span>
+                          </InputLabel>
+                          <OutlinedInput
+                            type="text"
+                            id="amount"
+                            placeholder="Amount ..."
+                            fullWidth
+                            size="small"
+                            {...register("price", {
+                              required: true,
+                            })}
+                          />
+                          <Typography style={style}>
+                            {errors.price && (
+                              <span>Amount Feild is Required **</span>
+                            )}
+                          </Typography>
+                        </Stack>
+                      </Grid>
                     </Grid>
-                    <Grid item xs={12} md={3}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="name">End Date*</InputLabel>
-                        <DatePicker
-                          className="myDatePicker"
-                          selected={endDate}
-                          onChange={(date: any) => setEndDate(date)}
-                          name="startDate"
-                          dateFormat="MM/dd/yyyy"
-                          placeholderText="End Date"
-                          minDate={startDate}
-                        />
-                      </Stack>
+                  </Stack>
+                  <Stack style={{ marginTop: "20px" }}>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} md={6}>
+                        <Stack spacing={1}>
+                          <InputLabel htmlFor="name">
+                            Short Description<span className="err_str">*</span>
+                          </InputLabel>
+                          <QuillNoSSRWrapper
+                            modules={modules}
+                            formats={formats}
+                            theme="snow"
+                            onChange={setContent}
+                          />
+                        </Stack>
+                      </Grid>
                     </Grid>
-                  </Grid>
-                </Stack>
-                <Stack style={{ marginTop: "20px" }}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="name">
-                          Ammount<span className="err_str">*</span>
-                        </InputLabel>
-                        <OutlinedInput
-                          type="text"
-                          id="amount"
-                          placeholder="Amount ..."
-                          fullWidth
-                          size="small"
-                          {...register("price", {
-                            required: true,
-                          })}
-                        />
-                        <Typography style={style}>
-                          {errors.price && (
-                            <span>Amount Feild is Required **</span>
-                          )}
-                        </Typography>
-                      </Stack>
+                  </Stack>
+                  <Stack style={{ marginTop: "20px" }}>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} md={6}>
+                        <Stack spacing={1}>
+                          <InputLabel htmlFor="name">
+                            Description<span className="err_str">*</span>
+                          </InputLabel>
+                          <QuillNoSSRWrapper
+                            modules={modules}
+                            formats={formats}
+                            theme="snow"
+                            onChange={setDesContent}
+                          />
+                        </Stack>
+                      </Grid>
                     </Grid>
-                  </Grid>
-                </Stack>
-                <Stack style={{ marginTop: "20px" }}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="name">
-                          Short Description<span className="err_str">*</span>
-                        </InputLabel>
-                        <QuillNoSSRWrapper
-                          modules={modules}
-                          formats={formats}
-                          theme="snow"
-                          onChange={setContent}
-                        />
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </Stack>
-                <Stack style={{ marginTop: "20px" }}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="name">
-                          Description<span className="err_str">*</span>
-                        </InputLabel>
-                        <QuillNoSSRWrapper
-                          modules={modules}
-                          formats={formats}
-                          theme="snow"
-                          onChange={setDesContent}
-                        />
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </Stack>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  size="small"
-                  sx={{ width: 150, marginTop: 5 }}
-                  autoFocus
-                  disabled={btnDisabled}
-                >
-                  <b>Save</b>
-                </Button>
-              </Grid>
-            </form>
+                  </Stack>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    size="small"
+                    sx={{ width: 150, marginTop: 5 }}
+                    autoFocus
+                    disabled={btnDisabled}
+                  >
+                    <b>Save</b>
+                  </Button>
+                </Grid>
+              </form>
+            </Card>
           </div>
         </Box>
       </Box>
-      <ToastContainer />
     </>
   );
 }
