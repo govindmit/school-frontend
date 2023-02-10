@@ -39,8 +39,8 @@ import "react-toastify/dist/ReactToastify.css";
 import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
-import AddActivity from "./addActivity";
-import EditActivity from "./editActivity";
+//   import AddActivity from "./addActivity";
+//   import EditActivity from "./editActivity";
 import ConfirmBox from "../commoncmp/confirmbox";
 
 function a11yProps(index: number) {
@@ -78,6 +78,8 @@ type FormValues = {
 
 export default function ActivityList() {
   const [activites, setactivites] = useState<any>([]);
+  const [activity, setFullactivites] = useState<any>([]);
+
   const [searchquery, setsearchquery] = useState("");
   const [searchdata, setsearchdata] = useState([]);
   const [All, setAll] = useState(0);
@@ -120,6 +122,8 @@ export default function ActivityList() {
       });
       const json = await response.json();
       setactivites(json.data);
+      setFullactivites(json.data);
+
       setsearchdata(json.data);
       setAll(json.data.length);
     } catch (error) {
@@ -154,6 +158,9 @@ export default function ActivityList() {
     }
   };
 
+  const past = activity?.filter((a: any) => a.status == "Past");
+  const upcoming = activity?.filter((a: any) => a.status == "Upcoming");
+  const current = activity?.filter((a: any) => a.status == "Current");
   //pagination
   const [row_per_page, set_row_per_page] = useState(5);
   function handlerowchange(e: any) {
@@ -214,6 +221,18 @@ export default function ActivityList() {
     seteditActivityOpen(false);
   };
 
+  const handleUpcoming = () => {
+    setactivites(upcoming);
+  };
+  const handleAll = () => {
+    fetchData();
+  };
+  const handlePast = () => {
+    setactivites(past);
+  };
+  const handleCurrent = () => {
+    setactivites(current);
+  };
   return (
     <>
       <Box sx={{ display: "flex" }}>
@@ -256,15 +275,17 @@ export default function ActivityList() {
                   ACTIVITY
                 </Typography>
               </Stack>
-              <Button
-                className="button-new"
-                variant="contained"
-                size="small"
-                sx={{ width: 150 }}
-                onClick={handleNewActivityFormOpen}
-              >
-                <b>Add New Activity</b>
-              </Button>
+              <Link href="/admin/addactivity">
+                <Button
+                  className="button-new"
+                  variant="contained"
+                  size="small"
+                  sx={{ width: 150 }}
+                  onClick={handleNewActivityFormOpen}
+                >
+                  <b>Add New Activity</b>
+                </Button>
+              </Link>
             </Stack>
             {/*bread cump */}
             <Card
@@ -289,22 +310,22 @@ export default function ActivityList() {
                         className="filter-list"
                         label={`All (${All})`}
                         {...a11yProps(0)}
-                        // onClick={handleAll}
+                        onClick={handleAll}
                       />
                       <Tab
-                        label={`Upcomming ()`}
+                        label={`Upcomming (${upcoming.length})`}
                         {...a11yProps(1)}
-                        //onClick={handleActive}
+                        onClick={handleUpcoming}
                       />
                       <Tab
-                        label={`Past ()`}
+                        label={`Past (${past.length})`}
                         {...a11yProps(2)}
-                        //onClick={handleInActive}
+                        onClick={handlePast}
                       />
                       <Tab
-                        label={`Current ()`}
+                        label={`Current (${current.length})`}
                         {...a11yProps(3)}
-                        //onClick={handleInActive}
+                        onClick={handleCurrent}
                       />
                     </Tabs>
                   </Box>
@@ -347,19 +368,19 @@ export default function ActivityList() {
                                               // value={custType}
                                             >
                                               {/* <MenuItem value={0}>All</MenuItem>
-                                              {custtype &&
-                                                custtype.map(
-                                                  (data: any, key: any) => {
-                                                    return (
-                                                      <MenuItem
-                                                        key={key}
-                                                        value={data.id}
-                                                      >
-                                                        {data.name}
-                                                      </MenuItem>
-                                                    );
-                                                  }
-                                                )} */}
+                                                {custtype &&
+                                                  custtype.map(
+                                                    (data: any, key: any) => {
+                                                      return (
+                                                        <MenuItem
+                                                          key={key}
+                                                          value={data.id}
+                                                        >
+                                                          {data.name}
+                                                        </MenuItem>
+                                                      );
+                                                    }
+                                                  )} */}
                                             </Select>
                                           </FormControl>
                                         </Stack>
@@ -509,6 +530,7 @@ export default function ActivityList() {
                           startDate,
                           status,
                           endDate,
+                          description,
                         } = item;
                         return (
                           <TableRow
@@ -522,6 +544,7 @@ export default function ActivityList() {
                             </TableCell>
                             <TableCell align="left">{id}</TableCell>
                             <TableCell align="left">{name}</TableCell>
+
                             <TableCell align="left">
                               {type.charAt(0).toUpperCase() + type.slice(1)}
                             </TableCell>
@@ -545,7 +568,7 @@ export default function ActivityList() {
                               >
                                 <IconButton className="action-view">
                                   <Link
-                                    href={`/customer/viewcustomer/${id}`}
+                                    href={`/admin/activitydetail/${id}`}
                                     style={{
                                       color: "#26CEB3",
                                     }}
@@ -553,12 +576,16 @@ export default function ActivityList() {
                                     <BiShow />
                                   </Link>
                                 </IconButton>
-                                <IconButton
-                                  className="action-edit"
-                                  onClick={() => handleEditActivityOpen(id)}
+                                <Link
+                                  href={`/admin/editActivity/${id}`}
+                                  style={{
+                                    color: "#26CEB3",
+                                  }}
                                 >
-                                  <FiEdit />
-                                </IconButton>
+                                  <IconButton className="action-edit">
+                                    <FiEdit />
+                                  </IconButton>
+                                </Link>
                                 <IconButton
                                   className="action-delete"
                                   style={{ color: "#F95A37" }}
@@ -606,21 +633,6 @@ export default function ActivityList() {
           </div>
         </Box>
       </Box>
-      {newActivityOpen ? (
-        <AddActivity open={newActivityOpen} closeDialog={closePoP} />
-      ) : (
-        ""
-      )}
-
-      {editActivityOpen ? (
-        <EditActivity
-          id={editid}
-          open={editActivityOpen}
-          closeDialogedit={closeEditPoP}
-        />
-      ) : (
-        ""
-      )}
 
       <ConfirmBox
         open={deleteConfirmBoxOpen}
