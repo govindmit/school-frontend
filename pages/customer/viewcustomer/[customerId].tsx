@@ -140,7 +140,7 @@ export default function ViewCustomer() {
               direction="row"
               alignItems="center"
               justifyContent="space-between"
-              style={{ padding: "8px" }}
+              style={{ padding: "8px", marginBottom: "25px" }}
             >
               <Stack>
                 <Stack spacing={3}>
@@ -173,12 +173,12 @@ export default function ViewCustomer() {
               </Stack>
               <Stack>
                 <Typography style={{ color: "#F95A37" }}>
-                  <span style={{ fontSize: "10PX" }}>OWES </span>{" "}
-                  <b> $174.00</b>
+                  <span style={{ fontSize: "14PX" }}>OWES </span>{" "}
+                  <b style={{ fontSize: "26px" }}> $174.00</b>
                 </Typography>
-                <Typography style={{ color: "#7D86A5" }}>
-                  <span style={{ fontSize: "10PX" }}>CREDITS </span>
-                  <b> $0.00</b>
+                <Typography style={{ color: "rgba(125, 134, 165, 0.6)" }}>
+                  <span style={{ fontSize: "14PX" }}>CREDITS </span>
+                  <b style={{ fontSize: "26px" }}> $0.00</b>
                 </Typography>
               </Stack>
             </Stack>
@@ -186,7 +186,11 @@ export default function ViewCustomer() {
             <Grid container spacing={2}>
               <Grid item xs={4}>
                 {" "}
-                <Card sx={{ minWidth: 275 }}>
+                <Card
+                  sx={{ minWidth: 275 }}
+                  className="box-shadow"
+                  style={{ borderRadius: "5px" }}
+                >
                   <CardContent>
                     <Stack
                       direction="row"
@@ -196,7 +200,7 @@ export default function ViewCustomer() {
                     >
                       <Stack>
                         <Typography
-                          variant="h5"
+                          variant="h3"
                           gutterBottom
                           style={{ fontWeight: "bold", color: "#333333" }}
                         >
@@ -223,8 +227,8 @@ export default function ViewCustomer() {
                           image="/image.png"
                           alt="#"
                         />
-                        <CardContent sx={{ flex: 1 }}>
-                          <Typography component="h2" variant="h5">
+                        <CardContent sx={{ flex: 1 }} className="text-grey">
+                          <Typography component="h4" variant="h4">
                             {userDet && userDet.name}
                           </Typography>
                           <Typography
@@ -242,7 +246,7 @@ export default function ViewCustomer() {
                         </CardContent>
                       </Box>
                     </Stack>
-                    <Stack style={{ padding: "8px" }}>
+                    <Stack style={{ padding: "8px" }} className="text-grey">
                       <Typography>Address:</Typography>
                       <span>
                         1234 EZ St City, State 00000-000 United States

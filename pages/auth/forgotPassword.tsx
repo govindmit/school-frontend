@@ -104,6 +104,7 @@ export default function ForgotPasswordPage() {
             <AuthRightTemplate />
           </Grid>
           <Grid
+            className="headre-right-main"
             item
             xs={12}
             sm={8}

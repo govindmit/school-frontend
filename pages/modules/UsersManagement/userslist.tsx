@@ -14,14 +14,9 @@ import {
     Breadcrumbs,
     FormControl,
     TextField,
-    Menu,
     MenuItem,
-    Grid,
-    InputLabel,
-    Container,
     Select,
     IconButton,
-    OutlinedInput,
     Pagination,
     Tabs,
     Tab,
@@ -30,9 +25,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import MiniDrawer from "../../sidebar";
 import { api_url, auth_token } from "../../api/hello";
-import { BiFilterAlt, BiShow } from "react-icons/bi";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
+import { BiShow } from "react-icons/bi";
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
 import { FiEdit } from "react-icons/fi";
@@ -40,11 +33,7 @@ import { RiDeleteBin5Fill } from "react-icons/ri";
 import ConfirmBox from "../../commoncmp/confirmbox";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-// import AddCustomer from "./addNewCustomer";
-// import EditCustomer from "./editcustomer";
 import { useRouter } from "next/router";
-import { CSVDownload } from "react-csv";
-// import Loader from "../commoncmp/myload";
 
 function a11yProps(index: number) {
     return {
@@ -75,41 +64,13 @@ function usePagination(data: any, itemsPerPage: any) {
     return { next, prev, jump, currentData, currentPage, maxPage };
 }
 
-//filter form values
-type FormValues = {
-    customerType: number;
-    status: number;
-    phoneNumber: number;
-    contactName: string;
-    sorting: number;
-    ParentId: string;
-};
-
 export default function UsersList() {
     const [users, setUsers] = useState<any>([]);
-    const [custtype, setcusttype] = useState<any>([]);
-    const [tabFilterData, settabFilterData] = useState<any>([]);
     const [All, setAll] = useState(0);
-    const [active, setactive] = useState(0);
-    const [inActive, setinActive] = useState(0);
     const [searchquery, setsearchquery] = useState("");
     const [searchdata, setsearchdata] = useState([]);
     const [deleteConfirmBoxOpen, setdeleteConfirmBoxOpen] = React.useState(false);
-    const [newCustOpen, setnewCustOpen] = React.useState(false);
-    const [editCustOpen, seteditCustOpen] = React.useState(false);
-    const [editid, seteditid] = useState<any>(0);
     const [value, setValue] = React.useState(0);
-    const [custType, setCustType] = useState<any>(0);
-    const [custStatus, setcustStatus] = useState<any>(2);
-    const [sort, setsort] = useState<any>(0);
-    const [conctName, setconctName] = useState<any>("");
-    const [phoneNum, setphoneNum] = useState<any>("");
-    const [pId, setpId] = useState<any>(0);
-    const [parentId, setparentId] = useState<any>("");
-    const [checked, setChecked] = React.useState(false);
-    const [OpenCSV, setOpenCSV] = React.useState(false);
-    const { register, handleSubmit } = useForm<FormValues>();
-
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
@@ -117,7 +78,6 @@ export default function UsersList() {
 
     useEffect(() => {
         getUser();
-        getType();
     }, []);
 
     // verify user login
@@ -142,82 +102,13 @@ export default function UsersList() {
                 },
             });
             const res = await response.json();
-            setUsers(res.data.filter((dt: any) => dt.customerId !== null));
-            settabFilterData(res.data.filter((dt: any) => dt.customerId !== null))
+            setUsers(res.data.filter((dt: any) => dt.roleId !== 2));
             setsearchdata(res.data.filter((dt: any) => dt.customerId !== null));
             setAll(res.data.filter((dt: any) => dt.customerId !== null).length);
-            setparentId(res.data.filter((dt: any) => dt.GeneratedParentId !== null));
-            const activeUser = res.data.filter(
-                (dt: any) => dt.status === 1 && dt.customerId !== null
-            ).length;
-            const inactiveUser = res.data.filter(
-                (dt: any) => dt.status === 0 && dt.customerId !== null
-            ).length;
-            setactive(activeUser);
-            setinActive(inactiveUser);
         } catch (error) {
             console.log("error", error);
         }
     };
-
-    //get customers(users) type
-    const getType = async () => {
-        const url = `${api_url}/getType`;
-        try {
-            const response = await fetch(url, {
-                method: "GET",
-                headers: {
-                    Authorization: auth_token,
-                    "x-access-token": logintoken,
-                },
-            });
-            const res = await response.json();
-            setcusttype(res.data);
-        } catch (error) {
-            console.log("error", error);
-        }
-    };
-
-    //apply filter
-    const onSubmit: SubmitHandler<FormValues> = async (data) => {
-        setUsers([]);
-        const reqData = {
-            status: custStatus,
-            customerType: custType,
-            contactName: conctName,
-            number: phoneNum,
-            sorting: sort,
-            ParentId: pId,
-        };
-        await axios({
-            method: "POST",
-            url: `${api_url}/getUser`,
-            data: reqData,
-            headers: {
-                Authorization: auth_token,
-                "x-access-token": logintoken,
-            },
-        })
-            .then((res) => {
-                if (res.status === 200) {
-                    setUsers(res.data.data.filter((dt: any) => dt.customerId !== null));
-                }
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    };
-
-    //reset filter value
-    function ResetFilterValue() {
-        setCustType(0);
-        setcustStatus(2);
-        setsort(0);
-        setconctName("");
-        setphoneNum("");
-        setpId(0);
-    }
-
     // apply searching
     const handleSearch = (e: any) => {
         setsearchquery(e.target.value);
@@ -285,141 +176,12 @@ export default function UsersList() {
             });
     }
 
-    //open close popup boxes
-    function handleNewCustomerOpen() {
-        setnewCustOpen(true);
-    }
-    const closePoP = (data: any) => {
-        getUser();
-        setnewCustOpen(false);
-    };
-
-    //edit customer popup
-    function handleEditCustomerOpen(id: any) {
-        seteditCustOpen(true);
-        seteditid(id);
-    }
-    const closeEditPoP = (data: any) => {
-        seteditCustOpen(false);
-        getUser();
-    };
-
     //tab functionality
     function handleAll() {
         getUser();
     }
-    function handleActive() {
-        const act = tabFilterData.filter((a: any) => a.status === 1);
-        setUsers(act);
-    }
-    function handleInActive() {
-        const Inact = tabFilterData.filter((a: any) => a.status === 0);
-        setUsers(Inact);
-    }
-
-    //check uncheck functionality
-    const [userinfo, setUserInfo] = useState<any>({
-        id: [],
-    });
-    const handleChanges = (e: any) => {
-        const { value, checked } = e.target;
-        const { id } = userinfo;
-        if (checked) {
-            setUserInfo({
-                id: [...id, value],
-            });
-        }
-        else {
-            setUserInfo({
-                id: id.filter((e: any) => e !== value),
-            });
-        }
-    };
-
-    function handleCheck(e: any) {
-        var isChecked = e.target.checked;
-        setChecked(isChecked)
-        // var item = e.target.value;
-        // console.log(item);
-    }
-
-    // console.log(checked);
-    // console.log(userinfo.id);
-
-
-    // Export to CSV
-    const [mydata, setmydata] = useState<any>("")
-    const [myload, setmyload] = useState(false)
-    function ExportCSV() {
-        let datas: {
-            name: string; email1: string; email2: string;
-            phone1: number; phone2: number, CustomerType: string;
-            contactName: string; printUs: string, status: string
-        }[] = [];
-        if (userinfo.id.length > 0) {
-            const ids = userinfo.id.join(",");
-            const getUserByMultipleids = async () => {
-                setmyload(true);
-                const url = `${api_url}/getuserbymultipleid/${ids}`;
-                try {
-                    const response = await fetch(url, {
-                        method: "get",
-                        headers: {
-                            Authorization: auth_token,
-                            "x-access-token": logintoken,
-                        },
-                    });
-                    const res = await response.json();
-                    if (res.data) {
-                        setmyload(false);
-                        res.data.map((item: any, key: any) => {
-                            datas.push({
-                                name: item.name,
-                                email1: item.email1,
-                                email2: item.email2,
-                                phone1: item.phone1,
-                                phone2: item.phone2,
-                                CustomerType: item.CustomerType,
-                                contactName: item.contactName,
-                                printUs: item.printUs,
-                                status: item.status === 1 ? "Active" : "InActive"
-                            })
-                        })
-                        setmydata(datas);
-                        setOpenCSV(true);
-                        setTimeout(() => {
-                            setOpenCSV(false);
-                            setUserInfo({
-                                id: []
-                            })
-                        }, 1000);
-                    }
-                } catch (error) {
-                    console.log("error", error);
-                }
-            };
-            getUserByMultipleids();
-        } else {
-            toast.error("Please Select Atleast One Customer !", {
-                position: toast.POSITION.TOP_CENTER
-            });
-        }
-    }
-    const headers = [
-        { label: "Name", key: "name" },
-        { label: "Email", key: "email1" },
-        { label: "Alternate Email", key: "email2" },
-        { label: "Phone Number", key: "phone1" },
-        { label: "Altername Number", key: "phone2" },
-        { label: "Contact Name ", key: "contactName" },
-        { label: "Print Us ", key: "printUs" },
-        { label: "Customer Type ", key: "CustomerType" },
-        { label: "status", key: "status" },
-    ];
-
     return (
         <>
-            {OpenCSV && mydata.length > 0 ? <CSVDownload data={mydata} headers={headers} /> : ""}
             <Box sx={{ display: "flex" }}>
                 <MiniDrawer />
                 <Box component="main" sx={{ flexGrow: 1 }}>
@@ -465,7 +227,7 @@ export default function UsersList() {
                                 variant="contained"
                                 size="small"
                                 sx={{ width: 150 }}
-                                onClick={handleNewCustomerOpen}
+                                onClick={() => router.push("/usermanagement/addnewuser")}
                             >
                                 <b>New User</b>
                             </Button>
@@ -518,37 +280,22 @@ export default function UsersList() {
                                     <TableHead>
                                         <TableRow>
                                             <TableCell padding="checkbox">
-                                                <Checkbox onChange={handleCheck} />
+                                                <Checkbox />
                                             </TableCell>
                                             <TableCell>
                                                 <Typography>ID</Typography>
                                             </TableCell>
                                             <TableCell>
-                                                <Typography>NAME</Typography>
+                                                <Typography>USER NAME</Typography>
                                             </TableCell>
                                             <TableCell>
-                                                <Typography>EMAIL 1</Typography>
+                                                <Typography>EMAIL</Typography>
                                             </TableCell>
                                             <TableCell>
-                                                <Typography>EMAIL 2</Typography>
+                                                <Typography>PHONE NO</Typography>
                                             </TableCell>
                                             <TableCell>
-                                                <Typography width={100}>COST. TYPE</Typography>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography width={100}>CONT. NAME</Typography>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography>STATUS</Typography>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography width={100}>PRINT US</Typography>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography>PHONE 1</Typography>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Typography width={100}>PHONE 2</Typography>
+                                                <Typography>ROLE</Typography>
                                             </TableCell>
                                             <TableCell>
                                                 <Typography>ACTION</Typography>
@@ -568,13 +315,13 @@ export default function UsersList() {
                                                     >
                                                         <TableCell padding="checkbox">
                                                             <Checkbox
-                                                                onChange={handleChanges} value={dataitem.id}
+                                                                //onChange={handleChanges} value={dataitem.id}
                                                                 //checked={checked}
                                                                 id={`check` + key}
                                                             />
                                                         </TableCell>
                                                         <TableCell align="left">
-                                                            {dataitem.customerId}
+                                                            {dataitem.id}
                                                         </TableCell>
                                                         <TableCell align="left">{dataitem.name}</TableCell>
                                                         <TableCell align="left">
@@ -584,30 +331,7 @@ export default function UsersList() {
                                                             <a href="">{dataitem.email2}</a>
                                                         </TableCell>
                                                         <TableCell align="left">
-                                                            {dataitem.CustomerType !== null
-                                                                ? dataitem.CustomerType
-                                                                : "INDIVIDUAL"}
-                                                        </TableCell>
-                                                        <TableCell align="left">
-                                                            {dataitem.contactName}
-                                                        </TableCell>
-                                                        <TableCell align="left">
-                                                            {dataitem.status === 1 ? (
-                                                                <span style={{ color: "#02C509" }}>ACTIVE</span>
-                                                            ) : (
-                                                                <span style={{ color: "#FF4026" }}>
-                                                                    INACTIVE
-                                                                </span>
-                                                            )}
-                                                        </TableCell>
-                                                        <TableCell align="left">
                                                             {dataitem.printUs}
-                                                        </TableCell>
-                                                        <TableCell align="left">
-                                                            {dataitem.phone1}
-                                                        </TableCell>
-                                                        <TableCell align="left">
-                                                            {dataitem.phone2}
                                                         </TableCell>
                                                         <TableCell align="left">
                                                             <Stack
@@ -617,7 +341,7 @@ export default function UsersList() {
                                                             >
                                                                 <IconButton className="action-view">
                                                                     <Link
-                                                                        href={`/customer/viewcustomer/${dataitem.id}`}
+                                                                        href={`/usermanagement/viewuser/${dataitem.id}`}
                                                                         style={{
                                                                             color: "#26CEB3",
                                                                         }}
@@ -627,11 +351,14 @@ export default function UsersList() {
                                                                 </IconButton>
                                                                 <IconButton
                                                                     className="action-edit"
-                                                                    onClick={() =>
-                                                                        handleEditCustomerOpen(dataitem.id)
-                                                                    }
+
                                                                 >
-                                                                    <FiEdit />
+                                                                    <Link
+                                                                        href={`/usermanagement/edituser/${dataitem.id}`}
+                                                                        style={{
+                                                                            color: "#26CEB3",
+                                                                        }}
+                                                                    > <FiEdit /></Link>
                                                                 </IconButton>
                                                                 <IconButton
                                                                     className="action-delete"
@@ -679,24 +406,6 @@ export default function UsersList() {
                     </div>
                 </Box>
             </Box>
-            {/* {
-                newCustOpen ? (
-                    <AddCustomer open={newCustOpen} closeDialog={closePoP} />
-                ) : (
-                    ""
-                )
-            }
-            {
-                editCustOpen ? (
-                    <EditCustomer
-                        id={editid}
-                        open={editCustOpen}
-                        closeDialogedit={closeEditPoP}
-                    />
-                ) : (
-                    ""
-                )
-            } */}
             <ConfirmBox
                 open={deleteConfirmBoxOpen}
                 closeDialog={() => setdeleteConfirmBoxOpen(false)}

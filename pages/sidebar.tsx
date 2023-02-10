@@ -332,7 +332,7 @@ export default function MiniDrawer() {
                     justifyContent: "center",
                   }}
                 ></ListItemIcon>
-                <TimelineOutlinedIcon />
+                <PeopleAltOutlinedIcon />
                 <ListItemText
                   primary="User Management"
                   sx={{ opacity: open ? 1 : 0 }}
@@ -343,7 +343,7 @@ export default function MiniDrawer() {
               className="sidebar-link"
               disablePadding
               sx={{ display: "block" }}
-              // onClick={() => router.push("/activites/activitylist")}
+            // onClick={() => router.push("/activites/activitylist")}
             >
               <ListItemButton
                 sx={{
