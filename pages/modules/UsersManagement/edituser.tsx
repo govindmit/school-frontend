@@ -14,6 +14,9 @@ import {
     FormGroup,
     FormControlLabel,
     Checkbox,
+    FormControl,
+    Select,
+    MenuItem,
 } from "@mui/material";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -41,6 +44,7 @@ const style = {
 
 export default function EditUser(props: any) {
     const [userdet, setuserdet] = useState<any>([]);
+    const [roles, setroles] = React.useState<any>([])
     const [checked, setChecked] = React.useState(true);
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setChecked(event.target.checked);
@@ -60,10 +64,12 @@ export default function EditUser(props: any) {
             setValue("email", response && response.email1);
             setValue("number", response && response.phone1);
         });
+        //get role
+        UserService.GetRoles().then(response => setroles(response));
     }, []);
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
-        console.log(data); 
+        console.log(data);
         return false;
         // setshowspinner(true);
         //setBtnDisabled(true);
@@ -96,8 +102,6 @@ export default function EditUser(props: any) {
         //         //setBtnDisabled(false);
         //     });
     };
-
-
     return (
         <>
             <Box sx={{ display: "flex" }}>
@@ -241,13 +245,26 @@ export default function EditUser(props: any) {
                                                         <InputLabel htmlFor="Price">
                                                             Role    <span className="err_str">*</span>
                                                         </InputLabel>
-                                                        <OutlinedInput
-                                                            type="text"
-                                                            id="name"
-                                                            placeholder="price..."
-                                                            fullWidth
-                                                            size="small"
-                                                        />
+                                                        <FormControl fullWidth>
+                                                            <Select
+                                                                labelId="demo-simple-select-label"
+                                                                id="demo-simple-select"
+                                                                size="small"
+                                                                defaultValue={1}
+                                                                {...register("roleid", {
+                                                                    required: true
+                                                                })}
+                                                            >
+                                                                {roles &&
+                                                                    roles.map((data: any, key: any) => {
+                                                                        return (
+                                                                            <MenuItem key={key} value={data.id}>
+                                                                                {data.name}
+                                                                            </MenuItem>
+                                                                        );
+                                                                    })}
+                                                            </Select>
+                                                        </FormControl>
                                                     </Stack>
                                                 </Grid>
                                                 <Grid item xs={12} md={12} style={{ paddingTop: "0px" }}>

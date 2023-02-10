@@ -107,13 +107,12 @@ export default function ViewUser(props: any) {
                                 <Card sx={{ minWidth: 275 }}>
                                     <CardContent>
                                         <Typography><b>Manage Permillage for this user</b></Typography>
-                                        <Box sx={{ width: "100%" }}>
+                                        <Box sx={{ width: "100%" }} style={{ marginTop: "10px" }}>
                                             <Stack
                                                 direction="row"
                                                 alignItems="center"
                                                 justifyContent="space-between"
                                                 style={{ backgroundColor: "#F0F4FF", padding: "10px" }}
-
                                             >
                                                 <Stack>
                                                     <Stack spacing={3}>
