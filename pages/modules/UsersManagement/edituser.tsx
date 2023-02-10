@@ -26,6 +26,8 @@ import "react-toastify/dist/ReactToastify.css";
 import styled from "@emotion/styled";
 import UserService from './servives'
 import { useForm, SubmitHandler } from "react-hook-form";
+import axios from "axios";
+import { api_url, auth_token } from "../../api/hello";
 const Item = styled(Paper)(({ theme }) => ({
     p: 10,
 }));
@@ -45,6 +47,7 @@ const style = {
 
 export default function EditUser(props: any) {
     const [roles, setroles] = React.useState<any>([])
+    const [rolestatus, setrolestatus] = React.useState<any>("");
     let permitions: { Dashboard?: any; Invoices?: any; SalesInvoices?: any; Activites?: any; Customers?: any; Cumposers?: any }[] = [];
     const [onDashboard, setonDashboard] = React.useState(false);
     const [Dashboardchecked, setDashboardchecked] = React.useState<any>({
@@ -77,6 +80,11 @@ export default function EditUser(props: any) {
         canEdit: false,
         canDelete: false
     });
+    if (onActivity) {
+        permitions.push({
+            Activites: Activitychecked
+        })
+    }
 
     const [onCustomer, setonCustomer] = React.useState(false);
     const [Customerchecked, setCustomerchecked] = React.useState<any>({
@@ -85,6 +93,11 @@ export default function EditUser(props: any) {
         canEdit: false,
         canDelete: false
     });
+    if (onCustomer) {
+        permitions.push({
+            Customers: Customerchecked
+        })
+    }
     const [onComposer, setonComposer] = React.useState(false);
     const [Composerchecked, setComposerchecked] = React.useState<any>({
         canView: false,
@@ -92,6 +105,12 @@ export default function EditUser(props: any) {
         canEdit: false,
         canDelete: false
     });
+
+    if (onComposer) {
+        permitions.push({
+            Cumposers: Customerchecked
+        })
+    }
     const [onSalesInvoice, setonSalesInvoice] = React.useState(false);
     const [SalesInvoicechecked, setSalesInvoicechecked] = React.useState<any>({
         canView: false,
@@ -99,9 +118,11 @@ export default function EditUser(props: any) {
         canEdit: false,
         canDelete: false
     });
-
-    console.log(permitions);
-
+    if (onSalesInvoice) {
+        permitions.push({
+            SalesInvoices: SalesInvoicechecked
+        })
+    }
     useEffect(() => {
         //get roles
         UserService.GetRoles().then(response => setroles(response));
@@ -175,6 +196,8 @@ export default function EditUser(props: any) {
             setValue("name", response && response.name);
             setValue("email", response && response.email1);
             setValue("number", response && response.phone1);
+            setrolestatus(response && response.roleId);
+
         });
     }, []);
 
@@ -196,30 +219,22 @@ export default function EditUser(props: any) {
             status: 1,
             userRole: "user"
         };
-        console.log(reqData);
-        return false;
-        // await axios({
-        //     method: "POST",
-        //     url: `${api_url}/addUser`,
-        //     data: reqData,
-        //     headers: {
-        //         Authorization: auth_token,
-        //     },
-        // })
-        //     .then((data: any) => {
-        //         if (data) {
-        //             //setshowspinner(false);
-        //             //setBtnDisabled(false);
-        //             toast.success("Customer Added Successfully !");
-        //             reset();
-
-        //         }
-        //     })
-        //     .catch((error) => {
-        //         toast.error("Email Allready Registred !");
-        //         //setshowspinner(false);
-        //         //setBtnDisabled(false);
-        //     });
+        await axios({
+            method: "put",
+            url: `${api_url}/edituser/${props.id}`,
+            data: reqData,
+            headers: {
+                Authorization: auth_token,
+            },
+        })
+            .then((data: any) => {
+                if (data) {
+                    toast.success("User updated successfully!");
+                }
+            })
+            .catch((error) => {
+                toast.error("Email Allready Registred !");
+            });
     };
     return (
         <>
@@ -365,24 +380,27 @@ export default function EditUser(props: any) {
                                                             Role    <span className="err_str">*</span>
                                                         </InputLabel>
                                                         <FormControl fullWidth>
-                                                            <Select
-                                                                labelId="demo-simple-select-label"
-                                                                id="demo-simple-select"
-                                                                size="small"
-                                                                defaultValue={1}
-                                                                {...register("roleid", {
-                                                                    required: true
-                                                                })}
-                                                            >
-                                                                {roles &&
-                                                                    roles.map((data: any, key: any) => {
-                                                                        return (
-                                                                            <MenuItem key={key} value={data.id}>
-                                                                                {data.name}
-                                                                            </MenuItem>
-                                                                        );
+                                                            {rolestatus !== "" ? (
+                                                                <Select
+                                                                    labelId="demo-simple-select-label"
+                                                                    id="demo-simple-select"
+                                                                    size="small"
+                                                                    defaultValue={rolestatus}
+                                                                    {...register("roleid", {
+                                                                        required: true
                                                                     })}
-                                                            </Select>
+                                                                >
+                                                                    {roles &&
+                                                                        roles.map((data: any, key: any) => {
+                                                                            return (
+                                                                                <MenuItem key={key} value={data.id}>
+                                                                                    {data.name}
+                                                                                </MenuItem>
+                                                                            );
+                                                                        })}
+                                                                </Select>) : (
+                                                                "loading......"
+                                                            )}
                                                         </FormControl>
                                                     </Stack>
                                                 </Grid>

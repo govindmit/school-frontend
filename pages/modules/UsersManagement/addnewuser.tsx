@@ -104,7 +104,6 @@ export default function AddNewUser() {
         canEdit: false,
         canDelete: false
     });
-
     if (onComposer) {
         permitions.push({
             Cumposers: Customerchecked

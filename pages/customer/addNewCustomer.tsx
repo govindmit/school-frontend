@@ -30,6 +30,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import CloseIcon from "@mui/icons-material/Close";
 import styled from "@emotion/styled";
+import commmonfunctions from "../commonFunctions/commmonfunctions";
 const style = {
   color: "red",
   fontSize: "12px",
@@ -126,6 +127,7 @@ export default function AddCustomer({
   const [parentid, setparentid] = React.useState(0);
   const [parentname, setparentname] = React.useState<any>("");
   const [btnDisabled, setBtnDisabled] = React.useState(false);
+  const [AccId, setAccid] = React.useState(0);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -142,6 +144,9 @@ export default function AddCustomer({
 
   React.useEffect(() => {
     getType();
+    commmonfunctions.GetLastInsertId().then(res => {
+      setAccid(res.id);
+    })
   }, []);
 
   //get type
@@ -576,6 +581,21 @@ export default function AddCustomer({
                         {errors.printUs?.type === "validate" && (
                           <span style={style}>Field can't be blank *</span>
                         )}
+                      </Stack>
+                    </Grid>
+                    <Grid item xs={12} md={12}>
+                      <Stack spacing={1}>
+                        <InputLabel htmlFor="name">
+                          Account
+                        </InputLabel>
+                        <OutlinedInput
+                          type="text"
+                          id="name"
+                          placeholder="# Generate If blank"
+                          fullWidth
+                          value={`#CUST${AccId && AccId + 1}`}
+                          size="small"
+                        />
                       </Stack>
                     </Grid>
                   </Grid>
