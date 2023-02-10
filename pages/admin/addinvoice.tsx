@@ -506,6 +506,7 @@ export default function Guardians() {
     var invoiceDatesss;
     if (Invoicedates != "") {
       invoiceDatesss = moment(Invoicedates).format("DD/MM/YYYY");
+    } else {
     }
     const createdDate = moment(dates).format("DD/MM/YYYY");
 
@@ -515,7 +516,7 @@ export default function Guardians() {
       status: "draft",
       createdDate: createdDate,
       createdBy: "1",
-      invoiceDate: invoiceDatesss,
+      invoiceDate: invoiceDatesss == "Invalid date" ? "" : invoiceDatesss,
       customerId: userID.id,
       invoiceNo: invoiceno,
     };
@@ -561,63 +562,65 @@ export default function Guardians() {
 
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <div className="guardianBar">
-            <Stack
-              direction="row"
-              alignItems="center"
-              justifyContent="space-between"
-              style={{ padding: "8px", marginBottom: "15px" }}
-            >
-              <Stack>
-                <Stack spacing={3}>
-                  <Breadcrumbs separator="›" aria-label="breadcrumb">
-                    <Link
-                      key="1"
-                      color="inherit"
-                      href="/"
-                      style={{ color: "#1A70C5", textDecoration: "none" }}
-                    >
-                      Home
-                    </Link>
-                    <Link
-                      key="2"
-                      color="inherit"
-                      href="/"
-                      style={{ color: "#7D86A5", textDecoration: "none" }}
-                    >
-                      Create Invoices
-                    </Link>
-                  </Breadcrumbs>
-                </Stack>
-                <Typography
-                  variant="h5"
-                  gutterBottom
-                  style={{ fontWeight: "bold", color: "#333333" }}
-                >
-                  Create Invoices
-                </Typography>
-              </Stack>
-              <div className="cinvoice">
-                <div>
-                  <BootstrapButton
-                    onClick={handleDraft}
-                    type="button"
-                    className="grey-button"
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                style={{ padding: "8px", marginBottom: "15px" }}
+              >
+                <Stack>
+                  <Stack spacing={3}>
+                    <Breadcrumbs separator="›" aria-label="breadcrumb">
+                      <Link
+                        key="1"
+                        color="inherit"
+                        href="/"
+                        style={{ color: "#1A70C5", textDecoration: "none" }}
+                      >
+                        Home
+                      </Link>
+                      <Link
+                        key="2"
+                        color="inherit"
+                        href="/"
+                        style={{ color: "#7D86A5", textDecoration: "none" }}
+                      >
+                        Create Invoices
+                      </Link>
+                    </Breadcrumbs>
+                  </Stack>
+                  <Typography
+                    variant="h5"
+                    gutterBottom
+                    style={{ fontWeight: "bold", color: "#333333" }}
                   >
-                    Save as Draft
-                  </BootstrapButton>
+                    Create Invoices
+                  </Typography>
+                </Stack>
+                <div className="cinvoice">
+                  <div>
+                    <BootstrapButton
+                      onClick={handleDraft}
+                      type="button"
+                      className="grey-button"
+                    >
+                      Save as Draft
+                    </BootstrapButton>
 
-                  <BootstrapButton type="submit">Save & issue</BootstrapButton>
-                </div>
-                {/* <Button sx={{ margin: "7px" }} type="button">
+                    <BootstrapButton type="submit">
+                      Save & issue
+                    </BootstrapButton>
+                  </div>
+                  {/* <Button sx={{ margin: "7px" }} type="button">
                     Add Guardians
                   </Button> */}
-              </div>
-            </Stack>
-            <form onSubmit={handleSubmit(onSubmit)}>
+                </div>
+              </Stack>
               <div className="midBar">
                 <div className="guardianList" style={{ padding: "50px" }}>
                   <div className="required" style={{ textAlign: "right" }}>
-                    <Typography style={style}>
+                    {/* <Typography style={style}>
                       {errors.date ? (
                         <span>Invoice Date Feild is Required **</span>
                       ) : error != "" ? (
@@ -625,7 +628,7 @@ export default function Guardians() {
                       ) : (
                         ""
                       )}
-                    </Typography>
+                    </Typography> */}
                   </div>
                   <div className="aititle">
                     <div className="iatitle flex">
@@ -714,14 +717,9 @@ export default function Guardians() {
                         // })}
                       />
                       <Typography style={style}>
-                        <span>{error} </span>
-                      </Typography>
-                      <Typography style={style}>
-                        {errors.Customername ? (
-                          <span>Feild is Required **</span>
-                        ) : (
-                          ""
-                        )}
+                        <span>
+                          {error === "customer field is required" ? error : ""}{" "}
+                        </span>
                       </Typography>
                     </div>
                     <div className="invoicedateField">
@@ -734,6 +732,13 @@ export default function Guardians() {
                         onChange={(e: any) => setInvoiceNo(e.target.value)}
                         value={invoiceno}
                       />
+                      <Typography style={style}>
+                        <span>
+                          {error === "invoiceNo field is required"
+                            ? "Invoice no field is required"
+                            : ""}{" "}
+                        </span>
+                      </Typography>
                       <InputLabel id="demo-select-small"></InputLabel>
                       &nbsp; &nbsp;
                       <DatePicker
@@ -746,6 +751,13 @@ export default function Guardians() {
                         // filterDate={filterDays}
                         minDate={new Date()}
                       />
+                      <Typography style={style}>
+                        <span>
+                          {error === "invoiceDate field is required"
+                            ? error
+                            : ""}{" "}
+                        </span>
+                      </Typography>
                     </div>
                   </div>
                   <div className="invoiceItem">
@@ -788,6 +800,11 @@ export default function Guardians() {
                         Add items
                       </BootstrapButton>
                     </div>
+                    <Typography style={style}>
+                      <span>
+                        {error === "item field is required" ? error : ""}{" "}
+                      </span>
+                    </Typography>
                   </div>
                   &nbsp;&nbsp;
                   <div className="invoiceSubTotal">

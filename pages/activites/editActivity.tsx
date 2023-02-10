@@ -91,6 +91,7 @@ type FormValues = {
   startDate: string;
   endDate: string;
   status: statusEnum;
+  startDates: string;
 };
 
 export default function EditActivity({
@@ -108,7 +109,7 @@ export default function EditActivity({
   const [opens, setOpen] = React.useState(open);
   const [type, setType] = useState<FormValues | any>("");
   const [status, setStatus] = useState<FormValues | any>("");
-  const [startDate, setStartDate] = useState(null);
+  const [startDate, setStartDate] = useState<FormValues | any>("");
   const [endDate, setEndDate] = useState(null);
   const [Activity, setActivityDetail] = useState<FormValues | any>("");
 
@@ -135,8 +136,8 @@ export default function EditActivity({
     const reqData = {
       name: data.name,
       type: type,
-      startdate: sDate ? sDate : Activity[0]?.startdate,
-      enddate: eDate ? eDate : Activity[0]?.enddate,
+      startdate: sDate ? sDate : Activity[0]?.startDate,
+      enddate: eDate ? eDate : Activity[0]?.endDate,
       status: status,
       price: data.price,
     };
@@ -164,6 +165,7 @@ export default function EditActivity({
       });
   };
   const getActivityDetail = async () => {
+    console.log(id, "idssssssssss");
     try {
       const response = await fetch(`${api_url}/getactivitydetails/${id}`, {
         method: "GET",
@@ -171,15 +173,13 @@ export default function EditActivity({
           Authorization: auth_token,
         },
       });
-
       const res = await response.json();
-
+      const startDates = moment(res.data[0].startDate).format("DD/MM/YYYY");
       console.log(res, "responce");
       setValue("name", res.data[0].name);
       setValue("price", res.data[0].price);
       setType(res.data[0].type);
       setStatus(res.data[0].status);
-
       setActivityDetail(res.data);
       //   setparentid(res.data[0].parentId);
       //   setstatus(res.data[0].status);
@@ -188,7 +188,7 @@ export default function EditActivity({
       console.log("error", error);
     }
   };
-
+  console.log(Activity[0]?.startDate, "activityyyyyyy");
   const closeDialogs = () => {
     closeDialogedit(false);
     setOpen(false);
@@ -253,8 +253,8 @@ export default function EditActivity({
                         {/* <MenuItem value={sort}>
                                             <em>None</em>
                                           </MenuItem> */}
-                        <MenuItem value="free">Free</MenuItem>
-                        <MenuItem value="paid">Paid</MenuItem>
+                        <MenuItem value="Free">Free</MenuItem>
+                        <MenuItem value="Paid">Paid</MenuItem>
                       </Select>
                     </Stack>
                   </Grid>
@@ -274,9 +274,9 @@ export default function EditActivity({
                         {/* <MenuItem value={sort}>
                                             <em>None</em>
                                           </MenuItem> */}
-                        <MenuItem value="upcoming">Upcoming</MenuItem>
-                        <MenuItem value="past">Past</MenuItem>
-                        <MenuItem value="current">Current</MenuItem>
+                        <MenuItem value="Upcoming">Upcoming</MenuItem>
+                        <MenuItem value="Past">Past</MenuItem>
+                        <MenuItem value="Current">Current</MenuItem>
                       </Select>
                     </Stack>
                   </Grid>
@@ -293,7 +293,7 @@ export default function EditActivity({
                         onChange={(date: any) => setStartDate(date)}
                         name="startDate"
                         dateFormat="MM/dd/yyyy"
-                        placeholderText={Activity[0]?.startdate}
+                        placeholderText={Activity[0]?.startDate}
                       />
                     </Stack>
                   </Grid>
@@ -306,7 +306,7 @@ export default function EditActivity({
                         onChange={(date: any) => setEndDate(date)}
                         name="startDate"
                         dateFormat="MM/dd/yyyy"
-                        placeholderText={Activity[0]?.enddate}
+                        placeholderText={Activity[0]?.endDate}
                         minDate={startDate}
                       />
                     </Stack>
