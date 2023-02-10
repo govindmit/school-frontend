@@ -34,7 +34,6 @@ import ConfirmBox from "../../commoncmp/confirmbox";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
-import { CSVDownload } from "react-csv";
 
 function a11yProps(index: number) {
     return {
@@ -67,19 +66,11 @@ function usePagination(data: any, itemsPerPage: any) {
 
 export default function UsersList() {
     const [users, setUsers] = useState<any>([]);
-    const [tabFilterData, settabFilterData] = useState<any>([]);
     const [All, setAll] = useState(0);
     const [searchquery, setsearchquery] = useState("");
     const [searchdata, setsearchdata] = useState([]);
     const [deleteConfirmBoxOpen, setdeleteConfirmBoxOpen] = React.useState(false);
     const [value, setValue] = React.useState(0);
-    const [custType, setCustType] = useState<any>(0);
-    const [custStatus, setcustStatus] = useState<any>(2);
-    const [sort, setsort] = useState<any>(0);
-    const [conctName, setconctName] = useState<any>("");
-    const [phoneNum, setphoneNum] = useState<any>("");
-    const [pId, setpId] = useState<any>(0);
-    const [OpenCSV, setOpenCSV] = React.useState(false);
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
@@ -111,8 +102,7 @@ export default function UsersList() {
                 },
             });
             const res = await response.json();
-            setUsers(res.data.filter((dt: any) => dt.customerId !== null));
-            settabFilterData(res.data.filter((dt: any) => dt.customerId !== null))
+            setUsers(res.data.filter((dt: any) => dt.roleId !== 2));
             setsearchdata(res.data.filter((dt: any) => dt.customerId !== null));
             setAll(res.data.filter((dt: any) => dt.customerId !== null).length);
         } catch (error) {
@@ -190,8 +180,6 @@ export default function UsersList() {
     function handleAll() {
         getUser();
     }
-
-
     return (
         <>
             <Box sx={{ display: "flex" }}>
@@ -333,7 +321,7 @@ export default function UsersList() {
                                                             />
                                                         </TableCell>
                                                         <TableCell align="left">
-                                                            {dataitem.customerId}
+                                                            {dataitem.id}
                                                         </TableCell>
                                                         <TableCell align="left">{dataitem.name}</TableCell>
                                                         <TableCell align="left">
