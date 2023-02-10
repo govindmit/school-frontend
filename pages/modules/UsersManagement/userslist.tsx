@@ -118,15 +118,9 @@ export default function UsersList() {
         } else {
             const filterres = searchdata.filter((item: any) => {
                 return (
-                    item.customerId
-                        ?.toLowerCase()
-                        .includes(e.target.value.toLowerCase()) ||
                     item.name.toLowerCase().includes(e.target.value.toLowerCase()) ||
                     item.email1.toLowerCase().includes(e.target.value.toLowerCase()) ||
-                    item.contactName
-                        .toLowerCase()
-                        .includes(e.target.value.toLowerCase()) ||
-                    item.printUs.toLowerCase().includes(e.target.value.toLowerCase()) ||
+                    item.UserRole.toLowerCase().includes(e.target.value.toLowerCase()) ||
                     `${item.phone1}`.includes(e.target.value)
                 );
             });
@@ -328,10 +322,10 @@ export default function UsersList() {
                                                             <a href="">{dataitem.email1}</a>
                                                         </TableCell>
                                                         <TableCell align="left">
-                                                            <a href="">{dataitem.email2}</a>
+                                                            {dataitem.phone1}
                                                         </TableCell>
                                                         <TableCell align="left">
-                                                            {dataitem.printUs}
+                                                            {dataitem.UserRole}
                                                         </TableCell>
                                                         <TableCell align="left">
                                                             <Stack

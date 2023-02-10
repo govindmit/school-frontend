@@ -1,4 +1,3 @@
-import axios from "axios";
 class CommonFunctions {
   //get token and verify login
   VerifyLoginUser = async (id: any) => {

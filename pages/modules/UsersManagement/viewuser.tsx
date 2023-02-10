@@ -24,11 +24,121 @@ const Item = styled(Paper)(({ theme }) => ({
 
 export default function ViewUser(props: any) {
     const [userdet, setuserdet] = useState<any>([]);
+    const [onDashboard, setonDashboard] = React.useState(false);
+    const [Dashboardchecked, setDashboardchecked] = React.useState<any>({
+        canView: false,
+        canAdd: false,
+        canEdit: false,
+        canDelete: false
+    });
+    const [onInvoice, setonInvoice] = React.useState(false);
+    const [Invoicechecked, setInvoicechecked] = React.useState<any>({
+        canView: false,
+        canAdd: false,
+        canEdit: false,
+        canDelete: false
+    });
+    const [onActivity, setonActivity] = React.useState(false);
+    const [Activitychecked, setActivitychecked] = React.useState<any>({
+        canView: false,
+        canAdd: false,
+        canEdit: false,
+        canDelete: false
+    });
+
+    const [onCustomer, setonCustomer] = React.useState(false);
+    const [Customerchecked, setCustomerchecked] = React.useState<any>({
+        canView: false,
+        canAdd: false,
+        canEdit: false,
+        canDelete: false
+    });
+    const [onComposer, setonComposer] = React.useState(false);
+    const [Composerchecked, setComposerchecked] = React.useState<any>({
+        canView: false,
+        canAdd: false,
+        canEdit: false,
+        canDelete: false
+    });
+    const [onSalesInvoice, setonSalesInvoice] = React.useState(false);
+    const [SalesInvoicechecked, setSalesInvoicechecked] = React.useState<any>({
+        canView: false,
+        canAdd: false,
+        canEdit: false,
+        canDelete: false
+    });
+
     useEffect(() => {
         //get user det
-        UserService.GetUserDet(props.id).then(response => setuserdet(response));
-    }, []);
+        UserService.GetUserDet(props.id).then(response => {
+            setuserdet(response);
+            let datas = (response?.userPrevilegs);
+            const parsedata = JSON.parse(datas)?.user_permition;
+            const lgh = parsedata.length;
+            if (lgh > 0) {
+                for (var i = 0; i <= lgh - 1; i++) {
+                    if (parsedata[i].Dashboard) {
+                        setonDashboard(true);
+                        setDashboardchecked({
+                            canView: parsedata[i].Dashboard.canView,
+                            canAdd: parsedata[i].Dashboard.canAdd,
+                            canEdit: parsedata[i].Dashboard.canEdit,
+                            canDelete: parsedata[i].Dashboard.canDelete
+                        })
+                    }
+                    if (parsedata[i].Customers) {
+                        setonCustomer(true);
+                        setCustomerchecked({
+                            canView: parsedata[i].Customers.canView,
+                            canAdd: parsedata[i].Customers.canAdd,
+                            canEdit: parsedata[i].Customers.canEdit,
+                            canDelete: parsedata[i].Customers.canDelete
+                        }
+                        )
+                    }
+                    if (parsedata[i].Invoices) {
+                        setonInvoice(true);
+                        setInvoicechecked({
+                            canView: parsedata[i].Invoices.canView,
+                            canAdd: parsedata[i].Invoices.canAdd,
+                            canEdit: parsedata[i].Invoices.canEdit,
+                            canDelete: parsedata[i].Invoices.canDelete
+                        })
+                    }
+                    if (parsedata[i].Activites) {
+                        setonActivity(true);
+                        setActivitychecked({
+                            canView: parsedata[i].Activites.canView,
+                            canAdd: parsedata[i].Activites.canAdd,
+                            canEdit: parsedata[i].Activites.canEdit,
+                            canDelete: parsedata[i].Activites.canDelete
+                        }
+                        )
 
+                    }
+                    if (parsedata[i].Cumposers) {
+                        setonComposer(true);
+                        setComposerchecked({
+                            canView: parsedata[i].Cumposers.canView,
+                            canAdd: parsedata[i].Cumposers.canAdd,
+                            canEdit: parsedata[i].Cumposers.canEdit,
+                            canDelete: parsedata[i].Cumposers.canDelete
+                        }
+                        )
+                    }
+                    if (parsedata[i].SalesInvoices) {
+                        setonSalesInvoice(true);
+                        setSalesInvoicechecked({
+                            canView: parsedata[i].SalesInvoices.canView,
+                            canAdd: parsedata[i].SalesInvoices.canAdd,
+                            canEdit: parsedata[i].SalesInvoices.canEdit,
+                            canDelete: parsedata[i].SalesInvoices.canDelete
+                        })
+                    }
+                }
+            }
+        });
+    }, []);
     return (
         <>
             <Box sx={{ display: "flex" }}>
@@ -99,8 +209,6 @@ export default function ViewUser(props: any) {
                                             </CardContent>
                                         </Box>
                                     </Stack>
-
-
                                 </Item>
                             </Grid>
                             <Grid item xs={7}>
@@ -119,16 +227,30 @@ export default function ViewUser(props: any) {
                                                         DASHBOARD
                                                     </Stack>
                                                     <span style={{ color: "#333333" }}>
-                                                        OFF
+                                                        {onDashboard ? (<span style={{ color: "#1976d2" }}>ON</span>) : "OFF"}
                                                     </span>
                                                 </Stack>
                                                 <Switch
-                                                    //checked={checked}
-                                                    //onChange={handleChange}
+                                                    checked={onDashboard}
+                                                    onChange={e => setonDashboard(e.target.checked)}
                                                     disabled
                                                     inputProps={{ 'aria-label': 'controlled' }}
                                                 />
                                             </Stack>
+                                            {onDashboard ? (<Stack direction="row" style={{ marginTop: "10px" }} >
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={Dashboardchecked.canView} disabled />} label="Can View" />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={Dashboardchecked.canAdd} disabled />} label="Can Add" />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={Dashboardchecked.canEdit} disabled />} label="Can Edit" />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={Dashboardchecked.canDelete} disabled />} label="Can Delete" />
+                                                </FormGroup>
+                                            </Stack>) : ""}
                                             <Stack
                                                 direction="row"
                                                 alignItems="center"
@@ -141,16 +263,30 @@ export default function ViewUser(props: any) {
                                                         INVOICE
                                                     </Stack>
                                                     <span style={{ color: "#333333" }}>
-                                                        OFF
+                                                        {onInvoice ? (<span style={{ color: "#1976d2" }}>ON</span>) : "OFF"}
                                                     </span>
                                                 </Stack>
                                                 <Switch
-                                                    //checked={checked}
-                                                    //onChange={handleChange}
+                                                    checked={onInvoice}
+                                                    onChange={e => setonInvoice(e.target.checked)}
                                                     disabled
                                                     inputProps={{ 'aria-label': 'controlled' }}
                                                 />
                                             </Stack>
+                                            {onInvoice ? (<Stack direction="row" style={{ marginTop: "10px" }} >
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={Invoicechecked.canView} disabled />} label="Can View" />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={Invoicechecked.canAdd} disabled />} label="Can Add" />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={Invoicechecked.canEdit} disabled />} label="Can Edit" />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={Invoicechecked.canDelete} disabled />} label="Can Delete" />
+                                                </FormGroup>
+                                            </Stack>) : ""}
                                             <Stack
                                                 direction="row"
                                                 alignItems="center"
@@ -163,16 +299,30 @@ export default function ViewUser(props: any) {
                                                         SALES INVOICE
                                                     </Stack>
                                                     <span style={{ color: "#333333" }}>
-                                                        OFF
+                                                        {onSalesInvoice ? (<span style={{ color: "#1976d2" }}>ON</span>) : "OFF"}
                                                     </span>
                                                 </Stack>
                                                 <Switch
-                                                    //checked={checked}
-                                                    //onChange={handleChange}
+                                                    checked={onSalesInvoice}
+                                                    onChange={e => setonSalesInvoice(e.target.checked)}
                                                     disabled
                                                     inputProps={{ 'aria-label': 'controlled' }}
                                                 />
                                             </Stack>
+                                            {onSalesInvoice ? (<Stack direction="row" style={{ marginTop: "10px" }} >
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={SalesInvoicechecked.canView} disabled />} label="Can View" />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={SalesInvoicechecked.canAdd} disabled />} label="Can Add" />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={SalesInvoicechecked.canEdit} disabled />} label="Can Edit" />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={SalesInvoicechecked.canDelete} disabled />} label="Can Delete" />
+                                                </FormGroup>
+                                            </Stack>) : ""}
                                             <Stack
                                                 direction="row"
                                                 alignItems="center"
@@ -185,16 +335,30 @@ export default function ViewUser(props: any) {
                                                         ACTIVITY
                                                     </Stack>
                                                     <span style={{ color: "#333333" }}>
-                                                        OFF
+                                                        {onActivity ? (<span style={{ color: "#1976d2" }}>ON</span>) : "OFF"}
                                                     </span>
                                                 </Stack>
                                                 <Switch
-                                                    //checked={checked}
-                                                    //onChange={handleChange}
+                                                    checked={onActivity}
+                                                    onChange={e => setonActivity(e.target.checked)}
                                                     disabled
                                                     inputProps={{ 'aria-label': 'controlled' }}
                                                 />
                                             </Stack>
+                                            {onActivity ? (<Stack direction="row" style={{ marginTop: "10px" }} >
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={Activitychecked.canView} disabled />} label="Can View" />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={Activitychecked.canAdd} disabled />} label="Can Add" />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={Activitychecked.canEdit} disabled />} label="Can Edit" />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={Activitychecked.canDelete} disabled />} label="Can Delete" />
+                                                </FormGroup>
+                                            </Stack>) : ""}
                                             <Stack
                                                 direction="row"
                                                 alignItems="center"
@@ -207,27 +371,30 @@ export default function ViewUser(props: any) {
                                                         CUSTOMER
                                                     </Stack>
                                                     <span style={{ color: "#333333" }}>
-                                                        OFF
+                                                        {onCustomer ? (<span style={{ color: "#1976d2" }}>ON</span>) : "OFF"}
                                                     </span>
                                                 </Stack>
                                                 <Switch
-                                                    //checked={checked}
-                                                    // onChange={handleChange}
+                                                    checked={onCustomer}
+                                                    onChange={e => setonCustomer(e.target.checked)}
                                                     disabled
                                                     inputProps={{ 'aria-label': 'controlled' }}
                                                 />
                                             </Stack>
-                                            <Stack direction="row" style={{ marginTop: "10px" }} >
+                                            {onCustomer ? (<Stack direction="row" style={{ marginTop: "10px" }} >
                                                 <FormGroup>
-                                                    <FormControlLabel control={<Checkbox defaultChecked disabled />} label="Can View" />
+                                                    <FormControlLabel control={<Checkbox checked={Customerchecked.canView} disabled />} label="Can View" />
                                                 </FormGroup>
                                                 <FormGroup>
-                                                    <FormControlLabel control={<Checkbox defaultChecked disabled />} label="Can Edit" />
+                                                    <FormControlLabel control={<Checkbox checked={Customerchecked.canAdd} disabled />} label="Can Add" />
                                                 </FormGroup>
                                                 <FormGroup>
-                                                    <FormControlLabel control={<Checkbox defaultChecked disabled />} label="Can Delete" />
+                                                    <FormControlLabel control={<Checkbox checked={Customerchecked.canEdit} disabled />} label="Can Edit" />
                                                 </FormGroup>
-                                            </Stack>
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={Customerchecked.canDelete} disabled />} label="Can Delete" />
+                                                </FormGroup>
+                                            </Stack>) : ""}
                                             <Stack
                                                 direction="row"
                                                 alignItems="center"
@@ -240,16 +407,30 @@ export default function ViewUser(props: any) {
                                                         COMPOSER
                                                     </Stack>
                                                     <span style={{ color: "#333333" }}>
-                                                        OFF
+                                                        {onComposer ? (<span style={{ color: "#1976d2" }}>ON</span>) : "OFF"}
                                                     </span>
                                                 </Stack>
                                                 <Switch
-                                                    //checked={checked}
-                                                    //onChange={handleChange}
+                                                    checked={onComposer}
+                                                    onChange={e => setonComposer(e.target.checked)}
                                                     disabled
                                                     inputProps={{ 'aria-label': 'controlled' }}
                                                 />
                                             </Stack>
+                                            {onComposer ? (<Stack direction="row" style={{ marginTop: "10px" }} >
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={Composerchecked.canView} disabled />} label="Can View" />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={Composerchecked.canAdd} disabled />} label="Can Add" />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={Composerchecked.canEdit} disabled />} label="Can Edit" />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={Composerchecked.canDelete} disabled />} label="Can Delete" />
+                                                </FormGroup>
+                                            </Stack>) : ""}
                                         </Box>
                                     </CardContent>
                                 </Card>
