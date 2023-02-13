@@ -29,6 +29,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import styled from "@emotion/styled";
 import { GridCloseIcon } from "@mui/x-data-grid";
+import commmonfunctions from "../commonFunctions/commmonfunctions";
 
 //dialog box
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({}));
@@ -109,6 +110,7 @@ type FormValues = {
   type: number;
   parentId: number;
   userRole: String;
+  pregeneratedid: string;
 };
 
 export default function AddNewParent({
@@ -124,6 +126,7 @@ export default function AddNewParent({
   const [spinner, setshowspinner] = React.useState(false);
   const [btnDisabled, setBtnDisabled] = React.useState(false);
   const [custtype, setcusttype] = React.useState<any>([]);
+  const [AccId, setAccid] = React.useState(0);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -146,6 +149,7 @@ export default function AddNewParent({
       printUs: data.printUs,
       status: data.status,
       typeId: data.type,
+      generatedId: data.pregeneratedid,
       parentId: 0,
       userRole: "parent",
     };
@@ -175,7 +179,11 @@ export default function AddNewParent({
 
   React.useEffect(() => {
     getType();
+    commmonfunctions.GetLastInsertId().then(res => {
+      setAccid(res.id);
+    })
   }, []);
+
 
   //get type
   const getType = async () => {
@@ -541,6 +549,22 @@ export default function AddNewParent({
                     </Grid>
                   </Grid>
                 </Stack>
+                <Grid item xs={12} md={12} style={{ marginTop: "10px" }}>
+                  <Stack spacing={1}>
+                    <InputLabel htmlFor="name">
+                      Account
+                    </InputLabel>
+                    <OutlinedInput
+                      type="text"
+                      id="name"
+                      placeholder="# Generate If blank"
+                      fullWidth
+                      value={`#CUST${AccId && AccId + 1}`}
+                      size="small"
+                      {...register("pregeneratedid")}
+                    />
+                  </Stack>
+                </Grid>
               </Grid>
             </TabPanel>
             <DialogActions>
