@@ -17,6 +17,7 @@ import {
     FormControl,
     Select,
     MenuItem,
+    CircularProgress,
 } from "@mui/material";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -28,6 +29,7 @@ import UserService from './servives'
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
 import { api_url, auth_token } from "../../api/hello";
+import { useRouter } from "next/router";
 const Item = styled(Paper)(({ theme }) => ({
     p: 10,
 }));
@@ -46,6 +48,9 @@ const style = {
 };
 
 export default function EditUser(props: any) {
+    const router = useRouter();
+    const [spinner, setshowspinner] = React.useState(false);
+    const [btnDisabled, setBtnDisabled] = React.useState(false);
     const [roles, setroles] = React.useState<any>([])
     const [rolestatus, setrolestatus] = React.useState<any>("");
     let permitions: { Dashboard?: any; Invoices?: any; SalesInvoices?: any; Activites?: any; Customers?: any; Cumposers?: any }[] = [];
@@ -210,6 +215,8 @@ export default function EditUser(props: any) {
 
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
+        setshowspinner(true);
+        setBtnDisabled(true);
         const reqData = {
             name: data.name,
             email: data.email,
@@ -230,10 +237,17 @@ export default function EditUser(props: any) {
             .then((data: any) => {
                 if (data) {
                     toast.success("User updated successfully!");
+                    setshowspinner(false);
+                    setBtnDisabled(false);
+                    setTimeout(() => {
+                        router.push("/usermanagement/users");
+                    }, 2000);
                 }
             })
             .catch((error) => {
                 toast.error("Email Allready Registred !");
+                setshowspinner(false);
+                setBtnDisabled(false);
             });
     };
     return (
@@ -418,8 +432,12 @@ export default function EditUser(props: any) {
                                                         type="submit"
                                                         variant="contained"
                                                         color="primary"
+                                                        disabled={btnDisabled}
                                                     >
                                                         <b>SAVE & UPDATE</b>
+                                                        <span style={{ fontSize: "2px", paddingLeft: "10px" }}>
+                                                            {spinner === true ? <CircularProgress color="inherit" /> : ""}
+                                                        </span>
                                                     </Button>{" "}
                                                     <Link
                                                         style={{ color: "red", textDecoration: "none" }}

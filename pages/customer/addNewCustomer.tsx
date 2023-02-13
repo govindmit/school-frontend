@@ -121,12 +121,12 @@ export default function AddCustomer({
 }) {
   const [value, setValue] = React.useState(0);
   const [spinner, setshowspinner] = React.useState(false);
+  const [btnDisabled, setBtnDisabled] = React.useState(false);
   const [opens, setOpen] = React.useState(open);
   const [custtype, setcusttype] = React.useState<any>([]);
   const [parentId, setparentId] = React.useState<any>(0);
   const [parentid, setparentid] = React.useState(0);
   const [parentname, setparentname] = React.useState<any>("");
-  const [btnDisabled, setBtnDisabled] = React.useState(false);
   const [AccId, setAccid] = React.useState(0);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
