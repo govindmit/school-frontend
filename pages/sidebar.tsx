@@ -8,17 +8,10 @@ import List from "@mui/material/List";
 import CssBaseline from "@mui/material/CssBaseline";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
-import Link from "next/link";
 import Image from "next/image";
 import { Input } from "@mui/material";
 import { useRouter } from "next/router";
@@ -31,6 +24,7 @@ import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Head from "next/head";
 import { Stack } from "@mui/system";
+import commmonfunctions from "./commonFunctions/commmonfunctions";
 const drawerWidth = 240;
 
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -106,6 +100,13 @@ export default function MiniDrawer() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(true);
   const router = useRouter();
+  const [userdet, setuserdet] = React.useState<any>([]);
+  React.useEffect(() => {
+    commmonfunctions.GivenPermition().then(res => {
+      setuserdet(res);
+    });
+  }, [])
+
   return (
     <>
       <Head>
@@ -132,12 +133,9 @@ export default function MiniDrawer() {
             <div className="inputBar search-box">
               <OutlinedInput
                 className="inbar search-box-outer"
-                // onChange={(e) => handlechange(e)}
                 id="name"
                 type="text"
                 name="name"
-                // defaultValue={user?.firstname}
-                // value={user.firstname}
                 placeholder="Search"
               />
             </div>
@@ -145,92 +143,84 @@ export default function MiniDrawer() {
         </AppBar>
         <Drawer variant="permanent" open={open}>
           <h1>Header</h1>
-          {/* <DrawerHeader>
-          <IconButton onClick={() => setOpen(!open)}>
-            {theme.direction === "rtl" ? (
-              <ChevronRightIcon />
-            ) : (
-              <ChevronLeftIcon />
-            )}
-          </IconButton>
-        </DrawerHeader> */}
           <List>
-            <ListItem
-              className="sidebar-link"
-              disablePadding
-              sx={{ display: "block" }}
-              onClick={() => router.push("/admin/dashboard")}
-            >
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
+            {userdet && userdet.roleId === 1 ? (
+              <ListItem
+                className="sidebar-link"
+                disablePadding
+                sx={{ display: "block" }}
+                onClick={() => router.push("/admin/dashboard")}
               >
-                <ListItemIcon
+                <ListItemButton
                   sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
+                    minHeight: 48,
+                    justifyContent: open ? "initial" : "center",
+                    px: 2.5,
                   }}
-                ></ListItemIcon>
-                <DashboardOutlinedIcon />
-                <ListItemText
-                  primary="Dashboard"
-                  sx={{ opacity: open ? 1 : 0 }}
-                />
-              </ListItemButton>
-            </ListItem>
-
-            <ListItem
-              className="sidebar-link"
-              disablePadding
-              sx={{ display: "block" }}
-              onClick={() => router.push("/customer/customerslist")}
-            >
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                ></ListItemIcon>
-                <PeopleAltOutlinedIcon />
-                <ListItemText
-                  primary="Customers"
-                  sx={{ opacity: open ? 1 : 0 }}
-                />
-              </ListItemButton>
-              <Stack>
-                <ListItem
-                  style={{ cursor: "pointer" }}
-                  onClick={() => router.push("/customer/custType")}
                 >
                   <ListItemIcon
                     sx={{
                       minWidth: 0,
-                      mr: open ? 7 : "auto",
+                      mr: open ? 3 : "auto",
+                      justifyContent: "center",
+                    }}
+                  ></ListItemIcon>
+                  <DashboardOutlinedIcon />
+                  <ListItemText
+                    primary="Dashboard"
+                    sx={{ opacity: open ? 1 : 0 }}
+                  />
+                </ListItemButton>
+              </ListItem>) : ("")
+            }
+            {userdet && userdet.roleId === 1 ? (
+              <ListItem
+                className="sidebar-link"
+                disablePadding
+                sx={{ display: "block" }}
+                onClick={() => router.push("/customer/customerslist")}
+              >
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: open ? "initial" : "center",
+                    px: 2.5,
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : "auto",
                       justifyContent: "center",
                     }}
                   ></ListItemIcon>
                   <PeopleAltOutlinedIcon />
                   <ListItemText
-                    primary="Customers Type"
+                    primary="Customers"
                     sx={{ opacity: open ? 1 : 0 }}
                   />
-                </ListItem>
-              </Stack>
-            </ListItem>
-
-            <ListItem
+                </ListItemButton>
+                <Stack>
+                  <ListItem
+                    style={{ cursor: "pointer" }}
+                    onClick={() => router.push("/customer/custType")}
+                  >
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open ? 7 : "auto",
+                        justifyContent: "center",
+                      }}
+                    ></ListItemIcon>
+                    <PeopleAltOutlinedIcon />
+                    <ListItemText
+                      primary="Customers Type"
+                      sx={{ opacity: open ? 1 : 0 }}
+                    />
+                  </ListItem>
+                </Stack>
+              </ListItem>) : ("")}
+            {userdet && userdet.roleId === 1 ? (<ListItem
               className="sidebar-link"
               disablePadding
               sx={{ display: "block" }}
@@ -256,8 +246,8 @@ export default function MiniDrawer() {
                   sx={{ opacity: open ? 1 : 0 }}
                 />
               </ListItemButton>
-            </ListItem>
-            <ListItem
+            </ListItem>) : ("")}
+            {userdet && userdet.roleId === 1 ? (<ListItem
               className="sidebar-link"
               disablePadding
               sx={{ display: "block" }}
@@ -284,8 +274,8 @@ export default function MiniDrawer() {
                   sx={{ opacity: open ? 1 : 0 }}
                 />
               </ListItemButton>
-            </ListItem>
-            <ListItem
+            </ListItem>) : ("")}
+            {userdet && userdet.roleId === 1 ? (<ListItem
               className="sidebar-link"
               disablePadding
               sx={{ display: "block" }}
@@ -311,8 +301,8 @@ export default function MiniDrawer() {
                   sx={{ opacity: open ? 1 : 0 }}
                 />
               </ListItemButton>
-            </ListItem>
-            <ListItem
+            </ListItem>) : ("")}
+            {userdet && userdet.roleId === 1 ? (<ListItem
               className="sidebar-link"
               disablePadding
               sx={{ display: "block" }}
@@ -338,8 +328,8 @@ export default function MiniDrawer() {
                   sx={{ opacity: open ? 1 : 0 }}
                 />
               </ListItemButton>
-            </ListItem>
-            <ListItem
+            </ListItem>) : ("")}
+            {userdet && userdet.roleId === 1 ? (<ListItem
               className="sidebar-link"
               disablePadding
               sx={{ display: "block" }}
@@ -366,7 +356,7 @@ export default function MiniDrawer() {
                   onClick={() => router.push("/logout")}
                 />
               </ListItemButton>
-            </ListItem>
+            </ListItem>) : ("")}
           </List>
         </Drawer>
         <Divider />

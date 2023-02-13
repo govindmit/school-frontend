@@ -61,7 +61,6 @@ export default function AddNewUser() {
             Dashboard: Dashboardchecked
         })
     }
-
     const [onInvoice, setonInvoice] = React.useState(false);
     const [Invoicechecked, setInvoicechecked] = React.useState<any>({
         canView: false,
@@ -74,7 +73,6 @@ export default function AddNewUser() {
             Invoices: Invoicechecked
         })
     }
-
     const [onActivity, setonActivity] = React.useState(false);
     const [Activitychecked, setActivitychecked] = React.useState<any>({
         canView: false,
@@ -87,7 +85,6 @@ export default function AddNewUser() {
             Activites: Activitychecked
         })
     }
-
     const [onCustomer, setonCustomer] = React.useState(false);
     const [Customerchecked, setCustomerchecked] = React.useState<any>({
         canView: false,
@@ -100,7 +97,6 @@ export default function AddNewUser() {
             Customers: Customerchecked
         })
     }
-
     const [onComposer, setonComposer] = React.useState(false);
     const [Composerchecked, setComposerchecked] = React.useState<any>({
         canView: false,
@@ -108,13 +104,11 @@ export default function AddNewUser() {
         canEdit: false,
         canDelete: false
     });
-
     if (onComposer) {
         permitions.push({
             Cumposers: Customerchecked
         })
     }
-
     const [onSalesInvoice, setonSalesInvoice] = React.useState(false);
     const [SalesInvoicechecked, setSalesInvoicechecked] = React.useState<any>({
         canView: false,
