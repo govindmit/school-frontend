@@ -17,6 +17,7 @@ import {
     FormControl,
     Select,
     MenuItem,
+    CircularProgress,
 } from "@mui/material";
 import Link from "next/link";
 import React from "react";
@@ -28,6 +29,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
 import { api_url, auth_token } from "../../api/hello";
 import UserService from "./servives";
+import { useRouter } from "next/router";
 const Item = styled(Paper)(({ theme }) => ({
     p: 10,
 }));
@@ -47,6 +49,9 @@ type FormValues = {
 };
 
 export default function AddNewUser() {
+    const router = useRouter();
+    const [spinner, setshowspinner] = React.useState(false);
+    const [btnDisabled, setBtnDisabled] = React.useState(false);
     const [roles, setroles] = React.useState<any>([])
     let permitions: { Dashboard?: any; Invoices?: any; SalesInvoices?: any; Activites?: any; Customers?: any; Cumposers?: any }[] = [];
     const [onDashboard, setonDashboard] = React.useState(false);
@@ -134,6 +139,8 @@ export default function AddNewUser() {
     } = useForm<FormValues>();
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
+        setshowspinner(true);
+        setBtnDisabled(true);
         const reqData = {
             name: data.name,
             email1: data.email,
@@ -155,10 +162,18 @@ export default function AddNewUser() {
                 if (data) {
                     toast.success("User Added Successfully !");
                     reset();
+                    setshowspinner(false);
+                    setBtnDisabled(false);
+                    setTimeout(() => {
+                        router.push("/usermanagement/users");
+                    }, 2000);
+
                 }
             })
             .catch((error) => {
                 toast.error("Email Allready Registred !");
+                setshowspinner(false);
+                setBtnDisabled(false);
             });
     };
 
@@ -346,8 +361,12 @@ export default function AddNewUser() {
                                                         type="submit"
                                                         variant="contained"
                                                         color="primary"
+                                                        disabled={btnDisabled}
                                                     >
                                                         <b>SAVE</b>
+                                                        <span style={{ fontSize: "2px", paddingLeft: "10px" }}>
+                                                            {spinner === true ? <CircularProgress color="inherit" /> : ""}
+                                                        </span>
                                                     </Button>{" "}
                                                     <Link
                                                         style={{ color: "red", textDecoration: "none" }}
