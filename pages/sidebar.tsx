@@ -102,9 +102,6 @@ export default function MiniDrawer() {
   const router = useRouter();
   const [userdet, setuserdet] = React.useState<any>([]);
   React.useEffect(() => {
-    commmonfunctions.VerifyLoginUser().then(response => {
-      console.log(response)
-    });
     commmonfunctions.GivenPermition().then(res => {
       setuserdet(res);
     });

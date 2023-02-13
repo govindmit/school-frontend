@@ -3,13 +3,11 @@ import jwt_decode from "jwt-decode";
 import { api_url, auth_token } from "../api/hello";
 
 class CommonFunctions {
-  //get token and verify login
   VerifyLoginUser = async () => {
     let login_token: any;
     login_token = localStorage.getItem("QIS_loginToken");
     const decoded: any = jwt_decode(login_token);
-    const expiryDate = new Date(decoded.exp * 1000);
-    return expiryDate;
+    return decoded;
   };
 
   //Crenditials
@@ -26,7 +24,6 @@ class CommonFunctions {
   };
 
   //get lastInsert id
-
   GetLastInsertId = async () => {
     let response = await axios.get(`${api_url}/getLastInsertId`, {
       headers: {

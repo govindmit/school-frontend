@@ -1,9 +1,6 @@
 import * as React from "react";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
-import { BiShow } from "react-icons/bi";
-import { FiEdit } from "react-icons/fi";
-import { RiDeleteBin5Fill } from "react-icons/ri";
 import {
   Card,
   Table,
@@ -17,31 +14,24 @@ import {
   Button,
   Box,
   styled,
-  OutlinedInput,
-  Typography,
 } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
-import Link from "next/link";
-import Image from "next/image";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import MiniDrawer from "../sidebar";
-import { useRouter } from "next/router";
-import TasksChart from "../chart";
 import dynamic from "next/dynamic";
-import BabyChangingStationIcon from "@mui/icons-material/BabyChangingStation";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import commmonfunctions from "../commonFunctions/commmonfunctions";
 const DynamicComponentWithNoSSR = dynamic(() => import("../chart"), {
   ssr: false,
 });
 
 export default function Dashboard(this: any) {
-  const router = useRouter();
+  const [userdet, setuserdet] = React.useState<any>([]);
   React.useEffect(() => {
-    const logintoken = localStorage.getItem("QIS_loginToken");
-    if (logintoken === undefined || logintoken === null) {
-      router.push("/");
-    }
-  }, []);
+    commmonfunctions.GivenPermition().then(res => {
+      setuserdet(JSON.parse(res.userPrevilegs));
+    });
+  }, [])
 
   const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",

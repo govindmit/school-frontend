@@ -155,7 +155,8 @@ const formats = [
 export default function AddNewActivity() {
   const [spinner, setshowspinner] = useState(false);
   const [btnDisabled, setBtnDisabled] = useState(false);
-  const [type, setType] = useState<FormValues | any>(null);
+  const [type, setType] = useState<FormValues | any>("");
+  const [typeError, setTypeError] = useState<FormValues | any>("");
   const [status, setStatus] = useState<FormValues | any>(null);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -169,13 +170,17 @@ export default function AddNewActivity() {
   } = useForm<FormValues>();
   const router = useRouter();
 
-  console.log(errors, "errorssss");
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     // setshowspinner(true);
     // setBtnDisabled(true);
     const sDate = moment(startDate).format("DD/MM/YYYY");
     const eDate = moment(endDate).format("DD/MM/YYYY");
-
+    console.log(type === "", ".................................h");
+    if (type === "") {
+      setTypeError("Type field is required");
+    } else {
+      setTypeError("");
+    }
     const reqData = {
       name: data.name,
       type: data.type,
@@ -215,7 +220,16 @@ export default function AddNewActivity() {
     fontSize: "12px",
     fontWeight: "bold",
   };
-  console.log(content, "contenttttttttt");
+
+  const handleType = (data: any) => {
+    if (data) {
+      setType(data);
+      setTypeError("");
+    } else {
+      setTypeError("Type field is required");
+    }
+  };
+  console.log(typeError, "typeErrosr");
   return (
     <>
       <Box sx={{ display: "flex" }}>
@@ -278,15 +292,7 @@ export default function AddNewActivity() {
                             placeholder="Activity name ..."
                             fullWidth
                             size="small"
-                            {...register("name", {
-                              required: true,
-                            })}
                           />
-                          <Typography style={style}>
-                            {errors.name && (
-                              <span>Name Feild is Required **</span>
-                            )}
-                          </Typography>
                         </Stack>
                       </Grid>
                     </Grid>
@@ -302,20 +308,19 @@ export default function AddNewActivity() {
                             id="type"
                             labelId="demo-select-small"
                             label="Status"
-                            {...register("type", {
-                              onChange: (e) => {
-                                setType(e.target.value);
-                              },
-                              required: true,
-                            })}
+                            onChange={(e) => handleType(e.target.value)}
+                            // {...register("type", {
+                            //   onChange: (e) => {
+                            //     setType(e.target.value);
+                            //   },
+                            //   required: true,
+                            // })}
                           >
                             <MenuItem value="Free">Free</MenuItem>
                             <MenuItem value="Paid">Paid</MenuItem>
                           </Select>
                           <Typography style={style}>
-                            {errors.type && (
-                              <span>Type Feild is Required **</span>
-                            )}
+                            {typeError ? <span>{typeError}</span> : ""}
                           </Typography>
                         </Stack>
                       </Grid>
@@ -340,11 +345,6 @@ export default function AddNewActivity() {
                             <MenuItem value="Past">Past</MenuItem>
                             <MenuItem value="Current">Current</MenuItem>
                           </Select>
-                          <Typography style={style}>
-                            {errors.status && (
-                              <span>status Feild is Required **</span>
-                            )}
-                          </Typography>
                         </Stack>
                       </Grid>
                     </Grid>
@@ -393,15 +393,12 @@ export default function AddNewActivity() {
                             placeholder="Amount ..."
                             fullWidth
                             size="small"
-                            {...register("price", {
-                              required: true,
-                            })}
                           />
-                          <Typography style={style}>
+                          {/* <Typography style={style}>
                             {errors.price && (
                               <span>Amount Feild is Required **</span>
                             )}
-                          </Typography>
+                          </Typography> */}
                         </Stack>
                       </Grid>
                     </Grid>
