@@ -198,7 +198,7 @@ function ResetFilterValue() {
   fetchData();
   setFilterType("");
   setFilterStatus("")
-
+window.location.reload();
   
 }
   const filterApply=async (e:any)=>{
@@ -228,7 +228,6 @@ function ResetFilterValue() {
       setAll(res?.data?.data.length);
       setAllNew(true)
       // setAllData(res?.data?.data);
-
         }
       })
       .catch((error) => {
@@ -417,7 +416,6 @@ function ResetFilterValue() {
                     <PopupState variant="popover" popupId="demo-popup-menu">
                       {(popupState) => (
                         <Box>
-                         
                           <MenuItem {...bindTrigger(popupState)}>
                             <BiFilterAlt />
                             &nbsp; Filter
