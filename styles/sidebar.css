@@ -11,7 +11,24 @@ input.MuiInputBase-input.MuiInput-input.css-1x51dt5-MuiInputBase-input-MuiInput-
 .maiDiv {
   max-width: 100% !important;
   /* margin: 0 auto; */
+
   display: flex !important;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-logo-search {
+  display: flex;
+}
+
+.avatar-box > div {
+  display: flex;
+  align-items: center;
+}
+
+.avatar-box > div svg {
+  color: #000;
+  margin: 0;
 }
 
 header.MuiPaper-root.sder {
