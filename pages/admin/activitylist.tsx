@@ -39,10 +39,7 @@ import "react-toastify/dist/ReactToastify.css";
 import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
-//   import AddActivity from "./addActivity";
-//   import EditActivity from "./editActivity";
 import ConfirmBox from "../commoncmp/confirmbox";
-import dynamic from "next/dynamic";
 
 function a11yProps(index: number) {
   return {
