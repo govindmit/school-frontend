@@ -110,6 +110,8 @@ type FormValues = {
   printUs: string;
   parentId: number;
   userRole: String;
+  agegroup: number;
+  pregeneratedid: string;
 };
 
 export default function AddCustomer({
@@ -127,7 +129,10 @@ export default function AddCustomer({
   const [parentId, setparentId] = React.useState<any>(0);
   const [parentid, setparentid] = React.useState(0);
   const [parentname, setparentname] = React.useState<any>("");
-  const [AccId, setAccid] = React.useState(0);
+  const [handleacctid, sethandleacctid] = React.useState("");
+  const handleacctids = (e: any) => {
+    sethandleacctid(e.target.value);
+  }
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -145,7 +150,8 @@ export default function AddCustomer({
   React.useEffect(() => {
     getType();
     commmonfunctions.GetLastInsertId().then(res => {
-      setAccid(res.id);
+      const idd = res.id + 1;
+      sethandleacctid("#CUST" + idd);
     })
   }, []);
 
@@ -185,6 +191,8 @@ export default function AddCustomer({
       contactName: data.contactName,
       printUs: data.printUs,
       status: data.status,
+      agegroup: data.agegroup,
+      generatedId: handleacctid,
       roleId: 2,
       parentId: parentId,
       userRole: "customer",
@@ -332,7 +340,7 @@ export default function AddCustomer({
                           size="small"
                           {...register("email1", {
                             required: true,
-                            pattern: /^\S+@\S+$/i,
+                            pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                             validate: (value) => { return !!value.trim() }
                           })}
                         />
@@ -487,6 +495,38 @@ export default function AddCustomer({
                     </Grid>
                   </Grid>
                 </Stack>
+                <Stack style={{ marginTop: "15px" }}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} md={12}>
+                      <Stack spacing={1}>
+                        <InputLabel htmlFor="name">Age Group</InputLabel>
+                        <FormControl fullWidth>
+                          <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            defaultValue={1}
+                            size="small"
+                            {...register("agegroup")}
+                          >
+                            <MenuItem value={1}>FS1</MenuItem>
+                            <MenuItem value={2}>FS2</MenuItem>
+                            <MenuItem value={3}>FS3</MenuItem>
+                            <MenuItem value={4}>FS4</MenuItem>
+                            <MenuItem value={5}>FS5</MenuItem>
+                            <MenuItem value={6}>FS6</MenuItem>
+                            <MenuItem value={7}>FS7</MenuItem>
+                            <MenuItem value={8}>FS8</MenuItem>
+                            <MenuItem value={9}>FS9</MenuItem>
+                            <MenuItem value={10}>FS10</MenuItem>
+                            <MenuItem value={11}>FS11</MenuItem>
+                            <MenuItem value={12}>FS12</MenuItem>
+                            <MenuItem value={13}>FS13</MenuItem>
+                          </Select>
+                        </FormControl>
+                      </Stack>
+                    </Grid>
+                  </Grid>
+                </Stack>
               </Grid>
             </TabPanel>
             <TabPanel value={value} index={2}>
@@ -593,8 +633,9 @@ export default function AddCustomer({
                           id="name"
                           placeholder="# Generate If blank"
                           fullWidth
-                          value={`#CUST${AccId && AccId + 1}`}
+                          value={handleacctid}
                           size="small"
+                          onChange={handleacctids}
                         />
                       </Stack>
                     </Grid>

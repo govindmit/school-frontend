@@ -45,6 +45,7 @@ import EditCustomer from "./editcustomer";
 import { useRouter } from "next/router";
 import { CSVDownload } from "react-csv";
 import Loader from "../commoncmp/myload";
+import commmonfunctions from "../commonFunctions/commmonfunctions";
 
 function a11yProps(index: number) {
   return {
@@ -109,7 +110,7 @@ export default function CustomerList() {
   const [checked, setChecked] = React.useState(false);
   const [OpenCSV, setOpenCSV] = React.useState(false);
   const { register, handleSubmit } = useForm<FormValues>();
-
+  const router = useRouter();
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -122,13 +123,36 @@ export default function CustomerList() {
 
   // verify user login
   let logintoken: any;
-  const router = useRouter();
   React.useEffect(() => {
     logintoken = localStorage.getItem("QIS_loginToken");
     if (logintoken === undefined || logintoken === null) {
       router.push("/");
     }
   }, []);
+
+  // React.useEffect(() => {
+  //   let custTrue = false;
+  //   commmonfunctions.GivenPermition().then(res => {
+  //     let datas = res && res.userPrevilegs;
+  //     const parsedata = JSON.parse(datas)?.user_permition;
+  //     console.log(parsedata);
+  //     const lgh = parsedata.length;
+  //     if (lgh > 0) {
+  //       for (var i = 0; i <= lgh - 1; i++) {
+  //         if (parsedata[i].Customers) {
+  //           custTrue = true;
+  //         }
+  //       }
+  //     }
+  //   });
+  //   if (custTrue) {
+  //     router.push("/customer/customerslist");
+  //   } else {
+  //     router.push("/admin/dashboard");
+  //   }
+  // }, []);
+
+
 
   //get customers(users) list
   const getUser = async () => {
@@ -216,6 +240,7 @@ export default function CustomerList() {
     setconctName("");
     setphoneNum("");
     setpId(0);
+    getUser();
   }
 
   // apply searching
@@ -809,7 +834,7 @@ export default function CustomerList() {
                           <Typography>EMAIL 2</Typography>
                         </TableCell>
                         <TableCell>
-                          <Typography width={100}>COST. TYPE</Typography>
+                          <Typography width={100}>CUST. TYPE</Typography>
                         </TableCell>
                         <TableCell>
                           <Typography width={100}>CONT. NAME</Typography>

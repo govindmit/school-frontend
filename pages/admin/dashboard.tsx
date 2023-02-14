@@ -21,17 +21,30 @@ import MiniDrawer from "../sidebar";
 import dynamic from "next/dynamic";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import commmonfunctions from "../commonFunctions/commmonfunctions";
+import { useRouter } from "next/router";
 const DynamicComponentWithNoSSR = dynamic(() => import("../chart"), {
   ssr: false,
 });
 
 export default function Dashboard(this: any) {
-  const [userdet, setuserdet] = React.useState<any>([]);
+  const router = useRouter();
   React.useEffect(() => {
     commmonfunctions.GivenPermition().then(res => {
-      setuserdet(JSON.parse(res.userPrevilegs));
+      //console.log(res && res.userPrevilegs)
+      let datas = res && res.userPrevilegs;
+      const parsedata = JSON.parse(datas)?.user_permition;
+      console.log(parsedata);
+      const lgh = parsedata.length;
+      if (lgh > 0) {
+        for (var i = 0; i <= lgh - 1; i++) {
+          if (parsedata[i].Dashboard) {
+            router.push("/admin/dashboard");
+          }
+        }
+      }
     });
-  }, [])
+  }, []);
+
 
   const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",

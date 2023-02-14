@@ -218,15 +218,7 @@ export default function ViewCustomer() {
                     </Stack>
                     <Stack style={{ padding: "8px" }}>
                       <Box sx={{ display: "flex" }}>
-                        <CardMedia
-                          component="img"
-                          sx={{
-                            width: 160,
-                            display: { xs: "none", sm: "block" },
-                          }}
-                          image="/image.png"
-                          alt="#"
-                        />
+                        <div id="profileImage"><span id="fullName"> {userDet && userDet.name && userDet.name.charAt(0).toUpperCase()}</span></div>
                         <CardContent sx={{ flex: 1 }} className="text-grey">
                           <Typography component="h4" variant="h4">
                             {userDet && userDet.name}

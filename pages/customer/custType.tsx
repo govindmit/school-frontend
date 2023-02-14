@@ -405,7 +405,7 @@ export default function CustomerTypeList() {
                   <Grid item xs={12} md={12}>
                     <Stack spacing={1}>
                       <InputLabel htmlFor="name">
-                        Customer Name<span className="err_str">*</span>
+                        Customer Type<span className="err_str">*</span>
                       </InputLabel>
                       <OutlinedInput
                         type="text"

@@ -29,6 +29,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import styled from "@emotion/styled";
 import { GridCloseIcon } from "@mui/x-data-grid";
+import commmonfunctions from "../commonFunctions/commmonfunctions";
 
 //dialog box
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({}));
@@ -109,6 +110,7 @@ type FormValues = {
   type: number;
   parentId: number;
   userRole: String;
+  pregeneratedid: string;
 };
 
 export default function AddNewParent({
@@ -124,6 +126,7 @@ export default function AddNewParent({
   const [spinner, setshowspinner] = React.useState(false);
   const [btnDisabled, setBtnDisabled] = React.useState(false);
   const [custtype, setcusttype] = React.useState<any>([]);
+  const [AccId, setAccid] = React.useState(0);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -146,6 +149,7 @@ export default function AddNewParent({
       printUs: data.printUs,
       status: data.status,
       typeId: data.type,
+      generatedId: data.pregeneratedid,
       parentId: 0,
       userRole: "parent",
     };
@@ -175,7 +179,11 @@ export default function AddNewParent({
 
   React.useEffect(() => {
     getType();
+    commmonfunctions.GetLastInsertId().then(res => {
+      setAccid(res.id);
+    })
   }, []);
+
 
   //get type
   const getType = async () => {
@@ -272,14 +280,19 @@ export default function AddNewParent({
                           fullWidth
                           size="small"
                           {...register("email1", {
-                            required: true,
-                            pattern: /^\S+@\S+$/i,
+                            pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                            validate: (value) => { return !!value.trim() }
                           })}
                         />
                         {errors.email1?.type === "required" && (
                           <span style={style}>Field is Required *</span>
                         )}
                         {errors.email1?.type === "pattern" && (
+                          <span style={style}>
+                            Please enter a valid email address *
+                          </span>
+                        )}
+                        {errors.email1?.type === "validate" && (
                           <span style={style}>
                             Please enter a valid email address *
                           </span>
@@ -368,7 +381,7 @@ export default function AddNewParent({
                         <OutlinedInput
                           type="text"
                           id="name"
-                          placeholder="Phone1..."
+                          placeholder="Attention To...."
                           fullWidth
                           size="small"
                         />
@@ -380,7 +393,7 @@ export default function AddNewParent({
                         <OutlinedInput
                           type="text"
                           id="name"
-                          placeholder="Print Us..."
+                          placeholder="Phone...."
                           fullWidth
                           size="small"
                         />
@@ -396,7 +409,7 @@ export default function AddNewParent({
                         <OutlinedInput
                           type="text"
                           id="name"
-                          placeholder="Phone1..."
+                          placeholder="Address 1..."
                           fullWidth
                           size="small"
                         />
@@ -408,7 +421,7 @@ export default function AddNewParent({
                         <OutlinedInput
                           type="text"
                           id="name"
-                          placeholder="Print Us..."
+                          placeholder="Address 2..."
                           fullWidth
                           size="small"
                         />
@@ -418,25 +431,37 @@ export default function AddNewParent({
                 </Stack>
                 <Stack style={{ marginTop: "20px" }}>
                   <Grid container spacing={2}>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} md={4}>
                       <Stack spacing={1}>
                         <InputLabel htmlFor="name">City</InputLabel>
                         <OutlinedInput
                           type="text"
                           id="name"
-                          placeholder="Phone1..."
+                          placeholder="City..."
                           fullWidth
                           size="small"
                         />
                       </Stack>
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} md={4}>
                       <Stack spacing={1}>
                         <InputLabel htmlFor="name">State</InputLabel>
                         <OutlinedInput
                           type="text"
                           id="name"
-                          placeholder="Print Us..."
+                          placeholder="State..."
+                          fullWidth
+                          size="small"
+                        />
+                      </Stack>
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                      <Stack spacing={1}>
+                        <InputLabel htmlFor="name">Zip/Postal Code</InputLabel>
+                        <OutlinedInput
+                          type="text"
+                          id="name"
+                          placeholder="Postal Code..."
                           fullWidth
                           size="small"
                         />
@@ -541,6 +566,22 @@ export default function AddNewParent({
                     </Grid>
                   </Grid>
                 </Stack>
+                <Grid item xs={12} md={12} style={{ marginTop: "10px" }}>
+                  <Stack spacing={1}>
+                    <InputLabel htmlFor="name">
+                      Account
+                    </InputLabel>
+                    <OutlinedInput
+                      type="text"
+                      id="name"
+                      placeholder="# Generate If blank"
+                      fullWidth
+                      value={`#CUST${AccId && AccId + 1}`}
+                      size="small"
+                      {...register("pregeneratedid")}
+                    />
+                  </Stack>
+                </Grid>
               </Grid>
             </TabPanel>
             <DialogActions>
