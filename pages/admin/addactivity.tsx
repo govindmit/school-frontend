@@ -50,6 +50,7 @@ const QuillNoSSRWrapper = dynamic(import("react-quill"), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
 });
+
 const style = {
   color: "red",
   fontSize: "12px",
@@ -104,13 +105,13 @@ enum statusEnum {
 }
 
 type FormValues = {
-  name: string;
-  type: string;
+  name1: string;
+  type1: string;
   description: string;
-  price: number;
-  startDate: string;
-  endDate: string;
-  status: statusEnum;
+  price1: number;
+  startDate1: string;
+  endDate1: string;
+  status1: statusEnum;
 };
 const modules = {
   toolbar: [
@@ -155,11 +156,13 @@ const formats = [
 export default function AddNewActivity() {
   const [spinner, setshowspinner] = useState(false);
   const [btnDisabled, setBtnDisabled] = useState(false);
-  const [type, setType] = useState<FormValues | any>("");
+  const [type1, setType1] = useState<FormValues | any>("");
+  const [name1, setName1] = useState<FormValues | any>("");
+  const [price1, setPrice1] = useState<FormValues | any>("");
   const [typeError, setTypeError] = useState<FormValues | any>("");
-  const [status, setStatus] = useState<FormValues | any>(null);
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+  const [status1, setStatus1] = useState<FormValues | any>(null);
+  const [startDate1, setStartDate1] = useState(null);
+  const [endDate1, setEndDate1] = useState(null);
   const [content, setContent] = useState("");
   const [descontent, setDesContent] = useState("");
 
@@ -173,38 +176,36 @@ export default function AddNewActivity() {
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     // setshowspinner(true);
     // setBtnDisabled(true);
-    const sDate = moment(startDate).format("DD/MM/YYYY");
-    const eDate = moment(endDate).format("DD/MM/YYYY");
-    console.log(type === "", ".................................h");
-    if (type === "") {
-      setTypeError("Type field is required");
+    const sDate = moment(startDate1).format("DD/MM/YYYY");
+    const eDate = moment(endDate1).format("DD/MM/YYYY");
+    if (type1 === "") {
+      setTypeError("Type field is required!");
     } else {
       setTypeError("");
     }
     const reqData = {
-      name: data.name,
-      type: data.type,
+      name: name1,
+      type: type1,
       startdate: sDate,
       enddate: eDate,
-      status: data.status,
-      price: data.price,
-      shortdescription: content,
+      status: data.status1,
+      price: price1 && price1 !== null ? price1: "00",
+      shortDescription: content,
       description: descontent,
     };
     const end_point = "addactivity";
 
-    console.log(reqData, "reqdata");
-    await axios({
-      method: "POST",
-      url: `${api_url}/addactivity`,
-      data: reqData,
-      headers: {
-        Authorization: auth_token,
-        "content-type": "multipart/form-data",
-      },
-    })
-      .then((data) => {
-        if (data.status === 201) {
+  await axios({
+    method: "POST",
+    url: `${api_url}/addactivity`,
+    data: reqData,
+    headers: {
+      Authorization: auth_token,
+      "content-type": "multipart/form-data",
+    },
+  })
+  .then((data) => {
+    if (data.status === 201) {
           router.push("/admin/activitylist");
 
           toast.success("Activity Added Successfully !");
@@ -213,8 +214,8 @@ export default function AddNewActivity() {
       .catch((error) => {
         toast.error("Activity Allready Registred !");
       });
-  };
-
+    };
+    
   const style = {
     color: "red",
     fontSize: "12px",
@@ -223,13 +224,14 @@ export default function AddNewActivity() {
 
   const handleType = (data: any) => {
     if (data) {
-      setType(data);
+      setType1(data);
       setTypeError("");
     } else {
       setTypeError("Type field is required");
     }
   };
-  console.log(typeError, "typeErrosr");
+
+
   return (
     <>
       <Box sx={{ display: "flex" }}>
@@ -288,11 +290,18 @@ export default function AddNewActivity() {
                           </InputLabel>
                           <OutlinedInput
                             type="text"
-                            id="name"
+                            id="name1"
                             placeholder="Activity name ..."
                             fullWidth
                             size="small"
+                            {...register("name1", {
+                              required: "Activity name is Required *",
+                            })}
+                            onChange={(e) => setName1(e.target.value)}
                           />
+                         
+                          {errors.name1?.type &&  <span style={style}>{name1 === "" ?" Activity name is Required *" : ""}</span>}
+
                         </Stack>
                       </Grid>
                     </Grid>
@@ -301,50 +310,44 @@ export default function AddNewActivity() {
                     <Grid container spacing={2}>
                       <Grid item xs={12} md={3}>
                         <Stack spacing={1}>
-                          <InputLabel htmlFor="name">Type</InputLabel>
+                          <InputLabel htmlFor="name">Type <span className="err_str">*</span></InputLabel>
                           <Select
                             defaultValue="none"
-                            value={type}
-                            id="type"
+                            value={type1}
+                            id="type1"
                             labelId="demo-select-small"
-                            label="Status"
+                            label="Type"
+                            {...register("type1", {
+                              required: "Type is Required *",
+                            })}
                             onChange={(e) => handleType(e.target.value)}
-                            // {...register("type", {
-                            //   onChange: (e) => {
-                            //     setType(e.target.value);
-                            //   },
-                            //   required: true,
-                            // })}
-                          >
+                          > 
                             <MenuItem value="Free">Free</MenuItem>
                             <MenuItem value="Paid">Paid</MenuItem>
                           </Select>
-                          <Typography style={style}>
-                            {typeError ? <span>{typeError}</span> : ""}
-                          </Typography>
+                          {errors.type1?.type &&  <span style={style}>{type1 === "" ? errors?.type1?.message : ""}</span>}
+                         
                         </Stack>
                       </Grid>
                       <Grid item xs={12} md={3}>
                         <Stack spacing={1}>
-                          <InputLabel htmlFor="name">Status</InputLabel>
+                          <InputLabel htmlFor="name">Status <span className="err_str">*</span></InputLabel>
                           <Select
                             defaultValue="none"
-                            // onChange={(e) => setStatus(e.target.value)}
-                            value={status}
+                            value={status1}
                             labelId="demo-select-small"
-                            id="demo-select-small"
+                            id="status1"
                             label="Status"
-                            {...register("status", {
-                              onChange: (e) => {
-                                setStatus(e.target.value);
-                              },
-                              required: true,
+                            {...register("status1", {
+                              required: "Status is Required *",
                             })}
+                            onChange={(e) => setStatus1(e.target.value)}
                           >
-                            <MenuItem value="Upcoming">Upcoming</MenuItem>
-                            <MenuItem value="Past">Past</MenuItem>
-                            <MenuItem value="Current">Current</MenuItem>
+                            <MenuItem value="Active">Active</MenuItem>
+                            <MenuItem value="Draft">Draft</MenuItem>
+                            <MenuItem value="Archive">Archive</MenuItem>
                           </Select>
+                          {errors.status1?.type &&  <span style={style}>{status1 === null ? errors?.status1?.message : ""}</span>}
                         </Stack>
                       </Grid>
                     </Grid>
@@ -353,62 +356,76 @@ export default function AddNewActivity() {
                     <Grid container spacing={2}>
                       <Grid item xs={12} md={3}>
                         <Stack spacing={1}>
-                          <InputLabel htmlFor="name">Start Date</InputLabel>
+                          <InputLabel htmlFor="name">Start Date <span className="err_str">*</span></InputLabel>
                           <DatePicker
                             className="myDatePicker"
-                            selected={startDate}
-                            onChange={(date: any) => setStartDate(date)}
-                            name="startDate"
+                            id="startDate1"
+                            selected={startDate1}
                             dateFormat="MM/dd/yyyy"
                             placeholderText="Start Date"
+                            // {...register("startDate1", {
+                            //   required: "Start Date is Required *",
+                            // })}
+                            onChange={(date: any) => setStartDate1(date)}
                           />
+                          {/* {errors.startDate1?.type &&  <span style={style}>{startDate1 === null ? "Start Date is Required *" : ""}</span>} */}
+
                         </Stack>
                       </Grid>
                       <Grid item xs={12} md={3}>
                         <Stack spacing={1}>
-                          <InputLabel htmlFor="name">End Date*</InputLabel>
+                          <InputLabel htmlFor="name">End Date <span className="err_str">*</span></InputLabel>
                           <DatePicker
                             className="myDatePicker"
-                            selected={endDate}
-                            onChange={(date: any) => setEndDate(date)}
-                            name="startDate"
+                            selected={endDate1}
+                            id="endDate1"
                             dateFormat="MM/dd/yyyy"
                             placeholderText="End Date"
-                            minDate={startDate}
+                            minDate={startDate1}
+                            // {...register("endDate1", {
+                            //   required: "End Date is Required *",
+                            // })}
+                            onChange={(date: any) => setEndDate1(date)}
                           />
+                          {/* {errors.endDate1?.type &&  <span style={style}>{endDate1 === null ? "End Date is Required *" : ""}</span>} */}
                         </Stack>
                       </Grid>
                     </Grid>
                   </Stack>
+                  {(type1 && type1 === "Paid") || type1 === "" ? (
+                    <Stack style={{ marginTop: "20px" }}>
+                      <Grid container spacing={2}>
+                        <Grid item xs={12} md={6}>
+                          <Stack spacing={1}>
+                            <InputLabel htmlFor="name">
+                              Amount <span className="err_str">*</span>
+                            </InputLabel>
+                            <OutlinedInput
+                              type="text"
+                              id="price1"
+                              placeholder="Amount ..."
+                              fullWidth
+                              size="small"
+                              {...register("price1", {
+                                required: "Amount is Required *",
+                              })}
+                              onChange={(e) => setPrice1(e.target.value)}
+                            />
+                          {errors.price1?.type &&  <span style={style}>{price1 === "" ? "Amount is Required *" : ""}</span>}
+                             
+                          </Stack>
+                        </Grid>
+                      </Grid>
+                    </Stack>
+                  ) : (
+                    ""
+                  )}
                   <Stack style={{ marginTop: "20px" }}>
                     <Grid container spacing={2}>
                       <Grid item xs={12} md={6}>
                         <Stack spacing={1}>
                           <InputLabel htmlFor="name">
-                            Ammount<span className="err_str">*</span>
-                          </InputLabel>
-                          <OutlinedInput
-                            type="text"
-                            id="amount"
-                            placeholder="Amount ..."
-                            fullWidth
-                            size="small"
-                          />
-                          {/* <Typography style={style}>
-                            {errors.price && (
-                              <span>Amount Feild is Required **</span>
-                            )}
-                          </Typography> */}
-                        </Stack>
-                      </Grid>
-                    </Grid>
-                  </Stack>
-                  <Stack style={{ marginTop: "20px" }}>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} md={6}>
-                        <Stack spacing={1}>
-                          <InputLabel htmlFor="name">
-                            Short Description<span className="err_str">*</span>
+                            Short Description<span className="err_str"></span>
                           </InputLabel>
                           <QuillNoSSRWrapper
                             modules={modules}
@@ -425,7 +442,7 @@ export default function AddNewActivity() {
                       <Grid item xs={12} md={6}>
                         <Stack spacing={1}>
                           <InputLabel htmlFor="name">
-                            Description<span className="err_str">*</span>
+                            Description<span className="err_str"></span>
                           </InputLabel>
                           <QuillNoSSRWrapper
                             modules={modules}
