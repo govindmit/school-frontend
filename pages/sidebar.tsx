@@ -112,8 +112,14 @@ export default function MiniDrawer() {
   React.useEffect(() => {
     commmonfunctions.GivenPermition().then((res) => {
       setuserdet(res);
+      //let datas = (userdet?.userPrevilegs);
+     // const parsedata = JSON.parse(datas)?.user_permition;
+     // console.log(parsedata.length);
+     // console.log(parsedata[0].Dashboard)
     });
+
   }, []);
+
 
   return (
     <>

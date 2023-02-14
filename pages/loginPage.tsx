@@ -22,6 +22,7 @@ import Head from "next/head";
 import AuthHeader from "./commoncmp/authheader";
 import AuthRightTemplate from "./commoncmp/authrighttemplate";
 import Footer from "./commoncmp/footer";
+import commmonfunctions from "./commonFunctions/commmonfunctions";
 const theme = createTheme();
 
 const style = {
@@ -36,9 +37,24 @@ type FormValues = {
 };
 
 export default function LoginPage() {
-  const router = useRouter();
   const [spinner, setShowspinner] = React.useState(false);
   const [btnDisabled, setBtnDisabled] = React.useState(false);
+
+  const router = useRouter();
+  React.useEffect(() => {
+    const logintoken = localStorage.getItem("QIS_loginToken");
+    if (logintoken === undefined || logintoken === null) {
+      router.push("/");
+    }
+    commmonfunctions.VerifyLoginUser().then(res => {
+      if (res.exp * 1000 < Date.now()) {
+        localStorage.removeItem('QIS_loginToken');
+        localStorage.removeItem('QIS_User');
+        router.push("/");
+      }
+    });
+  }, []);
+
   const {
     register,
     handleSubmit,
