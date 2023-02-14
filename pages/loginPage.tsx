@@ -143,6 +143,7 @@ export default function LoginPage() {
             elevation={6}
             square
           >
+            <div style={{ width: "100%" }}></div>
             <Box
               className="width-full"
               sx={{

@@ -113,21 +113,7 @@ export default function ForgotPasswordPage() {
             elevation={6}
             square
           >
-            <header className="header-navbar1">
-              <Typography></Typography>
-              <nav className="nav-bar">
-                <Link
-                  href="/"
-                  style={{
-                    color: "#1A70C5",
-                    textDecoration: "none",
-                    fontWeight: "bold",
-                  }}
-                >
-                  <BiArrowBack /> Back to Home
-                </Link>
-              </nav>
-            </header>
+            <div style={{ width: "100%" }}></div>
             <Box
               sx={{
                 height: 360,
