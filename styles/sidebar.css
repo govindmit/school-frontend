@@ -8,6 +8,10 @@
 input.MuiInputBase-input.MuiInput-input.css-1x51dt5-MuiInputBase-input-MuiInput-input {
   display: none !important;
 }
+
+.MuiStack-root.bisplay-block.css-nen11g-MuiStack-root {
+  display: block !important;
+}
 .maiDiv {
   max-width: 100% !important;
   /* margin: 0 auto; */

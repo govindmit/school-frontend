@@ -106,7 +106,7 @@ export default function MiniDrawer() {
   const [userdet, setuserdet] = React.useState<any>([]);
   const [isActive, setIsActive] = useState(false);
 
-  const handleClick = (event) => {
+  const handleClick = () => {
     setIsActive((current) => !current);
   };
   React.useEffect(() => {
