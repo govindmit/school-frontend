@@ -59,7 +59,7 @@ function usePagination(data: any, itemsPerPage: any) {
     const end = begin + itemsPerPage;
     return data.slice(begin, end);
   }
- 
+
   function next() {
     setCurrentPage((currentPage) => Math.min(currentPage + 1, maxPage));
   }
@@ -85,7 +85,7 @@ export default function ActivityList() {
   const [searchquery, setsearchquery] = useState("");
   const [searchdata, setsearchdata] = useState([]);
   const [All, setAll] = useState(0);
-  const [allData,setAllData]=useState(0)
+  const [allData, setAllData] = useState(0);
   const [Upcommig, setUpcommig] = useState(0);
   const [Past, setPast] = useState(0);
   const [Current, setCurrent] = useState(0);
@@ -94,9 +94,9 @@ export default function ActivityList() {
   const [editActivityOpen, seteditActivityOpen] = React.useState(false);
   const [tabFilterData, settabFilterData] = useState<any>([]);
   const [deleteConfirmBoxOpen, setdeleteConfirmBoxOpen] = React.useState(false);
-  const [filterType,setFilterType]=useState("");
-  const [filterStatus,setFilterStatus]=useState("");
-  
+  const [filterType, setFilterType] = useState("");
+  const [filterStatus, setFilterStatus] = useState("");
+
   const [value, setValue] = React.useState(0);
   const [editid, seteditid] = useState<any>(0);
   const { register, handleSubmit } = useForm<FormValues>();
@@ -104,8 +104,7 @@ export default function ActivityList() {
     setValue(newValue);
   };
 
-  const todayDate=moment(new Date()).format("DD/MM/YYYY")
-  
+  const todayDate = moment(new Date()).format("DD/MM/YYYY");
 
   useEffect(() => {
     fetchData();
@@ -124,7 +123,7 @@ export default function ActivityList() {
   //get activites
   const url = `${api_url}/getActivity`;
   const fetchData = async () => {
-    if(!allNew){
+    if (!allNew) {
       try {
         const response = await fetch(url, {
           method: "POST",
@@ -139,11 +138,10 @@ export default function ActivityList() {
         setsearchdata(json.data);
         setAll(json.data.length);
         // setAllData(json.data);
-       
-      } catch (error) {
+      } catch (error:any) {
         console.log("error", error);
       }
-    }else{
+    } else {
       try {
         const response = await fetch(url, {
           method: "POST",
@@ -158,8 +156,7 @@ export default function ActivityList() {
         setsearchdata(json.data);
         setAll(json.data.length);
         // setAllData(json.data);
-       
-      } catch (error) {
+      } catch (error:any) {
         console.log("error", error);
       }
     }
@@ -191,19 +188,18 @@ export default function ActivityList() {
       setactivites(dtd);
     }
   };
-//  console.log('@#$$$$$$$$$$$',activity);
-function ResetFilterValue() {
-  // popupState.close
-  setAllNew(false)
-  fetchData();
-  setFilterType("");
-  setFilterStatus("")
-window.location.reload();
-  
-}
-  const filterApply=async (e:any)=>{
+  //  console.log('@#$$$$$$$$$$$',activity);
+  function ResetFilterValue() {
+    // popupState.close
+    setAllNew(false);
+    fetchData();
+    setFilterType("");
+    setFilterStatus("");
+    window.location.reload();
+  }
+  const filterApply = async (e: any) => {
     e.preventDefault();
-    setFullactivites([])
+    setFullactivites([]);
 
     const reqData = {
       status: filterStatus,
@@ -219,23 +215,22 @@ window.location.reload();
         "x-access-token": logintoken,
       },
     })
-      .then((res) => {
+      .then((res: any) => {
         if (res.status === 200) {
-          
-           setactivites(res?.data?.data);
-      setFullactivites(res?.data?.data);
-      setsearchdata(res?.data?.data);
-      setAll(res?.data?.data.length);
-      setAllNew(true)
-      // setAllData(res?.data?.data);
+          setactivites(res?.data?.data);
+          setFullactivites(res?.data?.data);
+          setsearchdata(res?.data?.data);
+          setAll(res?.data?.data.length);
+          setAllNew(true);
+          // setAllData(res?.data?.data);
         }
       })
-      .catch((error) => {
+      .catch((error: any) => {
         console.log(error);
       });
-  }
+  };
 
-  const past = activity?.filter((a: any) =>  a?.startDate < todayDate);
+  const past = activity?.filter((a: any) => a?.startDate < todayDate);
   const upcoming = activity?.filter((a: any) => a?.startDate > todayDate);
   const current = activity?.filter((a: any) => a?.startDate === todayDate);
   //pagination
@@ -303,7 +298,7 @@ window.location.reload();
     setactivites(upcoming);
   };
   const handleAll = () => {
-     fetchData();
+    fetchData();
     //  setAll(activity)
   };
   const handlePast = () => {
@@ -431,7 +426,7 @@ window.location.reload();
                                 >
                                   <Stack style={{ marginTop: "10px" }}>
                                     <Grid container spacing={2}>
-                                    <Grid item xs={12} lg={3}>
+                                      <Grid item xs={12} lg={3}>
                                         <Stack spacing={1}>
                                           <InputLabel htmlFor="enddate">
                                             Status
@@ -444,7 +439,7 @@ window.location.reload();
                                               onChange={(e: any) =>
                                                 setFilterStatus(e.target.value)
                                               }
-                                               value={filterStatus}
+                                              value={filterStatus}
                                             >
                                               <MenuItem value="Active">
                                                 Active
@@ -452,7 +447,9 @@ window.location.reload();
                                               <MenuItem value="Draft">
                                                 Draft
                                               </MenuItem>
-                                              <MenuItem value="Archive">Archive</MenuItem>
+                                              <MenuItem value="Archive">
+                                                Archive
+                                              </MenuItem>
                                             </Select>
                                           </FormControl>
                                         </Stack>
@@ -470,7 +467,7 @@ window.location.reload();
                                               onChange={(e: any) =>
                                                 setFilterType(e.target.value)
                                               }
-                                               value={filterType}
+                                              value={filterType}
                                             >
                                               <MenuItem value="Free">
                                                 Free
@@ -482,7 +479,7 @@ window.location.reload();
                                           </FormControl>
                                         </Stack>
                                       </Grid>
-                                     
+
                                       <Grid
                                         item
                                         xs={12}
@@ -495,8 +492,7 @@ window.location.reload();
                                           color="primary"
                                           sx={{ width: 150 }}
                                           // onClick={popupState.close}
-                                          onClick={(e)=>filterApply(e)}
-
+                                          onClick={(e) => filterApply(e)}
                                         >
                                           <b>Apply Filter</b>
                                           <span
@@ -631,9 +627,39 @@ window.location.reload();
                               {moment(endDate, "DD/MM/YYYY").format("ll")}
                             </TableCell>
                             <TableCell align="left">
-                             {
-                              todayDate === startDate? <p style={{fontSize: "14px",color:" #15c6cf",fontWeight:"600"}}>CURRENT</p> : todayDate < startDate ? <p style={{fontSize: "14px",color:" #02c509",fontWeight:"600"}}>UPCOMING</p> : todayDate > startDate ? <p style={{fontSize: "14px",color:" rgb(241 61 61)",fontWeight:"600"}}>PAST ACTIVITY</p>:""
-                             }
+                              {todayDate === startDate ? (
+                                <p
+                                  style={{
+                                    fontSize: "14px",
+                                    color: " #15c6cf",
+                                    fontWeight: "600",
+                                  }}
+                                >
+                                  CURRENT
+                                </p>
+                              ) : todayDate < startDate ? (
+                                <p
+                                  style={{
+                                    fontSize: "14px",
+                                    color: " #02c509",
+                                    fontWeight: "600",
+                                  }}
+                                >
+                                  UPCOMING
+                                </p>
+                              ) : todayDate > startDate ? (
+                                <p
+                                  style={{
+                                    fontSize: "14px",
+                                    color: " rgb(241 61 61)",
+                                    fontWeight: "600",
+                                  }}
+                                >
+                                  PAST ACTIVITY
+                                </p>
+                              ) : (
+                                ""
+                              )}
                               {/* {status.toUpperCase()} */}
                             </TableCell>
                             <TableCell align="left">{price}</TableCell>
