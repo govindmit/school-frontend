@@ -29,22 +29,23 @@ const DynamicComponentWithNoSSR = dynamic(() => import("../chart"), {
 export default function Dashboard(this: any) {
   const router = useRouter();
   React.useEffect(() => {
-    commmonfunctions.GivenPermition().then(res => {
-      //console.log(res && res.userPrevilegs)
-      let datas = res && res.userPrevilegs;
-      const parsedata = JSON.parse(datas)?.user_permition;
-      console.log(parsedata);
-      const lgh = parsedata.length;
-      if (lgh > 0) {
-        for (var i = 0; i <= lgh - 1; i++) {
-          if (parsedata[i].Dashboard) {
-            router.push("/admin/dashboard");
-          }
-        }
+    const logintoken = localStorage.getItem("QIS_loginToken");
+    if (logintoken === undefined || logintoken === null) {
+      router.push("/");
+    }
+    commmonfunctions.VerifyLoginUser().then(res => {
+      if (res.exp * 1000 < Date.now()) {
+        localStorage.removeItem('QIS_loginToken');
+        localStorage.removeItem('QIS_User');
+        router.push("/");
       }
     });
+    commmonfunctions.ManageDashboard().then(res => {
+      if (!res) {
+        router.push("/userprofile");
+      }
+    })
   }, []);
-
 
   const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",

@@ -150,6 +150,7 @@ export default function AddNewUser() {
             status: 1,
             userRole: "user"
         };
+
         await axios({
             method: "POST",
             url: `${api_url}/addUser`,

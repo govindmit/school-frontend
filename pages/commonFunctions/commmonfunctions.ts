@@ -23,6 +23,58 @@ class CommonFunctions {
     return response.data.data[0];
   };
 
+  //manage previlegs
+  //manage dashboard
+  ManageDashboard = async () => {
+    let login_token: any;
+    login_token = localStorage.getItem("QIS_loginToken");
+    const decoded: any = jwt_decode(login_token);
+    let response = await axios.get(`${api_url}/getuserdetails/${decoded.id}`, {
+      headers: {
+        Authorization: auth_token,
+      },
+    });
+    const dt = response.data.data[0].userPrevilegs;
+    const dttt = JSON.parse(dt);
+    const lgh = dttt.user_permition.length;
+    for (var i = 0; i <= lgh - 1; i++) {
+      if (dttt.user_permition[i].Dashboard) {
+        return dttt.user_permition[i].Dashboard;
+      }
+    }
+  };
+
+  //manage customers
+  ManageCustomers = async () => {
+    let login_token: any;
+    login_token = localStorage.getItem("QIS_loginToken");
+    const decoded: any = jwt_decode(login_token);
+    let response = await axios.get(`${api_url}/getuserdetails/${decoded.id}`, {
+      headers: {
+        Authorization: auth_token,
+      },
+    });
+    const dt = response.data.data[0].userPrevilegs;
+    const dttt = JSON.parse(dt);
+    const lgh = dttt.user_permition.length;
+    for (var i = 0; i <= lgh - 1; i++) {
+      if (dttt.user_permition[i].Customers) {
+        return dttt.user_permition[i].Customers;
+      }
+    }
+  };
+
+  //Crenditials
+  GetuserDet = async (token: any) => {
+    const decoded: any = jwt_decode(token);
+    let response = await axios.get(`${api_url}/getuserdetails/${decoded.id}`, {
+      headers: {
+        Authorization: auth_token,
+      },
+    });
+    return response.data.data[0];
+  };
+
   //get lastInsert id
   GetLastInsertId = async () => {
     let response = await axios.get(`${api_url}/getLastInsertId`, {

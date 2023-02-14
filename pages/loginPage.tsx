@@ -24,7 +24,6 @@ import AuthRightTemplate from "./commoncmp/authrighttemplate";
 import Footer from "./commoncmp/footer";
 import commmonfunctions from "./commonFunctions/commmonfunctions";
 const theme = createTheme();
-
 const style = {
   color: "red",
   fontSize: "12px",
@@ -37,10 +36,10 @@ type FormValues = {
 };
 
 export default function LoginPage() {
+  const router = useRouter();
   const [spinner, setShowspinner] = React.useState(false);
   const [btnDisabled, setBtnDisabled] = React.useState(false);
 
-  const router = useRouter();
   React.useEffect(() => {
     const logintoken = localStorage.getItem("QIS_loginToken");
     if (logintoken === undefined || logintoken === null) {
@@ -104,14 +103,6 @@ export default function LoginPage() {
         setBtnDisabled(false);
       });
   };
-
-  React.useEffect(() => {
-    const login_token = localStorage.getItem("QIS_loginToken");
-    if (login_token) {
-      router.push("/admin/dashboard");
-    }
-  }, []);
-
   return (
     <>
       <Head>
