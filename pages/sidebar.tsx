@@ -101,15 +101,36 @@ export default function MiniDrawer() {
   const [open, setOpen] = React.useState(true);
   const router = useRouter();
   const [userdet, setuserdet] = React.useState<any>([]);
+  const [checkdashboard, setcheckdashboard] = React.useState<any>(false);
+  const [checkcustomers, setcheckcustomers] = React.useState<any>(false);
+  const [checkInvoices, setcheckInvoices] = React.useState<any>(false);
+  const [checkActivity, setcheckActivity] = React.useState<any>(false);
+  const [checkSalesInvoice, setcheckSalesInvoice] = React.useState<any>(false);
+  const [checkComposer, setcheckComposer] = React.useState<any>(false);
   React.useEffect(() => {
     commmonfunctions.GivenPermition().then(res => {
       setuserdet(res);
-      //let datas = (userdet?.userPrevilegs);
-     // const parsedata = JSON.parse(datas)?.user_permition;
-     // console.log(parsedata.length);
-     // console.log(parsedata[0].Dashboard)
+      const dttt = JSON.parse(res.userPrevilegs);
+      console.log(dttt);
+      const lgh = dttt.user_permition.length;
+      for (var i = 0; i <= lgh - 1; i++) {
+        if (dttt.user_permition[i].Dashboard) {
+          setcheckdashboard(true);
+        } else if (dttt.user_permition[i].Customers) {
+          setcheckcustomers(true);
+        } else if (dttt.user_permition[i].Invoices) {
+          setcheckInvoices(true)
+        } else if (dttt.user_permition[i].Activites) {
+          setcheckActivity(true)
+        } else if (dttt.user_permition[i].Cumposers) {
+          setcheckComposer(true)
+        } else if (dttt.user_permition[i].SalesInvoices) {
+          setcheckSalesInvoice(true)
+        }
+      }
     });
   }, [])
+
   return (
     <>
       <Head>
@@ -147,110 +168,115 @@ export default function MiniDrawer() {
         <Drawer variant="permanent" open={open}>
           <h1>Header</h1>
           <List>
-            {userdet && userdet.roleId === 1 ? (
-              <ListItem
-                className="sidebar-link"
-                disablePadding
-                sx={{ display: "block" }}
-                onClick={() => router.push("/admin/dashboard")}
-              >
-                <ListItemButton
-                  sx={{
-                    minHeight: 48,
-                    justifyContent: open ? "initial" : "center",
-                    px: 2.5,
-                  }}
+            {
+              checkdashboard === true ? (
+                <ListItem
+                  className="sidebar-link"
+                  disablePadding
+                  sx={{ display: "block" }}
+                  onClick={() => router.push("/admin/dashboard")}
                 >
-                  <ListItemIcon
+                  <ListItemButton
                     sx={{
-                      minWidth: 0,
-                      mr: open ? 3 : "auto",
-                      justifyContent: "center",
+                      minHeight: 48,
+                      justifyContent: open ? "initial" : "center",
+                      px: 2.5,
                     }}
-                  ></ListItemIcon>
-                  <DashboardOutlinedIcon />
-                  <ListItemText
-                    primary="Dashboard"
-                    sx={{ opacity: open ? 1 : 0 }}
-                  />
-                </ListItemButton>
-              </ListItem>) : ("")
-            }
-            {userdet && userdet.roleId === 1 ? (
-              <ListItem
-                className="sidebar-link"
-                disablePadding
-                sx={{ display: "block" }}
-                onClick={() => router.push("/customer/customerslist")}
-              >
-                <ListItemButton
-                  sx={{
-                    minHeight: 48,
-                    justifyContent: open ? "initial" : "center",
-                    px: 2.5,
-                  }}
-                >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      mr: open ? 3 : "auto",
-                      justifyContent: "center",
-                    }}
-                  ></ListItemIcon>
-                  <PeopleAltOutlinedIcon />
-                  <ListItemText
-                    primary="Customers"
-                    sx={{ opacity: open ? 1 : 0 }}
-                  />
-                </ListItemButton>
-                <Stack>
-                  <ListItem
-                    style={{ cursor: "pointer" }}
-                    onClick={() => router.push("/customer/custType")}
                   >
                     <ListItemIcon
                       sx={{
                         minWidth: 0,
-                        mr: open ? 7 : "auto",
+                        mr: open ? 3 : "auto",
+                        justifyContent: "center",
+                      }}
+                    ></ListItemIcon>
+                    <DashboardOutlinedIcon />
+                    <ListItemText
+                      primary="Dashboard"
+                      sx={{ opacity: open ? 1 : 0 }}
+                    />
+                  </ListItemButton>
+                </ListItem>) : ("")
+            }
+            {
+              checkcustomers === true ? (
+                <ListItem
+                  className="sidebar-link"
+                  disablePadding
+                  sx={{ display: "block" }}
+                  onClick={() => router.push("/customer/customerslist")}
+                >
+                  <ListItemButton
+                    sx={{
+                      minHeight: 48,
+                      justifyContent: open ? "initial" : "center",
+                      px: 2.5,
+                    }}
+                  >
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open ? 3 : "auto",
                         justifyContent: "center",
                       }}
                     ></ListItemIcon>
                     <PeopleAltOutlinedIcon />
                     <ListItemText
-                      primary="Customers Type"
+                      primary="Customers"
                       sx={{ opacity: open ? 1 : 0 }}
                     />
-                  </ListItem>
-                </Stack>
-              </ListItem>) : ("")}
-            {userdet && userdet.roleId === 1 ? (<ListItem
-              className="sidebar-link"
-              disablePadding
-              sx={{ display: "block" }}
-              onClick={() => router.push("/admin/invoices")}
-            >
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
+                  </ListItemButton>
+                  <Stack >
+                    <ListItem
+                      style={{ cursor: "pointer" }}
+                      onClick={() => router.push("/customer/custType")}
+                    >
+                      <ListItemIcon
+                        sx={{
+                          minWidth: 0,
+                          mr: open ? 7 : "auto",
+                          justifyContent: "center",
+                        }}
+                      ></ListItemIcon>
+                      <PeopleAltOutlinedIcon />
+                      <ListItemText
+                        primary="Customers Type"
+                        sx={{ opacity: open ? 1 : 0 }}
+                      />
+                    </ListItem>
+                  </Stack>
+                </ListItem>) : ("")
+            }
+            {checkInvoices === true ? (
+              <ListItem
+                className="sidebar-link"
+                disablePadding
+                sx={{ display: "block" }}
+                onClick={() => router.push("/admin/invoices")}
               >
-                <ListItemIcon
+                <ListItemButton
                   sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
+                    minHeight: 48,
+                    justifyContent: open ? "initial" : "center",
+                    px: 2.5,
                   }}
-                ></ListItemIcon>
-                <DescriptionOutlinedIcon />
-                <ListItemText
-                  primary="Invoices"
-                  sx={{ opacity: open ? 1 : 0 }}
-                />
-              </ListItemButton>
-            </ListItem>) : ("")}
-            {userdet && userdet.roleId === 1 ? (<ListItem
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : "auto",
+                      justifyContent: "center",
+                    }}
+                  ></ListItemIcon>
+                  <DescriptionOutlinedIcon />
+                  <ListItemText
+                    primary="Invoices"
+                    sx={{ opacity: open ? 1 : 0 }}
+                  />
+                </ListItemButton>
+              </ListItem>) : ("")
+            }
+            <ListItem
               className="sidebar-link"
               disablePadding
               sx={{ display: "block" }}
@@ -271,95 +297,190 @@ export default function MiniDrawer() {
                   }}
                 ></ListItemIcon>
                 <CreditCardOutlinedIcon />
-
                 <ListItemText
                   primary="Credit Notes"
                   sx={{ opacity: open ? 1 : 0 }}
                 />
               </ListItemButton>
-            </ListItem>) : ("")}
-            {userdet && userdet.roleId === 1 ? (<ListItem
-              className="sidebar-link"
-              disablePadding
-              sx={{ display: "block" }}
-              onClick={() => router.push("/admin/activitylist")}
-            >
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
+            </ListItem>
+            {checkActivity === true ? (
+              <ListItem
+                className="sidebar-link"
+                disablePadding
+                sx={{ display: "block" }}
+                onClick={() => router.push("/admin/activitylist")}
               >
-                <ListItemIcon
+                <ListItemButton
                   sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
+                    minHeight: 48,
+                    justifyContent: open ? "initial" : "center",
+                    px: 2.5,
                   }}
-                ></ListItemIcon>
-                <TimelineOutlinedIcon />
-                <ListItemText
-                  primary="Activity"
-                  sx={{ opacity: open ? 1 : 0 }}
-                />
-              </ListItemButton>
-            </ListItem>) : ("")}
-            {userdet && userdet.roleId === 1 ? (<ListItem
-              className="sidebar-link"
-              disablePadding
-              sx={{ display: "block" }}
-              onClick={() => router.push("/usermanagement/users")}
-            >
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : "auto",
+                      justifyContent: "center",
+                    }}
+                  ></ListItemIcon>
+                  <TimelineOutlinedIcon />
+                  <ListItemText
+                    primary="Activity"
+                    sx={{ opacity: open ? 1 : 0 }}
+                  />
+                </ListItemButton>
+              </ListItem>) : ("")
+            }
+            {checkSalesInvoice === true ? (
+              <ListItem
+                className="sidebar-link"
+                disablePadding
+                sx={{ display: "block" }}
+                onClick={() => router.push("/admin/activitylist")}
               >
-                <ListItemIcon
+                <ListItemButton
                   sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
+                    minHeight: 48,
+                    justifyContent: open ? "initial" : "center",
+                    px: 2.5,
                   }}
-                ></ListItemIcon>
-                <PeopleAltOutlinedIcon />
-                <ListItemText
-                  primary="User Management"
-                  sx={{ opacity: open ? 1 : 0 }}
-                />
-              </ListItemButton>
-            </ListItem>) : ("")}
-            {userdet && userdet.roleId === 1 ? (<ListItem
-              className="sidebar-link"
-              disablePadding
-              sx={{ display: "block" }}
-            // onClick={() => router.push("/activites/activitylist")}
-            >
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : "auto",
+                      justifyContent: "center",
+                    }}
+                  ></ListItemIcon>
+                  <DescriptionOutlinedIcon />
+                  <ListItemText
+                    primary="Sales Order"
+                    sx={{ opacity: open ? 1 : 0 }}
+                  />
+                </ListItemButton>
+              </ListItem>) : ("")
+            }
+            {userdet && userdet.roleId === 1 ? (
+              <ListItem
+                className="sidebar-link"
+                disablePadding
+                sx={{ display: "block" }}
+                onClick={() => router.push("/usermanagement/users")}
               >
-                <ListItemIcon
+                <ListItemButton
                   sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
+                    minHeight: 48,
+                    justifyContent: open ? "initial" : "center",
+                    px: 2.5,
                   }}
-                ></ListItemIcon>
-                <LockOutlinedIcon />
-                <ListItemText
-                  primary="Log Out"
-                  sx={{ opacity: open ? 1 : 0 }}
-                  onClick={() => router.push("/logout")}
-                />
-              </ListItemButton>
-            </ListItem>) : ("")}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : "auto",
+                      justifyContent: "center",
+                    }}
+                  ></ListItemIcon>
+                  <PeopleAltOutlinedIcon />
+                  <ListItemText
+                    primary="User Management"
+                    sx={{ opacity: open ? 1 : 0 }}
+                  />
+                </ListItemButton>
+              </ListItem>) : ("")
+            }
+            {checkComposer === true ? (
+              <ListItem
+                className="sidebar-link"
+                disablePadding
+                sx={{ display: "block" }}
+              // onClick={() => router.push("/activites/activitylist")}
+              >
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: open ? "initial" : "center",
+                    px: 2.5,
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : "auto",
+                      justifyContent: "center",
+                    }}
+                  ></ListItemIcon>
+                  <TimelineOutlinedIcon />
+                  <ListItemText
+                    primary="Composer"
+                    sx={{ opacity: open ? 1 : 0 }}
+                  //onClick={() => router.push("/logout")}
+                  />
+                </ListItemButton>
+              </ListItem>) : ("")
+            }
+            {userdet && userdet.roleId === 1 ? (
+              <ListItem
+                className="sidebar-link"
+                disablePadding
+                sx={{ display: "block" }}
+              // onClick={() => router.push("/activites/activitylist")}
+              >
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: open ? "initial" : "center",
+                    px: 2.5,
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : "auto",
+                      justifyContent: "center",
+                    }}
+                  ></ListItemIcon>
+                  <LockOutlinedIcon />
+                  <ListItemText
+                    primary="Log Out"
+                    sx={{ opacity: open ? 1 : 0 }}
+                    onClick={() => router.push("/logout")}
+                  />
+                </ListItemButton>
+              </ListItem>) : ("")
+            }
+            {userdet && userdet.roleId === 1 ? (
+              <ListItem
+                className="sidebar-link"
+                disablePadding
+                sx={{ display: "block" }}
+              // onClick={() => router.push("/activites/activitylist")}
+              >
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: open ? "initial" : "center",
+                    px: 2.5,
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : "auto",
+                      justifyContent: "center",
+                    }}
+                  ></ListItemIcon>
+                  <PeopleAltOutlinedIcon />
+                  <ListItemText
+                    primary="Profile"
+                    sx={{ opacity: open ? 1 : 0 }}
+                    onClick={() => router.push("/userprofile")
+                    }
+                  />
+                </ListItemButton>
+              </ListItem>) : ("")
+            }
           </List>
         </Drawer>
         <Divider />

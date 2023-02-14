@@ -109,6 +109,7 @@ export default function CustomerList() {
   const [parentId, setparentId] = useState<any>("");
   const [checked, setChecked] = React.useState(false);
   const [OpenCSV, setOpenCSV] = React.useState(false);
+  const [custpermit, setcustpermit] = useState<any>([]);
   const { register, handleSubmit } = useForm<FormValues>();
   const router = useRouter();
 
@@ -121,38 +122,21 @@ export default function CustomerList() {
     getType();
   }, []);
 
-  // verify user login
+  // verify user login and previlegs
   let logintoken: any;
   React.useEffect(() => {
     logintoken = localStorage.getItem("QIS_loginToken");
     if (logintoken === undefined || logintoken === null) {
       router.push("/");
     }
+    commmonfunctions.ManageCustomers().then(res => {
+      if (!res) {
+        router.push("/userprofile");
+      } else {
+        setcustpermit(res);
+      }
+    })
   }, []);
-
-  // React.useEffect(() => {
-  //   let custTrue = false;
-  //   commmonfunctions.GivenPermition().then(res => {
-  //     let datas = res && res.userPrevilegs;
-  //     const parsedata = JSON.parse(datas)?.user_permition;
-  //     console.log(parsedata);
-  //     const lgh = parsedata.length;
-  //     if (lgh > 0) {
-  //       for (var i = 0; i <= lgh - 1; i++) {
-  //         if (parsedata[i].Customers) {
-  //           custTrue = true;
-  //         }
-  //       }
-  //     }
-  //   });
-  //   if (custTrue) {
-  //     router.push("/customer/customerslist");
-  //   } else {
-  //     router.push("/admin/dashboard");
-  //   }
-  // }, []);
-
-
 
   //get customers(users) list
   const getUser = async () => {
@@ -485,7 +469,7 @@ export default function CustomerList() {
                   CUSTOMERS
                 </Typography>
               </Stack>
-              <Button
+              {custpermit && custpermit.canAdd === true ? (<Button
                 className="button-new"
                 variant="contained"
                 size="small"
@@ -493,7 +477,7 @@ export default function CustomerList() {
                 onClick={handleNewCustomerOpen}
               >
                 <b>New Customer</b>
-              </Button>
+              </Button>) : ""}
             </Stack>
             {/*bread cump */}
             <Card
@@ -916,31 +900,34 @@ export default function CustomerList() {
                                   direction="row"
                                   spacing={1}
                                 >
-                                  <IconButton className="action-view">
-                                    <Link
-                                      href={`/customer/viewcustomer/${dataitem.id}`}
-                                      style={{
-                                        color: "#26CEB3",
-                                      }}
-                                    >
-                                      <BiShow />
-                                    </Link>
-                                  </IconButton>
-                                  <IconButton
+                                  {custpermit && custpermit.canView === true ? (
+                                    <IconButton className="action-view">
+                                      <Link
+                                        href={`/customer/viewcustomer/${dataitem.id}`}
+                                        style={{
+                                          color: "#26CEB3",
+                                        }}
+                                      >
+                                        <BiShow />
+                                      </Link>
+                                    </IconButton>) : ""}
+                                  {custpermit && custpermit.canEdit === true ? (<IconButton
                                     className="action-edit"
                                     onClick={() =>
                                       handleEditCustomerOpen(dataitem.id)
                                     }
                                   >
                                     <FiEdit />
-                                  </IconButton>
-                                  <IconButton
+                                  </IconButton>)
+                                    : ""}
+                                  {custpermit && custpermit.canDelete === true ? (<IconButton
                                     className="action-delete"
                                     style={{ color: "#F95A37" }}
                                     onClick={() => openDelete(dataitem)}
                                   >
                                     <RiDeleteBin5Fill />
-                                  </IconButton>
+                                  </IconButton>) : ""}
+
                                 </Stack>
                               </TableCell>
                             </TableRow>

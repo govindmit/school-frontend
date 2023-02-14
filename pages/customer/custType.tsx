@@ -39,6 +39,8 @@ import styled from "@emotion/styled";
 import { GridCloseIcon } from "@mui/x-data-grid";
 import { useForm, SubmitHandler } from "react-hook-form";
 import EditType from "./editType";
+import commmonfunctions from "../commonFunctions/commmonfunctions";
+import { useRouter } from "next/router";
 
 const style = {
   color: "red",
@@ -95,6 +97,8 @@ export default function CustomerTypeList() {
   const [btnDisabled, setBtnDisabled] = React.useState(false);
   const [edittypeOpen, setedittypeOpen] = React.useState(false);
   const [editid, seteditid] = useState<any>(0);
+  const [custpermit, setcustpermit] = useState<any>([]);
+  const router = useRouter();
 
   const {
     register,
@@ -123,6 +127,22 @@ export default function CustomerTypeList() {
 
   useEffect(() => {
     getType();
+  }, []);
+
+  // verify user login and previlegs
+  let logintoken: any;
+  React.useEffect(() => {
+    logintoken = localStorage.getItem("QIS_loginToken");
+    if (logintoken === undefined || logintoken === null) {
+      router.push("/");
+    }
+    commmonfunctions.ManageCustomers().then(res => {
+      if (!res) {
+        router.push("/userprofile");
+      } else {
+        setcustpermit(res);
+      }
+    })
   }, []);
 
   //get customers type
