@@ -146,9 +146,16 @@ export default function Guardians() {
                 <div className="sdiv">
                   <h4>endDate : {activity[0]?.endDate}</h4>
                 </div>
-                <div style={{ marginLeft: "55%" }}>
-                  <h4>Amount ${activity[0]?.price}</h4>
-                </div>
+                {activity[0]?.price === 0 ? (
+                  <div style={{ marginLeft: "55%" }}>
+                    <h4 style={{ color: "#ff5e00" }}>Free</h4>
+                  </div>
+                ) : (
+                  <div style={{ marginLeft: "55%", display: "flex" }}>
+                    <h4>Amount</h4>&nbsp;
+                    <h4 style={{ color: "#ff5e00" }}>${activity[0]?.price}</h4>
+                  </div>
+                )}
               </div>
               {/* <p>{activity[0]?.description}</p> */}
               <div
@@ -161,6 +168,12 @@ export default function Guardians() {
                   __html: activity[0]?.shortDescription,
                 }}
               ></div>
+              <br/>
+              <div className="buycss" style={{textAlign: "end"}}>
+                <Button variant="contained" href="#contained-buttons">
+                  Buy
+                </Button>
+              </div>
             </Card>
           </div>
         </Box>

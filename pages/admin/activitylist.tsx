@@ -30,7 +30,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { BiFilterAlt, BiShow } from "react-icons/bi";
 import { FiEdit } from "react-icons/fi";
-import { RiDeleteBin5Fill } from "react-icons/ri";
+import { RiDeleteBin5Fill, RiFileCopyLine } from "react-icons/ri";
 import MiniDrawer from "../sidebar";
 import { api_url, auth_token } from "../api/hello";
 import axios from "axios";
@@ -42,6 +42,7 @@ import { useRouter } from "next/router";
 //   import AddActivity from "./addActivity";
 //   import EditActivity from "./editActivity";
 import ConfirmBox from "../commoncmp/confirmbox";
+import dynamic from "next/dynamic";
 
 function a11yProps(index: number) {
   return {
@@ -58,6 +59,7 @@ function usePagination(data: any, itemsPerPage: any) {
     const end = begin + itemsPerPage;
     return data.slice(begin, end);
   }
+ 
   function next() {
     setCurrentPage((currentPage) => Math.min(currentPage + 1, maxPage));
   }
@@ -83,19 +85,27 @@ export default function ActivityList() {
   const [searchquery, setsearchquery] = useState("");
   const [searchdata, setsearchdata] = useState([]);
   const [All, setAll] = useState(0);
+  const [allData,setAllData]=useState(0)
   const [Upcommig, setUpcommig] = useState(0);
   const [Past, setPast] = useState(0);
   const [Current, setCurrent] = useState(0);
   const [newActivityOpen, setnewActivityOpen] = React.useState(false);
+  const [allNew, setAllNew] = React.useState(false);
   const [editActivityOpen, seteditActivityOpen] = React.useState(false);
   const [tabFilterData, settabFilterData] = useState<any>([]);
   const [deleteConfirmBoxOpen, setdeleteConfirmBoxOpen] = React.useState(false);
+  const [filterType,setFilterType]=useState("");
+  const [filterStatus,setFilterStatus]=useState("");
+  
   const [value, setValue] = React.useState(0);
   const [editid, seteditid] = useState<any>(0);
   const { register, handleSubmit } = useForm<FormValues>();
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+
+  const todayDate=moment(new Date()).format("DD/MM/YYYY")
+  
 
   useEffect(() => {
     fetchData();
@@ -114,20 +124,44 @@ export default function ActivityList() {
   //get activites
   const url = `${api_url}/getActivity`;
   const fetchData = async () => {
-    try {
-      const response = await fetch(url, {
-        headers: {
-          Authorization: auth_token,
-        },
-      });
-      const json = await response.json();
-      setactivites(json.data);
-      setFullactivites(json.data);
-
-      setsearchdata(json.data);
-      setAll(json.data.length);
-    } catch (error) {
-      console.log("error", error);
+    if(!allNew){
+      try {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            Authorization: auth_token,
+            "x-access-token": logintoken,
+          },
+        });
+        const json = await response.json();
+        setactivites(json.data);
+        setFullactivites(json.data);
+        setsearchdata(json.data);
+        setAll(json.data.length);
+        // setAllData(json.data);
+       
+      } catch (error) {
+        console.log("error", error);
+      }
+    }else{
+      try {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            Authorization: auth_token,
+            "x-access-token": logintoken,
+          },
+        });
+        const json = await response.json();
+        setactivites(json.data);
+        setFullactivites(json.data);
+        setsearchdata(json.data);
+        setAll(json.data.length);
+        // setAllData(json.data);
+       
+      } catch (error) {
+        console.log("error", error);
+      }
     }
   };
 
@@ -157,10 +191,54 @@ export default function ActivityList() {
       setactivites(dtd);
     }
   };
+//  console.log('@#$$$$$$$$$$$',activity);
+function ResetFilterValue() {
+  // popupState.close
+  setAllNew(false)
+  fetchData();
+  setFilterType("");
+  setFilterStatus("")
 
-  const past = activity?.filter((a: any) => a.status == "Past");
-  const upcoming = activity?.filter((a: any) => a.status == "Upcoming");
-  const current = activity?.filter((a: any) => a.status == "Current");
+  
+}
+  const filterApply=async (e:any)=>{
+    e.preventDefault();
+    setFullactivites([])
+
+    const reqData = {
+      status: filterStatus,
+      type: filterType,
+    };
+
+    await axios({
+      method: "POST",
+      url: `${api_url}/getActivity`,
+      data: reqData,
+      headers: {
+        Authorization: auth_token,
+        "x-access-token": logintoken,
+      },
+    })
+      .then((res) => {
+        if (res.status === 200) {
+          
+           setactivites(res?.data?.data);
+      setFullactivites(res?.data?.data);
+      setsearchdata(res?.data?.data);
+      setAll(res?.data?.data.length);
+      setAllNew(true)
+      // setAllData(res?.data?.data);
+
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  const past = activity?.filter((a: any) =>  a?.startDate < todayDate);
+  const upcoming = activity?.filter((a: any) => a?.startDate > todayDate);
+  const current = activity?.filter((a: any) => a?.startDate === todayDate);
   //pagination
   const [row_per_page, set_row_per_page] = useState(5);
   function handlerowchange(e: any) {
@@ -181,6 +259,9 @@ export default function ActivityList() {
     setdeleteConfirmBoxOpen(true);
     setDeleteData(data);
   }
+  // function openCopy(data: any) {
+  //  console.log('@@@@@@@@@@copy');
+  // }
   async function deleteUser() {
     await axios({
       method: "DELETE",
@@ -190,7 +271,6 @@ export default function ActivityList() {
       },
     })
       .then((data) => {
-        console.log("Success:", data);
         toast.success("Activity Deleted Successfully !");
         setdeleteConfirmBoxOpen(false);
         fetchData();
@@ -211,7 +291,6 @@ export default function ActivityList() {
 
   //edit activity popup
   function handleEditActivityOpen(id: any) {
-    console.log(id, "iddddddddd");
     seteditActivityOpen(true);
     seteditid(id);
   }
@@ -225,7 +304,8 @@ export default function ActivityList() {
     setactivites(upcoming);
   };
   const handleAll = () => {
-    fetchData();
+     fetchData();
+    //  setAll(activity)
   };
   const handlePast = () => {
     setactivites(past);
@@ -337,6 +417,7 @@ export default function ActivityList() {
                     <PopupState variant="popover" popupId="demo-popup-menu">
                       {(popupState) => (
                         <Box>
+                         
                           <MenuItem {...bindTrigger(popupState)}>
                             <BiFilterAlt />
                             &nbsp; Filter
@@ -352,65 +433,58 @@ export default function ActivityList() {
                                 >
                                   <Stack style={{ marginTop: "10px" }}>
                                     <Grid container spacing={2}>
+                                    <Grid item xs={12} lg={3}>
+                                        <Stack spacing={1}>
+                                          <InputLabel htmlFor="enddate">
+                                            Status
+                                          </InputLabel>
+                                          <FormControl fullWidth>
+                                            <Select
+                                              labelId="demo-simple-select-label"
+                                              id="demo-simple-select"
+                                              size="small"
+                                              onChange={(e: any) =>
+                                                setFilterStatus(e.target.value)
+                                              }
+                                               value={filterStatus}
+                                            >
+                                              <MenuItem value="Active">
+                                                Active
+                                              </MenuItem>
+                                              <MenuItem value="Draft">
+                                                Draft
+                                              </MenuItem>
+                                              <MenuItem value="Archive">Archive</MenuItem>
+                                            </Select>
+                                          </FormControl>
+                                        </Stack>
+                                      </Grid>
                                       <Grid item xs={12} md={3}>
                                         <Stack spacing={1}>
                                           <InputLabel htmlFor="name">
-                                            Customer Type
+                                            Type
                                           </InputLabel>
                                           <FormControl fullWidth>
                                             <Select
                                               labelId="demo-simple-select-label"
                                               id="demo-simple-select"
                                               size="small"
-                                              // onChange={(e: any) =>
-                                              //   setCustType(e.target.value)
-                                              // }
-                                              // value={custType}
+                                              onChange={(e: any) =>
+                                                setFilterType(e.target.value)
+                                              }
+                                               value={filterType}
                                             >
-                                              {/* <MenuItem value={0}>All</MenuItem>
-                                                {custtype &&
-                                                  custtype.map(
-                                                    (data: any, key: any) => {
-                                                      return (
-                                                        <MenuItem
-                                                          key={key}
-                                                          value={data.id}
-                                                        >
-                                                          {data.name}
-                                                        </MenuItem>
-                                                      );
-                                                    }
-                                                  )} */}
-                                            </Select>
-                                          </FormControl>
-                                        </Stack>
-                                      </Grid>
-                                      <Grid item xs={12} lg={3}>
-                                        <Stack spacing={1}>
-                                          <InputLabel htmlFor="enddate">
-                                            Customer Status
-                                          </InputLabel>
-                                          <FormControl fullWidth>
-                                            <Select
-                                              labelId="demo-simple-select-label"
-                                              id="demo-simple-select"
-                                              size="small"
-                                              // onChange={(e: any) =>
-                                              //   setcustStatus(e.target.value)
-                                              // }
-                                              // value={custStatus}
-                                            >
-                                              <MenuItem value={2}>All</MenuItem>
-                                              <MenuItem value={1}>
-                                                Active
+                                              <MenuItem value="Free">
+                                                Free
                                               </MenuItem>
-                                              <MenuItem value={0}>
-                                                InActive
+                                              <MenuItem value="Paid">
+                                                Paid
                                               </MenuItem>
                                             </Select>
                                           </FormControl>
                                         </Stack>
                                       </Grid>
+                                     
                                       <Grid
                                         item
                                         xs={12}
@@ -422,7 +496,9 @@ export default function ActivityList() {
                                           variant="contained"
                                           color="primary"
                                           sx={{ width: 150 }}
-                                          onClick={popupState.close}
+                                          // onClick={popupState.close}
+                                          onClick={(e)=>filterApply(e)}
+
                                         >
                                           <b>Apply Filter</b>
                                           <span
@@ -438,7 +514,7 @@ export default function ActivityList() {
                                           variant="contained"
                                           color="primary"
                                           sx={{ width: 150 }}
-                                          //onClick={ResetFilterValue}
+                                          onClick={ResetFilterValue}
                                         >
                                           <b>Reset Filter</b>
                                           <span
@@ -557,7 +633,10 @@ export default function ActivityList() {
                               {moment(endDate, "DD/MM/YYYY").format("ll")}
                             </TableCell>
                             <TableCell align="left">
-                              {status.toUpperCase()}
+                             {
+                              todayDate === startDate? <p style={{fontSize: "14px",color:" #15c6cf",fontWeight:"600"}}>CURRENT</p> : todayDate < startDate ? <p style={{fontSize: "14px",color:" #02c509",fontWeight:"600"}}>UPCOMING</p> : todayDate > startDate ? <p style={{fontSize: "14px",color:" rgb(241 61 61)",fontWeight:"600"}}>PAST ACTIVITY</p>:""
+                             }
+                              {/* {status.toUpperCase()} */}
                             </TableCell>
                             <TableCell align="left">{price}</TableCell>
                             <TableCell align="left">
@@ -593,6 +672,20 @@ export default function ActivityList() {
                                 >
                                   <RiDeleteBin5Fill />
                                 </IconButton>
+                                {/* <Link
+                                  href={`/admin/activitydetail/${id}`}
+                                  style={{
+                                    color: "#26CEB3",
+                                  }}
+                                >
+                                <IconButton
+                                  className="action-delete"
+                                  style={{ color: "#F95A37" }}
+                                  onClick={() => openCopy(item)}
+                                >
+                                  <RiFileCopyLine />
+                                </IconButton>
+                                </Link> */}
                               </Stack>
                             </TableCell>
                           </TableRow>
