@@ -280,14 +280,19 @@ export default function AddNewParent({
                           fullWidth
                           size="small"
                           {...register("email1", {
-                            required: true,
-                            pattern: /^\S+@\S+$/i,
+                            pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                            validate: (value) => { return !!value.trim() }
                           })}
                         />
                         {errors.email1?.type === "required" && (
                           <span style={style}>Field is Required *</span>
                         )}
                         {errors.email1?.type === "pattern" && (
+                          <span style={style}>
+                            Please enter a valid email address *
+                          </span>
+                        )}
+                        {errors.email1?.type === "validate" && (
                           <span style={style}>
                             Please enter a valid email address *
                           </span>
@@ -376,7 +381,7 @@ export default function AddNewParent({
                         <OutlinedInput
                           type="text"
                           id="name"
-                          placeholder="Phone1..."
+                          placeholder="Attention To...."
                           fullWidth
                           size="small"
                         />
@@ -388,7 +393,7 @@ export default function AddNewParent({
                         <OutlinedInput
                           type="text"
                           id="name"
-                          placeholder="Print Us..."
+                          placeholder="Phone...."
                           fullWidth
                           size="small"
                         />
@@ -404,7 +409,7 @@ export default function AddNewParent({
                         <OutlinedInput
                           type="text"
                           id="name"
-                          placeholder="Phone1..."
+                          placeholder="Address 1..."
                           fullWidth
                           size="small"
                         />
@@ -416,7 +421,7 @@ export default function AddNewParent({
                         <OutlinedInput
                           type="text"
                           id="name"
-                          placeholder="Print Us..."
+                          placeholder="Address 2..."
                           fullWidth
                           size="small"
                         />
@@ -426,25 +431,37 @@ export default function AddNewParent({
                 </Stack>
                 <Stack style={{ marginTop: "20px" }}>
                   <Grid container spacing={2}>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} md={4}>
                       <Stack spacing={1}>
                         <InputLabel htmlFor="name">City</InputLabel>
                         <OutlinedInput
                           type="text"
                           id="name"
-                          placeholder="Phone1..."
+                          placeholder="City..."
                           fullWidth
                           size="small"
                         />
                       </Stack>
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} md={4}>
                       <Stack spacing={1}>
                         <InputLabel htmlFor="name">State</InputLabel>
                         <OutlinedInput
                           type="text"
                           id="name"
-                          placeholder="Print Us..."
+                          placeholder="State..."
+                          fullWidth
+                          size="small"
+                        />
+                      </Stack>
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                      <Stack spacing={1}>
+                        <InputLabel htmlFor="name">Zip/Postal Code</InputLabel>
+                        <OutlinedInput
+                          type="text"
+                          id="name"
+                          placeholder="Postal Code..."
                           fullWidth
                           size="small"
                         />
