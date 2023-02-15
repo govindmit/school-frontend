@@ -110,6 +110,7 @@ export default function CustomerList() {
   const [checked, setChecked] = React.useState(false);
   const [OpenCSV, setOpenCSV] = React.useState(false);
   const [custpermit, setcustpermit] = useState<any>([]);
+  const [roleid, setroleid] = useState(0);
   const { register, handleSubmit } = useForm<FormValues>();
   const router = useRouter();
 
@@ -129,11 +130,25 @@ export default function CustomerList() {
     if (logintoken === undefined || logintoken === null) {
       router.push("/");
     }
-    commmonfunctions.ManageCustomers().then(res => {
-      if (!res) {
-        router.push("/userprofile");
-      } else {
-        setcustpermit(res);
+    commmonfunctions.VerifyLoginUser().then(res => {
+      if (res.exp * 1000 < Date.now()) {
+        localStorage.removeItem('QIS_loginToken');
+        localStorage.removeItem('QIS_User');
+        router.push("/");
+      }
+    });
+    commmonfunctions.GivenPermition().then(res => {
+      if (res.roleId == 1) {
+        setroleid(res.roleId);
+        //router.push("/userprofile");
+      } else if (res.roleId > 1) {
+        commmonfunctions.ManageCustomers().then(res => {
+          if (!res) {
+            router.push("/userprofile");
+          } else {
+            setcustpermit(res);
+          }
+        })
       }
     })
   }, []);
@@ -469,7 +484,7 @@ export default function CustomerList() {
                   CUSTOMERS
                 </Typography>
               </Stack>
-              {custpermit && custpermit.canAdd === true ? (<Button
+              {custpermit && custpermit.canAdd === true || roleid === 1 ? (<Button
                 className="button-new"
                 variant="contained"
                 size="small"
@@ -900,7 +915,7 @@ export default function CustomerList() {
                                   direction="row"
                                   spacing={1}
                                 >
-                                  {custpermit && custpermit.canView === true ? (
+                                  {custpermit && custpermit.canView === true || roleid === 1 ? (
                                     <IconButton className="action-view">
                                       <Link
                                         href={`/customer/viewcustomer/${dataitem.id}`}
@@ -911,7 +926,7 @@ export default function CustomerList() {
                                         <BiShow />
                                       </Link>
                                     </IconButton>) : ""}
-                                  {custpermit && custpermit.canEdit === true ? (<IconButton
+                                  {custpermit && custpermit.canEdit === true || roleid === 1 ? (<IconButton
                                     className="action-edit"
                                     onClick={() =>
                                       handleEditCustomerOpen(dataitem.id)
@@ -920,7 +935,7 @@ export default function CustomerList() {
                                     <FiEdit />
                                   </IconButton>)
                                     : ""}
-                                  {custpermit && custpermit.canDelete === true ? (<IconButton
+                                  {custpermit && custpermit.canDelete === true || roleid === 1 ? (<IconButton
                                     className="action-delete"
                                     style={{ color: "#F95A37" }}
                                     onClick={() => openDelete(dataitem)}

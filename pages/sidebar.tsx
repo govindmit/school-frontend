@@ -120,26 +120,26 @@ export default function MiniDrawer() {
     commmonfunctions.GivenPermition().then((res) => {
       setuserdet(res);
       const dttt = JSON.parse(res.userPrevilegs);
-      console.log(dttt);
       const lgh = dttt.user_permition.length;
-      for (var i = 0; i <= lgh - 1; i++) {
-        if (dttt.user_permition[i].Dashboard) {
-          setcheckdashboard(true);
-        } else if (dttt.user_permition[i].Customers) {
-          setcheckcustomers(true);
-        } else if (dttt.user_permition[i].Invoices) {
-          setcheckInvoices(true)
-        } else if (dttt.user_permition[i].Activites) {
-          setcheckActivity(true)
-        } else if (dttt.user_permition[i].Cumposers) {
-          setcheckComposer(true)
-        } else if (dttt.user_permition[i].SalesInvoices) {
-          setcheckSalesInvoice(true)
+      if (lgh > 0) {
+        for (var i = 0; i <= lgh - 1; i++) {
+          if (dttt.user_permition[i].Dashboard) {
+            setcheckdashboard(true);
+          } else if (dttt.user_permition[i].Customers) {
+            setcheckcustomers(true);
+          } else if (dttt.user_permition[i].Invoices) {
+            setcheckInvoices(true)
+          } else if (dttt.user_permition[i].Activites) {
+            setcheckActivity(true)
+          } else if (dttt.user_permition[i].Cumposers) {
+            setcheckComposer(true)
+          } else if (dttt.user_permition[i].SalesInvoices) {
+            setcheckSalesInvoice(true)
+          }
         }
       }
     });
   }, [])
-
 
   return (
     <>
@@ -186,7 +186,7 @@ export default function MiniDrawer() {
           <h1>Header</h1>
           <List>
             {
-              checkdashboard === true ? (
+              checkdashboard === true || userdet.roleId === 1 ? (
                 <ListItem
                   className="sidebar-link"
                   disablePadding
@@ -216,7 +216,7 @@ export default function MiniDrawer() {
                 </ListItem>) : ("")
             }
             {
-              checkcustomers === true ? (
+              checkcustomers === true || userdet.roleId === 1 ? (
                 <ListItem
                   className="sidebar-link"
                   disablePadding
@@ -264,7 +264,7 @@ export default function MiniDrawer() {
                   </Stack>
                 </ListItem>) : ("")
             }
-            {checkInvoices === true ? (
+            {checkInvoices === true || userdet.roleId === 1 ? (
               <ListItem
                 className="sidebar-link"
                 disablePadding
@@ -320,7 +320,7 @@ export default function MiniDrawer() {
                 />
               </ListItemButton>
             </ListItem>
-            {checkActivity === true ? (
+            {checkActivity === true || userdet.roleId === 1 ? (
               <ListItem
                 className="sidebar-link"
                 disablePadding
@@ -351,7 +351,7 @@ export default function MiniDrawer() {
                 </ListItemButton>
               </ListItem>) : ("")
             }
-            {checkSalesInvoice === true ? (
+            {checkSalesInvoice === true || userdet.roleId === 1 ? (
               <ListItem
                 className="sidebar-link"
                 disablePadding
@@ -410,7 +410,7 @@ export default function MiniDrawer() {
               </ListItem >) : ("")
             }
             {
-              checkComposer === true ? (
+              checkComposer === true || userdet.roleId === 1 ? (
                 <ListItem
                   className="sidebar-link"
                   disablePadding

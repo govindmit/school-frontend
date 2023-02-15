@@ -98,8 +98,8 @@ class CommonFunctions {
     const dttt = JSON.parse(dt);
     const lgh = dttt.user_permition.length;
     for (var i = 0; i <= lgh - 1; i++) {
-      if (dttt.user_permition[i].Customers) {
-        return dttt.user_permition[i].Customers;
+      if (dttt.user_permition[i].Activites) {
+        return dttt.user_permition[i].Activites;
       }
     }
   };

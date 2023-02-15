@@ -180,6 +180,7 @@ export default function Guardians() {
   const [row_per_page, set_row_per_page] = useState(5);
   const [searchquery, setsearchquery] = useState("");
   const [custpermit, setcustpermit] = useState<any>([]);
+  const [roleid, setroleid] = useState(0);
   const router = useRouter();
 
   // verify user login and previlegs
@@ -189,11 +190,18 @@ export default function Guardians() {
     if (logintoken === undefined || logintoken === null) {
       router.push("/");
     }
-    commmonfunctions.ManageInvoices().then(res => {
-      if (!res) {
-        router.push("/userprofile");
-      } else {
-        setcustpermit(res);
+    commmonfunctions.GivenPermition().then(res => {
+      if (res.roleId == 1) {
+        setroleid(res.roleId);
+        //router.push("/userprofile");
+      } else if (res.roleId > 1) {
+        commmonfunctions.ManageInvoices().then(res => {
+          if (!res) {
+            router.push("/userprofile");
+          } else {
+            setcustpermit(res);
+          }
+        })
       }
     })
   }, []);
@@ -632,7 +640,7 @@ export default function Guardians() {
                   INVOICES
                 </Typography>
               </Stack>
-              {custpermit && custpermit.canAdd === true ? (
+              {custpermit && custpermit.canAdd === true || roleid === 1 ? (
                 <Link href="/admin/addinvoice">
                   <Button
                     className="button-new"
@@ -1094,7 +1102,7 @@ export default function Guardians() {
                                   />
                                 </Button>
                               )}
-                              {custpermit && custpermit.canDelete === true ? (
+                              {custpermit && custpermit.canDelete === true || roleid === 1 ? (
                                 <Button className="idiv">
                                   <Image
                                     onClick={() => handleOpen(item.id)}

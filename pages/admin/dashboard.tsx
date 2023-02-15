@@ -40,9 +40,15 @@ export default function Dashboard(this: any) {
         router.push("/");
       }
     });
-    commmonfunctions.ManageDashboard().then(res => {
-      if (!res) {
-        router.push("/userprofile");
+    commmonfunctions.GivenPermition().then(res => {
+      if (res.roleId == 1) {
+        //router.push("/userprofile");
+      } else if (res.roleId > 1) {
+        commmonfunctions.ManageDashboard().then(res => {
+          if (!res) {
+            router.push("/userprofile");
+          }
+        })
       }
     })
   }, []);

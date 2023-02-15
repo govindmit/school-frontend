@@ -40,6 +40,7 @@ import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import ConfirmBox from "../commoncmp/confirmbox";
+import commmonfunctions from "../commonFunctions/commmonfunctions";
 
 function a11yProps(index: number) {
   return {
@@ -78,7 +79,6 @@ type FormValues = {
 export default function ActivityList() {
   const [activites, setactivites] = useState<any>([]);
   const [activity, setFullactivites] = useState<any>([]);
-
   const [searchquery, setsearchquery] = useState("");
   const [searchdata, setsearchdata] = useState([]);
   const [All, setAll] = useState(0);
@@ -93,19 +93,16 @@ export default function ActivityList() {
   const [deleteConfirmBoxOpen, setdeleteConfirmBoxOpen] = React.useState(false);
   const [filterType, setFilterType] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
-
   const [value, setValue] = React.useState(0);
   const [editid, seteditid] = useState<any>(0);
   const { register, handleSubmit } = useForm<FormValues>();
+  const todayDate = moment(new Date()).format("DD/MM/YYYY");
+  const [custpermit, setcustpermit] = useState<any>([]);
+  const [roleid, setroleid] = useState(0);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
-  const todayDate = moment(new Date()).format("DD/MM/YYYY");
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   // verify user login
   let logintoken: any;
@@ -115,6 +112,24 @@ export default function ActivityList() {
     if (logintoken === undefined || logintoken === null) {
       router.push("/");
     }
+    commmonfunctions.GivenPermition().then(res => {
+      if (res.roleId == 1) {
+        setroleid(res.roleId);
+        //router.push("/userprofile");
+      } else if (res.roleId > 1) {
+        commmonfunctions.ManageActivity().then(res => {
+          if (!res) {
+            router.push("/userprofile");
+          } else {
+            setcustpermit(res);
+          }
+        })
+      }
+    })
+  }, []);
+
+  useEffect(() => {
+    fetchData();
   }, []);
 
   //get activites
@@ -135,7 +150,7 @@ export default function ActivityList() {
         setsearchdata(json.data);
         setAll(json.data.length);
         // setAllData(json.data);
-      } catch (error:any) {
+      } catch (error: any) {
         console.log("error", error);
       }
     } else {
@@ -153,7 +168,7 @@ export default function ActivityList() {
         setsearchdata(json.data);
         setAll(json.data.length);
         // setAllData(json.data);
-      } catch (error:any) {
+      } catch (error: any) {
         console.log("error", error);
       }
     }
@@ -346,17 +361,18 @@ export default function ActivityList() {
                   ACTIVITY
                 </Typography>
               </Stack>
-              <Link href="/admin/addactivity">
-                <Button
-                  className="button-new"
-                  variant="contained"
-                  size="small"
-                  sx={{ width: 150 }}
-                  onClick={handleNewActivityFormOpen}
-                >
-                  <b>Add New Activity</b>
-                </Button>
-              </Link>
+              {custpermit && custpermit.canAdd === true || roleid === 1 ? (
+                <Link href="/admin/addactivity">
+                  <Button
+                    className="button-new"
+                    variant="contained"
+                    size="small"
+                    sx={{ width: 150 }}
+                    onClick={handleNewActivityFormOpen}
+                  >
+                    <b>Add New Activity</b>
+                  </Button>
+                </Link>) : ""}
             </Stack>
             {/*bread cump */}
             <Card
@@ -530,7 +546,7 @@ export default function ActivityList() {
                         <Box>
                           <MenuItem
                             {...bindTrigger(popupState)}
-                            //onClick={ExportCSV}
+                          //onClick={ExportCSV}
                           >
                             Export
                             {/* <KeyboardArrowDownIcon /> */}
@@ -611,7 +627,6 @@ export default function ActivityList() {
                             </TableCell>
                             <TableCell align="left">{id}</TableCell>
                             <TableCell align="left">{name}</TableCell>
-
                             <TableCell align="left">
                               {type.charAt(0).toUpperCase() + type.slice(1)}
                             </TableCell>
@@ -666,33 +681,37 @@ export default function ActivityList() {
                                 spacing={1}
                                 className="action"
                               >
-                                <IconButton className="action-view">
+                                {custpermit && custpermit.canView === true || roleid === 1 ? (
+                                  <IconButton className="action-view">
+                                    <Link
+                                      href={`/admin/activitydetail/${id}`}
+                                      style={{
+                                        color: "#26CEB3",
+                                      }}
+                                    >
+                                      <BiShow />
+                                    </Link>
+                                  </IconButton>) : ""}
+                                {custpermit && custpermit.canEdit === true || roleid === 1 ? (
                                   <Link
-                                    href={`/admin/activitydetail/${id}`}
+                                    href={`/admin/editActivity/${id}`}
                                     style={{
                                       color: "#26CEB3",
                                     }}
                                   >
-                                    <BiShow />
-                                  </Link>
-                                </IconButton>
-                                <Link
-                                  href={`/admin/editActivity/${id}`}
-                                  style={{
-                                    color: "#26CEB3",
-                                  }}
-                                >
-                                  <IconButton className="action-edit">
-                                    <FiEdit />
-                                  </IconButton>
-                                </Link>
-                                <IconButton
-                                  className="action-delete"
-                                  style={{ color: "#F95A37" }}
-                                  onClick={() => openDelete(item)}
-                                >
-                                  <RiDeleteBin5Fill />
-                                </IconButton>
+                                    <IconButton className="action-edit">
+                                      <FiEdit />
+                                    </IconButton>
+                                  </Link>) : ""}
+
+                                {custpermit && custpermit.canDelete === true || roleid === 1 ? (
+                                  <IconButton
+                                    className="action-delete"
+                                    style={{ color: "#F95A37" }}
+                                    onClick={() => openDelete(item)}
+                                  >
+                                    <RiDeleteBin5Fill />
+                                  </IconButton>) : ""}
                                 {/* <Link
                                   href={`/admin/activitydetail/${id}`}
                                   style={{
