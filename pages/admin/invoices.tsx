@@ -1101,12 +1101,11 @@ export default function Guardians() {
                 <Stack
                   style={{
                     marginBottom: "10px",
-                    marginRight: "49px",
                     marginTop: "10px",
+                    justifyContent: "end",
+                    alignItems: "center",
                   }}
                   direction="row"
-                  alignItems="right"
-                  justifyContent="space-between"
                 >
                   <Pagination
                     count={count}

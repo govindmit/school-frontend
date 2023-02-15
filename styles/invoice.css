@@ -232,8 +232,10 @@ span.iexport {
   display: flex;
 }
 .idiv {
-  margin: 7px;
+  margin: 0 6px;
   cursor: pointer;
+  padding: 0 !important;
+  min-width: auto;
 }
 .dd {
   margin-top: 14px;

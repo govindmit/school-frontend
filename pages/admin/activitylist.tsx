@@ -135,7 +135,7 @@ export default function ActivityList() {
         setsearchdata(json.data);
         setAll(json.data.length);
         // setAllData(json.data);
-      } catch (error:any) {
+      } catch (error: any) {
         console.log("error", error);
       }
     } else {
@@ -153,7 +153,7 @@ export default function ActivityList() {
         setsearchdata(json.data);
         setAll(json.data.length);
         // setAllData(json.data);
-      } catch (error:any) {
+      } catch (error: any) {
         console.log("error", error);
       }
     }
@@ -562,7 +562,7 @@ export default function ActivityList() {
                       <TableCell>
                         <Typography>ID</Typography>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="t-name">
                         <Typography>NAME</Typography>
                       </TableCell>
                       <TableCell>
@@ -717,12 +717,16 @@ export default function ActivityList() {
                 {/* } */}
                 {activites == "" ? <h3>No Record found</h3> : ""}
                 <Stack
-                  style={{ marginBottom: "10px", marginTop: "10px" }}
+                  style={{
+                    marginBottom: "10px",
+                    marginTop: "10px",
+                    justifyContent: "end",
+                    alignItems: "center",
+                  }}
                   direction="row"
-                  alignItems="right"
-                  justifyContent="space-between"
                 >
                   <Pagination
+                    className="pagination"
                     count={count}
                     page={page}
                     color="primary"
