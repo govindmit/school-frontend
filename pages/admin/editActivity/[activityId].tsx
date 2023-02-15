@@ -159,6 +159,9 @@ export default function EditActivity() {
   const [endDate, setEndDate] = useState(null);
   const [Activity, setActivityDetail] = useState<FormValues | any>("");
   const [content, setContent] = useState("");
+  const [activityName, setActivityName] = useState("");
+  const [activityPrice, setActivityPrice] = useState<any>("");
+
   const [descontent, setDesContent] = useState("");
   const {
     register,
@@ -169,10 +172,9 @@ export default function EditActivity() {
   } = useForm<FormValues>();
   const router = useRouter();
   const { activityId } = router.query;
-  console.log(activityId, "editIdsssssssssss");
+  
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    // setshowspinner(true);
-    // setBtnDisabled(true);
+    
     var sDate = "";
     var eDate = "";
     if (startDate) {
@@ -181,18 +183,18 @@ export default function EditActivity() {
     if (endDate) {
       eDate = moment(endDate).format("DD/MM/YYYY");
     }
-    console.log(Activity, "Activity");
+   
     const reqData = {
       name: data.name,
       type: type,
       startdate: sDate ? sDate : Activity[0]?.startDate,
       enddate: eDate ? eDate : Activity[0]?.endDate,
       status: status,
-      price: data.price,
+      price: type === "Free"? 0 : data.price,
       shortDescription: content,
       description: descontent,
     };
-    console.log(reqData, "reqdata");
+   
     const end_point = "addactivity";
     await axios({
       method: "PUT",
@@ -231,7 +233,7 @@ export default function EditActivity() {
       const res = await response.json();
       const startDates = moment(res.data[0].startDate).format("DD/MM/YYYY");
       console.log(res, "responce");
-      setValue("name", res.data[0]?.name);
+       setValue("name", res.data[0]?.name);
       setValue("price", res.data[0]?.price);
       setType(res.data[0]?.type);
       setStatus(res.data[0]?.status);
@@ -246,10 +248,16 @@ export default function EditActivity() {
     }
   };
   //   console.log(Activity[0]?.startDate, "activityyyyyyy");
-
+  const style = {
+    color: "red",
+    fontSize: "12px",
+    fontWeight: "bold",
+  };
+  
   useEffect(() => {
     getActivityDetail();
   }, []);
+
   return (
     <>
       <Box sx={{ display: "flex" }}>
@@ -312,11 +320,18 @@ export default function EditActivity() {
                             placeholder="Activity name ..."
                             fullWidth
                             size="small"
+                            // value={Activity[0]?.name}
                             {...register("name", {
                               required: true,
                             })}
+                            onChange={(e) => setActivityName(e.target.value)}
                           />
-                        </Stack>
+                          {errors.name?.type === "required" && (
+                              <span style={style}>
+                               {activityName === ""? "Activity name is Required":""}
+                              </span>
+                            )}
+                           </Stack>
                       </Grid>
                     </Grid>
                   </Stack>
@@ -364,9 +379,9 @@ export default function EditActivity() {
                             {/* <MenuItem value={sort}>
                                     <em>None</em>
                                   </MenuItem> */}
-                            <MenuItem value="Upcoming">Upcoming</MenuItem>
-                            <MenuItem value="Past">Past</MenuItem>
-                            <MenuItem value="Current">Current</MenuItem>
+                            <MenuItem value="Active">Active</MenuItem>
+                            <MenuItem value="Draft">Draft</MenuItem>
+                            <MenuItem value="Archive">Archive</MenuItem>
                           </Select>
                         </Stack>
                       </Grid>
@@ -403,6 +418,7 @@ export default function EditActivity() {
                       </Grid>
                     </Grid>
                   </Stack>
+                  {(type && type === "Paid") || type === "" ? (
                   <Stack style={{ marginTop: "20px" }}>
                     <Grid container spacing={2}>
                       <Grid item xs={12} md={6}>
@@ -413,17 +429,30 @@ export default function EditActivity() {
                           <OutlinedInput
                             type="text"
                             id="price"
-                            placeholder="Activity name ..."
+                            placeholder="Activity Amount ..."
                             fullWidth
                             size="small"
                             {...register("price", {
                               required: true,
+                              pattern: /^[0-9+-]+$/,
                             })}
+                            onChange={(e) => setActivityPrice(e.target.value)}
                           />
+                          {errors.price?.type === "required" && (
+                              <span style={style}>
+                               {activityPrice === ""? "Amount is Required":""}
+                              </span>
+                            )}
+                            {errors.price?.type === "pattern" && (
+                              <span style={style}>Enter Valid Amount *</span>
+                            )}
                         </Stack>
                       </Grid>
                     </Grid>
                   </Stack>
+                     ) : (
+                      ""
+                    )}
                   <Stack style={{ marginTop: "20px" }}>
                     <Grid container spacing={2}>
                       <Grid item xs={12} md={6}>
@@ -469,6 +498,22 @@ export default function EditActivity() {
                   >
                     <b>Save</b>
                   </Button>
+                  &emsp;&emsp;
+                  <Link
+                    href="/admin/activitylist"
+                    style={{ color: "#1A70C5", textDecoration: "none" }}
+                  >
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      size="small"
+                      sx={{ width: 150, marginTop: 5 }}
+                      autoFocus
+                      // disabled={btnDisabled}
+                    >
+                      <b>Cancel</b>
+                    </Button>
+                  </Link>
                 </Grid>
               </form>
             </Card>

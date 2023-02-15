@@ -87,7 +87,7 @@ export default function ActivityList() {
   const [Past, setPast] = useState(0);
   const [Current, setCurrent] = useState(0);
   const [newActivityOpen, setnewActivityOpen] = React.useState(false);
-  const [allNew, setAllNew] = React.useState(false);
+  // const [allNew, setAllNew] = React.useState(false);
   const [editActivityOpen, seteditActivityOpen] = React.useState(false);
   const [tabFilterData, settabFilterData] = useState<any>([]);
   const [deleteConfirmBoxOpen, setdeleteConfirmBoxOpen] = React.useState(false);
@@ -120,7 +120,6 @@ export default function ActivityList() {
   //get activites
   const url = `${api_url}/getActivity`;
   const fetchData = async () => {
-    if (!allNew) {
       try {
         const response = await fetch(url, {
           method: "POST",
@@ -134,29 +133,10 @@ export default function ActivityList() {
         setFullactivites(json.data);
         setsearchdata(json.data);
         setAll(json.data.length);
-        // setAllData(json.data);
       } catch (error:any) {
         console.log("error", error);
       }
-    } else {
-      try {
-        const response = await fetch(url, {
-          method: "POST",
-          headers: {
-            Authorization: auth_token,
-            "x-access-token": logintoken,
-          },
-        });
-        const json = await response.json();
-        setactivites(json.data);
-        setFullactivites(json.data);
-        setsearchdata(json.data);
-        setAll(json.data.length);
-        // setAllData(json.data);
-      } catch (error:any) {
-        console.log("error", error);
-      }
-    }
+    
   };
 
   //searching
@@ -185,14 +165,10 @@ export default function ActivityList() {
       setactivites(dtd);
     }
   };
-  //  console.log('@#$$$$$$$$$$$',activity);
   function ResetFilterValue() {
-    // popupState.close
-    setAllNew(false);
-    fetchData();
     setFilterType("");
     setFilterStatus("");
-    window.location.reload();
+    fetchData();
   }
   const filterApply = async (e: any) => {
     e.preventDefault();
@@ -218,7 +194,7 @@ export default function ActivityList() {
           setFullactivites(res?.data?.data);
           setsearchdata(res?.data?.data);
           setAll(res?.data?.data.length);
-          setAllNew(true);
+          // setAllNew(true);
           // setAllData(res?.data?.data);
         }
       })
@@ -230,6 +206,8 @@ export default function ActivityList() {
   const past = activity?.filter((a: any) => a?.startDate < todayDate);
   const upcoming = activity?.filter((a: any) => a?.startDate > todayDate);
   const current = activity?.filter((a: any) => a?.startDate === todayDate);
+  const allListData = activity?.filter((a: any) => a);
+
   //pagination
   const [row_per_page, set_row_per_page] = useState(5);
   function handlerowchange(e: any) {
@@ -250,9 +228,7 @@ export default function ActivityList() {
     setdeleteConfirmBoxOpen(true);
     setDeleteData(data);
   }
-  // function openCopy(data: any) {
-  //  console.log('@@@@@@@@@@copy');
-  // }
+ 
   async function deleteUser() {
     await axios({
       method: "DELETE",
@@ -287,7 +263,6 @@ export default function ActivityList() {
   }
   const closeEditPoP = (data: any) => {
     fetchData();
-
     seteditActivityOpen(false);
   };
 
@@ -295,8 +270,12 @@ export default function ActivityList() {
     setactivites(upcoming);
   };
   const handleAll = () => {
-    fetchData();
-    //  setAll(activity)
+    if(filterStatus !== "" && filterType !== ""){
+      setactivites(allListData);
+    }else{
+      fetchData();
+    }
+    
   };
   const handlePast = () => {
     setactivites(past);
@@ -481,7 +460,9 @@ export default function ActivityList() {
                                         item
                                         xs={12}
                                         style={{ marginBottom: "10px" }}
+                                        className="filtercss"
                                       >
+                                      <div onClick={popupState.close}>
                                         <Button
                                           size="small"
                                           type="submit"
@@ -499,7 +480,9 @@ export default function ActivityList() {
                                             }}
                                           ></span>
                                         </Button>
+                                        </div>
                                         &nbsp;&nbsp;
+                                        <div onClick={popupState.close} className="resetfiltercss">
                                         <Button
                                           size="small"
                                           variant="contained"
@@ -515,6 +498,7 @@ export default function ActivityList() {
                                             }}
                                           ></span>
                                         </Button>
+                                        </div>
                                       </Grid>
                                     </Grid>
                                   </Stack>
@@ -659,7 +643,7 @@ export default function ActivityList() {
                               )}
                               {/* {status.toUpperCase()} */}
                             </TableCell>
-                            <TableCell align="left">{price}</TableCell>
+                            <TableCell align="left">$ {price}</TableCell>
                             <TableCell align="left">
                               <Stack
                                 direction="row"
