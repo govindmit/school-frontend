@@ -71,6 +71,8 @@ import {
 } from "typescript";
 import Paper from "@mui/material/Paper";
 import { number } from "yup/lib/locale";
+import { useRouter } from "next/router";
+import commmonfunctions from "../commonFunctions/commmonfunctions";
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
     padding: theme.spacing(2),
@@ -152,7 +154,6 @@ function usePagination(data: any, itemsPerPage: any) {
 }
 export default function Guardians() {
   let localUrl = process.env.NEXT_PUBLIC_BASE_URL;
-
   const [token, setToken] = useState([]);
   const [user, setUser] = useState<FormValues | any>([]);
   const [open, setOpen] = useState(false);
@@ -163,7 +164,6 @@ export default function Guardians() {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [value, setValue] = useState(0);
-
   const [id, setId] = useState();
   const [inputValue, setInputValue] = useState("");
   const [error, setError] = useState<any>("");
@@ -171,18 +171,33 @@ export default function Guardians() {
   const [recievedPay, setRecieved] = useState<FormValues | any>([]);
   const [sort, setSort] = useState<FormValues | any>("ASC");
   const [status, setStatus] = useState<FormValues | any>("All");
-
   const [note, setNote] = useState<FormValues | any>([]);
   const [disable, setDisable] = useState<FormValues | any>(false);
-
   const [paiddisable, setPaidDisable] = useState<FormValues | any>(false);
-
   const [Invoicedata, setInvoice] = useState<FormValues | any>([]);
-
   let [page, setPage] = useState(1);
   const [searchdata, setsearchdata] = useState([]);
   const [row_per_page, set_row_per_page] = useState(5);
   const [searchquery, setsearchquery] = useState("");
+  const [custpermit, setcustpermit] = useState<any>([]);
+  const router = useRouter();
+
+  // verify user login and previlegs
+  let logintoken: any;
+  useEffect(() => {
+    logintoken = localStorage.getItem("QIS_loginToken");
+    if (logintoken === undefined || logintoken === null) {
+      router.push("/");
+    }
+    commmonfunctions.ManageInvoices().then(res => {
+      if (!res) {
+        router.push("/userprofile");
+      } else {
+        setcustpermit(res);
+      }
+    })
+  }, []);
+
 
   const handleClickOpen = (item: any) => {
     console.log(item, "itemmmmm");
@@ -230,7 +245,7 @@ export default function Guardians() {
 
         setsearchdata(res?.data.data);
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
 
   function BootstrapDialogTitle(props: DialogTitleProps) {
@@ -294,7 +309,7 @@ export default function Guardians() {
         // reset();
         setUserId("");
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
 
   const handleReset = () => {
@@ -304,7 +319,6 @@ export default function Guardians() {
     setUserId("");
     setStartDate(null);
     setEndDate(null);
-    console.log(sdata, "sdataaaa");
   };
   const generateSimplePDF = async (item: any) => {
     let requested = {
@@ -368,19 +382,19 @@ export default function Guardians() {
             {
               items && items.length > 1
                 ? items.map((ticket: any) => {
-                    let ticketData = [
-                      ticket.name,
-                      ticket.price,
+                  let ticketData = [
+                    ticket.name,
+                    ticket.price,
 
-                      // called date-fns to format the date on the ticket
-                    ];
-                    // push each tickcet's info into a row
-                    data.push(ticketData);
-                  })
+                    // called date-fns to format the date on the ticket
+                  ];
+                  // push each tickcet's info into a row
+                  data.push(ticketData);
+                })
                 : data.push([
-                    items && items[0]?.name,
-                    items && items[0]?.price,
-                  ]);
+                  items && items[0]?.name,
+                  items && items[0]?.price,
+                ]);
               // push each tickcet's info into a row
             }
             doc.setFontSize(20);
@@ -394,7 +408,7 @@ export default function Guardians() {
               head: head,
               body: data,
 
-              didDrawCell: (data: any) => {},
+              didDrawCell: (data: any) => { },
             });
             if (items.length > 2) {
               doc.setFontSize(20);
@@ -414,7 +428,7 @@ export default function Guardians() {
           }, 2000);
         }
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
   useEffect(() => {
     getUser();
@@ -445,7 +459,7 @@ export default function Guardians() {
           handleCloses();
         }, 1000);
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
 
   const searchItems = (e: any) => {
@@ -501,7 +515,7 @@ export default function Guardians() {
           handleClose();
         }, 2000);
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
   const handleSend = async () => {
     await axios({
@@ -516,7 +530,7 @@ export default function Guardians() {
 
         setShare(false);
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
 
   function handlerowchange(e: any) {
@@ -618,17 +632,18 @@ export default function Guardians() {
                   INVOICES
                 </Typography>
               </Stack>
-              <Link href="/admin/addinvoice">
-                <Button
-                  className="button-new"
-                  variant="contained"
-                  size="small"
-                  sx={{ width: 150 }}
+              {custpermit && custpermit.canAdd === true ? (
+                <Link href="/admin/addinvoice">
+                  <Button
+                    className="button-new"
+                    variant="contained"
+                    size="small"
+                    sx={{ width: 150 }}
                   // onClick={handleNewCustomerOpen}
-                >
-                  New Invoice
-                </Button>
-              </Link>
+                  >
+                    New Invoice
+                  </Button>
+                </Link>) : ""}
             </Stack>
             <Card
               style={{ margin: "10px", padding: "15px" }}
@@ -823,7 +838,7 @@ export default function Guardians() {
                                           labelId="demo-select-small"
                                           id="demo-select-small"
                                           label="Status"
-                                          // {...register("sort")}
+                                        // {...register("sort")}
                                         >
                                           {/* <MenuItem value={sort}>
                                             <em>None</em>
@@ -850,8 +865,8 @@ export default function Guardians() {
                                           id="demo-select-small"
                                           value={status}
                                           label="Status"
-                                          // {...register("status")}
-                                          // onChange={handleChange}
+                                        // {...register("status")}
+                                        // onChange={handleChange}
                                         >
                                           <MenuItem value="All">All</MenuItem>
                                           <MenuItem value="pending">
@@ -873,7 +888,7 @@ export default function Guardians() {
                                         <Button
                                           onClick={handleReset}
                                           variant="contained"
-                                          // type="submit"
+                                        // type="submit"
                                         >
                                           reset Filter
                                         </Button>
@@ -1079,15 +1094,16 @@ export default function Guardians() {
                                   />
                                 </Button>
                               )}
-                              <Button className="idiv">
-                                <Image
-                                  onClick={() => handleOpen(item.id)}
-                                  src="/deleteicon.svg"
-                                  alt="Picture of the author"
-                                  width={35}
-                                  height={35}
-                                />
-                              </Button>
+                              {custpermit && custpermit.canDelete === true ? (
+                                <Button className="idiv">
+                                  <Image
+                                    onClick={() => handleOpen(item.id)}
+                                    src="/deleteicon.svg"
+                                    alt="Picture of the author"
+                                    width={35}
+                                    height={35}
+                                  />
+                                </Button>) : ""}
                             </div>
                           </TableCell>
                         </TableRow>
