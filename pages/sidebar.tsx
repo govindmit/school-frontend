@@ -121,7 +121,7 @@ export default function MiniDrawer() {
       setuserdet(res);
       const dttt = JSON.parse(res.userPrevilegs);
       console.log(dttt);
-      const lgh = dttt.user_permition.length;
+      const lgh = dttt?.user_permition?.length;
       if (lgh > 0) {
         for (var i = 0; i <= lgh - 1; i++) {
           if (dttt.user_permition[i].Dashboard) {

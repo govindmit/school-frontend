@@ -68,3 +68,9 @@ input {
 .buycss .css-sghohy-MuiButtonBase-root-MuiButton-root {
   text-transform: none;
 }
+.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-12.filtercss.css-1idn90j-MuiGrid-root {
+  display: flex !important;
+}
+.resetfiltercss {
+  margin-left: 25px;
+}
