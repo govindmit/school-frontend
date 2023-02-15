@@ -9,7 +9,7 @@ input.MuiInputBase-input.MuiInput-input.css-1x51dt5-MuiInputBase-input-MuiInput-
   display: none !important;
 }
 
-.MuiStack-root.bisplay-block.css-nen11g-MuiStack-root {
+.MuiStack-root.bisplay-block {
   display: block !important;
 }
 .maiDiv {
@@ -226,7 +226,11 @@ body h4.MuiTypography-h4 {
   font-weight: 600;
   text-transform: uppercase;
   padding: 0 15px;
-  border-right: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+}
+
+.fimport-export-box > div:first-child > li {
+  border: none;
 }
 
 .fimport-export-box > div:last-child > li {
@@ -236,4 +240,8 @@ body h4.MuiTypography-h4 {
 .fimport-export-box > div > li svg {
   float: left;
   font-size: 17px;
+}
+
+.t-name {
+  width: 18%;
 }
