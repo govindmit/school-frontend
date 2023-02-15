@@ -120,8 +120,8 @@ export default function MiniDrawer() {
     commmonfunctions.GivenPermition().then((res) => {
       setuserdet(res);
       const dttt = JSON.parse(res.userPrevilegs);
+      console.log(dttt);
       const lgh = dttt.user_permition.length;
-<<<<<<< HEAD
       if (lgh > 0) {
         for (var i = 0; i <= lgh - 1; i++) {
           if (dttt.user_permition[i].Dashboard) {
@@ -129,37 +129,18 @@ export default function MiniDrawer() {
           } else if (dttt.user_permition[i].Customers) {
             setcheckcustomers(true);
           } else if (dttt.user_permition[i].Invoices) {
-            setcheckInvoices(true)
+            setcheckInvoices(true);
           } else if (dttt.user_permition[i].Activites) {
-            setcheckActivity(true)
+            setcheckActivity(true);
           } else if (dttt.user_permition[i].Cumposers) {
-            setcheckComposer(true)
+            setcheckComposer(true);
           } else if (dttt.user_permition[i].SalesInvoices) {
-            setcheckSalesInvoice(true)
+            setcheckSalesInvoice(true);
           }
         }
       }
     });
-  }, [])
-=======
-      for (var i = 0; i <= lgh - 1; i++) {
-        if (dttt.user_permition[i].Dashboard) {
-          setcheckdashboard(true);
-        } else if (dttt.user_permition[i].Customers) {
-          setcheckcustomers(true);
-        } else if (dttt.user_permition[i].Invoices) {
-          setcheckInvoices(true);
-        } else if (dttt.user_permition[i].Activites) {
-          setcheckActivity(true);
-        } else if (dttt.user_permition[i].Cumposers) {
-          setcheckComposer(true);
-        } else if (dttt.user_permition[i].SalesInvoices) {
-          setcheckSalesInvoice(true);
-        }
-      }
-    });
   }, []);
->>>>>>> cf1c0373927aed68d5155bb8203b4931554661e8
 
   return (
     <>
@@ -204,16 +185,7 @@ export default function MiniDrawer() {
         <Drawer variant="permanent" open={open}>
           <h1>Header</h1>
           <List>
-<<<<<<< HEAD
-            {
-              checkdashboard === true || userdet.roleId === 1 ? (
-                <ListItem
-                  className="sidebar-link"
-                  disablePadding
-                  sx={{ display: "block" }}
-                  onClick={() => router.push("/admin/dashboard")}
-=======
-            {checkdashboard === true ? (
+            {checkdashboard === true || userdet.roleId === 1 ? (
               <ListItem
                 className="sidebar-link"
                 disablePadding
@@ -226,7 +198,6 @@ export default function MiniDrawer() {
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
                   }}
->>>>>>> cf1c0373927aed68d5155bb8203b4931554661e8
                 >
                   <ListItemIcon
                     sx={{
@@ -234,31 +205,6 @@ export default function MiniDrawer() {
                       mr: open ? 3 : "auto",
                       justifyContent: "center",
                     }}
-<<<<<<< HEAD
-                  >
-                    <ListItemIcon
-                      sx={{
-                        minWidth: 0,
-                        mr: open ? 3 : "auto",
-                        justifyContent: "center",
-                      }}
-                    ></ListItemIcon>
-                    <DashboardOutlinedIcon />
-                    <ListItemText
-                      primary="Dashboard"
-                      sx={{ opacity: open ? 1 : 0 }}
-                    />
-                  </ListItemButton>
-                </ListItem>) : ("")
-            }
-            {
-              checkcustomers === true || userdet.roleId === 1 ? (
-                <ListItem
-                  className="sidebar-link"
-                  disablePadding
-                  sx={{ display: "block" }}
-                  onClick={() => router.push("/customer/customerslist")}
-=======
                   ></ListItemIcon>
                   <DashboardOutlinedIcon />
                   <ListItemText
@@ -270,7 +216,7 @@ export default function MiniDrawer() {
             ) : (
               ""
             )}
-            {checkcustomers === true ? (
+            {checkcustomers === true || userdet.roleId === 1 ? (
               <ListItem
                 className="sidebar-link"
                 disablePadding
@@ -284,7 +230,6 @@ export default function MiniDrawer() {
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
                   }}
->>>>>>> cf1c0373927aed68d5155bb8203b4931554661e8
                 >
                   <ListItemIcon
                     sx={{
@@ -320,39 +265,13 @@ export default function MiniDrawer() {
                       primary="Customers Type"
                       sx={{ opacity: open ? 1 : 0 }}
                     />
-<<<<<<< HEAD
-                  </ListItemButton>
-                  <Stack >
-                    <ListItem
-                      style={{ cursor: "pointer" }}
-                      onClick={() => router.push("/customer/custType")}
-                    >
-                      <ListItemIcon
-                        sx={{
-                          minWidth: 0,
-                          mr: open ? 7 : "auto",
-                          justifyContent: "center",
-                        }}
-                      ></ListItemIcon>
-                      <PeopleAltOutlinedIcon />
-                      <ListItemText
-                        primary="Customers Type"
-                        sx={{ opacity: open ? 1 : 0 }}
-                      />
-                    </ListItem>
-                  </Stack>
-                </ListItem>) : ("")
-            }
-            {checkInvoices === true || userdet.roleId === 1 ? (
-=======
                   </ListItem>
                 </Stack>
               </ListItem>
             ) : (
               ""
             )}
-            {checkInvoices === true ? (
->>>>>>> cf1c0373927aed68d5155bb8203b4931554661e8
+            {checkInvoices === true || userdet.roleId === 1 ? (
               <ListItem
                 className="sidebar-link"
                 disablePadding
@@ -437,17 +356,11 @@ export default function MiniDrawer() {
                     sx={{ opacity: open ? 1 : 0 }}
                   />
                 </ListItemButton>
-<<<<<<< HEAD
-              </ListItem>) : ("")
-            }
-            {checkSalesInvoice === true || userdet.roleId === 1 ? (
-=======
               </ListItem>
             ) : (
               ""
             )}
-            {checkSalesInvoice === true ? (
->>>>>>> cf1c0373927aed68d5155bb8203b4931554661e8
+            {checkSalesInvoice === true || userdet.roleId === 1 ? (
               <ListItem
                 className="sidebar-link"
                 disablePadding
@@ -504,29 +417,17 @@ export default function MiniDrawer() {
                     primary="User Management"
                     sx={{ opacity: open ? 1 : 0 }}
                   />
-<<<<<<< HEAD
-                </ListItemButton >
-              </ListItem >) : ("")
-            }
-            {
-              checkComposer === true || userdet.roleId === 1 ? (
-                <ListItem
-                  className="sidebar-link"
-                  disablePadding
-                  sx={{ display: "block" }}
-=======
                 </ListItemButton>
               </ListItem>
             ) : (
               ""
             )}
-            {checkComposer === true ? (
+            {checkComposer === true || userdet.roleId === 1 ? (
               <ListItem
                 className="sidebar-link"
                 disablePadding
                 sx={{ display: "block" }}
->>>>>>> cf1c0373927aed68d5155bb8203b4931554661e8
-                // onClick={() => router.push("/activites/activitylist")}
+              // onClick={() => router.push("/activites/activitylist")}
               >
                 <ListItemButton
                   sx={{
@@ -546,7 +447,7 @@ export default function MiniDrawer() {
                   <ListItemText
                     primary="Composer"
                     sx={{ opacity: open ? 1 : 0 }}
-                    //onClick={() => router.push("/logout")}
+                  //onClick={() => router.push("/logout")}
                   />
                 </ListItemButton>
               </ListItem>
@@ -558,7 +459,7 @@ export default function MiniDrawer() {
               className="sidebar-link"
               disablePadding
               sx={{ display: "block" }}
-              // onClick={() => router.push("/activites/activitylist")}
+            // onClick={() => router.push("/activites/activitylist")}
             >
               <ListItemButton
                 sx={{
@@ -587,7 +488,7 @@ export default function MiniDrawer() {
               className="sidebar-link"
               disablePadding
               sx={{ display: "block" }}
-              // onClick={() => router.push("/activites/activitylist")}
+            // onClick={() => router.push("/activites/activitylist")}
             >
               <ListItemButton
                 sx={{
