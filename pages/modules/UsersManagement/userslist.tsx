@@ -114,7 +114,7 @@ export default function UsersList() {
                 },
             });
             const res = await response.json();
-            setUsers(res.data.filter((dt: any) => dt.roleId !== 2));
+            setUsers(res.data.filter((dt: any) => dt.roleId !== 1));
             setsearchdata(res.data.filter((dt: any) => dt.customerId !== null));
             setAll(res.data.filter((dt: any) => dt.customerId !== null).length);
         } catch (error) {

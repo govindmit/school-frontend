@@ -9,7 +9,7 @@ import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
-import { api_url, auth_token } from "../../api/hello";
+import { api_url, auth_token } from "../api/hello";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -19,9 +19,9 @@ import { BiArrowBack } from "react-icons/bi";
 import Head from "next/head";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import AuthHeader from "../../commoncmp/authheader";
-import AuthRightTemplate from "../../commoncmp/authrighttemplate";
-import Footer from "../../commoncmp/footer";
+import AuthHeader from "../commoncmp/authheader";
+import AuthRightTemplate from "../commoncmp/authrighttemplate";
+import Footer from "../commoncmp/footer";
 const theme = createTheme();
 
 const style = {
@@ -33,7 +33,6 @@ const style = {
 export default function ResetPasswordPage() {
   const router = useRouter();
   const { token } = router.query;
-
   const [spinner, setShowspinner] = React.useState(false);
   const [btnDisabled, setBtnDisabled] = React.useState(false);
 
@@ -77,7 +76,6 @@ export default function ResetPasswordPage() {
         }
       })
       .catch((error) => {
-        //console.error("Error:", error);
         toast.error("Reset passowrd link Expired !");
         setShowspinner(false);
         setBtnDisabled(false);
@@ -98,7 +96,6 @@ export default function ResetPasswordPage() {
             sm={4}
             md={7}
             sx={{
-              //backgroundImage: "url(https://source.unsplash.com/random)",
               backgroundRepeat: "no-repeat",
               backgroundColor: (t) =>
                 t.palette.mode === "light"
