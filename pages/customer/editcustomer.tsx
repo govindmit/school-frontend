@@ -108,6 +108,8 @@ type FormValues = {
   contactName: string;
   printUs: string;
   parentId: number;
+  agegroup: number;
+  pregeneratedid: string;
 };
 
 export default function EditCustomer({
@@ -128,6 +130,7 @@ export default function EditCustomer({
   const [btnDisabled, setBtnDisabled] = React.useState(false);
   const [checked, setChecked] = React.useState(false);
   const [status, setstatus] = React.useState<any>("");
+  const [agegrp, setagegrp] = React.useState<any>("");
   const [custType, setcustType] = React.useState<any>("");
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setselValue(newValue);
@@ -153,6 +156,9 @@ export default function EditCustomer({
     getType();
     getUserDet();
     getParentDet();
+    if (parentid > 0) {
+      setChecked(true);
+    }
   }, [status]);
 
   //get type
@@ -187,9 +193,11 @@ export default function EditCustomer({
       setValue("number", res.data[0].phone1);
       setValue("contactName", res.data[0].contactName);
       setValue("printUs", res.data[0].printus);
+      setValue("pregeneratedid", res.data[0].generatedId);
       setparentid(res.data[0].parentId);
       setstatus(res.data[0].status);
       setcustType(res.data[0].typeId);
+      setagegrp(res.data[0].agegroup);
     } catch (error) {
       console.log("error", error);
     }
@@ -232,6 +240,8 @@ export default function EditCustomer({
       status: data.status == 1 ? "1" : data.status == 0 ? "0" : "",
       typeId: data.customertype,
       parentId: parentid,
+      agegroup: data.agegroup,
+      pregeneratedid: data.pregeneratedid,
       updatedBy: 1,
     };
     await axios({
@@ -343,7 +353,7 @@ export default function EditCustomer({
                           size="small"
                           {...register("number", {
                             required: true,
-                            pattern: /^[0-9+-]+$/,
+                            pattern: /^[6-9]\d{9}$/,
                             minLength: 10,
                             maxLength: 10,
                           })}
@@ -355,6 +365,9 @@ export default function EditCustomer({
                           <span style={style}>Enter Valid Number *</span>
                         )}
                         {errors.number?.type === "minLength" && (
+                          <span style={style}>Enter Valid Number *</span>
+                        )}
+                        {errors.number?.type === "maxLength" && (
                           <span style={style}>Enter Valid Number *</span>
                         )}
                       </Stack>
@@ -372,7 +385,7 @@ export default function EditCustomer({
                           size="small"
                           {...register("email1", {
                             required: true,
-                            pattern: /^\S+@\S+$/i,
+                            pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                           })}
                         />
                         {errors.email1?.type === "required" && (
@@ -437,7 +450,7 @@ export default function EditCustomer({
                         <OutlinedInput
                           type="text"
                           id="name"
-                          placeholder="Phone1..."
+                          placeholder="Attention To..."
                           fullWidth
                           size="small"
                         />
@@ -449,7 +462,7 @@ export default function EditCustomer({
                         <OutlinedInput
                           type="text"
                           id="name"
-                          placeholder="Print Us..."
+                          placeholder="Phone..."
                           fullWidth
                           size="small"
                         />
@@ -465,7 +478,7 @@ export default function EditCustomer({
                         <OutlinedInput
                           type="text"
                           id="name"
-                          placeholder="Phone1..."
+                          placeholder="Address1..."
                           fullWidth
                           size="small"
                         />
@@ -477,7 +490,7 @@ export default function EditCustomer({
                         <OutlinedInput
                           type="text"
                           id="name"
-                          placeholder="Print Us..."
+                          placeholder="Address2..."
                           fullWidth
                           size="small"
                         />
@@ -487,28 +500,74 @@ export default function EditCustomer({
                 </Stack>
                 <Stack style={{ marginTop: "20px" }}>
                   <Grid container spacing={2}>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} md={4}>
                       <Stack spacing={1}>
                         <InputLabel htmlFor="name">City</InputLabel>
                         <OutlinedInput
                           type="text"
                           id="name"
-                          placeholder="Phone1..."
+                          placeholder="City..."
                           fullWidth
                           size="small"
                         />
                       </Stack>
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} md={4}>
                       <Stack spacing={1}>
                         <InputLabel htmlFor="name">State</InputLabel>
                         <OutlinedInput
                           type="text"
                           id="name"
-                          placeholder="Print Us..."
+                          placeholder="State..."
                           fullWidth
                           size="small"
                         />
+                      </Stack>
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                      <Stack spacing={1}>
+                        <InputLabel htmlFor="name">Zip/Postal Code</InputLabel>
+                        <OutlinedInput
+                          type="text"
+                          id="name"
+                          placeholder="Postal Code..."
+                          fullWidth
+                          size="small"
+                        />
+                      </Stack>
+                    </Grid>
+                  </Grid>
+                </Stack>
+                <Stack style={{ marginTop: "15px" }}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} md={12}>
+                      <Stack spacing={1}>
+                        <InputLabel htmlFor="name">Age Group</InputLabel>
+                        <FormControl fullWidth>
+                          {status !== "" ? (
+                            <Select
+                              labelId="demo-simple-select-label"
+                              id="demo-simple-select"
+                              defaultValue={agegrp}
+                              size="small"
+                              {...register("agegroup")}
+                            >
+                              <MenuItem value={1}>FS1</MenuItem>
+                              <MenuItem value={2}>FS2</MenuItem>
+                              <MenuItem value={3}>FS3</MenuItem>
+                              <MenuItem value={4}>FS4</MenuItem>
+                              <MenuItem value={5}>FS5</MenuItem>
+                              <MenuItem value={6}>FS6</MenuItem>
+                              <MenuItem value={7}>FS7</MenuItem>
+                              <MenuItem value={8}>FS8</MenuItem>
+                              <MenuItem value={9}>FS9</MenuItem>
+                              <MenuItem value={10}>FS10</MenuItem>
+                              <MenuItem value={11}>FS11</MenuItem>
+                              <MenuItem value={12}>FS12</MenuItem>
+                              <MenuItem value={13}>FS13</MenuItem>
+                            </Select>) : ("loadinf...")
+                          }
+                        </FormControl>
                       </Stack>
                     </Grid>
                   </Grid>
@@ -609,6 +668,21 @@ export default function EditCustomer({
                       </Stack>
                     </Grid>
                   </Grid>
+                </Stack>
+              </Grid>
+              <Grid item xs={12} md={12}>
+                <Stack spacing={1}>
+                  <InputLabel htmlFor="name">
+                    Account
+                  </InputLabel>
+                  <OutlinedInput
+                    type="text"
+                    id="name"
+                    placeholder="# Generate If blank"
+                    fullWidth
+                    size="small"
+                    {...register("pregeneratedid")}
+                  />
                 </Stack>
               </Grid>
             </TabPanel>

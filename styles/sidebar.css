@@ -8,10 +8,31 @@
 input.MuiInputBase-input.MuiInput-input.css-1x51dt5-MuiInputBase-input-MuiInput-input {
   display: none !important;
 }
+
+.MuiStack-root.bisplay-block {
+  display: block !important;
+}
 .maiDiv {
   max-width: 100% !important;
   /* margin: 0 auto; */
+
   display: flex !important;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-logo-search {
+  display: flex;
+}
+
+.avatar-box > div {
+  display: flex;
+  align-items: center;
+}
+
+.avatar-box > div svg {
+  color: #000;
+  margin: 0;
 }
 
 header.MuiPaper-root.sder {
@@ -205,7 +226,11 @@ body h4.MuiTypography-h4 {
   font-weight: 600;
   text-transform: uppercase;
   padding: 0 15px;
-  border-right: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+}
+
+.fimport-export-box > div:first-child > li {
+  border: none;
 }
 
 .fimport-export-box > div:last-child > li {
@@ -215,4 +240,8 @@ body h4.MuiTypography-h4 {
 .fimport-export-box > div > li svg {
   float: left;
   font-size: 17px;
+}
+
+.t-name {
+  width: 18%;
 }

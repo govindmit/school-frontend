@@ -39,6 +39,8 @@ import styled from "@emotion/styled";
 import { GridCloseIcon } from "@mui/x-data-grid";
 import { useForm, SubmitHandler } from "react-hook-form";
 import EditType from "./editType";
+import commmonfunctions from "../commonFunctions/commmonfunctions";
+import { useRouter } from "next/router";
 
 const style = {
   color: "red",
@@ -95,6 +97,9 @@ export default function CustomerTypeList() {
   const [btnDisabled, setBtnDisabled] = React.useState(false);
   const [edittypeOpen, setedittypeOpen] = React.useState(false);
   const [editid, seteditid] = useState<any>(0);
+  const [custpermit, setcustpermit] = useState<any>([]);
+  const [roleid, setroleid] = useState(0);
+  const router = useRouter();
 
   const {
     register,
@@ -123,6 +128,29 @@ export default function CustomerTypeList() {
 
   useEffect(() => {
     getType();
+  }, []);
+
+  // verify user login and previlegs
+  let logintoken: any;
+  React.useEffect(() => {
+    logintoken = localStorage.getItem("QIS_loginToken");
+    if (logintoken === undefined || logintoken === null) {
+      router.push("/");
+    }
+    commmonfunctions.GivenPermition().then(res => {
+      if (res.roleId == 1) {
+        setroleid(res.roleId);
+        //router.push("/userprofile");
+      } else if (res.roleId > 1) {
+        commmonfunctions.ManageCustomers().then(res => {
+          if (!res) {
+            router.push("/userprofile");
+          } else {
+            setcustpermit(res);
+          }
+        })
+      }
+    })
   }, []);
 
   //get customers type
@@ -257,15 +285,16 @@ export default function CustomerTypeList() {
                   CUSTOMER TYPE
                 </Typography>
               </Stack>
-              <Button
-                className="button-new"
-                variant="contained"
-                size="small"
-                style={{ width: "247px" }}
-                onClick={handleTypeOpen}
-              >
-                New Customer Type
-              </Button>
+              {custpermit && custpermit.canAdd === true || roleid === 1 ? (
+                <Button
+                  className="button-new"
+                  variant="contained"
+                  size="small"
+                  style={{ width: "247px" }}
+                  onClick={handleTypeOpen}
+                >
+                  New Customer Type
+                </Button>) : ""}
             </Stack>
             {/*bread cump */}
             <Card
@@ -350,21 +379,23 @@ export default function CustomerTypeList() {
                               direction="row"
                               spacing={1}
                             >
-                              <IconButton
-                                className="action-edit"
-                                onClick={() =>
-                                  handleEditCustomerTypeOpen(item.id)
-                                }
-                              >
-                                <FiEdit />
-                              </IconButton>
-                              <IconButton
-                                className="action-delete"
-                                style={{ color: "#F95A37" }}
-                                onClick={() => openDelete(item)}
-                              >
-                                <RiDeleteBin5Fill />
-                              </IconButton>
+                              {custpermit && custpermit.canEdit === true || roleid === 1 ? (
+                                <IconButton
+                                  className="action-edit"
+                                  onClick={() =>
+                                    handleEditCustomerTypeOpen(item.id)
+                                  }
+                                >
+                                  <FiEdit />
+                                </IconButton>) : ""}
+                              {custpermit && custpermit.canDelete === true || roleid === 1 ? (
+                                <IconButton
+                                  className="action-delete"
+                                  style={{ color: "#F95A37" }}
+                                  onClick={() => openDelete(item)}
+                                >
+                                  <RiDeleteBin5Fill />
+                                </IconButton>) : ""}
                             </Stack>
                           </TableCell>
                         </TableRow>
@@ -405,7 +436,7 @@ export default function CustomerTypeList() {
                   <Grid item xs={12} md={12}>
                     <Stack spacing={1}>
                       <InputLabel htmlFor="name">
-                        Customer Name<span className="err_str">*</span>
+                        Customer Type<span className="err_str">*</span>
                       </InputLabel>
                       <OutlinedInput
                         type="text"

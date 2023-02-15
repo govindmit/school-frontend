@@ -21,17 +21,37 @@ import MiniDrawer from "../sidebar";
 import dynamic from "next/dynamic";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import commmonfunctions from "../commonFunctions/commmonfunctions";
+import { useRouter } from "next/router";
 const DynamicComponentWithNoSSR = dynamic(() => import("../chart"), {
   ssr: false,
 });
 
 export default function Dashboard(this: any) {
-  const [userdet, setuserdet] = React.useState<any>([]);
+  const router = useRouter();
   React.useEffect(() => {
-    commmonfunctions.GivenPermition().then(res => {
-      setuserdet(JSON.parse(res.userPrevilegs));
+    const logintoken = localStorage.getItem("QIS_loginToken");
+    if (logintoken === undefined || logintoken === null) {
+      router.push("/");
+    }
+    commmonfunctions.VerifyLoginUser().then(res => {
+      if (res.exp * 1000 < Date.now()) {
+        localStorage.removeItem('QIS_loginToken');
+        localStorage.removeItem('QIS_User');
+        router.push("/");
+      }
     });
-  }, [])
+    commmonfunctions.GivenPermition().then(res => {
+      if (res.roleId == 1) {
+        //router.push("/userprofile");
+      } else if (res.roleId > 1) {
+        commmonfunctions.ManageDashboard().then(res => {
+          if (!res) {
+            router.push("/userprofile");
+          }
+        })
+      }
+    })
+  }, []);
 
   const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",

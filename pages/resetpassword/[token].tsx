@@ -2,16 +2,13 @@ import * as React from "react";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Link from "next/link";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { api_url, auth_token } from "./api/hello";
+import { useForm } from "react-hook-form";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -19,55 +16,50 @@ import { useRouter } from "next/router";
 import { CircularProgress } from "@mui/material";
 import { BiArrowBack } from "react-icons/bi";
 import Head from "next/head";
-import AuthHeader from "./commoncmp/authheader";
-import AuthRightTemplate from "./commoncmp/authrighttemplate";
-import Footer from "./commoncmp/footer";
-import commmonfunctions from "./commonFunctions/commmonfunctions";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as Yup from "yup";
+import { api_url, auth_token } from "../api/hello";
+import AuthHeader from "../commoncmp/authheader";
+import AuthRightTemplate from "../commoncmp/authrighttemplate";
+import Footer from "../commoncmp/footer";
 const theme = createTheme();
+
 const style = {
   color: "red",
   fontSize: "12px",
   fontWeight: "bold",
 };
 
-type FormValues = {
-  email1: string;
-  password: string;
-};
-
-export default function LoginPage() {
+export default function ResetPasswordPage() {
   const router = useRouter();
+  const { token } = router.query;
+
   const [spinner, setShowspinner] = React.useState(false);
   const [btnDisabled, setBtnDisabled] = React.useState(false);
 
-  React.useEffect(() => {
-    const logintoken = localStorage.getItem("QIS_loginToken");
-    if (logintoken === undefined || logintoken === null) {
-      router.push("/");
-    }
-    commmonfunctions.VerifyLoginUser().then(res => {
-      if (res.exp * 1000 < Date.now()) {
-        localStorage.removeItem('QIS_loginToken');
-        localStorage.removeItem('QIS_User');
-        router.push("/");
-      }
-    });
-  }, []);
+  const formSchema = Yup.object().shape({
+    password: Yup.string().required("Password is Required").matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/,
+      "Password should have at least 8 character and contain one uppercase, one lowercase, one number and one special character"
+    ),
+    confirmpassword: Yup.string()
+      .required("Confirm Password is Required")
+      .oneOf(
+        [Yup.ref("password")],
+        "Password and Confirm Password does not match"
+      ),
+  });
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<FormValues>();
-
-  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+  const formOptions = { resolver: yupResolver(formSchema) };
+  const { register, handleSubmit, reset, formState } = useForm(formOptions);
+  const { errors }: any = formState;
+  async function onSubmit(data: any) {
     setShowspinner(true);
     setBtnDisabled(true);
-    const reqData = { email1: data.email1, password: data.password };
+    const reqData = { token: token, password: data.password };
     await axios({
       method: "POST",
-      url: `${api_url}/userlogin`,
+      url: `${api_url}/resetpassword`,
       data: reqData,
       headers: {
         Authorization: auth_token,
@@ -77,43 +69,30 @@ export default function LoginPage() {
         if (res.status === 200) {
           setShowspinner(false);
           setBtnDisabled(false);
-          toast.success("Login Successfull !");
-          reset();
-          const loginToken = res.data.loginToken;
-          const role = res.data.data.role_id;
-          const QIS_User = res.data.data.name;
-          localStorage.setItem("QIS_loginToken", loginToken);
-          localStorage.setItem("QIS_User", QIS_User);
+          toast.success("Password Reset Successfully Please Login !");
           const redirect = () => {
-            if (role === 1) {
-              router.push("/admin/dashboard");
-            } else if (role === 2) {
-              router.push("/user/dashboard");
-            } else {
-              router.push("/staffer/dashboard");
-            }
+            router.push("/");
           };
           setTimeout(redirect, 3000);
         }
       })
       .catch((error) => {
         //console.error("Error:", error);
-        toast.error("invalid crendentials!");
+        toast.error("Reset passowrd link Expired !");
         setShowspinner(false);
         setBtnDisabled(false);
       });
-  };
+  }
+
   return (
     <>
       <Head>
         <title>QATAR INTERNATIONAL SCHOOL - QIS</title>
-        <link rel="shortcut icon" href="/public/svg-icon/qatar-logo.png" />
       </Head>
       <ThemeProvider theme={theme}>
         <Grid container component="main" sx={{ height: "100vh" }}>
           <CssBaseline />
           <Grid
-            className="header-main"
             item
             xs={false}
             sm={4}
@@ -134,7 +113,6 @@ export default function LoginPage() {
             <AuthRightTemplate />
           </Grid>
           <Grid
-            className="headre-right-main"
             item
             xs={12}
             sm={8}
@@ -143,13 +121,26 @@ export default function LoginPage() {
             elevation={6}
             square
           >
-            <div style={{ width: "100%" }}></div>
+            <header className="header-navbar1">
+              <Typography></Typography>
+              <nav className="nav-bar">
+                <Link
+                  href="/"
+                  style={{
+                    color: "#1A70C5",
+                    textDecoration: "none",
+                    fontWeight: "bold",
+                  }}
+                >
+                  <BiArrowBack /> Back to Home
+                </Link>
+              </nav>
+            </header>
             <Box
-              className="width-full"
               sx={{
-                height: 415,
-                width: 380,
-                marginTop: 5,
+                height: 405,
+                width: 400,
+                marginTop: 6,
                 marginLeft: 11,
               }}
             >
@@ -160,95 +151,51 @@ export default function LoginPage() {
                   color: "#333333",
                 }}
               >
-                <span style={{ color: "#42D5CD" }}>LOGIN &nbsp;</span>
-                NOW!
+                <span style={{ color: "#42D5CD" }}>RESET </span>
+                PASSWORD
               </Typography>
-              <Typography
-                variant="body2"
-                style={{
-                  color: "#5F6160",
-                  fontSize: "18px",
-                  marginBottom: "20px",
-                }}
-              >
+              <Typography variant="body2" style={{ color: "#5F6160" }}>
                 Lorem Ipsum is simply dummy text of the printing and typesetting
                 industry.
               </Typography>
               <form onSubmit={handleSubmit(onSubmit)}>
-                <Box sx={{ mt: 1 }}>
-                  <Typography>Email Address</Typography>
+                <Box sx={{ mt: 3 }}>
+                  <Typography>New Password</Typography>
                   <TextField
                     style={{ marginTop: "8px" }}
                     fullWidth
                     size="small"
-                    placeholder="Email Address..."
-                    {...register("email1", {
+                    type="password"
+                    placeholder="********"
+                    {...register("password", {
                       required: true,
-                      pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                     })}
                   />
-
                   <Typography style={style}>
-                    {errors?.email1?.type === "required" && (
-                      <div>Email Field is required *</div>
-                    )}
-                  </Typography>
-
-                  <Typography style={style}>
-                    {" "}
-                    {errors?.email1?.type === "pattern" && (
-                      <div>Please Enter Valid Email *</div>
-                    )}
+                    {errors.password?.message}
                   </Typography>
                   <Typography style={{ marginTop: "15px" }}>
-                    Password
+                    Confirm Password
                   </Typography>
                   <TextField
                     style={{ marginTop: "8px" }}
                     fullWidth
                     size="small"
                     type="password"
-                    placeholder="***********"
-                    {...register("password", {
+                    placeholder="********"
+                    {...register("confirmpassword", {
                       required: true,
                     })}
                   />
                   <Typography style={style}>
-                    {errors.password && (
-                      <span>Password Field is Required *</span>
-                    )}
+                    {errors.confirmpassword?.message}
                   </Typography>
-                  <Grid container style={{ marginTop: "10px" }}>
-                    <Grid item xs>
-                      <FormControlLabel
-                        control={<Checkbox defaultChecked color="primary" />}
-                        label="Remember me?"
-                      />
-                    </Grid>
-                    <Grid item>
-                      <Typography style={{ marginTop: "9px" }}>
-                        Forgot Password?{" "}
-                        <Link
-                          href="/auth/forgotPassword"
-                          style={{ color: "#26CEB3" }}
-                        >
-                          Click here
-                        </Link>
-                      </Typography>
-                    </Grid>
-                  </Grid>
                   <Button
-                    style={{
-                      backgroundColor: "#1A70C5",
-                      fontWeight: "500",
-                      fontSize: "18px",
-                      textTransform: "capitalize",
-                      marginTop: "20px",
-                    }}
+                    style={{ backgroundColor: "#1A70C5", fontWeight: "900" }}
                     type="submit"
                     fullWidth
                     variant="contained"
-                    sx={{ mt: 1 }}
+                    sx={{ mt: 3, mb: 2 }}
                     disabled={btnDisabled}
                   >
                     Submit

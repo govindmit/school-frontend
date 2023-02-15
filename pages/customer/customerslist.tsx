@@ -45,6 +45,7 @@ import EditCustomer from "./editcustomer";
 import { useRouter } from "next/router";
 import { CSVDownload } from "react-csv";
 import Loader from "../commoncmp/myload";
+import commmonfunctions from "../commonFunctions/commmonfunctions";
 
 function a11yProps(index: number) {
   return {
@@ -108,8 +109,10 @@ export default function CustomerList() {
   const [parentId, setparentId] = useState<any>("");
   const [checked, setChecked] = React.useState(false);
   const [OpenCSV, setOpenCSV] = React.useState(false);
+  const [custpermit, setcustpermit] = useState<any>([]);
+  const [roleid, setroleid] = useState(0);
   const { register, handleSubmit } = useForm<FormValues>();
-
+  const router = useRouter();
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -120,14 +123,34 @@ export default function CustomerList() {
     getType();
   }, []);
 
-  // verify user login
+  // verify user login and previlegs
   let logintoken: any;
-  const router = useRouter();
   React.useEffect(() => {
     logintoken = localStorage.getItem("QIS_loginToken");
     if (logintoken === undefined || logintoken === null) {
       router.push("/");
     }
+    commmonfunctions.VerifyLoginUser().then(res => {
+      if (res.exp * 1000 < Date.now()) {
+        localStorage.removeItem('QIS_loginToken');
+        localStorage.removeItem('QIS_User');
+        router.push("/");
+      }
+    });
+    commmonfunctions.GivenPermition().then(res => {
+      if (res.roleId == 1) {
+        setroleid(res.roleId);
+        //router.push("/userprofile");
+      } else if (res.roleId > 1) {
+        commmonfunctions.ManageCustomers().then(res => {
+          if (!res) {
+            router.push("/userprofile");
+          } else {
+            setcustpermit(res);
+          }
+        })
+      }
+    })
   }, []);
 
   //get customers(users) list
@@ -216,6 +239,7 @@ export default function CustomerList() {
     setconctName("");
     setphoneNum("");
     setpId(0);
+    getUser();
   }
 
   // apply searching
@@ -460,7 +484,7 @@ export default function CustomerList() {
                   CUSTOMERS
                 </Typography>
               </Stack>
-              <Button
+              {custpermit && custpermit.canAdd === true || roleid === 1 ? (<Button
                 className="button-new"
                 variant="contained"
                 size="small"
@@ -468,7 +492,7 @@ export default function CustomerList() {
                 onClick={handleNewCustomerOpen}
               >
                 <b>New Customer</b>
-              </Button>
+              </Button>) : ""}
             </Stack>
             {/*bread cump */}
             <Card
@@ -809,7 +833,7 @@ export default function CustomerList() {
                           <Typography>EMAIL 2</Typography>
                         </TableCell>
                         <TableCell>
-                          <Typography width={100}>COST. TYPE</Typography>
+                          <Typography width={100}>CUST. TYPE</Typography>
                         </TableCell>
                         <TableCell>
                           <Typography width={100}>CONT. NAME</Typography>
@@ -891,31 +915,34 @@ export default function CustomerList() {
                                   direction="row"
                                   spacing={1}
                                 >
-                                  <IconButton className="action-view">
-                                    <Link
-                                      href={`/customer/viewcustomer/${dataitem.id}`}
-                                      style={{
-                                        color: "#26CEB3",
-                                      }}
-                                    >
-                                      <BiShow />
-                                    </Link>
-                                  </IconButton>
-                                  <IconButton
+                                  {custpermit && custpermit.canView === true || roleid === 1 ? (
+                                    <IconButton className="action-view">
+                                      <Link
+                                        href={`/customer/viewcustomer/${dataitem.id}`}
+                                        style={{
+                                          color: "#26CEB3",
+                                        }}
+                                      >
+                                        <BiShow />
+                                      </Link>
+                                    </IconButton>) : ""}
+                                  {custpermit && custpermit.canEdit === true || roleid === 1 ? (<IconButton
                                     className="action-edit"
                                     onClick={() =>
                                       handleEditCustomerOpen(dataitem.id)
                                     }
                                   >
                                     <FiEdit />
-                                  </IconButton>
-                                  <IconButton
+                                  </IconButton>)
+                                    : ""}
+                                  {custpermit && custpermit.canDelete === true || roleid === 1 ? (<IconButton
                                     className="action-delete"
                                     style={{ color: "#F95A37" }}
                                     onClick={() => openDelete(dataitem)}
                                   >
                                     <RiDeleteBin5Fill />
-                                  </IconButton>
+                                  </IconButton>) : ""}
+
                                 </Stack>
                               </TableCell>
                             </TableRow>
