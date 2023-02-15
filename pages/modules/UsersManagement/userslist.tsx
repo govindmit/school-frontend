@@ -34,6 +34,7 @@ import ConfirmBox from "../../commoncmp/confirmbox";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
+import commmonfunctions from "../../commonFunctions/commmonfunctions";
 
 function a11yProps(index: number) {
     return {
@@ -77,6 +78,17 @@ export default function UsersList() {
     };
 
     useEffect(() => {
+        // verify user login and previlegs
+        logintoken = localStorage.getItem("QIS_loginToken");
+        if (logintoken === undefined || logintoken === null) {
+            router.push("/");
+        }
+        commmonfunctions.GivenPermition().then(res => {
+            if (res.roleId === 1) {
+            } else {
+                router.push("/userprofile");
+            }
+        })
         getUser();
     }, []);
 

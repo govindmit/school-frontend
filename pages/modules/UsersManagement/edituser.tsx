@@ -133,68 +133,70 @@ export default function EditUser(props: any) {
         UserService.GetRoles().then(response => setroles(response));
         //get user det
         UserService.GetUserDet(props.id).then(response => {
-            let datas = (response?.userPrevilegs);
-            const parsedata = JSON.parse(datas)?.user_permition;
-            const lgh = parsedata.length;
-            if (lgh > 0) {
-                for (var i = 0; i <= lgh - 1; i++) {
-                    if (parsedata[i].Dashboard) {
-                        setonDashboard(true);
-                        setDashboardchecked({
-                            canView: parsedata[i].Dashboard.canView,
-                            canAdd: parsedata[i].Dashboard.canAdd,
-                            canEdit: parsedata[i].Dashboard.canEdit,
-                            canDelete: parsedata[i].Dashboard.canDelete
-                        })
-                    }
-                    if (parsedata[i].Customers) {
-                        setonCustomer(true);
-                        setCustomerchecked({
-                            canView: parsedata[i].Customers.canView,
-                            canAdd: parsedata[i].Customers.canAdd,
-                            canEdit: parsedata[i].Customers.canEdit,
-                            canDelete: parsedata[i].Customers.canDelete
+            if (response?.userPrevilegs != null) {
+                let datas = (response?.userPrevilegs);
+                const parsedata = JSON.parse(datas)?.user_permition;
+                const lgh = parsedata.length;
+                if (lgh > 0) {
+                    for (var i = 0; i <= lgh - 1; i++) {
+                        if (parsedata[i].Dashboard) {
+                            setonDashboard(true);
+                            setDashboardchecked({
+                                canView: parsedata[i].Dashboard.canView,
+                                canAdd: parsedata[i].Dashboard.canAdd,
+                                canEdit: parsedata[i].Dashboard.canEdit,
+                                canDelete: parsedata[i].Dashboard.canDelete
+                            })
                         }
-                        )
-                    }
-                    if (parsedata[i].Invoices) {
-                        setonInvoice(true);
-                        setInvoicechecked({
-                            canView: parsedata[i].Invoices.canView,
-                            canAdd: parsedata[i].Invoices.canAdd,
-                            canEdit: parsedata[i].Invoices.canEdit,
-                            canDelete: parsedata[i].Invoices.canDelete
-                        })
-                    }
-                    if (parsedata[i].Activites) {
-                        setonActivity(true);
-                        setActivitychecked({
-                            canView: parsedata[i].Activites.canView,
-                            canAdd: parsedata[i].Activites.canAdd,
-                            canEdit: parsedata[i].Activites.canEdit,
-                            canDelete: parsedata[i].Activites.canDelete
+                        if (parsedata[i].Customers) {
+                            setonCustomer(true);
+                            setCustomerchecked({
+                                canView: parsedata[i].Customers.canView,
+                                canAdd: parsedata[i].Customers.canAdd,
+                                canEdit: parsedata[i].Customers.canEdit,
+                                canDelete: parsedata[i].Customers.canDelete
+                            }
+                            )
                         }
-                        )
+                        if (parsedata[i].Invoices) {
+                            setonInvoice(true);
+                            setInvoicechecked({
+                                canView: parsedata[i].Invoices.canView,
+                                canAdd: parsedata[i].Invoices.canAdd,
+                                canEdit: parsedata[i].Invoices.canEdit,
+                                canDelete: parsedata[i].Invoices.canDelete
+                            })
+                        }
+                        if (parsedata[i].Activites) {
+                            setonActivity(true);
+                            setActivitychecked({
+                                canView: parsedata[i].Activites.canView,
+                                canAdd: parsedata[i].Activites.canAdd,
+                                canEdit: parsedata[i].Activites.canEdit,
+                                canDelete: parsedata[i].Activites.canDelete
+                            }
+                            )
 
-                    }
-                    if (parsedata[i].Cumposers) {
-                        setonComposer(true);
-                        setComposerchecked({
-                            canView: parsedata[i].Cumposers.canView,
-                            canAdd: parsedata[i].Cumposers.canAdd,
-                            canEdit: parsedata[i].Cumposers.canEdit,
-                            canDelete: parsedata[i].Cumposers.canDelete
                         }
-                        )
-                    }
-                    if (parsedata[i].SalesInvoices) {
-                        setonSalesInvoice(true);
-                        setSalesInvoicechecked({
-                            canView: parsedata[i].SalesInvoices.canView,
-                            canAdd: parsedata[i].SalesInvoices.canAdd,
-                            canEdit: parsedata[i].SalesInvoices.canEdit,
-                            canDelete: parsedata[i].SalesInvoices.canDelete
-                        })
+                        if (parsedata[i].Cumposers) {
+                            setonComposer(true);
+                            setComposerchecked({
+                                canView: parsedata[i].Cumposers.canView,
+                                canAdd: parsedata[i].Cumposers.canAdd,
+                                canEdit: parsedata[i].Cumposers.canEdit,
+                                canDelete: parsedata[i].Cumposers.canDelete
+                            }
+                            )
+                        }
+                        if (parsedata[i].SalesInvoices) {
+                            setonSalesInvoice(true);
+                            setSalesInvoicechecked({
+                                canView: parsedata[i].SalesInvoices.canView,
+                                canAdd: parsedata[i].SalesInvoices.canAdd,
+                                canEdit: parsedata[i].SalesInvoices.canEdit,
+                                canDelete: parsedata[i].SalesInvoices.canDelete
+                            })
+                        }
                     }
                 }
             }
@@ -205,6 +207,8 @@ export default function EditUser(props: any) {
 
         });
     }, []);
+
+    console.log(rolestatus);
 
     const {
         register,
@@ -394,27 +398,25 @@ export default function EditUser(props: any) {
                                                             Role    <span className="err_str">*</span>
                                                         </InputLabel>
                                                         <FormControl fullWidth>
-                                                            {rolestatus !== "" ? (
-                                                                <Select
-                                                                    labelId="demo-simple-select-label"
-                                                                    id="demo-simple-select"
-                                                                    size="small"
-                                                                    defaultValue={rolestatus}
-                                                                    {...register("roleid", {
-                                                                        required: true
+                                                            {rolestatus !== "" ? (<Select
+                                                                labelId="demo-simple-select-label"
+                                                                id="demo-simple-select"
+                                                                size="small"
+                                                                defaultValue={rolestatus}
+                                                                {...register("roleid", {
+                                                                    required: true
+                                                                })}
+                                                            >
+                                                                {roles &&
+                                                                    roles.map((data: any, key: any) => {
+                                                                        return (
+                                                                            <MenuItem key={key} value={data.id}>
+                                                                                {data.name}
+                                                                            </MenuItem>
+                                                                        );
                                                                     })}
-                                                                >
-                                                                    {roles &&
-                                                                        roles.map((data: any, key: any) => {
-                                                                            return (
-                                                                                <MenuItem key={key} value={data.id}>
-                                                                                    {data.name}
-                                                                                </MenuItem>
-                                                                            );
-                                                                        })}
-                                                                </Select>) : (
-                                                                "loading......"
-                                                            )}
+                                                            </Select>) : ("")}
+
                                                         </FormControl>
                                                     </Stack>
                                                 </Grid>

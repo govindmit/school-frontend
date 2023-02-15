@@ -30,9 +30,11 @@ import axios from "axios";
 import { api_url, auth_token } from "../../api/hello";
 import UserService from "./servives";
 import { useRouter } from "next/router";
+import AddRole from "./addrole";
 const Item = styled(Paper)(({ theme }) => ({
     p: 10,
 }));
+
 
 const style = {
     color: "red",
@@ -126,7 +128,6 @@ export default function AddNewUser() {
             SalesInvoices: SalesInvoicechecked
         })
     }
-
     React.useEffect(() => {
         UserService.GetRoles().then(response => setroles(response));
     }, []);
@@ -176,6 +177,17 @@ export default function AddNewUser() {
                 setshowspinner(false);
                 setBtnDisabled(false);
             });
+    };
+
+    const [newRoleOpen, setnewRoleOpen] = React.useState(false);
+
+    //open close popup boxes
+    function handleNewCustomerOpen() {
+        setnewRoleOpen(true);
+    }
+    const closePoP = (data: any) => {
+        setnewRoleOpen(false);
+        UserService.GetRoles().then(response => setroles(response));
     };
 
     return (
@@ -351,8 +363,9 @@ export default function AddNewUser() {
                                                 <Grid item xs={12} md={12} style={{ paddingTop: "0px" }}>
                                                     <Stack
                                                         textAlign={"end"}
+                                                        onClick={handleNewCustomerOpen}
                                                     >
-                                                        <span style={{ color: "#26CEB3", fontWeight: "bold" }}>
+                                                        <span style={{ color: "#26CEB3", fontWeight: "bold", cursor: "pointer" }}>
                                                             Create New Role
                                                         </span>
                                                     </Stack>
@@ -616,6 +629,13 @@ export default function AddNewUser() {
                     </div>
                 </Box>
             </Box>
+            {
+                newRoleOpen ? (
+                    <AddRole open={newRoleOpen} closeDialog={closePoP} />
+                ) : (
+                    ""
+                )
+            }
             <ToastContainer />
         </>
     );
