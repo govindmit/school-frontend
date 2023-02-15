@@ -17,7 +17,6 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
 import { CircularProgress } from "@mui/material";
-import { BiArrowBack } from "react-icons/bi";
 import Head from "next/head";
 import AuthHeader from "./commoncmp/authheader";
 import AuthRightTemplate from "./commoncmp/authrighttemplate";
@@ -39,11 +38,12 @@ export default function LoginPage() {
   const router = useRouter();
   const [spinner, setShowspinner] = React.useState(false);
   const [btnDisabled, setBtnDisabled] = React.useState(false);
-
   React.useEffect(() => {
     const logintoken = localStorage.getItem("QIS_loginToken");
     if (logintoken === undefined || logintoken === null) {
       router.push("/");
+    } else {
+      router.push("/userprofile");
     }
     commmonfunctions.VerifyLoginUser().then(res => {
       if (res.exp * 1000 < Date.now()) {
@@ -87,17 +87,14 @@ export default function LoginPage() {
           const redirect = () => {
             if (role === 1) {
               router.push("/admin/dashboard");
-            } else if (role === 2) {
-              router.push("/user/dashboard");
             } else {
-              router.push("/staffer/dashboard");
+              router.push("/profile");
             }
           };
           setTimeout(redirect, 3000);
         }
       })
       .catch((error) => {
-        //console.error("Error:", error);
         toast.error("invalid crendentials!");
         setShowspinner(false);
         setBtnDisabled(false);
