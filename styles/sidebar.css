@@ -291,3 +291,20 @@ body h4.MuiTypography-h4 {
 .t-name {
   width: 18%;
 }
+
+.delete-popup-close {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 25px;
+}
+
+.delete-popup-close button {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.delete-popup-close .cross-button:hover {
+  background: none !important;
+}

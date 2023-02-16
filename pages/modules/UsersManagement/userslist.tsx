@@ -34,6 +34,7 @@ import ConfirmBox from "../../commoncmp/confirmbox";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
+import commmonfunctions from "../../commonFunctions/commmonfunctions";
 
 function a11yProps(index: number) {
     return {
@@ -77,6 +78,17 @@ export default function UsersList() {
     };
 
     useEffect(() => {
+        // verify user login and previlegs
+        logintoken = localStorage.getItem("QIS_loginToken");
+        if (logintoken === undefined || logintoken === null) {
+            router.push("/");
+        }
+        commmonfunctions.GivenPermition().then(res => {
+            if (res.roleId === 1) {
+            } else {
+                router.push("/userprofile");
+            }
+        })
         getUser();
     }, []);
 
@@ -102,7 +114,7 @@ export default function UsersList() {
                 },
             });
             const res = await response.json();
-            setUsers(res.data.filter((dt: any) => dt.roleId !== 2));
+            setUsers(res.data.filter((dt: any) => dt.roleId !== 1));
             setsearchdata(res.data.filter((dt: any) => dt.customerId !== null));
             setAll(res.data.filter((dt: any) => dt.customerId !== null).length);
         } catch (error) {

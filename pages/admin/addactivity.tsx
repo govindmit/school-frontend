@@ -161,7 +161,10 @@ export default function AddNewActivity() {
   const [price1, setPrice1] = useState<FormValues | any>("");
   const [typeError, setTypeError] = useState<FormValues | any>("");
   const [status1, setStatus1] = useState<FormValues | any>(null);
-  const [startDate1, setStartDate1] = useState(null);
+  const [startDate1, setStartDate1] = useState<FormValues | any>(null);
+  const [dateError, setDateError] = useState(false);
+  const [endDateError, setEndDateError] = useState(false);
+  // const [errorMessage, setErrorMessage] = useState("");
   const [endDate1, setEndDate1] = useState(null);
   const [content, setContent] = useState("");
   const [descontent, setDesContent] = useState("");
@@ -174,46 +177,48 @@ export default function AddNewActivity() {
   const router = useRouter();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    // setshowspinner(true);
-    // setBtnDisabled(true);
-    const sDate = moment(startDate1).format("DD/MM/YYYY");
-    const eDate = moment(endDate1).format("DD/MM/YYYY");
-    if (type1 === "") {
-      setTypeError("Type field is required!");
+    if (startDate1 === null || endDate1 === null) {
+      setDateError(true);
+      setEndDateError(true);
     } else {
-      setTypeError("");
-    }
-    const reqData = {
-      name: name1,
-      type: type1,
-      startdate: sDate,
-      enddate: eDate,
-      status: data.status1,
-      price: price1 && price1 !== null ? price1 : "00",
-      shortDescription: content,
-      description: descontent,
-    };
-    const end_point = "addactivity";
+      const sDate = moment(startDate1).format("DD/MM/YYYY");
+      const eDate = moment(endDate1).format("DD/MM/YYYY");
+      if (type1 === "") {
+        setTypeError("Type field is required!");
+      } else {
+        setTypeError("");
+      }
+      const reqData = {
+        name: name1,
+        type: type1,
+        startdate: sDate,
+        enddate: eDate,
+        status: data.status1,
+        price: price1 && price1 !== null ? price1 : "00",
+        shortDescription: content,
+        description: descontent,
+      };
 
-    await axios({
-      method: "POST",
-      url: `${api_url}/addactivity`,
-      data: reqData,
-      headers: {
-        Authorization: auth_token,
-        "content-type": "multipart/form-data",
-      },
-    })
-      .then((data) => {
-        if (data.status === 201) {
-          router.push("/admin/activitylist");
-
-          toast.success("Activity Added Successfully !");
-        }
+      await axios({
+        method: "POST",
+        url: `${api_url}/addactivity`,
+        data: reqData,
+        headers: {
+          Authorization: auth_token,
+          "content-type": "multipart/form-data",
+        },
       })
-      .catch((error) => {
-        toast.error("Activity Allready Registred !");
-      });
+        .then((data) => {
+          if (data.status === 201) {
+            router.push("/admin/activitylist");
+            toast.success("Activity Added Successfully !");
+          }
+        })
+        .catch((err) => {
+          router.push("/admin/activitylist");
+          toast.error(err?.response?.data?.message);
+        });
+    }
   };
 
   const style = {
@@ -273,6 +278,14 @@ export default function AddNewActivity() {
                   VIEW ACTIVITY
                 </Typography>
               </Stack>
+              <div className="buycss" style={{ textAlign: "end" }}>
+                <Link
+                  href="/admin/activitylist"
+                  style={{ color: "#1A70C5", textDecoration: "none" }}
+                >
+                  <Button variant="contained">Back</Button>
+                </Link>
+              </div>
             </Stack>
             <Card
               style={{
@@ -385,12 +398,21 @@ export default function AddNewActivity() {
                             selected={startDate1}
                             dateFormat="MM/dd/yyyy"
                             placeholderText="Start Date"
-                            // {...register("startDate1", {
-                            //   required: "Start Date is Required *",
-                            // })}
+                            // {...register("startDate1", {required: "Start Date is Required *"})}
                             onChange={(date: any) => setStartDate1(date)}
                           />
-                          {/* {errors.startDate1?.type &&  <span style={style}>{startDate1 === null ? "Start Date is Required *" : ""}</span>} */}
+                          {errors?.name1?.message !== undefined ||
+                          errors?.type1?.message !== undefined ||
+                          errors?.status1?.message !== undefined ||
+                          dateError === true ? (
+                            <span style={style}>
+                              {startDate1 === null
+                                ? "Start Date is Required *"
+                                : ""}
+                            </span>
+                          ) : (
+                            ""
+                          )}
                         </Stack>
                       </Grid>
                       <Grid item xs={12} md={6}>
@@ -410,6 +432,18 @@ export default function AddNewActivity() {
                             // })}
                             onChange={(date: any) => setEndDate1(date)}
                           />
+                          {errors?.name1?.message !== undefined ||
+                          errors?.type1?.message !== undefined ||
+                          errors?.status1?.message !== undefined ||
+                          endDateError === true ? (
+                            <span style={style}>
+                              {endDate1 === null
+                                ? "End Date is Required *"
+                                : ""}
+                            </span>
+                          ) : (
+                            ""
+                          )}
                           {/* {errors.endDate1?.type &&  <span style={style}>{endDate1 === null ? "End Date is Required *" : ""}</span>} */}
                         </Stack>
                       </Grid>
@@ -430,14 +464,18 @@ export default function AddNewActivity() {
                               fullWidth
                               size="small"
                               {...register("price1", {
-                                required: "Amount is Required *",
+                                required: true,
+                                pattern: /^[0-9+-]+$/,
                               })}
                               onChange={(e) => setPrice1(e.target.value)}
                             />
-                            {errors.price1?.type && (
+                            {errors.price1?.type === "required" && (
                               <span style={style}>
                                 {price1 === "" ? "Amount is Required *" : ""}
                               </span>
+                            )}
+                            {errors.price1?.type === "pattern" && (
+                              <span style={style}>Enter Valid Amount *</span>
                             )}
                           </Stack>
                         </Grid>

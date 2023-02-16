@@ -76,7 +76,7 @@ export default function Guardians() {
         }
       );
       const res = await response.json();
-      console.log(res, "responce");
+
       setActivity(res.data);
       setHtmlData(res.data[0].description);
     } catch (error) {
@@ -131,6 +131,14 @@ export default function Guardians() {
                   VIEW ACTIVITY
                 </Typography>
               </Stack>
+              <div className="buycss" style={{ textAlign: "end" }}>
+                <Link
+                  href="/admin/activitylist"
+                  style={{ color: "#1A70C5", textDecoration: "none" }}
+                >
+                  <Button variant="contained">Back</Button>
+                </Link>
+              </div>
             </Stack>
             <Card
               style={{ margin: "10px", padding: "15px" }}
