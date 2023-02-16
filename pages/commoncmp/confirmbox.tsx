@@ -31,7 +31,7 @@ function ConfirmBox({
         <div className="delete-popup-close">
           <Typography variant="h5">Delete {title}</Typography>
           <IconButton
-            classname="cross-button"
+            className="cross-button"
             size="medium"
             onClick={closeDialog}
             sx={{}}
