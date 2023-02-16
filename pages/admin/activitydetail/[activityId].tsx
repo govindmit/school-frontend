@@ -136,44 +136,58 @@ export default function Guardians() {
               style={{ margin: "10px", padding: "15px" }}
               className="box-shadow"
             >
-              <span className="title" style={{ fontSize: "40px" }}>
-                {activity[0]?.name}
-              </span>
-              <div className="date" style={{ display: "flex" }}>
-                <div className="sdiv">
-                  <h4>startDate : {activity[0]?.startDate}</h4>&nbsp;&nbsp;
-                </div>
-                <div className="sdiv">
-                  <h4>endDate : {activity[0]?.endDate}</h4>
-                </div>
-                {activity[0]?.price === 0 ? (
-                  <div style={{ marginLeft: "55%" }}>
-                    <h4 style={{ color: "#ff5e00" }}>Free</h4>
+              <div className="view-main">
+                <div className="view-mainleft">
+                  <span
+                    className="title view-activity"
+                    style={{ fontSize: "40px" }}
+                  >
+                    {activity[0]?.name}
+                  </span>
+                  <div className="date" style={{ display: "flex" }}>
+                    <div className="sdiv">
+                      <h4>
+                        <span>startDate :</span> {activity[0]?.startDate}
+                      </h4>
+                    </div>
+                    <div className="sdiv">
+                      <h4>
+                        <span>endDate : </span>
+                        {activity[0]?.endDate}
+                      </h4>
+                    </div>
                   </div>
-                ) : (
-                  <div style={{ marginLeft: "55%", display: "flex" }}>
-                    <h4>Amount</h4>&nbsp;
-                    <h4 style={{ color: "#ff5e00" }}>${activity[0]?.price}</h4>
-                  </div>
-                )}
+                </div>
+                <div className="view-mainright">
+                  {activity[0]?.price === 0 ? (
+                    <div style={{ marginLeft: "55%" }}>
+                      <h4 style={{ color: "#395ba9" }}>Free</h4>
+                    </div>
+                  ) : (
+                    <div>
+                      <h4>Amount</h4>
+                      <h3 style={{ color: "#395ba9" }}>
+                        ${activity[0]?.price}
+                      </h3>
+                    </div>
+                  )}
+                </div>
               </div>
+
               {/* <p>{activity[0]?.description}</p> */}
               <div
+                className="boder-bottom font-size-15"
                 dangerouslySetInnerHTML={{
                   __html: activity[0]?.description,
                 }}
               ></div>
               <div
+                className="font-size-15"
                 dangerouslySetInnerHTML={{
                   __html: activity[0]?.shortDescription,
                 }}
               ></div>
-              <br/>
-              <div className="buycss" style={{textAlign: "end"}}>
-                <Button variant="contained" href="#contained-buttons">
-                  Buy
-                </Button>
-              </div>
+              <br />
             </Card>
           </div>
         </Box>

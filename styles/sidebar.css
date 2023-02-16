@@ -21,6 +21,52 @@ input.MuiInputBase-input.MuiInput-input.css-1x51dt5-MuiInputBase-input-MuiInput-
   align-items: center;
 }
 
+.view-main {
+  display: flex;
+  justify-content: space-between;
+}
+.view-mainright h4 {
+  font-size: 20px;
+  margin: 0;
+}
+.view-mainright h3 {
+  font-size: 34px;
+  margin: 0;
+}
+.view-mainright {
+  padding: 18px;
+}
+
+.date {
+  margin-top: 5px;
+}
+
+.font-size-15 {
+  font-size: 15px;
+}
+
+.font-size-15 h1 {
+  font-size: 21px;
+  font-weight: normal;
+}
+
+.date .sdiv {
+  border: none;
+  padding: 0;
+  text-transform: capitalize;
+  font-size: 14px;
+  font-weight: normal;
+}
+.date .sdiv h4 {
+  font-weight: none;
+  margin: 0px 10px 0 0;
+}
+
+.date .sdiv h4 span {
+  color: #395ba9;
+  font-weight: 600;
+}
+
 .header-logo-search {
   display: flex;
 }

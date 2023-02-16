@@ -189,23 +189,23 @@ export default function AddNewActivity() {
       startdate: sDate,
       enddate: eDate,
       status: data.status1,
-      price: price1 && price1 !== null ? price1: "00",
+      price: price1 && price1 !== null ? price1 : "00",
       shortDescription: content,
       description: descontent,
     };
     const end_point = "addactivity";
 
-  await axios({
-    method: "POST",
-    url: `${api_url}/addactivity`,
-    data: reqData,
-    headers: {
-      Authorization: auth_token,
-      "content-type": "multipart/form-data",
-    },
-  })
-  .then((data) => {
-    if (data.status === 201) {
+    await axios({
+      method: "POST",
+      url: `${api_url}/addactivity`,
+      data: reqData,
+      headers: {
+        Authorization: auth_token,
+        "content-type": "multipart/form-data",
+      },
+    })
+      .then((data) => {
+        if (data.status === 201) {
           router.push("/admin/activitylist");
 
           toast.success("Activity Added Successfully !");
@@ -214,8 +214,8 @@ export default function AddNewActivity() {
       .catch((error) => {
         toast.error("Activity Allready Registred !");
       });
-    };
-    
+  };
+
   const style = {
     color: "red",
     fontSize: "12px",
@@ -230,7 +230,6 @@ export default function AddNewActivity() {
       setTypeError("Type field is required");
     }
   };
-
 
   return (
     <>
@@ -276,14 +275,19 @@ export default function AddNewActivity() {
               </Stack>
             </Stack>
             <Card
-              style={{ margin: "10px", padding: "15px" }}
+              style={{
+                margin: "10px",
+                padding: "15px",
+                width: "60%",
+                paddingBottom: "30px",
+              }}
               className="box-shadow"
             >
               <form onSubmit={handleSubmit(onSubmit)}>
                 <Grid>
                   <Stack style={{ marginTop: "10px" }}>
                     <Grid container spacing={2}>
-                      <Grid item xs={12} md={6}>
+                      <Grid item xs={12} md={12}>
                         <Stack spacing={1}>
                           <InputLabel htmlFor="name">
                             Activity Name <span className="err_str">*</span>
@@ -299,18 +303,25 @@ export default function AddNewActivity() {
                             })}
                             onChange={(e) => setName1(e.target.value)}
                           />
-                         
-                          {errors.name1?.type &&  <span style={style}>{name1 === "" ?" Activity name is Required *" : ""}</span>}
 
+                          {errors.name1?.type && (
+                            <span style={style}>
+                              {name1 === ""
+                                ? " Activity name is Required *"
+                                : ""}
+                            </span>
+                          )}
                         </Stack>
                       </Grid>
                     </Grid>
                   </Stack>
                   <Stack style={{ marginTop: "20px" }}>
                     <Grid container spacing={2}>
-                      <Grid item xs={12} md={3}>
+                      <Grid item xs={12} md={6}>
                         <Stack spacing={1}>
-                          <InputLabel htmlFor="name">Type <span className="err_str">*</span></InputLabel>
+                          <InputLabel htmlFor="name">
+                            Type <span className="err_str">*</span>
+                          </InputLabel>
                           <Select
                             defaultValue="none"
                             value={type1}
@@ -321,17 +332,22 @@ export default function AddNewActivity() {
                               required: "Type is Required *",
                             })}
                             onChange={(e) => handleType(e.target.value)}
-                          > 
+                          >
                             <MenuItem value="Free">Free</MenuItem>
                             <MenuItem value="Paid">Paid</MenuItem>
                           </Select>
-                          {errors.type1?.type &&  <span style={style}>{type1 === "" ? errors?.type1?.message : ""}</span>}
-                         
+                          {errors.type1?.type && (
+                            <span style={style}>
+                              {type1 === "" ? errors?.type1?.message : ""}
+                            </span>
+                          )}
                         </Stack>
                       </Grid>
-                      <Grid item xs={12} md={3}>
+                      <Grid item xs={12} md={6}>
                         <Stack spacing={1}>
-                          <InputLabel htmlFor="name">Status <span className="err_str">*</span></InputLabel>
+                          <InputLabel htmlFor="name">
+                            Status <span className="err_str">*</span>
+                          </InputLabel>
                           <Select
                             defaultValue="none"
                             value={status1}
@@ -347,16 +363,22 @@ export default function AddNewActivity() {
                             <MenuItem value="Draft">Draft</MenuItem>
                             <MenuItem value="Archive">Archive</MenuItem>
                           </Select>
-                          {errors.status1?.type &&  <span style={style}>{status1 === null ? errors?.status1?.message : ""}</span>}
+                          {errors.status1?.type && (
+                            <span style={style}>
+                              {status1 === null ? errors?.status1?.message : ""}
+                            </span>
+                          )}
                         </Stack>
                       </Grid>
                     </Grid>
                   </Stack>
                   <Stack style={{ marginTop: "20px" }}>
                     <Grid container spacing={2}>
-                      <Grid item xs={12} md={3}>
+                      <Grid item xs={12} md={6}>
                         <Stack spacing={1}>
-                          <InputLabel htmlFor="name">Start Date <span className="err_str">*</span></InputLabel>
+                          <InputLabel htmlFor="name">
+                            Start Date <span className="err_str">*</span>
+                          </InputLabel>
                           <DatePicker
                             className="myDatePicker"
                             id="startDate1"
@@ -369,12 +391,13 @@ export default function AddNewActivity() {
                             onChange={(date: any) => setStartDate1(date)}
                           />
                           {/* {errors.startDate1?.type &&  <span style={style}>{startDate1 === null ? "Start Date is Required *" : ""}</span>} */}
-
                         </Stack>
                       </Grid>
-                      <Grid item xs={12} md={3}>
+                      <Grid item xs={12} md={6}>
                         <Stack spacing={1}>
-                          <InputLabel htmlFor="name">End Date <span className="err_str">*</span></InputLabel>
+                          <InputLabel htmlFor="name">
+                            End Date <span className="err_str">*</span>
+                          </InputLabel>
                           <DatePicker
                             className="myDatePicker"
                             selected={endDate1}
@@ -395,7 +418,7 @@ export default function AddNewActivity() {
                   {(type1 && type1 === "Paid") || type1 === "" ? (
                     <Stack style={{ marginTop: "20px" }}>
                       <Grid container spacing={2}>
-                        <Grid item xs={12} md={6}>
+                        <Grid item xs={12} md={12}>
                           <Stack spacing={1}>
                             <InputLabel htmlFor="name">
                               Amount <span className="err_str">*</span>
@@ -411,8 +434,11 @@ export default function AddNewActivity() {
                               })}
                               onChange={(e) => setPrice1(e.target.value)}
                             />
-                          {errors.price1?.type &&  <span style={style}>{price1 === "" ? "Amount is Required *" : ""}</span>}
-                             
+                            {errors.price1?.type && (
+                              <span style={style}>
+                                {price1 === "" ? "Amount is Required *" : ""}
+                              </span>
+                            )}
                           </Stack>
                         </Grid>
                       </Grid>
@@ -422,7 +448,7 @@ export default function AddNewActivity() {
                   )}
                   <Stack style={{ marginTop: "20px" }}>
                     <Grid container spacing={2}>
-                      <Grid item xs={12} md={6}>
+                      <Grid item xs={12} md={12}>
                         <Stack spacing={1}>
                           <InputLabel htmlFor="name">
                             Short Description<span className="err_str"></span>
@@ -439,7 +465,7 @@ export default function AddNewActivity() {
                   </Stack>
                   <Stack style={{ marginTop: "20px" }}>
                     <Grid container spacing={2}>
-                      <Grid item xs={12} md={6}>
+                      <Grid item xs={12} md={12}>
                         <Stack spacing={1}>
                           <InputLabel htmlFor="name">
                             Description<span className="err_str"></span>
