@@ -119,7 +119,7 @@ export default function MiniDrawer() {
   React.useEffect(() => {
     commmonfunctions.GivenPermition().then((res) => {
       setuserdet(res);
-      const dttt = JSON.parse(res.userPrevilegs);
+      const dttt = JSON.parse(res?.userPrevilegs);
       console.log(dttt);
       const lgh = dttt?.user_permition?.length;
       if (lgh > 0) {
@@ -185,7 +185,7 @@ export default function MiniDrawer() {
         <Drawer variant="permanent" open={open}>
           <h1>Header</h1>
           <List>
-            {checkdashboard === true || userdet.roleId === 1 ? (
+            {checkdashboard === true || userdet?.roleId === 1 ? (
               <ListItem
                 className="sidebar-link"
                 disablePadding
@@ -216,7 +216,7 @@ export default function MiniDrawer() {
             ) : (
               ""
             )}
-            {checkcustomers === true || userdet.roleId === 1 ? (
+            {checkcustomers === true || userdet?.roleId === 1 ? (
               <ListItem
                 className="sidebar-link"
                 disablePadding
@@ -271,7 +271,7 @@ export default function MiniDrawer() {
             ) : (
               ""
             )}
-            {checkInvoices === true || userdet.roleId === 1 ? (
+            {checkInvoices === true || userdet?.roleId === 1 ? (
               <ListItem
                 className="sidebar-link"
                 disablePadding
@@ -329,7 +329,7 @@ export default function MiniDrawer() {
                 />
               </ListItemButton>
             </ListItem>
-            {checkActivity === true || userdet.roleId === 1 ? (
+            {checkActivity === true || userdet?.roleId === 1 ? (
               <ListItem
                 className="sidebar-link"
                 disablePadding
@@ -360,7 +360,7 @@ export default function MiniDrawer() {
             ) : (
               ""
             )}
-            {checkSalesInvoice === true || userdet.roleId === 1 ? (
+            {checkSalesInvoice === true || userdet?.roleId === 1 ? (
               <ListItem
                 className="sidebar-link"
                 disablePadding
@@ -391,7 +391,7 @@ export default function MiniDrawer() {
             ) : (
               ""
             )}
-            {userdet && userdet.roleId === 1 ? (
+            {userdet && userdet?.roleId === 1 ? (
               <ListItem
                 className="sidebar-link"
                 disablePadding
@@ -422,7 +422,7 @@ export default function MiniDrawer() {
             ) : (
               ""
             )}
-            {checkComposer === true || userdet.roleId === 1 ? (
+            {checkComposer === true || userdet?.roleId === 1 ? (
               <ListItem
                 className="sidebar-link"
                 disablePadding
