@@ -232,7 +232,7 @@ span.iexport {
   display: flex;
 }
 .idiv {
-  margin: 0 6px;
+  margin: 0 3px;
   cursor: pointer;
   padding: 0 !important;
   min-width: auto;

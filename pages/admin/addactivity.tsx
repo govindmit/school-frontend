@@ -198,7 +198,7 @@ export default function AddNewActivity() {
         shortDescription: content,
         description: descontent,
       };
-      
+
       await axios({
         method: "POST",
         url: `${api_url}/addactivity`,
@@ -208,19 +208,19 @@ export default function AddNewActivity() {
           "content-type": "multipart/form-data",
         },
       })
-      .then((data) => {
-        if (data.status === 201) {
+        .then((data) => {
+          if (data.status === 201) {
+            router.push("/admin/activitylist");
+            toast.success("Activity Added Successfully !");
+          }
+        })
+        .catch((err) => {
           router.push("/admin/activitylist");
-          toast.success("Activity Added Successfully !");
-        }
-      })
-      .catch((err) => {
-        router.push("/admin/activitylist");
-        toast.error(err?.response?.data?.message);
-      });
-      }
+          toast.error(err?.response?.data?.message);
+        });
+    }
   };
-     
+
   const style = {
     color: "red",
     fontSize: "12px",
@@ -235,7 +235,7 @@ export default function AddNewActivity() {
       setTypeError("Type field is required");
     }
   };
-  
+
   return (
     <>
       <Box sx={{ display: "flex" }}>
@@ -288,14 +288,19 @@ export default function AddNewActivity() {
               </div>
             </Stack>
             <Card
-              style={{ margin: "10px", padding: "15px" }}
+              style={{
+                margin: "10px",
+                padding: "15px",
+                width: "60%",
+                paddingBottom: "30px",
+              }}
               className="box-shadow"
             >
               <form onSubmit={handleSubmit(onSubmit)}>
                 <Grid>
                   <Stack style={{ marginTop: "10px" }}>
                     <Grid container spacing={2}>
-                      <Grid item xs={12} md={6}>
+                      <Grid item xs={12} md={12}>
                         <Stack spacing={1}>
                           <InputLabel htmlFor="name">
                             Activity Name <span className="err_str">*</span>
@@ -325,7 +330,7 @@ export default function AddNewActivity() {
                   </Stack>
                   <Stack style={{ marginTop: "20px" }}>
                     <Grid container spacing={2}>
-                      <Grid item xs={12} md={3}>
+                      <Grid item xs={12} md={6}>
                         <Stack spacing={1}>
                           <InputLabel htmlFor="name">
                             Type <span className="err_str">*</span>
@@ -351,7 +356,7 @@ export default function AddNewActivity() {
                           )}
                         </Stack>
                       </Grid>
-                      <Grid item xs={12} md={3}>
+                      <Grid item xs={12} md={6}>
                         <Stack spacing={1}>
                           <InputLabel htmlFor="name">
                             Status <span className="err_str">*</span>
@@ -382,7 +387,7 @@ export default function AddNewActivity() {
                   </Stack>
                   <Stack style={{ marginTop: "20px" }}>
                     <Grid container spacing={2}>
-                      <Grid item xs={12} md={3}>
+                      <Grid item xs={12} md={6}>
                         <Stack spacing={1}>
                           <InputLabel htmlFor="name">
                             Start Date <span className="err_str">*</span>
@@ -410,7 +415,7 @@ export default function AddNewActivity() {
                           )}
                         </Stack>
                       </Grid>
-                      <Grid item xs={12} md={3}>
+                      <Grid item xs={12} md={6}>
                         <Stack spacing={1}>
                           <InputLabel htmlFor="name">
                             End Date <span className="err_str">*</span>
@@ -447,7 +452,7 @@ export default function AddNewActivity() {
                   {(type1 && type1 === "Paid") || type1 === "" ? (
                     <Stack style={{ marginTop: "20px" }}>
                       <Grid container spacing={2}>
-                        <Grid item xs={12} md={6}>
+                        <Grid item xs={12} md={12}>
                           <Stack spacing={1}>
                             <InputLabel htmlFor="name">
                               Amount <span className="err_str">*</span>
@@ -481,7 +486,7 @@ export default function AddNewActivity() {
                   )}
                   <Stack style={{ marginTop: "20px" }}>
                     <Grid container spacing={2}>
-                      <Grid item xs={12} md={6}>
+                      <Grid item xs={12} md={12}>
                         <Stack spacing={1}>
                           <InputLabel htmlFor="name">
                             Short Description<span className="err_str"></span>
@@ -498,7 +503,7 @@ export default function AddNewActivity() {
                   </Stack>
                   <Stack style={{ marginTop: "20px" }}>
                     <Grid container spacing={2}>
-                      <Grid item xs={12} md={6}>
+                      <Grid item xs={12} md={12}>
                         <Stack spacing={1}>
                           <InputLabel htmlFor="name">
                             Description<span className="err_str"></span>

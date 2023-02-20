@@ -23,18 +23,22 @@ function ConfirmBox({
     <Dialog
       fullWidth
       open={open}
-      maxWidth="md"
+      maxWidth="xs"
       scroll="body"
       onClose={closeDialog}
     >
-      <DialogContent sx={{ px: 8, py: 6, position: "relative" }}>
-        <IconButton
-          size="medium"
-          onClick={closeDialog}
-          sx={{ position: "absolute", right: "1rem", top: "1rem" }}
-        >
-          X
-        </IconButton>
+      <DialogContent sx={{ px: 2, py: 2, position: "relative" }}>
+        <div className="delete-popup-close">
+          <Typography variant="h5">Delete {title}</Typography>
+          <IconButton
+            className="cross-button"
+            size="medium"
+            onClick={closeDialog}
+            sx={{}}
+          >
+            X
+          </IconButton>
+        </div>
 
         <Grid container spacing={6}>
           <Grid item xs={12}>
@@ -46,10 +50,8 @@ function ConfirmBox({
                 flexDirection: "column",
               }}
             >
-              <Typography variant="h5">Delete {title}</Typography>
-
               <Typography variant="body1">
-                Are you sure you want to delete this {title} ?
+                Are you sure want to delete from the records.?
               </Typography>
             </Box>
           </Grid>
@@ -60,19 +62,17 @@ function ConfirmBox({
           >
             <Button
               onClick={closeDialog}
-              size="medium"
-              variant="contained"
-              color="primary"
+              size="small"
+              style={{ color: "#F44336" }}
             >
               Cancel
             </Button>
             <Button
               onClick={deleteFunction}
-              size="medium"
-              variant="contained"
-              color="error"
+              size="small"
+              style={{ color: "#66BB6A" }}
             >
-              Delete
+              OK
             </Button>
           </Grid>
         </Grid>

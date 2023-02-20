@@ -605,6 +605,7 @@ export default function ActivityList() {
                             hover
                             tabIndex={-1}
                             role="checkbox"
+                            className="boder-bottom"
                           >
                             <TableCell padding="checkbox">
                               <Checkbox />
