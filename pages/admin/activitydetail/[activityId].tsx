@@ -14,7 +14,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-import { api_url, base_url } from "../../api/hello";
+import { api_url, auth_token, base_url } from "../../api/hello";
 import moment from "moment";
 import "react-datepicker/dist/react-datepicker.css";
 import MenuItem from "@mui/material/MenuItem";
@@ -73,6 +73,9 @@ export default function Guardians() {
         `${api_url}/getactivitydetails/${activityId}`,
         {
           method: "GET",
+          headers: {
+            Authorization: auth_token,
+          },
         }
       );
       const res = await response.json();
@@ -88,7 +91,7 @@ export default function Guardians() {
     getActivityDetail();
   }, []);
   let data = "<h1>hello</h1>";
-  console.log(htmlData, "htmtdata");
+  
   return (
     <>
       <Box sx={{ display: "flex" }}>
@@ -140,7 +143,7 @@ export default function Guardians() {
                 </Link>
               </div>
             </Stack>
-            <Card
+             <Card
               style={{ margin: "10px", padding: "15px" }}
               className="box-shadow"
             >
@@ -181,10 +184,8 @@ export default function Guardians() {
                   )}
                 </div>
               </div>
-
-              {/* <p>{activity[0]?.description}</p> */}
-              <div
-                className="boder-bottom font-size-15"
+               {/* <p>{activity[0]?.description}</p>  */}
+               <div
                 dangerouslySetInnerHTML={{
                   __html: activity[0]?.description,
                 }}
@@ -195,8 +196,9 @@ export default function Guardians() {
                   __html: activity[0]?.shortDescription,
                 }}
               ></div>
-              <br />
-            </Card>
+              <br/>
+            
+            </Card> 
           </div>
         </Box>
       </Box>

@@ -32,7 +32,7 @@ import { BiFilterAlt, BiShow } from "react-icons/bi";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBin5Fill, RiFileCopyLine } from "react-icons/ri";
 import MiniDrawer from "../sidebar";
-import { api_url, auth_token } from "../api/hello";
+import { api_url, auth_token, base_url } from "../api/hello";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -103,7 +103,6 @@ export default function ActivityList() {
     setValue(newValue);
   };
 
-
   // verify user login
   let logintoken: any;
   const router = useRouter();
@@ -112,20 +111,20 @@ export default function ActivityList() {
     if (logintoken === undefined || logintoken === null) {
       router.push("/");
     }
-    commmonfunctions.GivenPermition().then(res => {
+    commmonfunctions.GivenPermition().then((res) => {
       if (res.roleId == 1) {
         setroleid(res.roleId);
         //router.push("/userprofile");
       } else if (res.roleId > 1) {
-        commmonfunctions.ManageActivity().then(res => {
+        commmonfunctions.ManageActivity().then((res) => {
           if (!res) {
             router.push("/userprofile");
           } else {
             setcustpermit(res);
           }
-        })
+        });
       }
-    })
+    });
   }, []);
 
   useEffect(() => {
@@ -135,23 +134,22 @@ export default function ActivityList() {
   //get activites
   const url = `${api_url}/getActivity`;
   const fetchData = async () => {
-      try {
-        const response = await fetch(url, {
-          method: "POST",
-          headers: {
-            Authorization: auth_token,
-            "x-access-token": logintoken,
-          },
-        });
-        const json = await response.json();
-        setactivites(json.data);
-        setFullactivites(json.data);
-        setsearchdata(json.data);
-        setAll(json.data.length);
-      } catch (error:any) {
-        console.log("error", error);
-      }
-    
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          Authorization: auth_token,
+          "x-access-token": logintoken,
+        },
+      });
+      const json = await response.json();
+      setactivites(json.data);
+      setFullactivites(json.data);
+      setsearchdata(json.data);
+      setAll(json.data.length);
+    } catch (error: any) {
+      console.log("error", error);
+    }
   };
 
   //searching
@@ -243,7 +241,7 @@ export default function ActivityList() {
     setdeleteConfirmBoxOpen(true);
     setDeleteData(data);
   }
- 
+
   async function deleteUser() {
     await axios({
       method: "DELETE",
@@ -261,6 +259,46 @@ export default function ActivityList() {
         console.error("Error:", error);
       });
   }
+
+  function fallbackCopyTextToClipboard(text: any) {
+    var textArea = document.createElement("textarea");
+    textArea.value = text;
+
+    // Avoid scrolling to bottom
+    textArea.style.top = "0";
+    textArea.style.left = "0";
+    textArea.style.position = "fixed";
+
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    try {
+      var successful = document.execCommand("copy");
+      var msg = successful ? "successful" : "unsuccessful";
+      console.log("Fallback: Copying text command was " + msg);
+    } catch (err) {
+      console.error("Fallback: Oops, unable to copy", err);
+    }
+
+    document.body.removeChild(textArea);
+  }
+
+  const copyCode = (text: any) => {
+    let makeLink = `${base_url}${router?.pathname}/${text?.id}`;
+    if (!navigator.clipboard) {
+      fallbackCopyTextToClipboard(makeLink);
+      return;
+    }
+    navigator.clipboard.writeText(makeLink).then(
+      function () {
+        console.log("Async: Copying to clipboard was successful!");
+      },
+      function (err) {
+        console.error("Async: Could not copy text: ", err);
+      }
+    );
+  };
 
   // add activity from popup
   function handleNewActivityFormOpen() {
@@ -285,12 +323,11 @@ export default function ActivityList() {
     setactivites(upcoming);
   };
   const handleAll = () => {
-    if(filterStatus !== "" && filterType !== ""){
+    if (filterStatus !== "" && filterType !== "") {
       setactivites(allListData);
-    }else{
+    } else {
       fetchData();
     }
-    
   };
   const handlePast = () => {
     setactivites(past);
@@ -340,7 +377,7 @@ export default function ActivityList() {
                   ACTIVITY
                 </Typography>
               </Stack>
-              {custpermit && custpermit.canAdd === true || roleid === 1 ? (
+              {(custpermit && custpermit.canAdd === true) || roleid === 1 ? (
                 <Link href="/admin/addactivity">
                   <Button
                     className="button-new"
@@ -351,7 +388,10 @@ export default function ActivityList() {
                   >
                     <b>Add New Activity</b>
                   </Button>
-                </Link>) : ""}
+                </Link>
+              ) : (
+                ""
+              )}
             </Stack>
             {/*bread cump */}
             <Card
@@ -478,42 +518,45 @@ export default function ActivityList() {
                                         style={{ marginBottom: "10px" }}
                                         className="filtercss"
                                       >
-                                      <div onClick={popupState.close}>
-                                        <Button
-                                          size="small"
-                                          type="submit"
-                                          variant="contained"
-                                          color="primary"
-                                          sx={{ width: 150 }}
-                                          // onClick={popupState.close}
-                                          onClick={(e) => filterApply(e)}
-                                        >
-                                          <b>Apply Filter</b>
-                                          <span
-                                            style={{
-                                              fontSize: "2px",
-                                              paddingLeft: "10px",
-                                            }}
-                                          ></span>
-                                        </Button>
+                                        <div onClick={popupState.close}>
+                                          <Button
+                                            size="small"
+                                            type="submit"
+                                            variant="contained"
+                                            color="primary"
+                                            sx={{ width: 150 }}
+                                            // onClick={popupState.close}
+                                            onClick={(e) => filterApply(e)}
+                                          >
+                                            <b>Apply Filter</b>
+                                            <span
+                                              style={{
+                                                fontSize: "2px",
+                                                paddingLeft: "10px",
+                                              }}
+                                            ></span>
+                                          </Button>
                                         </div>
                                         &nbsp;&nbsp;
-                                        <div onClick={popupState.close} className="resetfiltercss">
-                                        <Button
-                                          size="small"
-                                          variant="contained"
-                                          color="primary"
-                                          sx={{ width: 150 }}
-                                          onClick={ResetFilterValue}
+                                        <div
+                                          onClick={popupState.close}
+                                          className="resetfiltercss"
                                         >
-                                          <b>Reset Filter</b>
-                                          <span
-                                            style={{
-                                              fontSize: "2px",
-                                              paddingLeft: "10px",
-                                            }}
-                                          ></span>
-                                        </Button>
+                                          <Button
+                                            size="small"
+                                            variant="contained"
+                                            color="primary"
+                                            sx={{ width: 150 }}
+                                            onClick={ResetFilterValue}
+                                          >
+                                            <b>Reset Filter</b>
+                                            <span
+                                              style={{
+                                                fontSize: "2px",
+                                                paddingLeft: "10px",
+                                              }}
+                                            ></span>
+                                          </Button>
                                         </div>
                                       </Grid>
                                     </Grid>
@@ -530,7 +573,7 @@ export default function ActivityList() {
                         <Box>
                           <MenuItem
                             {...bindTrigger(popupState)}
-                          //onClick={ExportCSV}
+                            //onClick={ExportCSV}
                           >
                             Export
                             {/* <KeyboardArrowDownIcon /> */}
@@ -666,7 +709,8 @@ export default function ActivityList() {
                                 spacing={1}
                                 className="action"
                               >
-                                {custpermit && custpermit.canView === true || roleid === 1 ? (
+                                {(custpermit && custpermit.canView === true) ||
+                                roleid === 1 ? (
                                   <IconButton className="action-view">
                                     <Link
                                       href={`/admin/activitydetail/${id}`}
@@ -676,8 +720,12 @@ export default function ActivityList() {
                                     >
                                       <BiShow />
                                     </Link>
-                                  </IconButton>) : ""}
-                                {custpermit && custpermit.canEdit === true || roleid === 1 ? (
+                                  </IconButton>
+                                ) : (
+                                  ""
+                                )}
+                                {(custpermit && custpermit.canEdit === true) ||
+                                roleid === 1 ? (
                                   <Link
                                     href={`/admin/editActivity/${id}`}
                                     style={{
@@ -687,30 +735,32 @@ export default function ActivityList() {
                                     <IconButton className="action-edit">
                                       <FiEdit />
                                     </IconButton>
-                                  </Link>) : ""}
+                                  </Link>
+                                ) : (
+                                  ""
+                                )}
 
-                                {custpermit && custpermit.canDelete === true || roleid === 1 ? (
+                                {(custpermit &&
+                                  custpermit.canDelete === true) ||
+                                roleid === 1 ? (
                                   <IconButton
                                     className="action-delete"
                                     style={{ color: "#F95A37" }}
                                     onClick={() => openDelete(item)}
                                   >
                                     <RiDeleteBin5Fill />
-                                  </IconButton>) : ""}
-                                {/* <Link
-                                  href={`/admin/activitydetail/${id}`}
-                                  style={{
-                                    color: "#26CEB3",
-                                  }}
-                                >
-                                <IconButton
-                                  className="action-delete"
+                                  </IconButton>
+                                ) : (
+                                  ""
+                                )}
+                                <Button
+                                  size="small"
+                                  className="action-delete copycss"
                                   style={{ color: "#F95A37" }}
-                                  onClick={() => openCopy(item)}
+                                  onClick={() => copyCode(item)}
                                 >
                                   <RiFileCopyLine />
-                                </IconButton>
-                                </Link> */}
+                                </Button>
                               </Stack>
                             </TableCell>
                           </TableRow>

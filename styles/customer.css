@@ -74,3 +74,39 @@ input {
 .resetfiltercss {
   margin-left: 25px;
 }
+.salesStatus{
+  font-size: 14px;
+  color: rgb(2, 197, 9) !important;
+  font-weight: 600;
+}
+.btndetail{
+  height: 20px !important;
+  font-size: 10px !important;
+  text-transform: none !important;
+  color: #528b2f !important;
+  background: #d7fddd !important;
+  font-weight: 700 !important;
+}
+.invcss{
+  color: #2bd1e2 !important;
+}
+.paidcss{
+  height: 29px !important;
+  text-transform: none !important;
+}
+
+.linecss {
+  border-bottom: 1px solid #d3cccc;
+  margin-top: 10px;
+}
+.confirmcss{
+  margin-top: 18px;
+  margin-left: 27px;
+}
+.deleteusercss{
+  margin-top: 18px;
+  margin-left: 27px;
+}
+.copycss{
+  min-width: 33px !important;
+}
