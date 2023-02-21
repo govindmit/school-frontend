@@ -23,6 +23,7 @@ import {
   Menu,
   Grid,
   InputLabel,
+  Modal,
 } from "@mui/material";
 import moment from "moment";
 import Box from "@mui/material/Box";
@@ -82,12 +83,11 @@ export default function ActivityList() {
   const [searchquery, setsearchquery] = useState("");
   const [searchdata, setsearchdata] = useState([]);
   const [All, setAll] = useState(0);
-  const [allData, setAllData] = useState(0);
+  const [activityName, setActivityName] = useState("");
   const [Upcommig, setUpcommig] = useState(0);
   const [Past, setPast] = useState(0);
   const [Current, setCurrent] = useState(0);
   const [newActivityOpen, setnewActivityOpen] = React.useState(false);
-  // const [allNew, setAllNew] = React.useState(false);
   const [editActivityOpen, seteditActivityOpen] = React.useState(false);
   const [tabFilterData, settabFilterData] = useState<any>([]);
   const [deleteConfirmBoxOpen, setdeleteConfirmBoxOpen] = React.useState(false);
@@ -99,6 +99,10 @@ export default function ActivityList() {
   const todayDate = moment(new Date()).format("DD/MM/YYYY");
   const [custpermit, setcustpermit] = useState<any>([]);
   const [roleid, setroleid] = useState(0);
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const [activeTab, setActiveTab] = useState("");
+
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -156,7 +160,15 @@ export default function ActivityList() {
   const handleSearch = (e: any) => {
     setsearchquery(e.target.value);
     if (e.target.value === "") {
-      setactivites(searchdata);
+      if (activeTab === "upcoming") {
+        setactivites(upcoming);
+      } else if (activeTab === "past") {
+        setactivites(past);
+      } else if (activeTab === "current") {
+        setactivites(current);
+      } else {
+        setactivites(searchdata);
+      }
     } else {
       const filterres = searchdata.filter((item: any) => {
         return (
@@ -207,8 +219,6 @@ export default function ActivityList() {
           setFullactivites(res?.data?.data);
           setsearchdata(res?.data?.data);
           setAll(res?.data?.data.length);
-          // setAllNew(true);
-          // setAllData(res?.data?.data);
         }
       })
       .catch((error: any) => {
@@ -238,26 +248,9 @@ export default function ActivityList() {
   //delete user
   const [deleteData, setDeleteData] = useState<any>({});
   function openDelete(data: any) {
-    setdeleteConfirmBoxOpen(true);
+    setActivityName(data?.name);
+    handleOpen();
     setDeleteData(data);
-  }
-
-  async function deleteUser() {
-    await axios({
-      method: "DELETE",
-      url: `${api_url}/deleteactivity/${deleteData.id}`,
-      headers: {
-        Authorization: auth_token,
-      },
-    })
-      .then((data) => {
-        toast.success("Activity Deleted Successfully !");
-        setdeleteConfirmBoxOpen(false);
-        fetchData();
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
   }
 
   function fallbackCopyTextToClipboard(text: any) {
@@ -292,7 +285,8 @@ export default function ActivityList() {
     }
     navigator.clipboard.writeText(makeLink).then(
       function () {
-        console.log("Async: Copying to clipboard was successful!");
+        toast.success("Copied !");
+        // console.log("Async: Copying to clipboard was successful!");
       },
       function (err) {
         console.error("Async: Could not copy text: ", err);
@@ -304,23 +298,33 @@ export default function ActivityList() {
   function handleNewActivityFormOpen() {
     setnewActivityOpen(true);
   }
-  const closePoP = (data: any) => {
-    setnewActivityOpen(false);
-    fetchData();
-  };
 
-  //edit activity popup
-  function handleEditActivityOpen(id: any) {
-    seteditActivityOpen(true);
-    seteditid(id);
-  }
-  const closeEditPoP = (data: any) => {
-    fetchData();
-    seteditActivityOpen(false);
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleActivityDelete = async () => {
+    await axios({
+      method: "DELETE",
+      url: `${api_url}/deleteactivity/${deleteData?.id}`,
+      headers: {
+        Authorization: auth_token,
+      },
+    })
+      .then((data) => {
+        toast.success("Activity Deleted Successfully !");
+        handleClose();
+        fetchData();
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   };
 
   const handleUpcoming = () => {
+    setActiveTab("upcoming");
     setactivites(upcoming);
+    setPage(1);
+    DATA.jump(1);
   };
   const handleAll = () => {
     if (filterStatus !== "" && filterType !== "") {
@@ -330,15 +334,73 @@ export default function ActivityList() {
     }
   };
   const handlePast = () => {
+    setActiveTab("past");
     setactivites(past);
+    setPage(1);
+    DATA.jump(1);
   };
   const handleCurrent = () => {
+    setActiveTab("current");
     setactivites(current);
+    setPage(1);
+    DATA.jump(1);
   };
+
+  const style1 = {
+    position: "absolute" as "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 500,
+    bgcolor: "background.paper",
+    border: "1px solid grey",
+    borderRadius: "8px",
+    boxShadow: 24,
+    // p: 4,
+  };
+
   return (
     <>
       <Box sx={{ display: "flex" }}>
         <MiniDrawer />
+        <Modal
+          keepMounted
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="keep-mounted-modal-title"
+          aria-describedby="keep-mounted-modal-description"
+        >
+          <Box sx={style1}>
+            <Typography
+              id="keep-mounted-modal-title"
+              variant="h6"
+              component="h2"
+              className="deleteusercss"
+            >
+              Delete{" "}
+              {activityName && activityName !== ""
+                ? activityName + " " + "activity"
+                : "Activity"}
+            </Typography>
+            <div className="linecss"></div>
+            <Typography
+              id="keep-mounted-modal-description"
+              sx={{ mt: 2 }}
+              className="confirmcss"
+            >
+              Are you sure want to delete from the records.
+            </Typography>
+            <br />
+            <div className="popupcss" style={{ textAlign: "end" }}>
+              <Button color="error" onClick={handleClose}>
+                Cancel
+              </Button>
+              <Button color="success" onClick={handleActivityDelete}>
+                Ok
+              </Button>
+            </div>
+          </Box>
+        </Modal>
         <Box component="main" sx={{ flexGrow: 1 }}>
           <div className="guardianBar">
             {/*bread cump */}
@@ -805,13 +867,6 @@ export default function ActivityList() {
           </div>
         </Box>
       </Box>
-
-      <ConfirmBox
-        open={deleteConfirmBoxOpen}
-        closeDialog={() => setdeleteConfirmBoxOpen(false)}
-        title={deleteData?.name}
-        deleteFunction={deleteUser}
-      />
       <ToastContainer />
     </>
   );

@@ -90,6 +90,7 @@ export default function SalesOrderList() {
   const [roleid, setroleid] = useState(0);
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
+  const [activeTab, setActiveTab] = useState("");
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -148,7 +149,13 @@ export default function SalesOrderList() {
   const handleSearch = (e: any) => {
     setsearchquery(e.target.value);
     if (e.target.value === "") {
-      setSalesOrder(searchdata);
+      if (activeTab === "Paid") {
+        setSalesOrder(paidOrder);
+      } else if (activeTab === "Delete") {
+        setSalesOrder(deleteOrder);
+      } else {
+        setSalesOrder(searchdata);
+      }
     } else {
       const filterres = searchdata.filter((item: any) => {
         return (
@@ -182,6 +189,7 @@ export default function SalesOrderList() {
   const PER_PAGE = row_per_page;
   const count = Math.ceil(salesOrder.length / PER_PAGE);
   const DATA = usePagination(salesOrder, PER_PAGE);
+
   const handlePageChange = (e: any, p: any) => {
     setPage(p);
     DATA.jump(p);
@@ -217,7 +225,10 @@ export default function SalesOrderList() {
   };
 
   const handleDelete = () => {
+    setActiveTab("Delete");
     setSalesOrder(deleteOrder);
+    setPage(1);
+    DATA.jump(1);
   };
   const handleAll = () => {
     if (filterStatus !== "" && filterType !== "") {
@@ -227,7 +238,10 @@ export default function SalesOrderList() {
     }
   };
   const handlePaid = () => {
+    setActiveTab("Paid");
     setSalesOrder(paidOrder);
+    setPage(1);
+    DATA.jump(1);
   };
 
   const style1 = {
@@ -238,7 +252,7 @@ export default function SalesOrderList() {
     width: 500,
     bgcolor: "background.paper",
     border: "1px solid grey",
-    borderRadius:"8px",
+    borderRadius: "8px",
     boxShadow: 24,
     // p: 4,
   };
@@ -261,10 +275,14 @@ export default function SalesOrderList() {
               component="h2"
               className="deleteusercss"
             >
-              Delete User
+              Delete Order
             </Typography>
-           <div className="linecss"></div>
-            <Typography id="keep-mounted-modal-description" sx={{ mt: 2 }} className="confirmcss">
+            <div className="linecss"></div>
+            <Typography
+              id="keep-mounted-modal-description"
+              sx={{ mt: 2 }}
+              className="confirmcss"
+            >
               Are you sure want to delete from the records.
             </Typography>
             <br />

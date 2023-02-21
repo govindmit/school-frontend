@@ -24,50 +24,9 @@ import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
 import { api_url, auth_token } from "../../../api/hello";
 import moment from "moment";
-//   import EditCustomer from "../../editcustomer";
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
-function a11yProps(index: number) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
-}
 
 export default function ViewCustomer() {
-  const [value, setValue] = React.useState(0);
   const [userDet, setUserDet] = useState<any>([]);
-  const [invoice, setUserinvoice] = useState<any>([]);
-  const [closeinvoice, setCloseinvoice] = useState<any>([]);
-  const [editCustOpen, seteditCustOpen] = React.useState(false);
-  const [editid, seteditid] = useState<any>(0);
-
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
-  };
-
   const router = useRouter();
   const { id } = router.query;
 
@@ -86,49 +45,13 @@ export default function ViewCustomer() {
     }
   };
 
-  const getUserInvoice = async () => {
-    const response = await fetch(`${api_url}/getInvoicebyUser/${id}`, {
-      method: "GET",
-      headers: {
-        Authorization: auth_token,
-      },
-    });
-    const res = await response.json();
-    console.log("hellooooo view", res);
-    setUserinvoice(res);
-  };
-  const getUserCloseInvoice = async () => {
-    const response = await fetch(
-      `${api_url}/getInvoicebyUser/${id}?key=close`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: auth_token,
-        },
-      }
-    );
-    const res = await response.json();
-    setCloseinvoice(res);
-  };
-
   useEffect(() => {
     getUserDet();
-
-    // getUserCloseInvoice();
-    // getUserInvoice();
   }, []);
-  console.log(value, "value");
 
-  //edit customer
-  function handleEditCustomerOpen(id: any) {
-    console.log(id);
-    seteditCustOpen(true);
-    seteditid(id);
-  }
-  const closeEditPoP = (data: any) => {
-    seteditCustOpen(false);
-    getUserDet();
-  };
+  let description =
+    userDet && userDet?.activity_shortDescription?.replace(/&nbsp;/g, " ");
+  let removeTags = description && description?.replace(/(<([^>]+)>)/gi, "");
 
   return (
     <>
@@ -235,14 +158,26 @@ export default function ViewCustomer() {
                           >
                             Status :
                           </Typography>
-                          <Button variant="contained" size="small" className="paidcss">
+                          <Button
+                            variant="contained"
+                            size="small"
+                            className="paidcss"
+                          >
                             Paid
                           </Button>
                         </CardContent>
                       </Box>
                     </Stack>
-                    <div style={{ padding: "8px", display:"flex"}} className="text-grey">
-                      <p>Date :</p> <p style={{marginLeft:"38%"}}>{moment(userDet?.user_create_Date).format("MMM DD, YYYY")}</p>
+                    <div
+                      style={{ padding: "8px", display: "flex" }}
+                      className="text-grey"
+                    >
+                      <p>Date :</p>{" "}
+                      <p style={{ marginLeft: "38%" }}>
+                        {moment(userDet?.user_create_Date).format(
+                          "MMM DD, YYYY"
+                        )}
+                      </p>
                     </div>
                   </CardContent>
                 </Card>
@@ -292,27 +227,62 @@ export default function ViewCustomer() {
                         </TableHead>
                         <TableBody>
                           <TableRow hover tabIndex={-1}>
-                            <TableCell align="left" className="invcss" style={{fontWeight:"500"}}>INV-{userDet && userDet?.id}</TableCell>
-                            <TableCell align="left"><span style={{fontWeight:"500"}}>{userDet && userDet?.activity_name}&nbsp; <Button className="btndetail" variant="contained" size="small">
-          Service
-        </Button></span> <br/><p style={{marginTop:"4px"}}>{userDet && userDet?.activity_shortDescription?.replace( /(<([^>]+)>)/ig, '')}</p></TableCell>
+                            <TableCell
+                              align="left"
+                              className="invcss"
+                              style={{ fontWeight: "500" }}
+                            >
+                              INV-{userDet && userDet?.id}
+                            </TableCell>
+                            <TableCell align="left">
+                              <span style={{ fontWeight: "500" }}>
+                                {userDet && userDet?.activity_name}&nbsp;{" "}
+                                <Button
+                                  className="btndetail"
+                                  variant="contained"
+                                  size="small"
+                                >
+                                  Service
+                                </Button>
+                              </span>{" "}
+                              <br />
+                              <p style={{ marginTop: "4px" }}>
+                                {removeTags && removeTags}
+                              </p>
+                            </TableCell>
                             <TableCell align="left"></TableCell>
                             <TableCell align="left"></TableCell>
-                            <TableCell align="left">$ {userDet && userDet?.amount}</TableCell>
+                            <TableCell align="left">
+                              $ {userDet && userDet?.amount}
+                            </TableCell>
                           </TableRow>
                           <TableRow hover tabIndex={1}>
                             <TableCell align="left"></TableCell>
                             <TableCell align="left"></TableCell>
                             <TableCell align="left"></TableCell>
-                            <TableCell align="left" style={{fontWeight:"600"}}>SUBTOTAL</TableCell>
-                            <TableCell align="left">$ {userDet && userDet?.amount}</TableCell>
+                            <TableCell
+                              align="left"
+                              style={{ fontWeight: "600" }}
+                            >
+                              SUBTOTAL
+                            </TableCell>
+                            <TableCell align="left">
+                              $ {userDet && userDet?.amount}
+                            </TableCell>
                           </TableRow>
                           <TableRow hover tabIndex={2}>
                             <TableCell align="left"></TableCell>
                             <TableCell align="left"></TableCell>
                             <TableCell align="left"></TableCell>
-                            <TableCell align="left"  style={{fontWeight:"600"}}>TOTAL</TableCell>
-                            <TableCell align="left">$ {userDet && userDet?.amount}</TableCell>
+                            <TableCell
+                              align="left"
+                              style={{ fontWeight: "600" }}
+                            >
+                              TOTAL
+                            </TableCell>
+                            <TableCell align="left">
+                              $ {userDet && userDet?.amount}
+                            </TableCell>
                           </TableRow>
                         </TableBody>
                       </Table>
