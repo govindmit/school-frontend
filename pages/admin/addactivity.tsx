@@ -210,8 +210,8 @@ export default function AddNewActivity() {
       })
         .then((data) => {
           if (data.status === 201) {
-            router.push("/admin/activitylist");
             toast.success("Activity Added Successfully !");
+            router.push("/admin/activitylist");
           }
         })
         .catch((err) => {
@@ -275,7 +275,7 @@ export default function AddNewActivity() {
                   gutterBottom
                   style={{ fontWeight: "bold", color: "#333333" }}
                 >
-                  VIEW ACTIVITY
+                  ADD ACTIVITY
                 </Typography>
               </Stack>
               <div className="buycss" style={{ textAlign: "end" }}>
