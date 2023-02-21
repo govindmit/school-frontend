@@ -11,20 +11,108 @@ import {
     TableRow,
     TableCell,
     TableBody,
+    InputLabel,
+    OutlinedInput,
+    Button,
 } from "@mui/material";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
 import MiniDrawer from "../../../sidebar";
 import DeleteFormDialog from "./deletedialougebox";
+import { api_url, auth_token } from "../../../api/hello";
+import { SubmitHandler, useForm } from "react-hook-form";
+import axios from "axios";
+import { toast } from "react-toastify";
+import ApproveCompForm from "./approvecmp";
+const style = {
+    color: "red",
+    fontSize: "12px",
+    fontWeight: "bold",
+};
+type FormValues = {
+    message: number;
+    status: number;
+};
+
 export default function ViewCreditNotes(props: any) {
+    const [creditNoteDet, setcreditNoteDet] = React.useState<any>([]);
     const [deleteOpen, setDeleteOpen] = React.useState(false);
+    const [rejectOpen, setrejectOpen] = React.useState(false);
+    const [approveOpen, setapproveOpen] = React.useState(false);
+    useEffect(() => {
+        fetchData();
+    }, []);
+    //get credit notes
+    const url = `${api_url}/getCreditNotesDetails/${props.id}`;
+    const fetchData = async () => {
+        try {
+            const response = await fetch(url, {
+                method: "GET",
+                headers: {
+                    Authorization: auth_token,
+                },
+            });
+            const json = await response.json();
+            setcreditNoteDet(json.data[0]);
+        } catch (error: any) {
+            console.log("error", error);
+        }
+    };
     //open close delete popup boxes
     function handleDeleteOpen() {
         setDeleteOpen(true);
+        setrejectOpen(false)
     }
     const closePoP = (data: any) => {
         setDeleteOpen(false);
     };
+    //open close approve popup boxes
+    function handleApproveOpen() {
+        setapproveOpen(true);
+        setrejectOpen(false)
+    }
+    const closePoPAppr = (data: any) => {
+        setapproveOpen(false);
+    };
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors },
+    } = useForm<FormValues>();
+    const onSubmit: SubmitHandler<FormValues> = async (data: any) => {
+        const reqData = {
+            name: data.message,
+            status: 2
+        };
+        await axios({
+            method: "put",
+            url: `${api_url}/editCreditNotes/${props.id}`,
+            data: reqData,
+            headers: {
+                Authorization: auth_token,
+            },
+        })
+            .then((data) => {
+                if (data) {
+                    toast.success("Credit Notes Updated Successfully !");
+                    reset();
+                    setrejectOpen(false)
+                }
+            })
+            .catch((error) => {
+                toast.error(" Internal Server Error !");
+            });
+    };
+
+    //reject open form
+    function handleRejectOpen() {
+        setrejectOpen(true)
+    }
+    function closeRejectForm() {
+        setrejectOpen(false)
+    }
+
     return (
         <>
             <Box sx={{ display: "flex" }}>
@@ -73,8 +161,8 @@ export default function ViewCreditNotes(props: any) {
                                     <b style={{ fontSize: "26px" }}> $174.00</b>
                                 </Typography>
                                 <Stack direction="row">
-                                    <Typography style={{ color: "#02C509" }}><b>Approved</b></Typography>
-                                    <Typography style={{ marginLeft: "20px", color: "red" }}><b>Reject</b></Typography>
+                                    <Stack onClick={handleApproveOpen} style={{ color: "#02C509", cursor: "pointer" }}><b>Approved</b></Stack>
+                                    <Stack onClick={handleRejectOpen} style={{ marginLeft: "20px", color: "red", cursor: "pointer" }}><b>Reject</b></Stack>
                                     <Stack onClick={handleDeleteOpen} style={{ marginLeft: "20px", color: "red", cursor: "pointer" }}><b>Delete</b></Stack>
                                 </Stack>
                             </Stack>
@@ -113,7 +201,10 @@ export default function ViewCreditNotes(props: any) {
                                                             <div id="profileImage"><span id="fullName">A</span></div>
                                                             <CardContent sx={{ flex: 1 }} className="text-grey">
                                                                 <Typography component="h4" variant="h4">
-                                                                    Acme Corporation
+                                                                    {creditNoteDet.name}
+                                                                </Typography>
+                                                                <Typography component="h4">
+                                                                    {creditNoteDet.email1}
                                                                 </Typography>
                                                                 <Typography
                                                                     variant="subtitle1"
@@ -172,7 +263,7 @@ export default function ViewCreditNotes(props: any) {
                                                     </Typography>
                                                 </Stack>
                                             </Stack>
-                                            <Typography>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one </Typography>
+                                            <Typography>{creditNoteDet.message}</Typography>
                                         </CardContent>
                                     </Card>
                                 </Grid>
@@ -227,30 +318,100 @@ export default function ViewCreditNotes(props: any) {
                                                         <TableCell align="left">Adam Johans
                                                             Lorem ipsum dollar sit ammet</TableCell>
                                                         <TableCell align="left">10</TableCell>
-                                                        <TableCell align="left">$ 237.5</TableCell>
-                                                        <TableCell align="left">$ 237.5</TableCell>
+                                                        <TableCell align="left">{creditNoteDet.amount}</TableCell>
+                                                        <TableCell align="left">{creditNoteDet.amount}</TableCell>
                                                     </TableRow>
                                                     <TableRow hover tabIndex={1}>
                                                         <TableCell align="left" colSpan={3}></TableCell>
                                                         <TableCell align="left" style={{ fontWeight: "600" }}>SUBTOTAL</TableCell>
-                                                        <TableCell align="left">$ 237.5</TableCell>
+                                                        <TableCell align="left">{creditNoteDet.amount}</TableCell>
                                                     </TableRow>
                                                     <TableRow hover tabIndex={2}>
                                                         <TableCell align="left" colSpan={3}></TableCell>
                                                         <TableCell align="left" style={{ fontWeight: "600" }}>TOTAL</TableCell>
-                                                        <TableCell align="left">$ 237.5</TableCell>
+                                                        <TableCell align="left">{creditNoteDet.amount}</TableCell>
                                                     </TableRow>
                                                 </TableBody>
                                             </Table>
                                         </CardContent>
                                     </Card>
                                 </Grid>
+                                {rejectOpen ? (<Grid item xs={12} md={12} style={{ marginTop: "20px" }}>
+                                    <Card sx={{ minWidth: 275 }}>
+                                        <form onSubmit={handleSubmit(onSubmit)}>
+                                            <CardContent>
+                                                <Stack
+                                                    direction="row"
+                                                    justifyContent="space-between"
+                                                >
+                                                    <Stack>
+                                                        <Typography
+                                                            variant="h5"
+
+                                                            style={{
+                                                                fontWeight: "bold",
+                                                                color: "#333333",
+                                                            }}
+                                                        >
+                                                            Reason  for reject this request
+                                                        </Typography>
+                                                    </Stack>
+
+                                                </Stack>
+                                                <Table style={{ marginTop: "20px" }}>
+                                                    <Stack>
+                                                        <Grid container spacing={3}>
+                                                            <Grid item xs={12} md={6}>
+                                                                <Stack spacing={1}>
+                                                                    <InputLabel htmlFor="name">
+                                                                        Your comments on this request                                                                </InputLabel>
+                                                                    <OutlinedInput
+                                                                        type="text"
+                                                                        id="name"
+                                                                        fullWidth
+                                                                        size="small"
+                                                                        {...register("message", {
+                                                                            required: true,
+                                                                        })}
+                                                                    />
+                                                                    {errors.message?.type === "required" && (
+                                                                        <span style={style}>Field is Required *</span>
+                                                                    )}
+                                                                </Stack>
+                                                            </Grid>
+                                                            <Grid item xs={12}>
+                                                                <Button
+                                                                    type="submit"
+                                                                    variant="contained"
+                                                                    color="primary"
+                                                                >
+                                                                    <b>SAVE</b>
+                                                                </Button>
+                                                                <Button
+                                                                    variant="contained"
+                                                                    style={{
+                                                                        marginLeft: "10px",
+                                                                        backgroundColor: "#F95A37",
+                                                                    }}
+                                                                    onClick={closeRejectForm}
+                                                                >
+                                                                    <b>CANCEL</b>
+                                                                </Button>
+                                                            </Grid>
+                                                        </Grid>
+                                                    </Stack>
+                                                </Table>
+                                            </CardContent>
+                                        </form>
+                                    </Card>
+                                </Grid>) : ""}
                             </Grid>
                         </Grid>
                     </div>
                 </Box>
             </Box>
-            <DeleteFormDialog open={deleteOpen} closeDialog={closePoP} />
+            <DeleteFormDialog id={props.id} open={deleteOpen} closeDialog={closePoP} />
+            <ApproveCompForm id={props.id} open={approveOpen} closeDialog={closePoPAppr} />
         </>
     );
 }

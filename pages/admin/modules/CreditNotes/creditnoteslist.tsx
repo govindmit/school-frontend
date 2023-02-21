@@ -23,24 +23,22 @@ import {
     Menu,
     Grid,
     InputLabel,
+    Autocomplete,
 } from "@mui/material";
-import moment from "moment";
 import Box from "@mui/material/Box";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { BiFilterAlt, BiShow } from "react-icons/bi";
-import { FiEdit } from "react-icons/fi";
-import { RiDeleteBin5Fill, RiFileCopyLine } from "react-icons/ri";
+import { RiDeleteBin5Fill } from "react-icons/ri";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
-import { useForm } from "react-hook-form";
-import { useRouter } from "next/router";
-import commmonfunctions from "../../../commonFunctions/commmonfunctions";
 import { api_url, auth_token } from "../../../api/hello";
 import MiniDrawer from "../../../sidebar";
-import ConfirmBox from "../../../commoncmp/confirmbox";
+import DeleteFormDialog from "./deletedialougebox";
+import AddCustomerCmp from "../../../commoncmp/addCustomerCmp";
+import DatePicker from "react-datepicker";
 
 function a11yProps(index: number) {
     return {
@@ -57,7 +55,6 @@ function usePagination(data: any, itemsPerPage: any) {
         const end = begin + itemsPerPage;
         return data.slice(begin, end);
     }
-
     function next() {
         setCurrentPage((currentPage) => Math.min(currentPage + 1, maxPage));
     }
@@ -70,157 +67,130 @@ function usePagination(data: any, itemsPerPage: any) {
     }
     return { next, prev, jump, currentData, currentPage, maxPage };
 }
+
+//filter form values
 //filter form values
 type FormValues = {
-    customerType: number;
     status: number;
+    sorting: number;
+    startdate: Date;
+    enddate: Date;
+    customerId: number;
 };
 
 export default function CreditNotesList() {
-    const [activites, setactivites] = useState<any>([]);
-    const [activity, setFullactivites] = useState<any>([]);
+    const [creditnotes, setcreditnotes] = useState<any>([]);
+    const [creditNotes, setFullcreditNotes] = useState<any>([]);
     const [searchquery, setsearchquery] = useState("");
     const [searchdata, setsearchdata] = useState([]);
     const [All, setAll] = useState(0);
-    const [allData, setAllData] = useState(0);
-    const [Upcommig, setUpcommig] = useState(0);
-    const [Past, setPast] = useState(0);
-    const [Current, setCurrent] = useState(0);
-    const [newActivityOpen, setnewActivityOpen] = React.useState(false);
-    // const [allNew, setAllNew] = React.useState(false);
-    const [editActivityOpen, seteditActivityOpen] = React.useState(false);
-    const [tabFilterData, settabFilterData] = useState<any>([]);
-    const [deleteConfirmBoxOpen, setdeleteConfirmBoxOpen] = React.useState(false);
-    const [filterType, setFilterType] = useState("");
-    const [filterStatus, setFilterStatus] = useState("");
     const [value, setValue] = React.useState(0);
-    const [editid, seteditid] = useState<any>(0);
-    const { register, handleSubmit } = useForm<FormValues>();
-    const todayDate = moment(new Date()).format("DD/MM/YYYY");
-    const [custpermit, setcustpermit] = useState<any>([]);
-    const [roleid, setroleid] = useState(0);
+    const [deleteOpen, setDeleteOpen] = React.useState(false);
+    const [users, setUsers] = useState<any>([]);
+    const [id, setid] = React.useState(0);
+    const [status, setstatus] = useState<any>(4);
+    const [custId, setcustId] = useState<any>(0);
+    const [sort, setsort] = useState<any>(0);
+    const [startdate, setstartdate] = useState<any>("");
+    const [enddate, setenddate] = useState<any>("");
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
 
-    // verify user login
-    let logintoken: any;
-    const router = useRouter();
-    React.useEffect(() => {
-        logintoken = localStorage.getItem("QIS_loginToken");
-        if (logintoken === undefined || logintoken === null) {
-            //router.push("/");
-        }
-        commmonfunctions.GivenPermition().then(res => {
-            if (res.roleId == 1) {
-                setroleid(res.roleId);
-                //router.push("/userprofile");
-            } else if (res.roleId > 1) {
-                commmonfunctions.ManageActivity().then(res => {
-                    if (!res) {
-                        //router.push("/userprofile");
-                    } else {
-                        setcustpermit(res);
-                    }
-                })
-            }
-        })
-    }, []);
-
     useEffect(() => {
         fetchData();
+        getUser();
     }, []);
 
-    //get activites
-    const url = `${api_url}/getActivity`;
+    //get credit notes
+    const url = `${api_url}/getCreditNotes`;
     const fetchData = async () => {
         try {
             const response = await fetch(url, {
-                method: "POST",
+                method: "post",
                 headers: {
                     Authorization: auth_token,
-                    "x-access-token": logintoken,
                 },
             });
             const json = await response.json();
-            setactivites(json.data);
-            setFullactivites(json.data);
+            setcreditnotes(json.data);
             setsearchdata(json.data);
+            setFullcreditNotes(json.data);
             setAll(json.data.length);
         } catch (error: any) {
             console.log("error", error);
         }
 
     };
-
     //searching
     const handleSearch = (e: any) => {
         setsearchquery(e.target.value);
         if (e.target.value === "") {
-            setactivites(searchdata);
+            setcreditnotes(searchdata);
         } else {
             const filterres = searchdata.filter((item: any) => {
                 return (
-                    item.name.toLowerCase().includes(e.target.value.toLowerCase()) ||
-                    item.type.toLowerCase().includes(e.target.value.toLowerCase()) ||
-                    item.status.toLowerCase().includes(e.target.value.toLowerCase()) ||
-                    `${item.price}`.includes(e.target.value) ||
-                    moment(item?.startDate, "DD/MM/YYYY")
-                        .format("ll")
-                        .toLowerCase()
-                        .includes(e.target.value.toLowerCase()) ||
-                    moment(item?.endDate, "DD/MM/YYYY")
-                        .format("ll")
-                        .toLowerCase()
-                        .includes(e.target.value.toLowerCase())
+                    item.name.toLowerCase().includes(e.target.value.toLowerCase())
                 );
             });
             const dtd = filterres;
-            setactivites(dtd);
+            setcreditnotes(dtd);
         }
     };
     function ResetFilterValue() {
-        setFilterType("");
-        setFilterStatus("");
         fetchData();
     }
+
+
+    //get customers(users) list
+    const getUser = async () => {
+        const url = `${api_url}/getuser`;
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    Authorization: auth_token,
+                },
+            });
+            const res = await response.json();
+            setUsers(res.data.filter((dt: any) => dt.roleId !== 1));
+        } catch (error) {
+            console.log("error", error);
+        }
+    };
+
+    //filter data
     const filterApply = async (e: any) => {
+        setFullcreditNotes([]);
         e.preventDefault();
-        setFullactivites([]);
-
         const reqData = {
-            status: filterStatus,
-            type: filterType,
+            status: status,
+            sorting: sort,
+            customerId: custId,
+            startdate: startdate,
+            enddate: enddate
         };
-
         await axios({
             method: "POST",
-            url: `${api_url}/getActivity`,
+            url: `${api_url}/getCreditNotes`,
             data: reqData,
             headers: {
                 Authorization: auth_token,
-                "x-access-token": logintoken,
+
             },
         })
             .then((res: any) => {
                 if (res.status === 200) {
-                    setactivites(res?.data?.data);
-                    setFullactivites(res?.data?.data);
+                    setcreditnotes(res?.data?.data);
+                    setFullcreditNotes(res?.data?.data);
                     setsearchdata(res?.data?.data);
                     setAll(res?.data?.data.length);
-                    // setAllNew(true);
-                    // setAllData(res?.data?.data);
                 }
             })
             .catch((error: any) => {
                 console.log(error);
             });
     };
-
-    const past = activity?.filter((a: any) => a?.startDate < todayDate);
-    const upcoming = activity?.filter((a: any) => a?.startDate > todayDate);
-    const current = activity?.filter((a: any) => a?.startDate === todayDate);
-    const allListData = activity?.filter((a: any) => a);
 
     //pagination
     const [row_per_page, set_row_per_page] = useState(5);
@@ -229,74 +199,47 @@ export default function CreditNotesList() {
     }
     let [page, setPage] = useState(1);
     const PER_PAGE = row_per_page;
-    const count = Math.ceil(activites.length / PER_PAGE);
-    const DATA = usePagination(activites, PER_PAGE);
+    const count = Math.ceil(creditnotes.length / PER_PAGE);
+    const DATA = usePagination(creditnotes, PER_PAGE);
     const handlePageChange = (e: any, p: any) => {
         setPage(p);
         DATA.jump(p);
     };
 
-    //delete user
-    const [deleteData, setDeleteData] = useState<any>({});
-    function openDelete(data: any) {
-        setdeleteConfirmBoxOpen(true);
-        setDeleteData(data);
-    }
+    const approved = creditNotes?.filter((a: any) => a?.status === 1);
+    const pending = creditNotes?.filter((a: any) => a?.status === 0);
+    const reject = creditNotes?.filter((a: any) => a?.status === 2);
+    const deleted = creditNotes?.filter((a: any) => a?.status === 3);
 
-    async function deleteUser() {
-        await axios({
-            method: "DELETE",
-            url: `${api_url}/deleteactivity/${deleteData.id}`,
-            headers: {
-                Authorization: auth_token,
-            },
-        })
-            .then((data) => {
-                toast.success("Activity Deleted Successfully !");
-                setdeleteConfirmBoxOpen(false);
-                fetchData();
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-            });
-    }
 
-    // add activity from popup
-    function handleNewActivityFormOpen() {
-        setnewActivityOpen(true);
-    }
-    const closePoP = (data: any) => {
-        setnewActivityOpen(false);
-        fetchData();
-    };
-
-    //edit activity popup
-    function handleEditActivityOpen(id: any) {
-        seteditActivityOpen(true);
-        seteditid(id);
-    }
-    const closeEditPoP = (data: any) => {
-        fetchData();
-        seteditActivityOpen(false);
-    };
-
-    const handleUpcoming = () => {
-        setactivites(upcoming);
+    const handleApproved = () => {
+        setcreditnotes(approved);
     };
     const handleAll = () => {
-        if (filterStatus !== "" && filterType !== "") {
-            setactivites(allListData);
-        } else {
-            fetchData();
-        }
-
+        fetchData();
     };
-    const handlePast = () => {
-        setactivites(past);
+
+    const handlePending = () => {
+        setcreditnotes(pending);
     };
     const handleCurrent = () => {
-        setactivites(current);
+        setcreditnotes(reject);
     };
+
+    const handleDelete = () => {
+        setcreditnotes(deleted);
+    };
+
+    //open close delete popup boxes
+    const closePoP = (data: any) => {
+        setDeleteOpen(false);
+        fetchData();
+    };
+    function openDelete(item: any) {
+        setid(item.id)
+        setDeleteOpen(true);
+    }
+
     return (
         <>
             <Box sx={{ display: "flex" }}>
@@ -366,19 +309,24 @@ export default function CreditNotesList() {
                                                 onClick={handleAll}
                                             />
                                             <Tab
-                                                label={`Approved (${upcoming.length})`}
+                                                label={`Approved (${approved.length})`}
                                                 {...a11yProps(1)}
-                                                onClick={handleUpcoming}
+                                                onClick={handleApproved}
                                             />
                                             <Tab
-                                                label={`Pending (${past.length})`}
+                                                label={`Pending (${pending.length})`}
                                                 {...a11yProps(2)}
-                                                onClick={handlePast}
+                                                onClick={handlePending}
                                             />
                                             <Tab
-                                                label={`Reject (${current.length})`}
+                                                label={`Reject (${reject.length})`}
                                                 {...a11yProps(3)}
                                                 onClick={handleCurrent}
+                                            />
+                                            <Tab
+                                                label={`Deleted (${deleted.length})`}
+                                                {...a11yProps(4)}
+                                                onClick={handleDelete}
                                             />
                                         </Tabs>
                                     </Box>
@@ -405,7 +353,7 @@ export default function CreditNotesList() {
                                                                 >
                                                                     <Stack style={{ marginTop: "10px" }}>
                                                                         <Grid container spacing={2}>
-                                                                            <Grid item xs={12} lg={3}>
+                                                                            <Grid item xs={12} lg={4}>
                                                                                 <Stack spacing={1}>
                                                                                     <InputLabel htmlFor="enddate">
                                                                                         Status
@@ -416,49 +364,130 @@ export default function CreditNotesList() {
                                                                                             id="demo-simple-select"
                                                                                             size="small"
                                                                                             onChange={(e: any) =>
-                                                                                                setFilterStatus(e.target.value)
+                                                                                                setstatus(e.target.value)
                                                                                             }
-                                                                                            value={filterStatus}
+                                                                                            value={status}
                                                                                         >
-                                                                                            <MenuItem value="Active">
-                                                                                                Active
+                                                                                            <MenuItem value="4">
+                                                                                                All
                                                                                             </MenuItem>
-                                                                                            <MenuItem value="Draft">
-                                                                                                Draft
+                                                                                            <MenuItem value="1">
+                                                                                                Approved
                                                                                             </MenuItem>
-                                                                                            <MenuItem value="Archive">
-                                                                                                Archive
+                                                                                            <MenuItem value="0">
+                                                                                                Pending
+                                                                                            </MenuItem>
+                                                                                            <MenuItem value="2">
+                                                                                                Reject
+                                                                                            </MenuItem>
+                                                                                            <MenuItem value="3">
+                                                                                                Deleted
                                                                                             </MenuItem>
                                                                                         </Select>
                                                                                     </FormControl>
                                                                                 </Stack>
                                                                             </Grid>
-                                                                            <Grid item xs={12} md={3}>
+                                                                            <Grid item xs={12} lg={4}>
                                                                                 <Stack spacing={1}>
-                                                                                    <InputLabel htmlFor="name">
-                                                                                        Type
+                                                                                    <InputLabel htmlFor="enddate">
+                                                                                        Customer
                                                                                     </InputLabel>
                                                                                     <FormControl fullWidth>
                                                                                         <Select
                                                                                             labelId="demo-simple-select-label"
                                                                                             id="demo-simple-select"
                                                                                             size="small"
+                                                                                            value={custId}
                                                                                             onChange={(e: any) =>
-                                                                                                setFilterType(e.target.value)
+                                                                                                setcustId(e.target.value)
                                                                                             }
-                                                                                            value={filterType}
                                                                                         >
-                                                                                            <MenuItem value="Free">
-                                                                                                Free
+                                                                                            <MenuItem value={0}>All</MenuItem>
+                                                                                            {users &&
+                                                                                                users.map(
+                                                                                                    (datas: any, key: any) => {
+                                                                                                        return (
+                                                                                                            <MenuItem
+                                                                                                                key={key}
+                                                                                                                value={datas.id}
+                                                                                                            >
+                                                                                                                {
+                                                                                                                    datas.name
+                                                                                                                }
+                                                                                                            </MenuItem>
+                                                                                                        );
+                                                                                                    }
+                                                                                                )}
+                                                                                        </Select>
+                                                                                    </FormControl>
+                                                                                </Stack>
+                                                                            </Grid>
+                                                                            <Grid item xs={12} lg={4}>
+                                                                                <Stack spacing={1}>
+                                                                                    <InputLabel htmlFor="enddate">
+                                                                                        Sort
+                                                                                    </InputLabel>
+                                                                                    <FormControl fullWidth>
+                                                                                        <Select
+                                                                                            labelId="demo-simple-select-label"
+                                                                                            id="demo-simple-select"
+                                                                                            size="small"
+                                                                                            value={sort}
+                                                                                            onChange={(e: any) =>
+                                                                                                setsort(e.target.value)
+                                                                                            }
+                                                                                        >
+                                                                                            <MenuItem value={0}>
+                                                                                                Date, Newest First
                                                                                             </MenuItem>
-                                                                                            <MenuItem value="Paid">
-                                                                                                Paid
+                                                                                            <MenuItem value={1}>
+                                                                                                Date, Oldest First
+                                                                                            </MenuItem>
+
+                                                                                            <MenuItem value={2}>
+                                                                                                Name, Ascending Order
+                                                                                            </MenuItem>
+                                                                                            <MenuItem value={3}>
+                                                                                                Name, Descending Order
                                                                                             </MenuItem>
                                                                                         </Select>
                                                                                     </FormControl>
                                                                                 </Stack>
                                                                             </Grid>
+                                                                            <Grid item xs={12} lg={4}>
+                                                                                <Stack spacing={1}>
+                                                                                    <InputLabel htmlFor="enddate">
+                                                                                        Date Range (start date)
+                                                                                    </InputLabel>
+                                                                                    <DatePicker
+                                                                                        className="myDatePicker"
 
+                                                                                        onChange={(date: any) =>
+                                                                                            startdate(date)
+                                                                                        }
+                                                                                        name="startDate"
+                                                                                        dateFormat="MM/dd/yyyy"
+                                                                                        placeholderText="Start Date"
+                                                                                    />
+                                                                                </Stack>
+                                                                            </Grid>
+                                                                            <Grid item xs={12} lg={4}>
+                                                                                <Stack spacing={1}>
+                                                                                    <InputLabel htmlFor="enddate">
+                                                                                        End Date
+                                                                                    </InputLabel>
+                                                                                    <DatePicker
+                                                                                        className="myDatePicker"
+
+                                                                                        onChange={(date: any) =>
+                                                                                            enddate(date)
+                                                                                        }
+                                                                                        name="startDate"
+                                                                                        dateFormat="MM/dd/yyyy"
+                                                                                        placeholderText="Start Date"
+                                                                                    />
+                                                                                </Stack>
+                                                                            </Grid>
                                                                             <Grid
                                                                                 item
                                                                                 xs={12}
@@ -543,7 +572,7 @@ export default function CreditNotesList() {
                                                 <Typography>EMAIL</Typography>
                                             </TableCell>
                                             <TableCell>
-                                                <Typography>STATUS</Typography>
+                                                <Typography width={150}>STATUS</Typography>
                                             </TableCell>
                                             <TableCell>
                                                 <Typography width={150}>AMOUNT</Typography>
@@ -573,60 +602,32 @@ export default function CreditNotesList() {
                                                         <TableCell align="left">{item.id}</TableCell>
                                                         <TableCell align="left">{item.name}</TableCell>
                                                         <TableCell align="left">{item.email1}</TableCell>
-                                                        <TableCell align="left">{item.email1}</TableCell>
-                                                        <TableCell align="left">{item.email1}</TableCell>
-                                                        <TableCell align="left">$200</TableCell>
+                                                        <TableCell align="left">{item?.status === 0 ? (<span style={{ color: "#FF4026", fontWeight: "bold" }}>Pending</span>) : item?.status === 1 ? (<span style={{ color: "#02C509", fontWeight: "bold" }}>Approved</span>) : item?.status === 2 ? (<span style={{ color: "#FF4026", fontWeight: "bold" }}>Reject</span>) : ""}</TableCell>
+                                                        <TableCell align="left">{item.amount}</TableCell>
+                                                        <TableCell align="left">INV-{item.id}</TableCell>
                                                         <TableCell align="left">
                                                             <Stack
                                                                 direction="row"
                                                                 spacing={1}
                                                                 className="action"
                                                             >
-                                                                {custpermit && custpermit.canView === true || roleid === 1 ? (
-                                                                    <IconButton className="action-view">
-                                                                        <Link
-                                                                            href={`/admin/creditnotes/viewcreditnotes/${item.id}`}
-                                                                            style={{
-                                                                                color: "#26CEB3",
-                                                                            }}
-                                                                        >
-                                                                            <BiShow />
-                                                                        </Link>
-                                                                    </IconButton>) : ""}
-                                                                {custpermit && custpermit.canEdit === true || roleid === 1 ? (
+                                                                <IconButton className="action-view">
                                                                     <Link
-                                                                        href={`/admin/editActivity/${item.id}`}
+                                                                        href={`/admin/creditnotes/viewcreditnotes/${item.id}`}
                                                                         style={{
                                                                             color: "#26CEB3",
                                                                         }}
                                                                     >
-                                                                        <IconButton className="action-edit">
-                                                                            <FiEdit />
-                                                                        </IconButton>
-                                                                    </Link>) : ""}
-
-                                                                {custpermit && custpermit.canDelete === true || roleid === 1 ? (
-                                                                    <IconButton
-                                                                        className="action-delete"
-                                                                        style={{ color: "#F95A37" }}
-                                                                        onClick={() => openDelete(item)}
-                                                                    >
-                                                                        <RiDeleteBin5Fill />
-                                                                    </IconButton>) : ""}
-                                                                {/* <Link
-                                    href={`/admin/activitydetail/${id}`}
-                                    style={{
-                                      color: "#26CEB3",
-                                    }}
-                                  >
-                                  <IconButton
-                                    className="action-delete"
-                                    style={{ color: "#F95A37" }}
-                                    onClick={() => openCopy(item)}
-                                  >
-                                    <RiFileCopyLine />
-                                  </IconButton>
-                                  </Link> */}
+                                                                        <BiShow />
+                                                                    </Link>
+                                                                </IconButton>
+                                                                {item.status === 3 ? ("") : (<IconButton
+                                                                    className="action-delete"
+                                                                    style={{ color: "#F95A37" }}
+                                                                    onClick={() => openDelete(item)}
+                                                                >
+                                                                    <RiDeleteBin5Fill />
+                                                                </IconButton>)}
                                                             </Stack>
                                                         </TableCell>
                                                     </TableRow>
@@ -635,7 +636,7 @@ export default function CreditNotesList() {
                                     </TableBody>
                                 </Table>
                                 {/* } */}
-                                {activites == "" ? <h3>No Record found</h3> : ""}
+                                {creditnotes == "" ? <h3>No Record found</h3> : ""}
                                 <Stack
                                     style={{
                                         marginBottom: "10px",
@@ -671,12 +672,7 @@ export default function CreditNotesList() {
                     </div>
                 </Box>
             </Box>
-            <ConfirmBox
-                open={deleteConfirmBoxOpen}
-                closeDialog={() => setdeleteConfirmBoxOpen(false)}
-                title={deleteData?.name}
-                deleteFunction={deleteUser}
-            />
+            <DeleteFormDialog id={id} open={deleteOpen} closeDialog={closePoP} />
             <ToastContainer />
         </>
     );
