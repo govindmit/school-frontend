@@ -115,8 +115,8 @@ export default function UsersList() {
             });
             const res = await response.json();
             setUsers(res.data.filter((dt: any) => dt.roleId !== 1));
-            setsearchdata(res.data.filter((dt: any) => dt.customerId !== null));
-            setAll(res.data.filter((dt: any) => dt.customerId !== null).length);
+            setsearchdata(res.data.filter((dt: any) => dt.roleId !== 1));
+            setAll(res.data.filter((dt: any) => dt.roleId !== 1).length);
         } catch (error) {
             console.log("error", error);
         }
@@ -132,7 +132,6 @@ export default function UsersList() {
                 return (
                     item.name.toLowerCase().includes(e.target.value.toLowerCase()) ||
                     item.email1.toLowerCase().includes(e.target.value.toLowerCase()) ||
-                    item.UserRole.toLowerCase().includes(e.target.value.toLowerCase()) ||
                     `${item.phone1}`.includes(e.target.value)
                 );
             });
@@ -256,12 +255,18 @@ export default function UsersList() {
                                             value={value}
                                             onChange={handleChange}
                                             aria-label="basic tabs example"
+                                            TabIndicatorProps={{
+                                                style: {
+                                                    backgroundColor: "#F95A37"
+                                                }
+                                            }}
                                         >
                                             <Tab
                                                 className="filter-list"
                                                 label={`All (${All})`}
                                                 {...a11yProps(0)}
                                                 onClick={handleAll}
+                                                style={{ color: "#F95A37" }}
                                             />
                                         </Tabs>
                                     </Box>
