@@ -88,7 +88,7 @@ export default function LoginPage() {
             if (role === 1) {
               router.push("/admin/dashboard");
             } else {
-              router.push("/profile");
+              router.push("/userprofile");
             }
           };
           setTimeout(redirect, 3000);

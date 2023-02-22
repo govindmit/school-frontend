@@ -74,7 +74,7 @@ export default function ViewUser(props: any) {
             setuserdet(response);
             let datas = (response?.userPrevilegs);
             const parsedata = JSON.parse(datas)?.user_permition;
-            const lgh = parsedata.length;
+            const lgh = parsedata?.length;
             if (lgh > 0) {
                 for (var i = 0; i <= lgh - 1; i++) {
                     if (parsedata[i].Dashboard) {
