@@ -57,6 +57,8 @@ export default function AddNewUser() {
     const [roles, setroles] = React.useState<any>([])
     let permitions: { Dashboard?: any; Invoices?: any; SalesInvoices?: any; Activites?: any; Customers?: any; Cumposers?: any }[] = [];
     const [onDashboard, setonDashboard] = React.useState(false);
+    const [roleid, setroleid] = React.useState<FormValues | any>("");
+    const [typeError, setTypeError] = React.useState<FormValues | any>("");
     const [Dashboardchecked, setDashboardchecked] = React.useState<any>({
         canView: false,
         canAdd: false,
@@ -142,6 +144,12 @@ export default function AddNewUser() {
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
         setshowspinner(true);
         setBtnDisabled(true);
+
+        if (roleid === "") {
+            setTypeError("Type field is required!");
+        } else {
+            setTypeError("");
+        }
         const reqData = {
             name: data.name,
             email1: data.email,
@@ -151,7 +159,6 @@ export default function AddNewUser() {
             status: 1,
             userRole: "user"
         };
-
         await axios({
             method: "POST",
             url: `${api_url}/addUser`,
@@ -164,11 +171,12 @@ export default function AddNewUser() {
                 if (data) {
                     toast.success("User Added Successfully !");
                     reset();
+                    setroleid("");
                     setshowspinner(false);
                     setBtnDisabled(false);
                     setTimeout(() => {
                         router.push("/usermanagement/users");
-                    }, 2000);
+                    }, 1000);
 
                 }
             })
@@ -188,6 +196,16 @@ export default function AddNewUser() {
     const closePoP = (data: any) => {
         setnewRoleOpen(false);
         UserService.GetRoles().then(response => setroles(response));
+    };
+
+
+    const handleType = (data: any) => {
+        if (data) {
+            setroleid(data);
+            setTypeError("");
+        } else {
+            setTypeError("Type field is required");
+        }
     };
 
     return (
@@ -279,7 +297,7 @@ export default function AddNewUser() {
                                                             size="small"
                                                             {...register("email", {
                                                                 required: true,
-                                                                pattern: /^\S+@\S+$/i,
+                                                                pattern: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i,
                                                                 validate: (value) => { return !!value.trim() }
                                                             })}
                                                         />
@@ -335,12 +353,13 @@ export default function AddNewUser() {
                                                         <FormControl fullWidth>
                                                             <Select
                                                                 labelId="demo-simple-select-label"
-                                                                id="demo-simple-select"
                                                                 size="small"
-                                                                defaultValue={0}
+                                                                value={roleid}
+                                                                id="type1"
                                                                 {...register("roleid", {
-                                                                    required: true
+                                                                    required: "Role is Required *",
                                                                 })}
+                                                                onChange={(e) => handleType(e.target.value)}
                                                             >
                                                                 <MenuItem value={0}>Select Role</MenuItem>
                                                                 {roles &&
@@ -353,9 +372,9 @@ export default function AddNewUser() {
                                                                     })}
                                                             </Select>
                                                         </FormControl>
-                                                        {errors.roleid?.type === "pattern" && (
+                                                        {errors.roleid?.type && (
                                                             <span style={style}>
-                                                                Please select user role *
+                                                                {roleid === "" ? errors?.roleid?.message : ""}
                                                             </span>
                                                         )}
                                                     </Stack>
