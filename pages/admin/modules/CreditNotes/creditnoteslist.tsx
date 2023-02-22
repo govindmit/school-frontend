@@ -23,7 +23,7 @@ import {
     Menu,
     Grid,
     InputLabel,
-    Autocomplete,
+    Autocomplete
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import Link from "next/link";
@@ -37,9 +37,9 @@ import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
 import { api_url, auth_token } from "../../../api/hello";
 import MiniDrawer from "../../../sidebar";
 import DeleteFormDialog from "./deletedialougebox";
-import AddCustomerCmp from "../../../commoncmp/addCustomerCmp";
 import DatePicker from "react-datepicker";
-
+import "react-datepicker/dist/react-datepicker.css";
+import moment from "moment";
 function a11yProps(index: number) {
     return {
         id: `simple-tab-${index}`,
@@ -69,7 +69,6 @@ function usePagination(data: any, itemsPerPage: any) {
 }
 
 //filter form values
-//filter form values
 type FormValues = {
     status: number;
     sorting: number;
@@ -89,19 +88,18 @@ export default function CreditNotesList() {
     const [users, setUsers] = useState<any>([]);
     const [id, setid] = React.useState(0);
     const [status, setstatus] = useState<any>(4);
-    const [custId, setcustId] = useState<any>(0);
+    const [val, setVal] = useState<any>({});
     const [sort, setsort] = useState<any>(0);
-    const [startdate, setstartdate] = useState<any>("");
+    const [startdate, setstartdate] = useState<FormValues | any>(null);
     const [enddate, setenddate] = useState<any>("");
+    const [inputValue, setInputValue] = React.useState('');
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
-
     useEffect(() => {
         fetchData();
         getUser();
     }, []);
-
     //get credit notes
     const url = `${api_url}/getCreditNotes`;
     const fetchData = async () => {
@@ -120,28 +118,7 @@ export default function CreditNotesList() {
         } catch (error: any) {
             console.log("error", error);
         }
-
     };
-    //searching
-    const handleSearch = (e: any) => {
-        setsearchquery(e.target.value);
-        if (e.target.value === "") {
-            setcreditnotes(searchdata);
-        } else {
-            const filterres = searchdata.filter((item: any) => {
-                return (
-                    item.name.toLowerCase().includes(e.target.value.toLowerCase())
-                );
-            });
-            const dtd = filterres;
-            setcreditnotes(dtd);
-        }
-    };
-    function ResetFilterValue() {
-        fetchData();
-    }
-
-
     //get customers(users) list
     const getUser = async () => {
         const url = `${api_url}/getuser`;
@@ -158,6 +135,44 @@ export default function CreditNotesList() {
             console.log("error", error);
         }
     };
+    const option: { id: number; title: string }[] = [];
+    users &&
+        users.map((data: any, key: any) => {
+            return option.push({
+                id: data.id,
+                title: data.name,
+            });
+        });
+
+    //searching
+    const handleSearch = (e: any) => {
+        setsearchquery(e.target.value);
+        if (e.target.value === "") {
+            setcreditnotes(searchdata);
+        } else {
+            const filterres = searchdata.filter((item: any) => {
+                console.log(item)
+                return (
+                    item?.name?.toLowerCase().includes(e.target.value.toLowerCase()) ||
+                    `${item?.amount}`.includes(e.target.value) ||
+                    item?.email1?.toLowerCase().includes(e.target.value.toLowerCase())
+                );
+            });
+            const dtd = filterres;
+            setcreditnotes(dtd);
+        }
+    };
+
+
+    //reset filter value
+    function ResetFilterValue() {
+        setstatus(4);
+        setVal([]);
+        setsort(0);
+        setstartdate(null);
+        setenddate(null);
+        fetchData();
+    }
 
     //filter data
     const filterApply = async (e: any) => {
@@ -166,9 +181,9 @@ export default function CreditNotesList() {
         const reqData = {
             status: status,
             sorting: sort,
-            customerId: custId,
-            startdate: startdate,
-            enddate: enddate
+            customerId: val?.id !== "undefined" ? val?.id : 0,
+            startdate: startdate !== null ? moment(startdate).format("DD/MM/YYYY") : startdate,
+            enddate: enddate !== null ? moment(enddate).format("DD/MM/YYYY") : enddate,
         };
         await axios({
             method: "POST",
@@ -279,7 +294,7 @@ export default function CreditNotesList() {
                                     gutterBottom
                                     style={{ fontWeight: "bold", color: "#333333" }}
                                 >
-                                    CREDITNOTES
+                                    CREDIT NOTES
                                 </Typography>
                             </Stack>
                         </Stack>
@@ -362,7 +377,6 @@ export default function CreditNotesList() {
                                                                                         <Select
                                                                                             labelId="demo-simple-select-label"
                                                                                             id="demo-simple-select"
-                                                                                            size="small"
                                                                                             onChange={(e: any) =>
                                                                                                 setstatus(e.target.value)
                                                                                             }
@@ -392,34 +406,25 @@ export default function CreditNotesList() {
                                                                                     <InputLabel htmlFor="enddate">
                                                                                         Customer
                                                                                     </InputLabel>
-                                                                                    <FormControl fullWidth>
-                                                                                        <Select
-                                                                                            labelId="demo-simple-select-label"
-                                                                                            id="demo-simple-select"
-                                                                                            size="small"
-                                                                                            value={custId}
-                                                                                            onChange={(e: any) =>
-                                                                                                setcustId(e.target.value)
-                                                                                            }
-                                                                                        >
-                                                                                            <MenuItem value={0}>All</MenuItem>
-                                                                                            {users &&
-                                                                                                users.map(
-                                                                                                    (datas: any, key: any) => {
-                                                                                                        return (
-                                                                                                            <MenuItem
-                                                                                                                key={key}
-                                                                                                                value={datas.id}
-                                                                                                            >
-                                                                                                                {
-                                                                                                                    datas.name
-                                                                                                                }
-                                                                                                            </MenuItem>
-                                                                                                        );
-                                                                                                    }
-                                                                                                )}
-                                                                                        </Select>
-                                                                                    </FormControl>
+                                                                                    <Autocomplete
+                                                                                        value={val}
+                                                                                        inputValue={inputValue}
+                                                                                        onChange={(event, newValue) => {
+                                                                                            setVal(newValue);
+                                                                                        }}
+                                                                                        onInputChange={(event, newInputValue) => {
+                                                                                            setInputValue(newInputValue);
+                                                                                        }}
+                                                                                        options={option}
+                                                                                        getOptionLabel={(option) => option.title || ""}
+                                                                                        renderInput={(params) => (
+                                                                                            <TextField
+                                                                                                {...params}
+                                                                                                variant="outlined"
+                                                                                                placeholder="Find or customer"
+                                                                                            />
+                                                                                        )}
+                                                                                    />
                                                                                 </Stack>
                                                                             </Grid>
                                                                             <Grid item xs={12} lg={4}>
@@ -431,7 +436,6 @@ export default function CreditNotesList() {
                                                                                         <Select
                                                                                             labelId="demo-simple-select-label"
                                                                                             id="demo-simple-select"
-                                                                                            size="small"
                                                                                             value={sort}
                                                                                             onChange={(e: any) =>
                                                                                                 setsort(e.target.value)
@@ -461,13 +465,11 @@ export default function CreditNotesList() {
                                                                                     </InputLabel>
                                                                                     <DatePicker
                                                                                         className="myDatePicker"
-
-                                                                                        onChange={(date: any) =>
-                                                                                            startdate(date)
-                                                                                        }
-                                                                                        name="startDate"
+                                                                                        id="startdate"
+                                                                                        selected={startdate}
                                                                                         dateFormat="MM/dd/yyyy"
                                                                                         placeholderText="Start Date"
+                                                                                        onChange={(date: any) => setstartdate(date)}
                                                                                     />
                                                                                 </Stack>
                                                                             </Grid>
@@ -478,13 +480,11 @@ export default function CreditNotesList() {
                                                                                     </InputLabel>
                                                                                     <DatePicker
                                                                                         className="myDatePicker"
-
-                                                                                        onChange={(date: any) =>
-                                                                                            enddate(date)
-                                                                                        }
-                                                                                        name="startDate"
+                                                                                        id="enddate"
+                                                                                        selected={enddate}
                                                                                         dateFormat="MM/dd/yyyy"
                                                                                         placeholderText="Start Date"
+                                                                                        onChange={(date: any) => setenddate(date)}
                                                                                     />
                                                                                 </Stack>
                                                                             </Grid>
@@ -602,7 +602,8 @@ export default function CreditNotesList() {
                                                         <TableCell align="left">{item.id}</TableCell>
                                                         <TableCell align="left">{item.name}</TableCell>
                                                         <TableCell align="left">{item.email1}</TableCell>
-                                                        <TableCell align="left">{item?.status === 0 ? (<span style={{ color: "#FF4026", fontWeight: "bold" }}>Pending</span>) : item?.status === 1 ? (<span style={{ color: "#02C509", fontWeight: "bold" }}>Approved</span>) : item?.status === 2 ? (<span style={{ color: "#FF4026", fontWeight: "bold" }}>Reject</span>) : ""}</TableCell>
+                                                        <TableCell align="left">{item?.status === 0 ? (<span style={{ color: "#FF4026", fontWeight: "bold" }}>Pending</span>) : item?.status === 1 ?
+                                                            (<span style={{ color: "#02C509", fontWeight: "bold" }}>Approved</span>) : item?.status === 2 ? (<span style={{ color: "#FF4026", fontWeight: "bold" }}>Reject</span>) : item?.status === 3 ? (<span style={{ color: "#FF4026", fontWeight: "bold" }}>Deleted</span>) : ""}</TableCell>
                                                         <TableCell align="left">{item.amount}</TableCell>
                                                         <TableCell align="left">INV-{item.id}</TableCell>
                                                         <TableCell align="left">

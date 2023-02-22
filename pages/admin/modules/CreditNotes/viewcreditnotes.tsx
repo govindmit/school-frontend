@@ -30,12 +30,15 @@ const style = {
     fontWeight: "bold",
 };
 type FormValues = {
-    message: number;
+    message: string;
     status: number;
+    updatedBy: number
+
 };
 
 export default function ViewCreditNotes(props: any) {
     const [creditNoteDet, setcreditNoteDet] = React.useState<any>([]);
+    const [creditNoteMsg, setcreditNoteMsg] = React.useState<any>([]);
     const [deleteOpen, setDeleteOpen] = React.useState(false);
     const [rejectOpen, setrejectOpen] = React.useState(false);
     const [approveOpen, setapproveOpen] = React.useState(false);
@@ -53,26 +56,12 @@ export default function ViewCreditNotes(props: any) {
                 },
             });
             const json = await response.json();
-            setcreditNoteDet(json.data[0]);
+            console.log(json.data);
+            setcreditNoteDet(json.data.result[0]);
+            setcreditNoteMsg(json.data.results);
         } catch (error: any) {
             console.log("error", error);
         }
-    };
-    //open close delete popup boxes
-    function handleDeleteOpen() {
-        setDeleteOpen(true);
-        setrejectOpen(false)
-    }
-    const closePoP = (data: any) => {
-        setDeleteOpen(false);
-    };
-    //open close approve popup boxes
-    function handleApproveOpen() {
-        setapproveOpen(true);
-        setrejectOpen(false)
-    }
-    const closePoPAppr = (data: any) => {
-        setapproveOpen(false);
     };
     const {
         register,
@@ -82,8 +71,9 @@ export default function ViewCreditNotes(props: any) {
     } = useForm<FormValues>();
     const onSubmit: SubmitHandler<FormValues> = async (data: any) => {
         const reqData = {
-            name: data.message,
-            status: 2
+            message: data.message,
+            status: 2,
+            updatedBy: 1
         };
         await axios({
             method: "put",
@@ -105,13 +95,35 @@ export default function ViewCreditNotes(props: any) {
             });
     };
 
+    //open close delete popup boxes
+    function handleDeleteOpen() {
+        setDeleteOpen(true);
+        setrejectOpen(false)
+        setapproveOpen(false);
+    }
+    const closePoP = (data: any) => {
+        setDeleteOpen(false);
+    };
+
     //reject open form
     function handleRejectOpen() {
         setrejectOpen(true)
+        setapproveOpen(false);
     }
     function closeRejectForm() {
         setrejectOpen(false)
     }
+
+    //approve form open
+    function handleApproveOpen() {
+        setapproveOpen(true);
+        setrejectOpen(false)
+    }
+
+    const closePoPapprove = (data: any) => {
+        setapproveOpen(false);
+    };
+
 
     return (
         <>
@@ -201,10 +213,10 @@ export default function ViewCreditNotes(props: any) {
                                                             <div id="profileImage"><span id="fullName">A</span></div>
                                                             <CardContent sx={{ flex: 1 }} className="text-grey">
                                                                 <Typography component="h4" variant="h4">
-                                                                    {creditNoteDet.name}
+                                                                    {creditNoteDet?.name}
                                                                 </Typography>
                                                                 <Typography component="h4">
-                                                                    {creditNoteDet.email1}
+                                                                    {creditNoteDet?.email1}
                                                                 </Typography>
                                                                 <Typography
                                                                     variant="subtitle1"
@@ -263,7 +275,38 @@ export default function ViewCreditNotes(props: any) {
                                                     </Typography>
                                                 </Stack>
                                             </Stack>
-                                            <Typography>{creditNoteDet.message}</Typography>
+                                            <Typography style={{ padding: "8px" }}>{creditNoteMsg[0]?.message}</Typography>
+                                        </CardContent>
+                                    </Card>
+                                </Grid>
+                                <Grid item xs={12} md={12} style={{ marginTop: "20px" }}>
+                                    <Card sx={{ minWidth: 275 }}>
+                                        <CardContent>
+                                            <Stack
+                                                direction="row"
+                                                alignItems="center"
+                                                justifyContent="space-between"
+                                                style={{ padding: "8px" }}
+                                            >
+                                                <Stack>
+                                                    <Typography
+                                                        variant="h5"
+                                                        gutterBottom
+                                                        style={{
+                                                            fontWeight: "bold",
+                                                            color: "#333333",
+                                                        }}
+                                                    >
+                                                        Note by Admin
+                                                    </Typography>
+                                                </Stack>
+                                            </Stack>
+                                            {
+                                                creditNoteMsg.slice(1).map((data: any) => {
+                                                    return (<Typography style={{ padding: "8px" }}>{data.message}</Typography>)
+                                                })
+
+                                            }
                                         </CardContent>
                                     </Card>
                                 </Grid>
@@ -318,18 +361,18 @@ export default function ViewCreditNotes(props: any) {
                                                         <TableCell align="left">Adam Johans
                                                             Lorem ipsum dollar sit ammet</TableCell>
                                                         <TableCell align="left">10</TableCell>
-                                                        <TableCell align="left">{creditNoteDet.amount}</TableCell>
-                                                        <TableCell align="left">{creditNoteDet.amount}</TableCell>
+                                                        <TableCell align="left">{creditNoteDet?.amount}</TableCell>
+                                                        <TableCell align="left">{creditNoteDet?.amount}</TableCell>
                                                     </TableRow>
                                                     <TableRow hover tabIndex={1}>
                                                         <TableCell align="left" colSpan={3}></TableCell>
                                                         <TableCell align="left" style={{ fontWeight: "600" }}>SUBTOTAL</TableCell>
-                                                        <TableCell align="left">{creditNoteDet.amount}</TableCell>
+                                                        <TableCell align="left">{creditNoteDet?.amount}</TableCell>
                                                     </TableRow>
                                                     <TableRow hover tabIndex={2}>
                                                         <TableCell align="left" colSpan={3}></TableCell>
                                                         <TableCell align="left" style={{ fontWeight: "600" }}>TOTAL</TableCell>
-                                                        <TableCell align="left">{creditNoteDet.amount}</TableCell>
+                                                        <TableCell align="left">{creditNoteDet?.amount}</TableCell>
                                                     </TableRow>
                                                 </TableBody>
                                             </Table>
@@ -356,7 +399,6 @@ export default function ViewCreditNotes(props: any) {
                                                             Reason  for reject this request
                                                         </Typography>
                                                     </Stack>
-
                                                 </Stack>
                                                 <Table style={{ marginTop: "20px" }}>
                                                     <Stack>
@@ -405,13 +447,17 @@ export default function ViewCreditNotes(props: any) {
                                         </form>
                                     </Card>
                                 </Grid>) : ""}
+                                {approveOpen ? (<Grid item xs={12} md={12} style={{ marginTop: "20px" }}>
+                                    <Card sx={{ minWidth: 275 }}>
+                                        <ApproveCompForm id={props.id} closeDialog={closePoPapprove} />
+                                    </Card>
+                                </Grid>) : ""}
                             </Grid>
                         </Grid>
                     </div>
                 </Box>
-            </Box>
+            </Box >
             <DeleteFormDialog id={props.id} open={deleteOpen} closeDialog={closePoP} />
-            <ApproveCompForm id={props.id} open={approveOpen} closeDialog={closePoPAppr} />
         </>
     );
 }

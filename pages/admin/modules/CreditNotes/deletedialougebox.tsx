@@ -18,6 +18,7 @@ const style = {
 type FormValues = {
     message: string;
     status: number
+    updatedBy: number
 };
 
 export default function DeleteFormDialog({
@@ -39,7 +40,8 @@ export default function DeleteFormDialog({
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
         const reqData = {
             message: data.message,
-            status: 3
+            status: 3,
+            updatedBy: 1
         };
         await axios({
             method: "put",
