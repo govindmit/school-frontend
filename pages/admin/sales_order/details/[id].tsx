@@ -24,6 +24,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
 import { api_url, auth_token } from "../../../api/hello";
 import moment from "moment";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import MainFooter from "../../../commoncmp/mainfooter";
 
 export default function ViewCustomer() {
   const [userDet, setUserDet] = useState<any>([]);
@@ -101,7 +103,7 @@ export default function ViewCustomer() {
                     href="/admin/sales_order/list"
                     style={{ color: "#1A70C5", textDecoration: "none" }}
                   >
-                    <Button variant="contained">Back</Button>
+                    <Button variant="contained" startIcon={<ArrowBackIcon />}> Back To List</Button>
                   </Link>
                 </div>
               </Stack>
@@ -292,6 +294,7 @@ export default function ViewCustomer() {
               </Grid>
             </Grid>
           </div>
+          <MainFooter/>
         </Box>
       </Box>
       <ToastContainer />

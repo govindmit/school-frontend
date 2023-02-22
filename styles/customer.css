@@ -110,3 +110,20 @@ input {
 .copycss{
   min-width: 33px !important;
 }
+.darkBgCss{
+  background: #ebebeb !important
+}
+span.addsales {
+  border-top: 1px solid darkgrey;
+  margin-top: 30px;
+}
+.MuiCheckbox-root.MuiCheckbox-colorPrimary.checkbox132 {
+  margin-left: -10px !important;
+}
+
+.MuiInputLabel-root.MuiInputLabel-animated.paymentcolor {
+  color: #3ba306 !important;
+}
+footer.footermain {
+  text-align: center;
+}

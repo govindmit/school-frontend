@@ -42,6 +42,7 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import ConfirmBox from "../commoncmp/confirmbox";
 import commmonfunctions from "../commonFunctions/commmonfunctions";
+import MainFooter from "../commoncmp/mainfooter";
 
 function a11yProps(index: number) {
   return {
@@ -440,7 +441,9 @@ export default function ActivityList() {
                 </Typography>
               </Stack>
               {(custpermit && custpermit.canAdd === true) || roleid === 1 ? (
-                <Link href="/admin/addactivity">
+                    <Link href="/admin/addactivity" 
+                    style={{ color: "#1A70C5", textDecoration: "none" }}
+                    >
                   <Button
                     className="button-new"
                     variant="contained"
@@ -865,6 +868,7 @@ export default function ActivityList() {
               </TableContainer>
             </Card>
           </div>
+          <MainFooter/>
         </Box>
       </Box>
       <ToastContainer />
