@@ -100,13 +100,13 @@ export default function ViewCustomer() {
                                                         variant="subtitle1"
                                                         color="text.secondary"
                                                     >
-                                                        USER-0000{userDet && userDet.id}
+                                                        USER-0000{userDet && userDet?.id}
                                                     </Typography>
                                                     <Typography variant="subtitle1">
-                                                        {userDet.email1}
+                                                        {userDet?.email1}
                                                     </Typography>
                                                     <Typography variant="subtitle1">
-                                                        {userDet.phone1}
+                                                        {userDet?.phone1}
                                                     </Typography>
                                                 </CardContent>
                                             </Box>

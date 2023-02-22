@@ -32,7 +32,7 @@ const style = {
 
 export default function ResetPasswordPage() {
   const router = useRouter();
-  const { token } = router.query;
+  const { id } = router.query;
   const [spinner, setShowspinner] = React.useState(false);
   const [btnDisabled, setBtnDisabled] = React.useState(false);
 
@@ -55,7 +55,7 @@ export default function ResetPasswordPage() {
   async function onSubmit(data: any) {
     setShowspinner(true);
     setBtnDisabled(true);
-    const reqData = { token: token, password: data.password };
+    const reqData = { token: id, password: data.password };
     await axios({
       method: "POST",
       url: `${api_url}/resetpassword`,
