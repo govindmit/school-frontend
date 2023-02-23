@@ -361,18 +361,18 @@ export default function ViewCreditNotes(props: any) {
                                                         <TableCell align="left">Adam Johans
                                                             Lorem ipsum dollar sit ammet</TableCell>
                                                         <TableCell align="left">10</TableCell>
-                                                        <TableCell align="left">{creditNoteDet?.amount}</TableCell>
-                                                        <TableCell align="left">{creditNoteDet?.amount}</TableCell>
+                                                        <TableCell align="left">${creditNoteDet?.amount}</TableCell>
+                                                        <TableCell align="left">${creditNoteDet?.amount}</TableCell>
                                                     </TableRow>
                                                     <TableRow hover tabIndex={1}>
                                                         <TableCell align="left" colSpan={3}></TableCell>
                                                         <TableCell align="left" style={{ fontWeight: "600" }}>SUBTOTAL</TableCell>
-                                                        <TableCell align="left">{creditNoteDet?.amount}</TableCell>
+                                                        <TableCell align="left">${creditNoteDet?.amount}</TableCell>
                                                     </TableRow>
                                                     <TableRow hover tabIndex={2}>
                                                         <TableCell align="left" colSpan={3}></TableCell>
                                                         <TableCell align="left" style={{ fontWeight: "600" }}>TOTAL</TableCell>
-                                                        <TableCell align="left">{creditNoteDet?.amount}</TableCell>
+                                                        <TableCell align="left">${creditNoteDet?.amount}</TableCell>
                                                     </TableRow>
                                                 </TableBody>
                                             </Table>
