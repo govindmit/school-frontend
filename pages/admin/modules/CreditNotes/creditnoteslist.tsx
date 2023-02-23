@@ -225,6 +225,7 @@ export default function CreditNotesList() {
     const pending = creditNotes?.filter((a: any) => a?.status === 0);
     const reject = creditNotes?.filter((a: any) => a?.status === 2);
     const deleted = creditNotes?.filter((a: any) => a?.status === 3);
+    const apprbyadmin = creditNotes?.filter((a: any) => a?.status === 4);
 
 
     const handleApproved = () => {
@@ -243,6 +244,10 @@ export default function CreditNotesList() {
 
     const handleDelete = () => {
         setcreditnotes(deleted);
+    };
+
+    const handleApprByAdmin = () => {
+        setcreditnotes(apprbyadmin);
     };
 
     //open close delete popup boxes
@@ -342,6 +347,11 @@ export default function CreditNotesList() {
                                                 label={`Deleted (${deleted.length})`}
                                                 {...a11yProps(4)}
                                                 onClick={handleDelete}
+                                            />
+                                            <Tab
+                                                label={`Approved By Admin (${apprbyadmin.length})`}
+                                                {...a11yProps(5)}
+                                                onClick={handleApprByAdmin}
                                             />
                                         </Tabs>
                                     </Box>
@@ -603,7 +613,7 @@ export default function CreditNotesList() {
                                                         <TableCell align="left">{item.name}</TableCell>
                                                         <TableCell align="left">{item.email1}</TableCell>
                                                         <TableCell align="left">{item?.status === 0 ? (<span style={{ color: "#FF4026", fontWeight: "bold" }}>Pending</span>) : item?.status === 1 ?
-                                                            (<span style={{ color: "#02C509", fontWeight: "bold" }}>Approved</span>) : item?.status === 2 ? (<span style={{ color: "#FF4026", fontWeight: "bold" }}>Reject</span>) : item?.status === 3 ? (<span style={{ color: "#FF4026", fontWeight: "bold" }}>Deleted</span>) : ""}</TableCell>
+                                                            (<span style={{ color: "#02C509", fontWeight: "bold" }}>Approved</span>) : item?.status === 2 ? (<span style={{ color: "#FF4026", fontWeight: "bold" }}>Reject</span>) : item?.status === 3 ? (<span style={{ color: "#FF4026", fontWeight: "bold" }}>Deleted</span>) : item?.status === 4 ? (<span style={{ color: "#FF4026", fontWeight: "bold" }}>Appr By Admin</span>) : ""}</TableCell>
                                                         <TableCell align="left">${item.amount}</TableCell>
                                                         <TableCell align="left">INV-{item.id}</TableCell>
                                                         <TableCell align="left">

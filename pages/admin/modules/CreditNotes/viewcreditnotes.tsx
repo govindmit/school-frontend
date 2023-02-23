@@ -24,6 +24,8 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import axios from "axios";
 import { toast } from "react-toastify";
 import ApproveCompForm from "./approvecmp";
+import { useRouter } from "next/router";
+import commmonfunctions from "../../../commonFunctions/commmonfunctions";
 const style = {
     color: "red",
     fontSize: "12px",
@@ -42,8 +44,27 @@ export default function ViewCreditNotes(props: any) {
     const [deleteOpen, setDeleteOpen] = React.useState(false);
     const [rejectOpen, setrejectOpen] = React.useState(false);
     const [approveOpen, setapproveOpen] = React.useState(false);
+    const [roleid, setroleid] = React.useState(0);
+    const [creditball, setcreditball] = React.useState(0);
+    const router = useRouter();
+
+    // verify user login and previlegs
+    let logintoken: any;
+    useEffect(() => {
+        logintoken = localStorage.getItem("QIS_loginToken");
+        if (logintoken === undefined || logintoken === null) {
+            router.push("/");
+        }
+        commmonfunctions.GivenPermition().then(res => {
+            if (res.roleId == 1) {
+                setroleid(res.roleId);
+                //router.push("/userprofile");
+            }
+        })
+    }, []);
     useEffect(() => {
         fetchData();
+        //fetchBallance();
     }, []);
     //get credit notes
     const url = `${api_url}/getCreditNotesDetails/${props.id}`;
@@ -57,12 +78,32 @@ export default function ViewCreditNotes(props: any) {
             });
             const json = await response.json();
             console.log(json.data);
+            fetchBallance(json.data.result[0].id);
             setcreditNoteDet(json.data.result[0]);
             setcreditNoteMsg(json.data.results);
         } catch (error: any) {
             console.log("error", error);
         }
     };
+
+    //get credit ballance 
+    const fetchBallance = async (id: number) => {
+        const apiurl = `${api_url}/creditballance/${id}`;
+        try {
+            const response = await fetch(apiurl, {
+                method: "GET",
+                headers: {
+                    Authorization: auth_token,
+                },
+            });
+            const json = await response.json();
+            // console.log(json.results[0].amount);
+            setcreditball(json.results[0].amount);
+        } catch (error: any) {
+            console.log("error", error);
+        }
+    };
+
     const {
         register,
         handleSubmit,
@@ -170,13 +211,13 @@ export default function ViewCreditNotes(props: any) {
                             <Stack>
                                 <Typography style={{ color: "#F95A37" }}>
                                     <span style={{ fontSize: "14PX" }}>BALANCE </span>{" "}
-                                    <b style={{ fontSize: "26px" }}> $174.00</b>
+                                    <b style={{ fontSize: "26px" }}> ${creditball ? creditball : 0}</b>
                                 </Typography>
-                                <Stack direction="row">
-                                    <Stack onClick={handleApproveOpen} style={{ color: "#02C509", cursor: "pointer" }}><b>Approved</b></Stack>
+                                {creditNoteDet?.status === 4 ? ("") : (<Stack direction="row">
+                                    {roleid === 1 ? (<Stack onClick={handleApproveOpen} style={{ color: "#02C509", cursor: "pointer" }}><b>Approved By Admin</b></Stack>) : (<Stack onClick={handleApproveOpen} style={{ color: "#02C509", cursor: "pointer" }}><b>Approved</b></Stack>)}
                                     <Stack onClick={handleRejectOpen} style={{ marginLeft: "20px", color: "red", cursor: "pointer" }}><b>Reject</b></Stack>
                                     <Stack onClick={handleDeleteOpen} style={{ marginLeft: "20px", color: "red", cursor: "pointer" }}><b>Delete</b></Stack>
-                                </Stack>
+                                </Stack>)}
                             </Stack>
                         </Stack>
                         {/*bread cump */}
@@ -449,7 +490,7 @@ export default function ViewCreditNotes(props: any) {
                                 </Grid>) : ""}
                                 {approveOpen ? (<Grid item xs={12} md={12} style={{ marginTop: "20px" }}>
                                     <Card sx={{ minWidth: 275 }}>
-                                        <ApproveCompForm id={props.id} closeDialog={closePoPapprove} />
+                                        <ApproveCompForm id={props.id} closeDialog={closePoPapprove} roleid={roleid} />
                                     </Card>
                                 </Grid>) : ""}
                             </Grid>
