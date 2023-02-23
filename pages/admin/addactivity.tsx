@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   Card,
   Button,
@@ -44,8 +45,9 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from "moment";
 import dynamic from "next/dynamic";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import MainFooter from "../commoncmp/mainfooter";
 
-import React, { useEffect, useState } from "react";
 const QuillNoSSRWrapper = dynamic(import("react-quill"), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -283,7 +285,7 @@ export default function AddNewActivity() {
                   href="/admin/activitylist"
                   style={{ color: "#1A70C5", textDecoration: "none" }}
                 >
-                  <Button variant="contained">Back</Button>
+                <Button variant="contained" startIcon={<ArrowBackIcon />}> Back To List</Button>
                 </Link>
               </div>
             </Stack>
@@ -532,6 +534,7 @@ export default function AddNewActivity() {
               </form>
             </Card>
           </div>
+          <MainFooter/>
         </Box>
       </Box>
     </>

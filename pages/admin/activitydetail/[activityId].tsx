@@ -25,6 +25,8 @@ import "react-toastify/dist/ReactToastify.css";
 import Paper from "@mui/material/Paper";
 import MiniDrawer from "../../sidebar";
 import { useRouter } from "next/router";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import MainFooter from "../../commoncmp/mainfooter";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -139,7 +141,7 @@ export default function Guardians() {
                   href="/admin/activitylist"
                   style={{ color: "#1A70C5", textDecoration: "none" }}
                 >
-                  <Button variant="contained">Back</Button>
+                <Button variant="contained" startIcon={<ArrowBackIcon />}> Back To List</Button>
                 </Link>
               </div>
             </Stack>
@@ -200,6 +202,7 @@ export default function Guardians() {
             
             </Card> 
           </div>
+          <MainFooter/>
         </Box>
       </Box>
     </>

@@ -44,6 +44,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from "moment";
 import dynamic from "next/dynamic";
+import MainFooter from "../../commoncmp/mainfooter";
 
 import React, { useEffect, useState } from "react";
 const QuillNoSSRWrapper = dynamic(import("react-quill"), {
@@ -518,6 +519,7 @@ export default function EditActivity() {
               </form>
             </Card>
           </div>
+          <MainFooter/>
         </Box>
       </Box>
     </>

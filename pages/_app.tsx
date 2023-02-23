@@ -9,6 +9,7 @@ import "../styles/globals.css";
 import "../styles/addinvoice.css";
 import "../styles/globals.css";
 import React, { useState } from "react";
+import Footer from "./commoncmp/footer";
 export default function App({ Component, pageProps }: AppProps) {
   return <Component {...pageProps} />;
 }

@@ -42,6 +42,8 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import ConfirmBox from "../../commoncmp/confirmbox";
 import commmonfunctions from "../../commonFunctions/commmonfunctions";
+import AddSalesOrder from "./add_new_sales_order";
+import MainFooter from "../../commoncmp/mainfooter";
 
 function a11yProps(index: number) {
   return {
@@ -91,6 +93,8 @@ export default function SalesOrderList() {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const [activeTab, setActiveTab] = useState("");
+const [newSalesOpen, setNewSalesOpen] = useState(false);
+
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -244,6 +248,15 @@ export default function SalesOrderList() {
     DATA.jump(1);
   };
 
+  function handleNewSalesOrder() {
+    setNewSalesOpen(true);
+  }
+
+  const closePoP = (data: any) => {
+    fetchData();
+    setNewSalesOpen(false);
+  };
+
   const style1 = {
     position: "absolute" as "absolute",
     top: "50%",
@@ -256,6 +269,7 @@ export default function SalesOrderList() {
     boxShadow: 24,
     // p: 4,
   };
+
 
   return (
     <>
@@ -333,6 +347,17 @@ export default function SalesOrderList() {
                 >
                   SALES ORDER
                 </Typography>
+              </Stack>
+              <Stack>
+              <Button
+                className="button-new"
+                variant="contained"
+                size="small"
+                sx={{ width: 150 }}
+                onClick={handleNewSalesOrder}
+              >
+                <b>ADD SALES ORDER</b>
+              </Button>
               </Stack>
             </Stack>
             {/*bread cump */}
@@ -437,11 +462,16 @@ export default function SalesOrderList() {
                             hover
                             tabIndex={-1}
                             role="checkbox"
+                            className={item?.isDeleted !== 0 ? "darkBgCss" : ""}
                           >
                             <TableCell padding="checkbox">
                               <Checkbox />
                             </TableCell>
-                            <TableCell align="left">INV-{id}</TableCell>
+                            <TableCell align="left">
+                              <Link href={`/admin/sales_order/details/${id}`}>
+                                INV-{id}
+                              </Link>
+                            </TableCell>
                             <TableCell align="left">{activity_name}</TableCell>
                             <TableCell align="left">{customer_email}</TableCell>
                             <TableCell align="left">{customer_name}</TableCell>
@@ -531,8 +561,16 @@ export default function SalesOrderList() {
               </TableContainer>
             </Card>
           </div>
+          <MainFooter/>
         </Box>
       </Box>
+      {
+        newSalesOpen ? (
+          <AddSalesOrder open={newSalesOpen} closeDialog={closePoP} />
+        ) : (
+          ""
+        )
+      }
       <ToastContainer />
     </>
   );
