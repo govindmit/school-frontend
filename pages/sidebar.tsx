@@ -304,33 +304,37 @@ export default function MiniDrawer() {
             ) : (
               ""
             )}
-            <ListItem
-              className="sidebar-link"
-              disablePadding
-              sx={{ display: "block" }}
-              onClick={() => router.push("/creditnotes/creditnotes")}
-            >
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
+
+            {userdet?.roleId === 1 ? (
+              <ListItem
+                className="sidebar-link"
+                disablePadding
+                sx={{ display: "block" }}
+                onClick={() => router.push("/admin/creditnotes/creditnoteslist")}
               >
-                <ListItemIcon
+                <ListItemButton
                   sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
+                    minHeight: 48,
+                    justifyContent: open ? "initial" : "center",
+                    px: 2.5,
                   }}
-                ></ListItemIcon>
-                <CreditCardOutlinedIcon />
-                <ListItemText
-                  primary="Credit Notes"
-                  sx={{ opacity: open ? 1 : 0 }}
-                />
-              </ListItemButton>
-            </ListItem>
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : "auto",
+                      justifyContent: "center",
+                    }}
+                  ></ListItemIcon>
+                  <CreditCardOutlinedIcon />
+                  <ListItemText
+                    primary="Credit Notes"
+                    sx={{ opacity: open ? 1 : 0 }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            ) : ""}
+
             {checkActivity === true || userdet?.roleId === 1 ? (
               <ListItem
                 className="sidebar-link"

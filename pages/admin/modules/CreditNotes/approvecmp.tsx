@@ -18,9 +18,11 @@ const style = {
 };
 export default function ApproveCompForm({
     id,
+    roleid,
     closeDialog
 }: {
     id: any,
+    roleid: any,
     closeDialog: any
 }) {
     const {
@@ -34,7 +36,7 @@ export default function ApproveCompForm({
         const reqData = {
             amount: data.amount,
             message: data.message,
-            status: 1,
+            status: roleid === 1 ? 4 : 1,
             updatedBy: 1
         };
         await axios({

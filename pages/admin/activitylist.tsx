@@ -638,7 +638,7 @@ export default function ActivityList() {
                         <Box>
                           <MenuItem
                             {...bindTrigger(popupState)}
-                            //onClick={ExportCSV}
+                          //onClick={ExportCSV}
                           >
                             Export
                             {/* <KeyboardArrowDownIcon /> */}
@@ -721,7 +721,7 @@ export default function ActivityList() {
                             <TableCell align="left">{id}</TableCell>
                             <TableCell align="left">{name}</TableCell>
                             <TableCell align="left">
-                              {type.charAt(0).toUpperCase() + type.slice(1)}
+                              {type?.charAt(0).toUpperCase() + type?.slice(1)}
                             </TableCell>
                             <TableCell align="left">
                               {" "}
@@ -775,7 +775,7 @@ export default function ActivityList() {
                                 className="action"
                               >
                                 {(custpermit && custpermit.canView === true) ||
-                                roleid === 1 ? (
+                                  roleid === 1 ? (
                                   <IconButton className="action-view">
                                     <Link
                                       href={`/admin/activitydetail/${id}`}
@@ -790,7 +790,7 @@ export default function ActivityList() {
                                   ""
                                 )}
                                 {(custpermit && custpermit.canEdit === true) ||
-                                roleid === 1 ? (
+                                  roleid === 1 ? (
                                   <Link
                                     href={`/admin/editActivity/${id}`}
                                     style={{
@@ -807,7 +807,7 @@ export default function ActivityList() {
 
                                 {(custpermit &&
                                   custpermit.canDelete === true) ||
-                                roleid === 1 ? (
+                                  roleid === 1 ? (
                                   <IconButton
                                     className="action-delete"
                                     style={{ color: "#F95A37" }}
