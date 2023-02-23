@@ -28,6 +28,8 @@ import Avatar from "@mui/material/Avatar";
 import Head from "next/head";
 import { Stack } from "@mui/system";
 import commmonfunctions from "./commonFunctions/commmonfunctions";
+import Footer from "./commoncmp/footer";
+
 const drawerWidth = 240;
 
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -512,7 +514,9 @@ export default function MiniDrawer() {
                 />
               </ListItemButton>
             </ListItem>
+           
           </List>
+      
         </Drawer>
         <Divider />
       </Box>
