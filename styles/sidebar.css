@@ -74,6 +74,7 @@ input.MuiInputBase-input.MuiInput-input.css-1x51dt5-MuiInputBase-input-MuiInput-
 .avatar-box > div {
   display: flex;
   align-items: center;
+  cursor: pointer;
 }
 
 .avatar-box > div svg {

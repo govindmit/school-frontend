@@ -22,6 +22,7 @@ import dynamic from "next/dynamic";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import commmonfunctions from "../commonFunctions/commmonfunctions";
 import { useRouter } from "next/router";
+import MainFooter from "../commoncmp/mainfooter";
 const DynamicComponentWithNoSSR = dynamic(() => import("../chart"), {
   ssr: false,
 });
@@ -711,6 +712,7 @@ export default function Dashboard(this: any) {
               </div>
             </div>
           </div>
+          <MainFooter />
         </Box>
       </Box>
     </>

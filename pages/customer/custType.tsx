@@ -41,6 +41,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import EditType from "./editType";
 import commmonfunctions from "../commonFunctions/commmonfunctions";
 import { useRouter } from "next/router";
+import MainFooter from "../commoncmp/mainfooter";
 
 const style = {
   color: "red",
@@ -415,6 +416,7 @@ export default function CustomerTypeList() {
               </TableContainer>
             </Card>
           </div>
+          <MainFooter />
         </Box>
       </Box>
       <BootstrapDialog

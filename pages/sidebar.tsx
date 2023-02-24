@@ -182,8 +182,8 @@ export default function MiniDrawer() {
             </div>
 
             <div className="avatar-box">
-              <Stack direction="row" spacing={2}>
-                <Avatar>N</Avatar>
+              <Stack direction="row" spacing={2} onClick={() => router.push("/userprofile")}>
+                <Avatar>{userdet?.name?.charAt(0).toUpperCase()}</Avatar>
                 <ArrowDropDownIcon />
               </Stack>
             </div>

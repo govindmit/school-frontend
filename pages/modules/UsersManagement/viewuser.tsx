@@ -17,6 +17,7 @@ import React, { useEffect, useState } from "react";
 import MiniDrawer from "../../sidebar";
 import styled from "@emotion/styled";
 import UserService from "./servives";
+import MainFooter from "../../commoncmp/mainfooter";
 
 const Item = styled(Paper)(({ theme }) => ({
     p: 10,
@@ -62,6 +63,14 @@ export default function ViewUser(props: any) {
     });
     const [onSalesInvoice, setonSalesInvoice] = React.useState(false);
     const [SalesInvoicechecked, setSalesInvoicechecked] = React.useState<any>({
+        canView: false,
+        canAdd: false,
+        canEdit: false,
+        canDelete: false
+    });
+
+    const [onCreditNote, setonCreditNote] = React.useState(false);
+    const [onCreditNotechecked, setonCreditNotechecked] = React.useState<any>({
         canView: false,
         canAdd: false,
         canEdit: false,
@@ -133,6 +142,16 @@ export default function ViewUser(props: any) {
                             canAdd: parsedata[i].SalesInvoices.canAdd,
                             canEdit: parsedata[i].SalesInvoices.canEdit,
                             canDelete: parsedata[i].SalesInvoices.canDelete
+                        })
+                    }
+
+                    if (parsedata[i].CreditNote) {
+                        setonCreditNote(true);
+                        setonCreditNotechecked({
+                            canView: parsedata[i].CreditNote.canView,
+                            canAdd: parsedata[i].CreditNote.canAdd,
+                            canEdit: parsedata[i].CreditNote.canEdit,
+                            canDelete: parsedata[i].CreditNote.canDelete
                         })
                     }
                 }
@@ -431,12 +450,85 @@ export default function ViewUser(props: any) {
                                                     <FormControlLabel control={<Checkbox checked={Composerchecked.canDelete} disabled />} label="Can Delete" />
                                                 </FormGroup>
                                             </Stack>) : ""}
+                                            <Stack
+                                                direction="row"
+                                                alignItems="center"
+                                                justifyContent="space-between"
+                                                style={{ backgroundColor: "#F0F4FF", padding: "10px", marginTop: "10px" }}
+
+                                            >
+                                                <Stack>
+                                                    <Stack spacing={3}>
+                                                        COMPOSER
+                                                    </Stack>
+                                                    <span style={{ color: "#333333" }}>
+                                                        {onComposer ? (<span style={{ color: "#1976d2" }}>ON</span>) : "OFF"}
+                                                    </span>
+                                                </Stack>
+                                                <Switch
+                                                    checked={onComposer}
+                                                    onChange={e => setonComposer(e.target.checked)}
+                                                    disabled
+                                                    inputProps={{ 'aria-label': 'controlled' }}
+                                                />
+                                            </Stack>
+                                            {onComposer ? (<Stack direction="row" style={{ marginTop: "10px" }} >
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={Composerchecked.canView} disabled />} label="Can View" />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={Composerchecked.canAdd} disabled />} label="Can Add" />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={Composerchecked.canEdit} disabled />} label="Can Edit" />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={Composerchecked.canDelete} disabled />} label="Can Delete" />
+                                                </FormGroup>
+                                            </Stack>) : ""}
+                                            <Stack
+                                                direction="row"
+                                                alignItems="center"
+                                                justifyContent="space-between"
+                                                style={{ backgroundColor: "#F0F4FF", padding: "10px", marginTop: "15px" }}
+
+                                            >
+                                                <Stack>
+                                                    <Stack spacing={3}>
+                                                        CREDIT NOTE
+                                                    </Stack>
+                                                    <span style={{ color: "#333333" }}>
+                                                        {onCreditNote ? (<span style={{ color: "#1976d2" }}>ON</span>) : "OFF"}
+                                                    </span>
+                                                </Stack>
+                                                <Switch
+                                                    checked={onCreditNote}
+                                                    onChange={e => setonCreditNote(e.target.checked)}
+                                                    inputProps={{ 'aria-label': 'controlled' }}
+                                                    disabled
+                                                />
+                                            </Stack>
+                                            {onCreditNote ? (<Stack direction="row" style={{ marginTop: "10px" }} >
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={onCreditNotechecked.canView} disabled />} label="Can View" />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={onCreditNotechecked.canAdd} disabled />} label="Can Add" />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={onCreditNotechecked.canEdit} disabled />} label="Can Edit" />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={onCreditNotechecked.canDelete} disabled />} label="Can Delete" />
+                                                </FormGroup>
+                                            </Stack>) : ""}
                                         </Box>
                                     </CardContent>
                                 </Card>
                             </Grid>
                         </Grid>
                     </div>
+                    <MainFooter />
                 </Box>
             </Box>
         </>
