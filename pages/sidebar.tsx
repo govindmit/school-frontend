@@ -53,6 +53,10 @@ const closedMixin = (theme: Theme): CSSObject => ({
   },
 });
 
+const handleChangeActive=()=>{
+console.log('######');
+}
+
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
@@ -116,8 +120,8 @@ export default function MiniDrawer() {
 
   const handleClick = () => {
     setIsActive((current) => !current);
+    console.log('isActive',isActive);
   };
-
   React.useEffect(() => {
     commmonfunctions.GivenPermition().then((res) => {
       setuserdet(res);
@@ -143,6 +147,8 @@ export default function MiniDrawer() {
       }
     });
   }, []);
+
+  let mngbackground = 'blue';
 
   return (
     <>
@@ -328,7 +334,7 @@ export default function MiniDrawer() {
                   ></ListItemIcon>
                   <CreditCardOutlinedIcon />
                   <ListItemText
-                    primary="Credit Notes"
+                    primary="Credit Note"
                     sx={{ opacity: open ? 1 : 0 }}
                   />
                 </ListItemButton>
@@ -342,11 +348,12 @@ export default function MiniDrawer() {
                 sx={{ display: "block" }}
                 onClick={() => router.push("/admin/activitylist")}
               >
-                <ListItemButton
+                <ListItemButton onClick={handleChangeActive}
                   sx={{
                     minHeight: 48,
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
+                    // background:mngbackground
                   }}
                 >
                   <ListItemIcon
@@ -358,7 +365,7 @@ export default function MiniDrawer() {
                   ></ListItemIcon>
                   <TimelineOutlinedIcon />
                   <ListItemText
-                    primary="Activity"
+                    primary="Activities"
                     sx={{ opacity: open ? 1 : 0 }}
                   />
                 </ListItemButton>
