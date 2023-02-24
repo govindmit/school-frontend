@@ -489,7 +489,7 @@ export default function AddNewActivity() {
                   <Stack style={{ marginTop: "20px" }}>
                     <Grid container spacing={2}>
                       <Grid item xs={12} md={12}>
-                        <Stack spacing={1}>
+                        <Stack spacing={5}>
                           <InputLabel htmlFor="name">
                             Short Description<span className="err_str"></span>
                           </InputLabel>
