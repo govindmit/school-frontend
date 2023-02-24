@@ -23,6 +23,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
 import { api_url, auth_token } from "../../api/hello";
 import EditCustomer from "../editcustomer";
+import MainFooter from "../../commoncmp/mainfooter";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -463,6 +464,7 @@ export default function ViewCustomer() {
               </Grid>
             </Grid>
           </div>
+          <MainFooter />
         </Box>
       </Box>
       <ToastContainer />

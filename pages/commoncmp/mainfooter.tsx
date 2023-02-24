@@ -6,7 +6,7 @@ import { SlSocialFacebook } from "react-icons/sl";
 
 export default function MainFooter() {
   return (
-    <footer className="footermain">
+    <footer className="footermain " style={{ marginTop: "20px", marginBottom: "20px" }}>
       <Typography style={{ fontSize: "15px" }}>
         © 2023 QIS. All Rights Reserved{" "}
         <a href="http://www.polymer-project.org/" target="_blank">

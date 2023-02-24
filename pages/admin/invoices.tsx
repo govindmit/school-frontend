@@ -73,6 +73,7 @@ import Paper from "@mui/material/Paper";
 import { number } from "yup/lib/locale";
 import { useRouter } from "next/router";
 import commmonfunctions from "../commonFunctions/commmonfunctions";
+import MainFooter from "../commoncmp/mainfooter";
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
     padding: theme.spacing(2),
@@ -1367,6 +1368,7 @@ export default function Guardians() {
             </div>
             <ToastContainer />
           </div>
+          <MainFooter />
         </Box>
       </Box>
     </>

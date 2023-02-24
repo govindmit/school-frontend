@@ -15,6 +15,7 @@ import router, { useRouter } from "next/router";
 import MiniDrawer from "./sidebar";
 import { api_url, auth_token } from "./api/hello";
 import commmonfunctions from "./commonFunctions/commmonfunctions";
+import MainFooter from "./commoncmp/mainfooter";
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -151,6 +152,7 @@ export default function ViewCustomer() {
                             </Grid>
                         </Grid>
                     </div>
+                    <MainFooter />
                 </Box>
             </Box>
             <ToastContainer />

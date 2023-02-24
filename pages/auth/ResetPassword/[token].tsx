@@ -18,10 +18,10 @@ import { BiArrowBack } from "react-icons/bi";
 import Head from "next/head";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import { api_url, auth_token } from "../api/hello";
-import AuthHeader from "../commoncmp/authheader";
-import AuthRightTemplate from "../commoncmp/authrighttemplate";
-import Footer from "../commoncmp/footer";
+import { api_url, auth_token } from "../../api/hello";
+import AuthHeader from "../../commoncmp/authheader";
+import AuthRightTemplate from "../../commoncmp/authrighttemplate";
+import Footer from "../../commoncmp/footer";
 const theme = createTheme();
 
 const style = {
@@ -93,6 +93,7 @@ export default function ResetPasswordPage() {
         <Grid container component="main" sx={{ height: "100vh" }}>
           <CssBaseline />
           <Grid
+            className="header-main"
             item
             xs={false}
             sm={4}
@@ -113,6 +114,7 @@ export default function ResetPasswordPage() {
             <AuthRightTemplate />
           </Grid>
           <Grid
+            className="headre-right-main"
             item
             xs={12}
             sm={8}
@@ -121,26 +123,12 @@ export default function ResetPasswordPage() {
             elevation={6}
             square
           >
-            <header className="header-navbar1">
-              <Typography></Typography>
-              <nav className="nav-bar">
-                <Link
-                  href="/"
-                  style={{
-                    color: "#1A70C5",
-                    textDecoration: "none",
-                    fontWeight: "bold",
-                  }}
-                >
-                  <BiArrowBack /> Back to Home
-                </Link>
-              </nav>
-            </header>
             <Box
+              className="width-full"
               sx={{
-                height: 405,
-                width: 400,
-                marginTop: 6,
+                height: 415,
+                width: 380,
+                marginTop: 5,
                 marginLeft: 11,
               }}
             >
