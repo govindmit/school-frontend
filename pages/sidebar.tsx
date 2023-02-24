@@ -173,7 +173,7 @@ export default function MiniDrawer() {
               <div className="inputBar search-box">
                 <OutlinedInput
                   className="inbar search-box-outer"
-                  id="name"
+                  id="name1"
                   type="text"
                   name="name"
                   placeholder="Search"

@@ -442,7 +442,7 @@ let creditBalance = creditAmount === price ? creditAmount : creditAmount > price
                               id="demo-simple-select"
                               defaultValue={"Cash"}
                               size="small"
-                              disabled = {totalPrice === "0" || price < 0 ? true : false}
+                              disabled = {totalPrice === "0" && price === 0 || Check === true && creditAmount > price ? true : false}
                               {...register("payment")}
                               onChange={(e) =>
                                 handlePaymentName(e.target.value)
