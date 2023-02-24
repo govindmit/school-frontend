@@ -167,20 +167,17 @@ export default function ViewCustomer() {
                           >
                             Paid
                           </Button>
+                          <Typography
+                            variant="subtitle1"
+                            color="text.secondary"
+                          >
+                            Date : {moment(userDet?.user_create_Date).format(
+                          "MMM DD, YYYY"
+                        )}
+                          </Typography>
                         </CardContent>
                       </Box>
                     </Stack>
-                    <div
-                      style={{ padding: "8px", display: "flex" }}
-                      className="text-grey"
-                    >
-                      <p>Date :</p>{" "}
-                      <p style={{ marginLeft: "38%" }}>
-                        {moment(userDet?.user_create_Date).format(
-                          "MMM DD, YYYY"
-                        )}
-                      </p>
-                    </div>
                   </CardContent>
                 </Card>
               </Grid>
@@ -255,7 +252,21 @@ export default function ViewCustomer() {
                             <TableCell align="left"></TableCell>
                             <TableCell align="left"></TableCell>
                             <TableCell align="left">
-                              $ {userDet && userDet?.amount}
+                              $ {userDet && userDet?.activity_price}
+                            </TableCell>
+                          </TableRow>
+                            <TableRow hover tabIndex={2}>
+                            <TableCell align="left"></TableCell>
+                            <TableCell align="left"></TableCell>
+                            <TableCell align="left"></TableCell>
+                            <TableCell
+                              align="left"
+                              style={{ fontWeight: "600" }}
+                            >
+                            CREDIT BALANCE:  
+                            </TableCell>
+                            <TableCell align="left">
+                            {userDet?.activity_price-userDet?.amount === 0 ? "$0" : `-$${userDet?.activity_price-userDet?.amount}`}
                             </TableCell>
                           </TableRow>
                           <TableRow hover tabIndex={1}>
@@ -284,6 +295,35 @@ export default function ViewCustomer() {
                             </TableCell>
                             <TableCell align="left">
                               $ {userDet && userDet?.amount}
+                            </TableCell>
+                          </TableRow>
+
+                          <TableRow hover tabIndex={2}>
+                            <TableCell align="left"></TableCell>
+                            <TableCell align="left"></TableCell>
+                            <TableCell align="left"></TableCell>
+                            <TableCell
+                              align="left"
+                              style={{ fontWeight: "600" }}
+                            >
+                              PAYMENT METHOD
+                            </TableCell>
+                            <TableCell align="left">
+                              {userDet && userDet?.paymentMethod}
+                            </TableCell>
+                          </TableRow>
+                          <TableRow hover tabIndex={2}>
+                            <TableCell align="left"></TableCell>
+                            <TableCell align="left"></TableCell>
+                            <TableCell align="left"></TableCell>
+                            <TableCell
+                              align="left"
+                              style={{ fontWeight: "600" }}
+                            >
+                              PAYMENT DATE
+                            </TableCell>
+                            <TableCell align="left">
+                            {userDet?.createdDate}
                             </TableCell>
                           </TableRow>
                         </TableBody>
