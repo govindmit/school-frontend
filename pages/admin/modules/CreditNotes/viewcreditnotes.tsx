@@ -35,9 +35,7 @@ type FormValues = {
     message: string;
     status: number;
     updatedBy: number
-
 };
-
 export default function ViewCreditNotes(props: any) {
     const [creditNoteDet, setcreditNoteDet] = React.useState<any>([]);
     const [creditNoteMsg, setcreditNoteMsg] = React.useState<any>([]);
@@ -64,8 +62,8 @@ export default function ViewCreditNotes(props: any) {
     }, []);
     useEffect(() => {
         fetchData();
-        //fetchBallance();
     }, []);
+
     //get credit notes
     const url = `${api_url}/getCreditNotesDetails/${props.id}`;
     const fetchData = async () => {
@@ -77,8 +75,7 @@ export default function ViewCreditNotes(props: any) {
                 },
             });
             const json = await response.json();
-            console.log(json.data);
-            fetchBallance(json.data.result[0].id);
+            fetchBallance(json.data.result[0].customerId);
             setcreditNoteDet(json.data.result[0]);
             setcreditNoteMsg(json.data.results);
         } catch (error: any) {
@@ -97,12 +94,13 @@ export default function ViewCreditNotes(props: any) {
                 },
             });
             const json = await response.json();
-            // console.log(json.results[0].amount);
-            setcreditball(json.results[0].amount);
+            setcreditball(json.creditBal);
         } catch (error: any) {
             console.log("error", error);
         }
     };
+
+    console.log(creditNoteDet);
 
     const {
         register,
@@ -211,7 +209,7 @@ export default function ViewCreditNotes(props: any) {
                             <Stack>
                                 <Typography style={{ color: "#F95A37" }}>
                                     <span style={{ fontSize: "14PX" }}>BALANCE </span>{" "}
-                                    <b style={{ fontSize: "26px" }}> ${creditball ? creditball : 0}</b>
+                                    <b style={{ fontSize: "26px" }}>  ${creditball ? creditball : 0}</b>
                                 </Typography>
                                 {creditNoteDet?.status === 4 ? ("") : (<Stack direction="row">
                                     {roleid === 1 ? (<Stack onClick={handleApproveOpen} style={{ color: "#02C509", cursor: "pointer" }}><b>Approved By Admin</b></Stack>) : (<Stack onClick={handleApproveOpen} style={{ color: "#02C509", cursor: "pointer" }}><b>Approved</b></Stack>)}
@@ -399,8 +397,7 @@ export default function ViewCreditNotes(props: any) {
                                                 <TableBody>
                                                     <TableRow hover tabIndex={-1}>
                                                         <TableCell align="left" className="invcss" style={{ fontWeight: "500", color: "#26CEB3" }}>INV-0001</TableCell>
-                                                        <TableCell align="left">Adam Johans
-                                                            Lorem ipsum dollar sit ammet</TableCell>
+                                                        <TableCell align="left">{creditNoteDet?.activityname}</TableCell>
                                                         <TableCell align="left">10</TableCell>
                                                         <TableCell align="left">${creditNoteDet?.amount}</TableCell>
                                                         <TableCell align="left">${creditNoteDet?.amount}</TableCell>
@@ -490,7 +487,8 @@ export default function ViewCreditNotes(props: any) {
                                 </Grid>) : ""}
                                 {approveOpen ? (<Grid item xs={12} md={12} style={{ marginTop: "20px" }}>
                                     <Card sx={{ minWidth: 275 }}>
-                                        <ApproveCompForm id={props.id} closeDialog={closePoPapprove} roleid={roleid} />
+                                        <ApproveCompForm id={props.id} closeDialog={closePoPapprove} roleid={roleid} custId={creditNoteDet?.customerId
+                                        } creditReqId={creditNoteDet?.creditReqId} />
                                     </Card>
                                 </Grid>) : ""}
                             </Grid>
