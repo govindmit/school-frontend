@@ -78,6 +78,14 @@ export default function ViewUser(props: any) {
         canDelete: false
     });
 
+    const [onUserManagement, setonUserManagement] = React.useState(false);
+    const [onUserManagementchecked, setonUserManagementchecked] = React.useState<any>({
+        canView: false,
+        canAdd: false,
+        canEdit: false,
+        canDelete: false
+    });
+
     useEffect(() => {
         //get user det
         UserService.GetUserDet(props.id).then(response => {
@@ -145,8 +153,16 @@ export default function ViewUser(props: any) {
                             canDelete: parsedata[i].SalesInvoices.canDelete
                         })
                     }
-
                     if (parsedata[i].CreditNote) {
+                        setonCreditNote(true);
+                        setonCreditNotechecked({
+                            canView: parsedata[i].CreditNote.canView,
+                            canAdd: parsedata[i].CreditNote.canAdd,
+                            canEdit: parsedata[i].CreditNote.canEdit,
+                            canDelete: parsedata[i].CreditNote.canDelete
+                        })
+                    }
+                    if (parsedata[i].UserManagement) {
                         setonCreditNote(true);
                         setonCreditNotechecked({
                             canView: parsedata[i].CreditNote.canView,
@@ -498,6 +514,42 @@ export default function ViewUser(props: any) {
                                                 <Stack>
                                                     <Stack spacing={3}>
                                                         CREDIT NOTE
+                                                    </Stack>
+                                                    <span style={{ color: "#333333" }}>
+                                                        {onCreditNote ? (<span style={{ color: "#1976d2" }}>ON</span>) : "OFF"}
+                                                    </span>
+                                                </Stack>
+                                                <Switch
+                                                    checked={onCreditNote}
+                                                    onChange={e => setonCreditNote(e.target.checked)}
+                                                    inputProps={{ 'aria-label': 'controlled' }}
+                                                    disabled
+                                                />
+                                            </Stack>
+                                            {onCreditNote ? (<Stack direction="row" style={{ marginTop: "10px" }} >
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={onCreditNotechecked.canView} disabled />} label="Can View" />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={onCreditNotechecked.canAdd} disabled />} label="Can Add" />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={onCreditNotechecked.canEdit} disabled />} label="Can Edit" />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={onCreditNotechecked.canDelete} disabled />} label="Can Delete" />
+                                                </FormGroup>
+                                            </Stack>) : ""}
+                                            <Stack
+                                                direction="row"
+                                                alignItems="center"
+                                                justifyContent="space-between"
+                                                style={{ backgroundColor: "#F0F4FF", padding: "10px", marginTop: "15px" }}
+
+                                            >
+                                                <Stack>
+                                                    <Stack spacing={3}>
+                                                        User Management
                                                     </Stack>
                                                     <span style={{ color: "#333333" }}>
                                                         {onCreditNote ? (<span style={{ color: "#1976d2" }}>ON</span>) : "OFF"}
