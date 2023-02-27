@@ -117,11 +117,18 @@ export default function MiniDrawer() {
   const [checkSalesInvoice, setcheckSalesInvoice] = React.useState<any>(false);
   const [checkComposer, setcheckComposer] = React.useState<any>(false);
   const [isActive, setIsActive] = useState(false);
+  const [profileActive, setprofileActive] = useState(false);
 
   const handleClick = () => {
     setIsActive((current) => !current);
     console.log('isActive',isActive);
   };
+
+  const profileClick = () => {
+    setprofileActive((current) => !current);
+  };
+
+
   React.useEffect(() => {
     commmonfunctions.GivenPermition().then((res) => {
       setuserdet(res);
@@ -182,10 +189,65 @@ export default function MiniDrawer() {
             </div>
 
             <div className="avatar-box">
-              <Stack direction="row" spacing={2} onClick={() => router.push("/userprofile")}>
-                <Avatar>{userdet?.name?.charAt(0).toUpperCase()}</Avatar>
+
+              <Stack onClick={profileClick} direction="row" spacing={2}>
+                <Avatar>N</Avatar>
+
                 <ArrowDropDownIcon />
               </Stack>
+              <List
+                className={
+                  profileActive
+                    ? "bisplay-block drop-down-profile"
+                    : "drop-down-profile"
+                }
+                style={{ display: "none" }}
+              >
+                <ListItem
+                  className="sidebar-link"
+                  disablePadding
+                  sx={{ display: "block" }}
+                  // onClick={() => router.push("/activites/activitylist")}
+                >
+                  <ListItemButton
+                    sx={{
+                      minHeight: 48,
+                      justifyContent: open ? "initial" : "center",
+                      px: 2.5,
+                    }}
+                  >
+                    <PeopleAltOutlinedIcon />
+                    <ListItemText
+                      className="text-line"
+                      primary="Profile"
+                      sx={{ opacity: open ? 1 : 0 }}
+                      onClick={() => router.push("/userprofile")}
+                    />
+                  </ListItemButton>
+                </ListItem>
+                <ListItem
+                  className="sidebar-link"
+                  disablePadding
+                  sx={{ display: "block" }}
+                  // onClick={() => router.push("/activites/activitylist")}
+                >
+                  <ListItemButton
+                    sx={{
+                      minHeight: 48,
+                      justifyContent: open ? "initial" : "center",
+                      px: 2.5,
+                    }}
+                  >
+                    <LockOutlinedIcon />
+                    <ListItemText
+                      className="text-line"
+                      primary="Log Out"
+                      sx={{ opacity: open ? 1 : 0 }}
+                      onClick={() => router.push("/logout")}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              </List>
             </div>
           </div>
         </AppBar>
@@ -315,7 +377,9 @@ export default function MiniDrawer() {
                 className="sidebar-link"
                 disablePadding
                 sx={{ display: "block" }}
-                onClick={() => router.push("/admin/creditnotes/creditnoteslist")}
+                onClick={() =>
+                  router.push("/admin/creditnotes/creditnoteslist")
+                }
               >
                 <ListItemButton
                   sx={{
@@ -338,7 +402,9 @@ export default function MiniDrawer() {
                   />
                 </ListItemButton>
               </ListItem>
-            ) : ""}
+            ) : (
+              ""
+            )}
 
             {checkActivity === true || userdet?.roleId === 1 ? (
               <ListItem
@@ -439,7 +505,7 @@ export default function MiniDrawer() {
                 className="sidebar-link"
                 disablePadding
                 sx={{ display: "block" }}
-              // onClick={() => router.push("/activites/activitylist")}
+                // onClick={() => router.push("/activites/activitylist")}
               >
                 <ListItemButton
                   sx={{
@@ -459,7 +525,7 @@ export default function MiniDrawer() {
                   <ListItemText
                     primary="Composer"
                     sx={{ opacity: open ? 1 : 0 }}
-                  //onClick={() => router.push("/logout")}
+                    //onClick={() => router.push("/logout")}
                   />
                 </ListItemButton>
               </ListItem>
@@ -471,36 +537,7 @@ export default function MiniDrawer() {
               className="sidebar-link"
               disablePadding
               sx={{ display: "block" }}
-            // onClick={() => router.push("/activites/activitylist")}
-            >
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                ></ListItemIcon>
-                <LockOutlinedIcon />
-                <ListItemText
-                  primary="Log Out"
-                  sx={{ opacity: open ? 1 : 0 }}
-                  onClick={() => router.push("/logout")}
-                />
-              </ListItemButton>
-            </ListItem>
-
-            <ListItem
-              className="sidebar-link"
-              disablePadding
-              sx={{ display: "block" }}
-            // onClick={() => router.push("/activites/activitylist")}
+              // onClick={() => router.push("/activites/activitylist")}
             >
               <ListItemButton
                 sx={{
@@ -524,9 +561,7 @@ export default function MiniDrawer() {
                 />
               </ListItemButton>
             </ListItem>
-
           </List>
-
         </Drawer>
         <Divider />
       </Box>
