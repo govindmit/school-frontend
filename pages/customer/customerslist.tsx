@@ -326,7 +326,7 @@ export default function CustomerList() {
   }
   const closeEditPoP = (data: any) => {
     seteditCustOpen(false);
-    getUser();
+    //getUser();
   };
 
   //tab functionality

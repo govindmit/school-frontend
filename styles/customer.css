@@ -5,11 +5,12 @@
   position: absolute;
   left: 290px !important;
   width: calc(100% - 353px);
-  background: #eee;
-  top: 264px !important;
+  background: #f4f4f4;
+  top: 272px !important;
   box-shadow: none;
   text-align: left;
   padding: 25px;
+  border-radius: 10px;
 }
 
 label {
@@ -74,12 +75,12 @@ input {
 .resetfiltercss {
   margin-left: 25px;
 }
-.salesStatus{
+.salesStatus {
   font-size: 14px;
   color: rgb(2, 197, 9) !important;
   font-weight: 600;
 }
-.btndetail{
+.btndetail {
   height: 20px !important;
   font-size: 10px !important;
   text-transform: none !important;
@@ -87,10 +88,10 @@ input {
   background: #d7fddd !important;
   font-weight: 700 !important;
 }
-.invcss{
+.invcss {
   color: #2bd1e2 !important;
 }
-.paidcss{
+.paidcss {
   height: 29px !important;
   text-transform: none !important;
   margin-bottom: 4px !important;
@@ -100,19 +101,21 @@ input {
   border-bottom: 1px solid #d3cccc;
   margin-top: 10px;
 }
-.confirmcss{
-  margin-top: 18px !important;
-  margin-left: 27px !important;
+
+.confirmcss {
+  margin-top: 18px;
+  margin-left: 27px;
 }
 .deleteusercss {
-  margin-top: 18px !important;
-  margin-left: 27px !important;
+  margin-top: 18px;
+  margin-left: 27px;
+
 }
-.copycss{
+.copycss {
   min-width: 33px !important;
 }
-.darkBgCss{
-  background: #ebebeb !important
+.darkBgCss {
+  background: #ebebeb !important;
 }
 span.addsales {
   border-top: 1px solid darkgrey;

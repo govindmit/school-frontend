@@ -1434,7 +1434,7 @@ getwayService.transactionDataSaveInDB(data,function(result:any){
                       <Grid container spacing={2}>
                         <Grid item xs={12} md={6}>
                           <Stack spacing={1}>
-                            <InputLabel htmlFor="name">Reerence</InputLabel>
+                            <InputLabel htmlFor="name">Reference</InputLabel>
                             <OutlinedInput
                               onChange={(e) => setNote(e.target.value)}
                               type="text"

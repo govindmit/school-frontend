@@ -64,9 +64,15 @@ export default function ViewCreditNotes(props: any) {
                                     <b style={{ fontSize: "26px" }}> $174.00</b>
                                 </Typography>
                                 <Stack direction="row">
-                                    <Typography style={{ color: "#02C509" }}><b>Approved</b></Typography>
-                                    <Typography style={{ marginLeft: "20px", color: "red" }}><b>Reject</b></Typography>
-                                    <Typography style={{ marginLeft: "20px", color: "red" }}><b>Delete</b></Typography>
+                                    <Typography style={{ color: "#02C509" }}>
+                                        <b>Approved</b>
+                                    </Typography>
+                                    <Typography style={{ marginLeft: "20px", color: "red" }}>
+                                        <b>Reject</b>
+                                    </Typography>
+                                    <Typography style={{ marginLeft: "20px", color: "red" }}>
+                                        <b>Delete</b>
+                                    </Typography>
                                 </Stack>
                             </Stack>
                         </Stack>
@@ -95,32 +101,34 @@ export default function ViewCreditNotes(props: any) {
                                                                 gutterBottom
                                                                 style={{ fontWeight: "bold", color: "#333333" }}
                                                             >
-                                                                Credit Note Details
+                                                                Credit Note Detailshg
                                                             </Typography>
                                                         </Stack>
-                                                    </Stack>
-                                                    <Stack style={{ padding: "8px" }}>
-                                                        <Box sx={{ display: "flex" }}>
-                                                            <div id="profileImage"><span id="fullName">A</span></div>
-                                                            <CardContent sx={{ flex: 1 }} className="text-grey">
-                                                                <Typography component="h4" variant="h4">
-                                                                    Acme Corporation
-                                                                </Typography>
-                                                                <Typography
-                                                                    variant="subtitle1"
-                                                                    color="text.secondary"
+                                                        <Stack style={{ padding: "8px" }}>
+                                                            <Box sx={{ display: "flex" }}>
+                                                                <div id="profileImage">
+                                                                    <span id="fullName">A</span>
+                                                                </div>
+                                                                <CardContent
+                                                                    sx={{ flex: 1 }}
+                                                                    className="text-grey"
                                                                 >
-                                                                    CUST-00002
-                                                                </Typography>
-                                                                <Typography variant="subtitle1">
-
-                                                                </Typography>
-                                                                <Typography variant="subtitle1">
-
-                                                                </Typography>
-                                                            </CardContent>
-                                                        </Box>
+                                                                    <Typography component="h4" variant="h4">
+                                                                        Acme Corporation
+                                                                    </Typography>
+                                                                    <Typography
+                                                                        variant="subtitle1"
+                                                                        color="text.secondary"
+                                                                    >
+                                                                        CUST-00002
+                                                                    </Typography>
+                                                                    <Typography variant="subtitle1"></Typography>
+                                                                    <Typography variant="subtitle1"></Typography>
+                                                                </CardContent>
+                                                            </Box>
+                                                        </Stack>
                                                     </Stack>
+
                                                     <Stack style={{ padding: "8px" }}>
                                                         <Typography>Cretaed : Jan 10, 2023</Typography>
                                                     </Stack>
@@ -163,7 +171,13 @@ export default function ViewCreditNotes(props: any) {
                                                     </Typography>
                                                 </Stack>
                                             </Stack>
-                                            <Typography>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one </Typography>
+                                            <Typography>
+                                                Contrary to popular belief, Lorem Ipsum is not simply
+                                                random text. It has roots in a piece of classical Latin
+                                                literature from 45 BC, making it over 2000 years old.
+                                                Richard McClintock, a Latin professor at Hampden-Sydney
+                                                College in Virginia, looked up one{" "}
+                                            </Typography>
                                         </CardContent>
                                     </Card>
                                 </Grid>
@@ -190,7 +204,6 @@ export default function ViewCreditNotes(props: any) {
                                                         Line Items
                                                     </Typography>
                                                 </Stack>
-
                                             </Stack>
                                             <Table style={{ marginTop: "20px" }}>
                                                 <TableHead>
@@ -214,21 +227,38 @@ export default function ViewCreditNotes(props: any) {
                                                 </TableHead>
                                                 <TableBody>
                                                     <TableRow hover tabIndex={-1}>
-                                                        <TableCell align="left" className="invcss" style={{ fontWeight: "500", color: "#26CEB3" }}>INV-0001</TableCell>
-                                                        <TableCell align="left">Adam Johans
-                                                            Lorem ipsum dollar sit ammet</TableCell>
+                                                        <TableCell
+                                                            align="left"
+                                                            className="invcss"
+                                                            style={{ fontWeight: "500", color: "#26CEB3" }}
+                                                        >
+                                                            INV-0001
+                                                        </TableCell>
+                                                        <TableCell align="left">
+                                                            Adam Johans Lorem ipsum dollar sit ammet
+                                                        </TableCell>
                                                         <TableCell align="left">10</TableCell>
                                                         <TableCell align="left">$ 237.5</TableCell>
                                                         <TableCell align="left">$ 237.5</TableCell>
                                                     </TableRow>
                                                     <TableRow hover tabIndex={1}>
                                                         <TableCell align="left" colSpan={3}></TableCell>
-                                                        <TableCell align="left" style={{ fontWeight: "600" }}>SUBTOTAL</TableCell>
+                                                        <TableCell
+                                                            align="left"
+                                                            style={{ fontWeight: "600" }}
+                                                        >
+                                                            SUBTOTAL
+                                                        </TableCell>
                                                         <TableCell align="left">$ 237.5</TableCell>
                                                     </TableRow>
                                                     <TableRow hover tabIndex={2}>
                                                         <TableCell align="left" colSpan={3}></TableCell>
-                                                        <TableCell align="left" style={{ fontWeight: "600" }}>TOTAL</TableCell>
+                                                        <TableCell
+                                                            align="left"
+                                                            style={{ fontWeight: "600" }}
+                                                        >
+                                                            TOTAL
+                                                        </TableCell>
                                                         <TableCell align="left">$ 237.5</TableCell>
                                                     </TableRow>
                                                 </TableBody>
@@ -244,4 +274,3 @@ export default function ViewCreditNotes(props: any) {
         </>
     );
 }
-
