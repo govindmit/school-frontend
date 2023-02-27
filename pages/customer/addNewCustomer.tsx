@@ -217,7 +217,7 @@ export default function AddCustomer({
         }
       })
       .catch((error) => {
-        toast.error("Email Allready Registred !");
+        toast.error("Email Already Registered !");
         setshowspinner(false);
         setBtnDisabled(false);
       });

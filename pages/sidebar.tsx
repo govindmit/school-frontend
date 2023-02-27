@@ -53,6 +53,10 @@ const closedMixin = (theme: Theme): CSSObject => ({
   },
 });
 
+const handleChangeActive=()=>{
+console.log('######');
+}
+
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
@@ -117,10 +121,13 @@ export default function MiniDrawer() {
 
   const handleClick = () => {
     setIsActive((current) => !current);
+    console.log('isActive',isActive);
   };
+
   const profileClick = () => {
     setprofileActive((current) => !current);
   };
+
 
   React.useEffect(() => {
     commmonfunctions.GivenPermition().then((res) => {
@@ -147,6 +154,8 @@ export default function MiniDrawer() {
     });
   }, []);
 
+  let mngbackground = 'blue';
+
   return (
     <>
       <Head>
@@ -171,7 +180,7 @@ export default function MiniDrawer() {
               <div className="inputBar search-box">
                 <OutlinedInput
                   className="inbar search-box-outer"
-                  id="name"
+                  id="name1"
                   type="text"
                   name="name"
                   placeholder="Search"
@@ -180,8 +189,10 @@ export default function MiniDrawer() {
             </div>
 
             <div className="avatar-box">
+
               <Stack onClick={profileClick} direction="row" spacing={2}>
                 <Avatar>N</Avatar>
+
                 <ArrowDropDownIcon />
               </Stack>
               <List
@@ -386,7 +397,7 @@ export default function MiniDrawer() {
                   ></ListItemIcon>
                   <CreditCardOutlinedIcon />
                   <ListItemText
-                    primary="Credit Notes"
+                    primary="Credit Note"
                     sx={{ opacity: open ? 1 : 0 }}
                   />
                 </ListItemButton>
@@ -402,11 +413,12 @@ export default function MiniDrawer() {
                 sx={{ display: "block" }}
                 onClick={() => router.push("/admin/activitylist")}
               >
-                <ListItemButton
+                <ListItemButton onClick={handleChangeActive}
                   sx={{
                     minHeight: 48,
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
+                    // background:mngbackground
                   }}
                 >
                   <ListItemIcon
@@ -418,7 +430,7 @@ export default function MiniDrawer() {
                   ></ListItemIcon>
                   <TimelineOutlinedIcon />
                   <ListItemText
-                    primary="Activity"
+                    primary="Activities"
                     sx={{ opacity: open ? 1 : 0 }}
                   />
                 </ListItemButton>

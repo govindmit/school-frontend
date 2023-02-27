@@ -445,23 +445,25 @@ export default function AddSalesOrder({
                           Payment Method
                         </InputLabel>
                         <FormControl fullWidth>
-                          <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            defaultValue={"Cash"}
-                            size="small"
-                            disabled={
-                              totalPrice === "0" || price < 0 ? true : false
-                            }
-                            {...register("payment")}
-                            onChange={(e) => handlePaymentName(e.target.value)}
-                          >
-                            <MenuItem value={"Cash"}>Cash</MenuItem>
-                            <MenuItem value={"Amex"}>Amex</MenuItem>
-                            <MenuItem value={"QPay"}>QPay</MenuItem>
-                            <MenuItem value={"CBQ"}>CBQ</MenuItem>
-                          </Select>
-                        </FormControl>
+
+                            <Select
+                              labelId="demo-simple-select-label"
+                              id="demo-simple-select"
+                              defaultValue={"Cash"}
+                              size="small"
+                              disabled = {totalPrice === "0" && price === 0 || Check === true && creditAmount > price ? true : false}
+                              {...register("payment")}
+                              onChange={(e) =>
+                                handlePaymentName(e.target.value)
+                              }
+                            >
+                              <MenuItem value={"Cash"}>Cash</MenuItem>
+                              <MenuItem value={"Amex"}>Amex</MenuItem>
+                              <MenuItem value={"QPay"}>QPay</MenuItem>
+                              <MenuItem value={"CBQ"}>CBQ</MenuItem>
+                            </Select>
+                    
+                       </FormControl>
                       </Stack>
                     </Grid>
                   </Grid>

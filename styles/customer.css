@@ -94,12 +94,14 @@ input {
 .paidcss {
   height: 29px !important;
   text-transform: none !important;
+  margin-bottom: 4px !important;
 }
 
 .linecss {
   border-bottom: 1px solid #d3cccc;
   margin-top: 10px;
 }
+
 .confirmcss {
   margin-top: 18px;
   margin-left: 27px;
@@ -107,6 +109,7 @@ input {
 .deleteusercss {
   margin-top: 18px;
   margin-left: 27px;
+
 }
 .copycss {
   min-width: 33px !important;

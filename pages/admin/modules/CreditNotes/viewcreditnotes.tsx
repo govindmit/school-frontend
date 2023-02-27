@@ -26,6 +26,7 @@ import { toast } from "react-toastify";
 import ApproveCompForm from "./approvecmp";
 import { useRouter } from "next/router";
 import commmonfunctions from "../../../commonFunctions/commmonfunctions";
+import MainFooter from "../../../commoncmp/mainfooter";
 const style = {
   color: "red",
   fontSize: "12px",
@@ -813,6 +814,7 @@ export default function ViewCreditNotes(props: any) {
                             </Grid>
                         </Grid>
                     </div>
+                    <MainFooter />
                 </Box>
             </Box >
             <DeleteFormDialog id={props.id} open={deleteOpen} closeDialog={closePoP} />

@@ -37,6 +37,7 @@ import Link from "next/link";
 import DatePicker from "react-datepicker";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import "react-datepicker/dist/react-datepicker.css";
+import MainFooter from "../commoncmp/mainfooter";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -397,7 +398,7 @@ export default function Guardians() {
       .then((res) => {
         setItem(res?.data.data);
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
   console.log(Dateerror, "Dateerror");
   useEffect(() => {
@@ -443,7 +444,7 @@ export default function Guardians() {
         setProduct(res?.data.data);
         handleCloses();
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
   var price = 0;
   for (let d of product) {
@@ -464,7 +465,7 @@ export default function Guardians() {
       .then((res) => {
         setUser(res?.data.data);
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
   const handleSearch = (e: any) => {
     setInputValue(e.target.value);
@@ -521,7 +522,7 @@ export default function Guardians() {
         setInvoiceNo(res?.data?.invoiceNo);
         // console.log(res, "response");
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
 
   const handleDraft = async () => {
@@ -767,12 +768,12 @@ export default function Guardians() {
                             )}
                           </Button>
                         }
-                        // {...register("Customername", {
-                        //   onChange: (event) => {
-                        //     setUserId(event);
-                        //   },
-                        //   required: true,
-                        // })}
+                      // {...register("Customername", {
+                      //   onChange: (event) => {
+                      //     setUserId(event);
+                      //   },
+                      //   required: true,
+                      // })}
                       />
                       <Typography style={style}>
                         <span>
@@ -827,11 +828,11 @@ export default function Guardians() {
                           {product.map((row: any) => (
                             <TableRow
                               key={row.name}
-                              // sx={{
-                              //   "&:last-child td, &:last-child th": { border: 0 },
-                              // }}
+                            // sx={{
+                            //   "&:last-child td, &:last-child th": { border: 0 },
+                            // }}
                             >
-                              <TableCell component="th" scope="row">
+                              <TableCell >
                                 {row.name}
                               </TableCell>
                               <TableCell>1</TableCell>
@@ -1011,6 +1012,7 @@ export default function Guardians() {
 
             {opens ? <AddCustomer open={true} closeDialog={handleClose} /> : ""}
           </div>
+          <MainFooter />
         </Box>
       </Box>
     </>

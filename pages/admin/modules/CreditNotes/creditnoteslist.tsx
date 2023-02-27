@@ -40,6 +40,7 @@ import DeleteFormDialog from "./deletedialougebox";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from "moment";
+import MainFooter from "../../../commoncmp/mainfooter";
 function a11yProps(index: number) {
     return {
         id: `simple-tab-${index}`,
@@ -681,6 +682,7 @@ export default function CreditNotesList() {
                             </TableContainer>
                         </Card>
                     </div>
+                    <MainFooter />
                 </Box>
             </Box>
             <DeleteFormDialog id={id} open={deleteOpen} closeDialog={closePoP} />
