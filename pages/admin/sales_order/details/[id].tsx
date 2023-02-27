@@ -313,21 +313,7 @@ export default function ViewCustomer() {
                               PAYMENT METHOD
                             </TableCell>
                             <TableCell align="left">
-                              {userDet && userDet?.paymentMethod}
-                            </TableCell>
-                          </TableRow>
-                          <TableRow hover tabIndex={2}>
-                            <TableCell align="left"></TableCell>
-                            <TableCell align="left"></TableCell>
-                            <TableCell align="left"></TableCell>
-                            <TableCell
-                              align="left"
-                              style={{ fontWeight: "600" }}
-                            >
-                              PAYMENT DATE
-                            </TableCell>
-                            <TableCell align="left">
-                            {userDet?.createdDate}
+                              {userDet && userDet?.transaction_paymentMethod}
                             </TableCell>
                           </TableRow>
                         </TableBody>

@@ -284,22 +284,29 @@ getwayService.transactionDataSaveInDB(data,function(result:any){
 
   const handleDelete = () => {
     setActiveTab("Delete");
-    setSalesOrder(deleteOrder);
-    setPage(1);
-    DATA.jump(1);
+    if(DATA?.currentPage === 1){
+          setSalesOrder(deleteOrder);
+          handlePageChange("",1)
+    }else{
+        setSalesOrder(deleteOrder);
+       handlePageChange("",1)
+    }
   };
   const handleAll = () => {
-    if (filterStatus !== "" && filterType !== "") {
+    if(DATA?.currentPage === 1){
       setSalesOrder(allListData);
-    } else {
-      fetchData();
+    }else{
+      handlePageChange("",1)
     }
+    // fetchData();
   };
   const handlePaid = () => {
     setActiveTab("Paid");
-    setSalesOrder(paidOrder);
-    setPage(1);
-    DATA.jump(1);
+    if(DATA?.currentPage === 1){
+      setSalesOrder(paidOrder);
+    }else{
+       handlePageChange("",1)
+    }
   };
 
   function handleNewSalesOrder() {
