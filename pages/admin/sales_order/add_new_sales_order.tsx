@@ -73,6 +73,7 @@ interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
+  className: any
 }
 
 function TabPanel(props: TabPanelProps) {
@@ -334,14 +335,14 @@ export default function AddSalesOrder({
     price === 0
       ? "0"
       : price < creditAmount
-      ? "0"
-      : Math?.abs(creditAmount - price);
+        ? "0"
+        : Math?.abs(creditAmount - price);
   let creditBalance =
     creditAmount === price
       ? creditAmount
       : creditAmount > price
-      ? price
-      : creditAmount;
+        ? price
+        : creditAmount;
 
   return (
     <BootstrapDialog
@@ -359,7 +360,6 @@ export default function AddSalesOrder({
               value={value}
               index={0}
               className="new-sale"
-              style={{ padding: "0" }}
             >
               <Grid className="">
                 <Stack style={{ marginTop: "5px" }}>
@@ -446,24 +446,24 @@ export default function AddSalesOrder({
                         </InputLabel>
                         <FormControl fullWidth>
 
-                            <Select
-                              labelId="demo-simple-select-label"
-                              id="demo-simple-select"
-                              defaultValue={"Cash"}
-                              size="small"
-                              disabled = {totalPrice === "0" && price === 0 || Check === true && creditAmount > price ? true : false}
-                              {...register("payment")}
-                              onChange={(e) =>
-                                handlePaymentName(e.target.value)
-                              }
-                            >
-                              <MenuItem value={"Cash"}>Cash</MenuItem>
-                              <MenuItem value={"Amex"}>Amex</MenuItem>
-                              <MenuItem value={"QPay"}>QPay</MenuItem>
-                              <MenuItem value={"CBQ"}>CBQ</MenuItem>
-                            </Select>
-                    
-                       </FormControl>
+                          <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            defaultValue={"Cash"}
+                            size="small"
+                            disabled={totalPrice === "0" && price === 0 || Check === true && creditAmount > price ? true : false}
+                            {...register("payment")}
+                            onChange={(e) =>
+                              handlePaymentName(e.target.value)
+                            }
+                          >
+                            <MenuItem value={"Cash"}>Cash</MenuItem>
+                            <MenuItem value={"Amex"}>Amex</MenuItem>
+                            <MenuItem value={"QPay"}>QPay</MenuItem>
+                            <MenuItem value={"CBQ"}>CBQ</MenuItem>
+                          </Select>
+
+                        </FormControl>
                       </Stack>
                     </Grid>
                   </Grid>
@@ -502,8 +502,8 @@ export default function AddSalesOrder({
                               {creditAmount === price
                                 ? creditAmount
                                 : creditAmount > price
-                                ? price
-                                : creditAmount}
+                                  ? price
+                                  : creditAmount}
                             </div>
                           </div>
                         </Stack>
@@ -520,8 +520,8 @@ export default function AddSalesOrder({
                               {price === 0
                                 ? "0.00"
                                 : price < creditAmount
-                                ? "0.00"
-                                : Math?.abs(creditAmount - price)}
+                                  ? "0.00"
+                                  : Math?.abs(creditAmount - price)}
                             </p>
                           )}
                         </Stack>

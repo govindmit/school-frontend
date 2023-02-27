@@ -249,8 +249,8 @@ export default function EditUser(props: any) {
         setBtnDisabled(true);
         const reqData = {
             name: data.name,
-            email: data.email,
-            phone: data.number,
+            email1: data.email,
+            phone1: data.number,
             roleId: data.roleid,
             previlegs: permitions,
             status: 1,
