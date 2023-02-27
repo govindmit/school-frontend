@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
@@ -33,6 +33,9 @@ import CloseIcon from "@mui/icons-material/Close";
 import moment from "moment";
 import styled from "@emotion/styled";
 // import commmonfunctions from "../commonFunctions/commmonfunctions";
+import Script from "next/script";
+import getwayService from "../../services/gatewayService"
+
 const style = {
   color: "red",
   fontSize: "12px",
@@ -73,6 +76,7 @@ interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
+  className: any
 }
 
 function TabPanel(props: TabPanelProps) {
@@ -144,8 +148,16 @@ export default function AddSalesOrder({
   let datee = Date();
   const todayDate = moment(datee).format("DD/MM/YYYY");
   const todaysDate = moment(datee).format("MMM DD,YYYY");
+  const [orderId,setorderId] = React.useState('');
+  const [amount,setAmount] = React.useState(0);
+  const [creditNoteId, setcreditNoteId] = React.useState<any>("");
+
+  var Checkout :any 
+  let creditBalance:any;
 
   const handlePaymentName = (data: any) => {
+    const Checkout : any  =  (window as any).Checkout
+    console.log("Checkout=>",Checkout);
     setPaymentPayMethod(data);
   };
 
@@ -160,6 +172,9 @@ export default function AddSalesOrder({
   }
 
   const insertRemainingNotesAmount = async () => {
+    // setAmount(creditBalance)
+    // setPrice(creditBalance)
+ console.log("price =>",creditBalance);
     const reqData = {
       customerId: customerId,
       Amount: creditBalance,
@@ -192,6 +207,8 @@ export default function AddSalesOrder({
         },
       });
       const res = await response.json();
+      //  creditNoteId = res?.CreditRequestId
+       setcreditNoteId(res?.CreditRequestId)
       setCreditAmount(res?.creditBal);
     } catch (error) {
       console.log("error", error);
@@ -206,6 +223,9 @@ export default function AddSalesOrder({
   } = useForm<FormValues>();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    const Checkout : any  =  (window as any).Checkout
+    let sageintacctorderID : any = "";
+    console.log("price =>",price);
     if (customerId !== "" && activityId !== "") {
       setshowspinner(true);
       setBtnDisabled(true);
@@ -232,20 +252,24 @@ export default function AddSalesOrder({
         })
           .then(async (data: any) => {
             if (data) {
+              insertRemainingNotesAmount();
+              if(data.status === 200){
+                setorderId(data.data.sageIntacctorderID);
+                sageintacctorderID=data.data.sageIntacctorderID
+                // setAmount(creditBalance)
+              }
               const unique = keyGen(5);
               const reqData1 = {
                 totalAmount: totalPrice,
                 paidAmount: totalPrice,
                 transactionId: `case-${unique} `,
                 amexorderId: data?.data?.sageIntacctorderID,
-                paymentMethod:
-                  paymentPayMethod === "" ? "Cash" : paymentPayMethod,
+                paymentMethod:paymentPayMethod === "" ? "Cash" : paymentPayMethod,
                 idForPayment: data?.data?.sageIntacctorderID,
               };
               transactionSave(reqData1);
               setshowspinner(false);
               setBtnDisabled(false);
-              insertRemainingNotesAmount();
               toast.success("Sales Order Create Successfully !");
               closeDialog(false);
               setTimeout(() => {
@@ -281,6 +305,11 @@ export default function AddSalesOrder({
         })
           .then(async (data: any) => {
             if (data) {
+              if(data.status === 200){
+                setorderId(data.data.sageIntacctorderID);
+                sageintacctorderID=data.data.sageIntacctorderID
+                setAmount(price)
+              }
               const unique = keyGen(5);
               const reqData1 = {
                 totalAmount: totalPrice,
@@ -320,6 +349,59 @@ export default function AddSalesOrder({
         setActivityError("");
       }
     }
+
+
+    // payment getway
+    if(paymentPayMethod === "Amex"){
+      let orderamount = Check ?  Math?.abs(price - creditBalance) :price ;
+      if(price === 0 ){
+        toast.error("amount will not be $0 for AMFX payment method");
+       }else{
+        var requestData = {
+          "apiOperation": "CREATE_CHECKOUT_SESSION",
+          "order": {
+              "id": sageintacctorderID,
+              "amount":  orderamount,
+              "currency": "QAR",
+              "description": "Orderd",
+          },
+          "interaction": {
+            // "returnUrl":`${process.env.NEXT_PUBLIC_REDIRECT_URL}/?orderid=${orderId}&paymentMethod=${paymentMethod}`,
+            "returnUrl":`${process.env.NEXT_PUBLIC_AMEX_SALES_ORDER_REDIRECT_URL}/?orderid=${sageintacctorderID}&paymentMethod=${paymentPayMethod}&creditNoteId=${creditNoteId}`,
+            "cancelUrl":`${process.env.NEXT_PUBLIC_AMEX_SALES_ORDER_CANCEL_URL}`,
+            "operation": "PURCHASE",
+              "merchant": {
+                  "name": "QATAR INTERNATIONAL SCHOOL - ONLINE 634",
+                  "address": {
+                      "line1": "200 Sample St",
+                      "line2": "1234 Example Town"
+                  }
+              }
+          }
+       }
+       await getwayService.getSession(requestData,async function(result:any){
+         if(result?.data?.result === "SUCCESS"){
+          // setSessionId(result?.data.session.id)
+          // setsuccessIndicator(result?.data.successIndicator);
+          await Checkout.configure({
+           session: {
+               id:  result?.data.session.id
+           }
+          });
+          await Checkout.showPaymentPage();
+        }
+        
+       })
+    
+       }
+     }
+     if(paymentPayMethod === "CBQ"){
+      toast.info(`As of Now This payment method is not supported ${paymentPayMethod} !`);
+     }
+    
+     if(paymentPayMethod === "QPay"){
+      toast.info(`As of Now This payment method is not supported ${paymentPayMethod} !`);
+     }
   };
   const keyGen = (keyLength: any) => {
     var i,
@@ -377,21 +459,17 @@ export default function AddSalesOrder({
     fontSize: "12px",
     fontWeight: "bold",
   };
-  let totalPrice =
-    price === 0
-      ? "0"
-      : price < creditAmount
-      ? "0"
-      : Math?.abs(creditAmount - price);
-  let creditBalance =
-    creditAmount === price
-      ? creditAmount
-      : creditAmount > price
-      ? price
-      : creditAmount;
+let totalPrice = price === 0 ? "0" :price < creditAmount ? "0" : Math?.abs(creditAmount - price);
+ creditBalance = creditAmount === price ? creditAmount : creditAmount > price ? price:creditAmount;
 
   return (
-    <BootstrapDialog
+    <>
+      <Script  src="https://amexmena.gateway.mastercard.com/static/checkout/checkout.min.js"
+                data-error="errorCallback"
+                data-cancel="cancelCallback"
+                strategy="beforeInteractive"
+               > </Script>
+                <BootstrapDialog
       onClose={closeDialog}
       aria-labelledby="customized-dialog-title"
       open={opens}
@@ -402,8 +480,12 @@ export default function AddSalesOrder({
       <DialogContent dividers>
         <Box sx={{ width: "100%" }}>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <TabPanel value={value} index={0}>
-              <Grid>
+            <TabPanel
+              value={value}
+              index={0}
+              className="new-sale"
+            >
+              <Grid className="">
                 <Stack style={{ marginTop: "5px" }}>
                   <Grid container spacing={2}>
                     <Grid item xs={12} md={12}>
@@ -594,5 +676,7 @@ export default function AddSalesOrder({
         </Box>
       </DialogContent>
     </BootstrapDialog>
+    </>
+   
   );
 }

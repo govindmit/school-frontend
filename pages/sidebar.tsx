@@ -120,11 +120,18 @@ export default function MiniDrawer() {
   let path = router?.pathname;
   let mngbackground = "#1976d2";
   let textcolor='white !important';
+  const [profileActive, setprofileActive] = useState(false);
 
   const handleClick = () => {
     setIsActive((current) => !current);
     console.log("isActive", isActive);
   };
+
+  const profileClick = () => {
+    setprofileActive((current) => !current);
+  };
+
+
   React.useEffect(() => {
     commmonfunctions.GivenPermition().then((res) => {
       setuserdet(res);
@@ -214,10 +221,65 @@ export default function MiniDrawer() {
             </div>
 
             <div className="avatar-box">
-              <Stack direction="row" spacing={2}>
+
+              <Stack onClick={profileClick} direction="row" spacing={2}>
                 <Avatar>N</Avatar>
+
                 <ArrowDropDownIcon />
               </Stack>
+              <List
+                className={
+                  profileActive
+                    ? "bisplay-block drop-down-profile"
+                    : "drop-down-profile"
+                }
+                style={{ display: "none" }}
+              >
+                <ListItem
+                  className="sidebar-link"
+                  disablePadding
+                  sx={{ display: "block" }}
+                  // onClick={() => router.push("/activites/activitylist")}
+                >
+                  <ListItemButton
+                    sx={{
+                      minHeight: 48,
+                      justifyContent: open ? "initial" : "center",
+                      px: 2.5,
+                    }}
+                  >
+                    <PeopleAltOutlinedIcon />
+                    <ListItemText
+                      className="text-line"
+                      primary="Profile"
+                      sx={{ opacity: open ? 1 : 0 }}
+                      onClick={() => router.push("/userprofile")}
+                    />
+                  </ListItemButton>
+                </ListItem>
+                <ListItem
+                  className="sidebar-link"
+                  disablePadding
+                  sx={{ display: "block" }}
+                  // onClick={() => router.push("/activites/activitylist")}
+                >
+                  <ListItemButton
+                    sx={{
+                      minHeight: 48,
+                      justifyContent: open ? "initial" : "center",
+                      px: 2.5,
+                    }}
+                  >
+                    <LockOutlinedIcon />
+                    <ListItemText
+                      className="text-line"
+                      primary="Log Out"
+                      sx={{ opacity: open ? 1 : 0 }}
+                      onClick={() => router.push("/logout")}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              </List>
             </div>
           </div>
         </AppBar>

@@ -77,7 +77,7 @@ export default function LoginPage() {
         if (res.status === 200) {
           setShowspinner(false);
           setBtnDisabled(false);
-          toast.success("Login Successfull !");
+          toast.success("Login Successful !");
           reset();
           const loginToken = res.data.loginToken;
           const role = res.data.data.role_id;

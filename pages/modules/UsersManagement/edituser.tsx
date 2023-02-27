@@ -30,6 +30,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
 import { api_url, auth_token } from "../../api/hello";
 import { useRouter } from "next/router";
+import MainFooter from "../../commoncmp/mainfooter";
 const Item = styled(Paper)(({ theme }) => ({
     p: 10,
 }));
@@ -53,7 +54,7 @@ export default function EditUser(props: any) {
     const [btnDisabled, setBtnDisabled] = React.useState(false);
     const [roles, setroles] = React.useState<any>([])
     const [rolestatus, setrolestatus] = React.useState<any>("");
-    let permitions: { Dashboard?: any; Invoices?: any; SalesInvoices?: any; Activites?: any; Customers?: any; Cumposers?: any }[] = [];
+    let permitions: { Dashboard?: any; Invoices?: any; SalesInvoices?: any; Activites?: any; Customers?: any; Cumposers?: any; CreditNote?: any }[] = [];
     const [onDashboard, setonDashboard] = React.useState(false);
     const [Dashboardchecked, setDashboardchecked] = React.useState<any>({
         canView: false,
@@ -116,6 +117,7 @@ export default function EditUser(props: any) {
             Cumposers: Customerchecked
         })
     }
+
     const [onSalesInvoice, setonSalesInvoice] = React.useState(false);
     const [SalesInvoicechecked, setSalesInvoicechecked] = React.useState<any>({
         canView: false,
@@ -128,6 +130,22 @@ export default function EditUser(props: any) {
             SalesInvoices: SalesInvoicechecked
         })
     }
+
+    const [onCreditNote, setonCreditNote] = React.useState(false);
+    const [CreditNotechecked, setCreditNotechecked] = React.useState<any>({
+        canView: false,
+        canAdd: false,
+        canEdit: false,
+        canDelete: false
+    });
+    if (onCreditNote) {
+        permitions.push({
+            CreditNote: CreditNotechecked
+        })
+    }
+
+    console.log(permitions);
+
     useEffect(() => {
         //get roles
         UserService.GetRoles().then(response => setroles(response));
@@ -197,6 +215,15 @@ export default function EditUser(props: any) {
                                 canDelete: parsedata[i].SalesInvoices.canDelete
                             })
                         }
+                        if (parsedata[i].CreditNote) {
+                            setonCreditNote(true);
+                            setCreditNotechecked({
+                                canView: parsedata[i].CreditNote.canView,
+                                canAdd: parsedata[i].CreditNote.canAdd,
+                                canEdit: parsedata[i].CreditNote.canEdit,
+                                canDelete: parsedata[i].CreditNote.canDelete
+                            })
+                        }
                     }
                 }
             }
@@ -208,7 +235,6 @@ export default function EditUser(props: any) {
         });
     }, []);
 
-    console.log(rolestatus);
 
     const {
         register,
@@ -223,8 +249,8 @@ export default function EditUser(props: any) {
         setBtnDisabled(true);
         const reqData = {
             name: data.name,
-            email: data.email,
-            phone: data.number,
+            email1: data.email,
+            phone1: data.number,
             roleId: data.roleid,
             previlegs: permitions,
             status: 1,
@@ -676,6 +702,41 @@ export default function EditUser(props: any) {
                                                         <FormControlLabel control={<Checkbox checked={Composerchecked.canDelete} onChange={e => setComposerchecked({ ...Composerchecked, canDelete: e.target.checked })} />} label="Can Delete" />
                                                     </FormGroup>
                                                 </Stack>) : ""}
+                                                <Stack
+                                                    direction="row"
+                                                    alignItems="center"
+                                                    justifyContent="space-between"
+                                                    style={{ backgroundColor: "#F0F4FF", padding: "10px", marginTop: "15px" }}
+
+                                                >
+                                                    <Stack>
+                                                        <Stack spacing={3}>
+                                                            CREDIT NOTE
+                                                        </Stack>
+                                                        <span style={{ color: "#333333" }}>
+                                                            {onCreditNote ? (<span style={{ color: "#1976d2" }}>ON</span>) : "OFF"}
+                                                        </span>
+                                                    </Stack>
+                                                    <Switch
+                                                        checked={onCreditNote}
+                                                        onChange={e => setonCreditNote(e.target.checked)}
+                                                        inputProps={{ 'aria-label': 'controlled' }}
+                                                    />
+                                                </Stack>
+                                                {onCreditNote ? (<Stack direction="row" style={{ marginTop: "10px" }} >
+                                                    <FormGroup>
+                                                        <FormControlLabel control={<Checkbox checked={CreditNotechecked.canView} onChange={e => setCreditNotechecked({ ...CreditNotechecked, canView: e.target.checked })} />} label="Can View" />
+                                                    </FormGroup>
+                                                    <FormGroup>
+                                                        <FormControlLabel control={<Checkbox checked={CreditNotechecked.canAdd} onChange={e => setCreditNotechecked({ ...CreditNotechecked, canAdd: e.target.checked })} />} label="Can Add" />
+                                                    </FormGroup>
+                                                    <FormGroup>
+                                                        <FormControlLabel control={<Checkbox checked={CreditNotechecked.canEdit} onChange={e => setCreditNotechecked({ ...CreditNotechecked, canEdit: e.target.checked })} />} label="Can Edit" />
+                                                    </FormGroup>
+                                                    <FormGroup>
+                                                        <FormControlLabel control={<Checkbox checked={CreditNotechecked.canDelete} onChange={e => setCreditNotechecked({ ...CreditNotechecked, canDelete: e.target.checked })} />} label="Can Delete" />
+                                                    </FormGroup>
+                                                </Stack>) : ""}
                                             </Box>
                                         </CardContent>
                                     </Card>
@@ -683,6 +744,7 @@ export default function EditUser(props: any) {
                             </Grid>
                         </form >
                     </div>
+                    <MainFooter />
                 </Box>
             </Box>
             <ToastContainer />

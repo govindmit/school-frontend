@@ -24,7 +24,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
 import { api_url, auth_token } from "../../../api/hello";
 import moment from "moment";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import MainFooter from "../../../commoncmp/mainfooter";
 
 export default function ViewCustomer() {
@@ -103,7 +103,10 @@ export default function ViewCustomer() {
                     href="/admin/sales_order/list"
                     style={{ color: "#1A70C5", textDecoration: "none" }}
                   >
-                    <Button variant="contained" startIcon={<ArrowBackIcon />}> Back To List</Button>
+                    <Button variant="contained" startIcon={<ArrowBackIcon />}>
+                      {" "}
+                      Back To List
+                    </Button>
                   </Link>
                 </div>
               </Stack>
@@ -204,7 +207,10 @@ export default function ViewCustomer() {
                           </Typography>
                         </Stack>
                       </Stack>
-                      <Table style={{ marginTop: "20px" }}>
+                      <Table
+                        style={{ marginTop: "20px" }}
+                        className="invoice-table"
+                      >
                         <TableHead>
                           <TableRow>
                             <TableCell>
@@ -216,9 +222,7 @@ export default function ViewCustomer() {
                             <TableCell>
                               <Typography></Typography>
                             </TableCell>
-                            <TableCell>
-                              <Typography></Typography>
-                            </TableCell>
+
                             <TableCell>
                               <Typography>Amount</Typography>
                             </TableCell>
@@ -249,7 +253,7 @@ export default function ViewCustomer() {
                                 {removeTags && removeTags}
                               </p>
                             </TableCell>
-                            <TableCell align="left"></TableCell>
+
                             <TableCell align="left"></TableCell>
                             <TableCell align="left">
                               $ {userDet && userDet?.activity_price}
@@ -271,7 +275,7 @@ export default function ViewCustomer() {
                           </TableRow>
                           <TableRow hover tabIndex={1}>
                             <TableCell align="left"></TableCell>
-                            <TableCell align="left"></TableCell>
+
                             <TableCell align="left"></TableCell>
                             <TableCell
                               align="left"
@@ -280,12 +284,12 @@ export default function ViewCustomer() {
                               SUBTOTAL
                             </TableCell>
                             <TableCell align="left">
-                              $ {userDet && userDet?.transaction_amount}
+                              $ {userDet && userDet?.amount}
                             </TableCell>
                           </TableRow>
                           <TableRow hover tabIndex={2}>
                             <TableCell align="left"></TableCell>
-                            <TableCell align="left"></TableCell>
+
                             <TableCell align="left"></TableCell>
                             <TableCell
                               align="left"
@@ -294,7 +298,7 @@ export default function ViewCustomer() {
                               TOTAL
                             </TableCell>
                             <TableCell align="left">
-                              $ {userDet && userDet?.transaction_amount}
+                              $ {userDet && userDet?.amount}
                             </TableCell>
                           </TableRow>
 
@@ -320,7 +324,7 @@ export default function ViewCustomer() {
               </Grid>
             </Grid>
           </div>
-          <MainFooter/>
+          <MainFooter />
         </Box>
       </Box>
       <ToastContainer />

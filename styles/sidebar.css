@@ -74,11 +74,32 @@ input.MuiInputBase-input.MuiInput-input.css-1x51dt5-MuiInputBase-input-MuiInput-
 .avatar-box > div {
   display: flex;
   align-items: center;
+  cursor: pointer;
 }
 
 .avatar-box > div svg {
   color: #000;
   margin: 0;
+}
+.new-sale .MuiBox-root {
+  padding: 0;
+}
+
+#demo-simple-select {
+  height: 50px !important;
+  border-radius: 5px;
+  padding: 0 15px !important;
+  line-height: 50px;
+}
+
+body .new-sale .MuiOutlinedInput-root.MuiInputBase-sizeSmall {
+  padding-top: 6px;
+  padding-bottom: 6px;
+  padding-left: 6px;
+  height: 50px;
+  line-height: 50px;
+  padding: 0;
+  padding-right: 0px;
 }
 
 header.MuiPaper-root.sder {
@@ -218,6 +239,7 @@ table td a {
 
 body .guardianBar {
   margin-top: 79px;
+  min-height: 100vh;
 }
 
 .inputBar.search-box .search-box-outer fieldset {
@@ -314,4 +336,88 @@ body h4.MuiTypography-h4 {
 
 .delete-popup-close .cross-button:hover {
   background: none !important;
+}
+
+body #profileImage {
+  border-radius: 20px;
+}
+
+h4.status-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 7px;
+  margin-bottom: 6px;
+}
+
+.date-box,
+.purchase-box {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.date-box span,
+.purchase-box span {
+  width: 150px;
+  display: inline-block;
+}
+
+.status-box {
+  background: #1a70c5;
+  height: 24px;
+  display: inline-block;
+  padding: 0 15px;
+  color: #fff;
+  text-transform: uppercase;
+  font-weight: 500;
+  border-radius: 4px;
+  font-size: 15px;
+}
+
+.invoice-table td,
+.invoice-table th {
+  border: 1px solid #ccc !important;
+}
+
+.invoice-table th {
+  text-transform: uppercase;
+}
+.guardianBar .MuiGrid-root > .MuiPaper-root {
+  box-shadow: 0px 0px 14px 6px rgba(236, 238, 244, 1) !important;
+}
+
+.comment input {
+  height: 110px !important;
+}
+
+.delete-popup
+  .MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation24.MuiDialog-paper.MuiDialog-paperScrollPaper {
+  width: 444px;
+}
+
+.delete-popup
+  .MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation24.MuiDialog-paper.MuiDialog-paperScrollPaper
+  h2 {
+  border-bottom: 1px solid #ccc;
+}
+
+body .ql-editor {
+  min-height: 105px;
+}
+
+.avatar-box {
+  position: relative;
+}
+
+.text-line {
+  white-space: nowrap;
+}
+
+.drop-down-profile {
+  position: absolute;
+  right: 0;
+  background: #fff;
+  text-align: left;
+}
+
+.MuiList-root.MuiList-padding.bisplay-block.drop-down-profile {
+  display: block !important;
 }

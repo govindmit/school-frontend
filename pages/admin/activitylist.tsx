@@ -816,7 +816,7 @@ export default function ActivityList() {
                                 {(custpermit && custpermit.canEdit === true) ||
                                 roleid === 1 ? (
                                   <Link
-                                    href={`/admin/editActivity/${id}`}
+                                    href={`/admin/editactivity/${id}`}
                                     style={{
                                       color: "#26CEB3",
                                     }}

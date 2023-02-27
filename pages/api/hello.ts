@@ -14,7 +14,6 @@ export default function handler(
 // const base_url = "http://localhost:5003";
 // const api_url = "http://localhost:5003/api";
 
-
 // server
 const backend_url = "https://api-school.mangoitsol.com";
 const base_url = "https://school.mangoitsol.com";

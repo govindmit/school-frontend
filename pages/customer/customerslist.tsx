@@ -46,6 +46,7 @@ import { useRouter } from "next/router";
 import { CSVDownload } from "react-csv";
 import Loader from "../commoncmp/myload";
 import commmonfunctions from "../commonFunctions/commmonfunctions";
+import MainFooter from "../commoncmp/mainfooter";
 
 function a11yProps(index: number) {
   return {
@@ -325,7 +326,7 @@ export default function CustomerList() {
   }
   const closeEditPoP = (data: any) => {
     seteditCustOpen(false);
-    getUser();
+    //getUser();
   };
 
   //tab functionality
@@ -980,6 +981,7 @@ export default function CustomerList() {
               </TableContainer>
             </Card>
           </div>
+          <MainFooter />
         </Box>
       </Box>
       {
