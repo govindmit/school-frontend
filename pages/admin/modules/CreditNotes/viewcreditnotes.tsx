@@ -1,19 +1,19 @@
 import {
-    Card,
-    Box,
-    Typography,
-    Stack,
-    Breadcrumbs,
-    Grid,
-    CardContent,
-    Table,
-    TableHead,
-    TableRow,
-    TableCell,
-    TableBody,
-    InputLabel,
-    OutlinedInput,
-    Button,
+  Card,
+  Box,
+  Typography,
+  Stack,
+  Breadcrumbs,
+  Grid,
+  CardContent,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  InputLabel,
+  OutlinedInput,
+  Button,
 } from "@mui/material";
 import Link from "next/link";
 import React, { useEffect } from "react";
@@ -28,9 +28,9 @@ import { useRouter } from "next/router";
 import commmonfunctions from "../../../commonFunctions/commmonfunctions";
 import MainFooter from "../../../commoncmp/mainfooter";
 const style = {
-    color: "red",
-    fontSize: "12px",
-    fontWeight: "bold",
+  color: "red",
+  fontSize: "12px",
+  fontWeight: "bold",
 };
 type FormValues = {
     message: string;
@@ -38,21 +38,96 @@ type FormValues = {
     updatedBy: number
 };
 export default function ViewCreditNotes(props: any) {
-    const [creditNoteDet, setcreditNoteDet] = React.useState<any>([]);
-    const [creditNoteMsg, setcreditNoteMsg] = React.useState<any>([]);
-    const [deleteOpen, setDeleteOpen] = React.useState(false);
-    const [rejectOpen, setrejectOpen] = React.useState(false);
-    const [approveOpen, setapproveOpen] = React.useState(false);
-    const [roleid, setroleid] = React.useState(0);
-    const [creditball, setcreditball] = React.useState(0);
-    const router = useRouter();
+  const [creditNoteDet, setcreditNoteDet] = React.useState<any>([]);
+  const [creditNoteMsg, setcreditNoteMsg] = React.useState<any>([]);
+  const [deleteOpen, setDeleteOpen] = React.useState(false);
+  const [rejectOpen, setrejectOpen] = React.useState(false);
+  const [approveOpen, setapproveOpen] = React.useState(false);
+  const [roleid, setroleid] = React.useState(0);
+  const [creditball, setcreditball] = React.useState(0);
+  const router = useRouter();
 
-    // verify user login and previlegs
-    let logintoken: any;
-    useEffect(() => {
-        logintoken = localStorage.getItem("QIS_loginToken");
-        if (logintoken === undefined || logintoken === null) {
-            router.push("/");
+  // verify user login and previlegs
+  let logintoken: any;
+  useEffect(() => {
+    logintoken = localStorage.getItem("QIS_loginToken");
+    if (logintoken === undefined || logintoken === null) {
+      router.push("/");
+    }
+    commmonfunctions.GivenPermition().then((res) => {
+      if (res.roleId == 1) {
+        setroleid(res.roleId);
+        //router.push("/userprofile");
+      }
+    });
+  }, []);
+  useEffect(() => {
+    fetchData();
+    //fetchBallance();
+  }, []);
+  //get credit notes
+  const url = `${api_url}/getCreditNotesDetails/${props.id}`;
+  const fetchData = async () => {
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: auth_token,
+        },
+      });
+      const json = await response.json();
+      console.log(json.data);
+      fetchBallance(json.data.result[0].id);
+      setcreditNoteDet(json.data.result[0]);
+      setcreditNoteMsg(json.data.results);
+    } catch (error: any) {
+      console.log("error", error);
+    }
+  };
+
+  //get credit ballance
+  const fetchBallance = async (id: number) => {
+    const apiurl = `${api_url}/creditballance/${id}`;
+    try {
+      const response = await fetch(apiurl, {
+        method: "GET",
+        headers: {
+          Authorization: auth_token,
+        },
+      });
+      const json = await response.json();
+      // console.log(json.results[0].amount);
+      setcreditball(json.results[0].amount);
+    } catch (error: any) {
+      console.log("error", error);
+    }
+  };
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<FormValues>();
+  const onSubmit: SubmitHandler<FormValues> = async (data: any) => {
+    const reqData = {
+      message: data.message,
+      status: 2,
+      updatedBy: 1,
+    };
+    await axios({
+      method: "put",
+      url: `${api_url}/editCreditNotes/${props.id}`,
+      data: reqData,
+      headers: {
+        Authorization: auth_token,
+      },
+    })
+      .then((data) => {
+        if (data) {
+          toast.success("Credit Notes Updated Successfully !");
+          reset();
+          setrejectOpen(false);
         }
         commmonfunctions.GivenPermition().then(res => {
             if (res.roleId == 1) {
@@ -134,78 +209,189 @@ export default function ViewCreditNotes(props: any) {
             });
     };
 
-    //open close delete popup boxes
-    function handleDeleteOpen() {
-        setDeleteOpen(true);
-        setrejectOpen(false)
-        setapproveOpen(false);
-    }
-    const closePoP = (data: any) => {
-        setDeleteOpen(false);
-    };
+  //approve form open
+  function handleApproveOpen() {
+    setapproveOpen(true);
+    setrejectOpen(false);
+  }
 
-    //reject open form
-    function handleRejectOpen() {
-        setrejectOpen(true)
-        setapproveOpen(false);
-    }
-    function closeRejectForm() {
-        setrejectOpen(false)
-    }
+  const closePoPapprove = (data: any) => { 
+    setapproveOpen(false);
+  };
 
-    //approve form open
-    function handleApproveOpen() {
-        setapproveOpen(true);
-        setrejectOpen(false)
-    }
-
-    const closePoPapprove = (data: any) => {
-        setapproveOpen(false);
-    };
-
-
-    return (
-        <>
-            <Box sx={{ display: "flex" }}>
-                <MiniDrawer />
-                <Box component="main" sx={{ flexGrow: 1 }}>
-                    <div className="guardianBar">
-                        {/*bread cump */}
-                        <Stack
+  return (
+    <>
+      <Box sx={{ display: "flex" }}>
+        <MiniDrawer />
+        <Box component="main" sx={{ flexGrow: 1 }}>
+          <div className="guardianBar">
+            {/*bread cump */}
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+              style={{ padding: "8px", marginBottom: "25px" }}
+            >
+              <Stack>
+                <Stack spacing={3}>
+                  <Breadcrumbs separator="›" aria-label="breadcrumb">
+                    <Link
+                      key="1"
+                      color="inherit"
+                      href="/creditnotes/creditnotes"
+                      style={{ color: "#1A70C5", textDecoration: "none" }}
+                    >
+                      Home
+                    </Link>
+                    <Link
+                      key="2"
+                      color="inherit"
+                      href="/"
+                      style={{ color: "#7D86A5", textDecoration: "none" }}
+                    >
+                      View Credit Notes
+                    </Link>
+                  </Breadcrumbs>
+                </Stack>
+                <Typography
+                  variant="h5"
+                  gutterBottom
+                  style={{ fontWeight: "bold", color: "#333333" }}
+                >
+                  VIEW CREDIT NOTE
+                </Typography>
+              </Stack>
+              <Stack>
+                <Typography
+                  style={{
+                    color: "#F95A37",
+                    textAlign: "right",
+                    marginBottom: "15px",
+                  }}
+                >
+                  <span style={{ fontSize: "14px" }}>BALANCE </span>{" "}
+                  <b style={{ fontSize: "26px" }}>
+                    {" "}
+                    ${creditball ? creditball : 0}
+                  </b>
+                </Typography>
+                {creditNoteDet?.status === 4 ? (
+                  ""
+                ) : (
+                  <Stack direction="row">
+                    {roleid === 1 ? (
+                      <Stack
+                        onClick={handleApproveOpen}
+                        style={{ color: "#02C509", cursor: "pointer" }}
+                      >
+                        <b>Approved By Admin</b>
+                      </Stack>
+                    ) : (
+                      <Stack
+                        onClick={handleApproveOpen}
+                        style={{ color: "#02C509", cursor: "pointer" }}
+                      >
+                        <b>Approved</b>
+                      </Stack>
+                    )}
+                    <Stack
+                      onClick={handleRejectOpen}
+                      style={{
+                        marginLeft: "20px",
+                        color: "#F95A37",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <b>Reject</b>
+                    </Stack>
+                    <Stack
+                      onClick={handleDeleteOpen}
+                      style={{
+                        marginLeft: "20px",
+                        color: "#F95A37",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <b>Delete</b>
+                    </Stack>
+                  </Stack>
+                )}
+              </Stack>
+            </Stack>
+            {/*bread cump */}
+            <Grid container spacing={2}>
+              <Grid item xs={4}>
+                <Grid item xs={12} md={12}>
+                  <Card sx={{ minWidth: 275 }} style={{ width: "100%" }}>
+                    <CardContent>
+                      <Stack
+                        direction="row"
+                        alignItems="center"
+                        justifyContent="space-between"
+                        style={{ padding: "0px" }}
+                      >
+                        <CardContent style={{ width: "100%", padding: "0" }}>
+                          <Stack
                             direction="row"
                             alignItems="center"
                             justifyContent="space-between"
-                            style={{ padding: "8px", marginBottom: "25px" }}
-                        >
+                            style={{ padding: "8px" }}
+                          >
                             <Stack>
-                                <Stack spacing={3}>
-                                    <Breadcrumbs separator="›" aria-label="breadcrumb">
-                                        <Link
-                                            key="1"
-                                            color="inherit"
-                                            href="/creditnotes/creditnotes"
-                                            style={{ color: "#1A70C5", textDecoration: "none" }}
-                                        >
-                                            Home
-                                        </Link>
-                                        <Link
-                                            key="2"
-                                            color="inherit"
-                                            href="/"
-                                            style={{ color: "#7D86A5", textDecoration: "none" }}
-                                        >
-                                            View Credit Notes
-                                        </Link>
-                                    </Breadcrumbs>
-                                </Stack>
-                                <Typography
-                                    variant="h5"
-                                    gutterBottom
-                                    style={{ fontWeight: "bold", color: "#333333" }}
-                                >
-                                    VIEW CREDIT NOTE
-                                </Typography>
+                              <Typography
+                                variant="h3"
+                                gutterBottom
+                                style={{ fontWeight: "bold", color: "#333333" }}
+                              >
+                                Credit Note Details
+                              </Typography>
                             </Stack>
+                          </Stack>
+                          <Stack style={{ padding: "8px" }}>
+                            <Box sx={{ display: "flex" }}>
+                              <div id="profileImage">
+                                <span id="fullName">A</span>
+                              </div>
+                              <CardContent
+                                sx={{ flex: 1 }}
+                                className="text-grey"
+                              >
+                                <Typography component="h4" variant="h4">
+                                  {creditNoteDet?.name} Acme Corporation
+                                </Typography>
+
+                                <Typography
+                                  variant="subtitle1"
+                                  color="text.secondary"
+                                >
+                                  CUST-00002
+                                </Typography>
+                                <Typography
+                                  component="h4"
+                                  className="status-title"
+                                >
+                                  Status:
+                                </Typography>
+                                <Typography
+                                  component="span"
+                                  className="status-box"
+                                >
+                                  Open
+                                </Typography>
+                              </CardContent>
+                            </Box>
+                          </Stack>
+                          <Stack style={{ padding: "8px" }}>
+                            <Typography className="date-box">
+                              <span>Cretaed :</span> Jan 10, 2023
+                            </Typography>
+                          </Stack>
+                          <Stack
+                            direction="row"
+                            alignItems="center"
+                            justifyContent="space-between"
+                            style={{ padding: "8px" }}
+                          >
                             <Stack>
                                 <Typography style={{ color: "#F95A37" }}>
                                     <span style={{ fontSize: "14PX" }}>BALANCE </span>{" "}
@@ -217,106 +403,239 @@ export default function ViewCreditNotes(props: any) {
                                     <Stack onClick={handleDeleteOpen} style={{ marginLeft: "20px", color: "red", cursor: "pointer" }}><b>Delete</b></Stack>
                                 </Stack>)}
                             </Stack>
+                          </Stack>
+                        </CardContent>
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                </Grid>
+                <Grid item xs={12} md={12} style={{ marginTop: "20px" }}>
+                  <Card sx={{ minWidth: 275 }}>
+                    <CardContent>
+                      <Stack
+                        direction="row"
+                        alignItems="center"
+                        justifyContent="space-between"
+                        style={{ padding: "8px" }}
+                      >
+                        <Stack>
+                          <Typography
+                            variant="h5"
+                            gutterBottom
+                            style={{
+                              fontWeight: "bold",
+                              color: "#333333",
+                            }}
+                          >
+                            Note by Customer
+                          </Typography>
                         </Stack>
-                        {/*bread cump */}
-                        <Grid container spacing={2}>
-                            <Grid item xs={4}>
-                                <Grid item xs={12} md={12}>
-                                    <Card sx={{ minWidth: 275 }}>
-                                        <CardContent>
-                                            <Stack
-                                                direction="row"
-                                                alignItems="center"
-                                                justifyContent="space-between"
-                                                style={{ padding: "8px" }}
-                                            >
-                                                <CardContent>
-                                                    <Stack
-                                                        direction="row"
-                                                        alignItems="center"
-                                                        justifyContent="space-between"
-                                                        style={{ padding: "8px" }}
-                                                    >
-                                                        <Stack>
-                                                            <Typography
-                                                                variant="h3"
-                                                                gutterBottom
-                                                                style={{ fontWeight: "bold", color: "#333333" }}
-                                                            >
-                                                                Credit Note Details
-                                                            </Typography>
-                                                        </Stack>
-                                                    </Stack>
-                                                    <Stack style={{ padding: "8px" }}>
-                                                        <Box sx={{ display: "flex" }}>
-                                                            <div id="profileImage"><span id="fullName">A</span></div>
-                                                            <CardContent sx={{ flex: 1 }} className="text-grey">
-                                                                <Typography component="h4" variant="h4">
-                                                                    {creditNoteDet?.name}
-                                                                </Typography>
-                                                                <Typography component="h4">
-                                                                    {creditNoteDet?.email1}
-                                                                </Typography>
-                                                                <Typography
-                                                                    variant="subtitle1"
-                                                                    color="text.secondary"
-                                                                >
-                                                                    CUST-00002
-                                                                </Typography>
-                                                                <Typography variant="subtitle1">
-
-                                                                </Typography>
-                                                                <Typography variant="subtitle1">
-
-                                                                </Typography>
-                                                            </CardContent>
-                                                        </Box>
-                                                    </Stack>
-                                                    <Stack style={{ padding: "8px" }}>
-                                                        <Typography>Cretaed : Jan 10, 2023</Typography>
-                                                    </Stack>
-                                                    <Stack
-                                                        direction="row"
-                                                        alignItems="center"
-                                                        justifyContent="space-between"
-                                                        style={{ padding: "8px" }}
-                                                    >
-                                                        <Stack>
-                                                            <Typography variant="subtitle1">
-                                                                purchase order : 2342354235
-                                                            </Typography>
-                                                        </Stack>
-                                                    </Stack>
-                                                </CardContent>
-                                            </Stack>
-                                        </CardContent>
-                                    </Card>
+                      </Stack>
+                      <Typography style={{ padding: "8px" }}>
+                        {creditNoteMsg[0]?.message}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+                <Grid item xs={12} md={12} style={{ marginTop: "20px" }}>
+                  <Card sx={{ minWidth: 275 }}>
+                    <CardContent>
+                      <Stack
+                        direction="row"
+                        alignItems="center"
+                        justifyContent="space-between"
+                        style={{ padding: "8px" }}
+                      >
+                        <Stack>
+                          <Typography
+                            variant="h5"
+                            gutterBottom
+                            style={{
+                              fontWeight: "bold",
+                              color: "#333333",
+                            }}
+                          >
+                            Note by Admin
+                          </Typography>
+                        </Stack>
+                      </Stack>
+                      {creditNoteMsg.slice(1).map((data: any) => {
+                        return (
+                          <Typography style={{ padding: "8px" }}>
+                            {data.message}
+                          </Typography>
+                        );
+                      })}
+                    </CardContent>
+                  </Card>
+                </Grid>
+              </Grid>
+              <Grid item xs={8}>
+                <Grid item xs={12} md={12}>
+                  <Card sx={{ minWidth: 275 }}>
+                    <CardContent>
+                      <Stack
+                        direction="row"
+                        alignItems="center"
+                        justifyContent="space-between"
+                        style={{ padding: "8px" }}
+                      >
+                        <Stack>
+                          <Typography
+                            variant="h5"
+                            gutterBottom
+                            style={{
+                              fontWeight: "bold",
+                              color: "#333333",
+                            }}
+                          >
+                            Line Items
+                          </Typography>
+                        </Stack>
+                      </Stack>
+                      <Table
+                        className="invoice-table"
+                        style={{ marginTop: "20px" }}
+                      >
+                        <TableHead>
+                          <TableRow>
+                            <TableCell>
+                              <Typography>INVOICE ID</Typography>
+                            </TableCell>
+                            <TableCell>
+                              <Typography>Item</Typography>
+                            </TableCell>
+                            <TableCell>
+                              <Typography>Quantity</Typography>
+                            </TableCell>
+                            <TableCell>
+                              <Typography>Rate</Typography>
+                            </TableCell>
+                            <TableCell>
+                              <Typography>Amount</Typography>
+                            </TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          <TableRow hover tabIndex={-1}>
+                            <TableCell
+                              align="left"
+                              className="invcss"
+                              style={{ fontWeight: "500", color: "#26CEB3" }}
+                            >
+                              INV-0001
+                            </TableCell>
+                            <TableCell align="left">
+                              Adam Johans Lorem ipsum dollar sit ammet
+                            </TableCell>
+                            <TableCell align="left">10</TableCell>
+                            <TableCell align="left">
+                              ${creditNoteDet?.amount}
+                            </TableCell>
+                            <TableCell align="left">
+                              ${creditNoteDet?.amount}
+                            </TableCell>
+                          </TableRow>
+                          <TableRow hover tabIndex={1}>
+                            <TableCell
+                              align="left"
+                              colSpan={3}
+                              style={{ border: "none !important" }}
+                            ></TableCell>
+                            <TableCell
+                              align="left"
+                              style={{ fontWeight: "600" }}
+                            >
+                              SUBTOTAL
+                            </TableCell>
+                            <TableCell align="left">
+                              ${creditNoteDet?.amount}
+                            </TableCell>
+                          </TableRow>
+                          <TableRow hover tabIndex={2}>
+                            <TableCell
+                              align="left"
+                              colSpan={3}
+                              style={{ border: "none !important" }}
+                            ></TableCell>
+                            <TableCell
+                              align="left"
+                              style={{ fontWeight: "600" }}
+                            >
+                              TOTAL
+                            </TableCell>
+                            <TableCell align="left">
+                              ${creditNoteDet?.amount}
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </CardContent>
+                  </Card>
+                </Grid>
+                {rejectOpen ? (
+                  <Grid item xs={12} md={12} style={{ marginTop: "20px" }}>
+                    <Card sx={{ minWidth: 275 }}>
+                      <form onSubmit={handleSubmit(onSubmit)}>
+                        <CardContent>
+                          <Stack direction="row" justifyContent="space-between">
+                            <Stack>
+                              <Typography
+                                variant="h5"
+                                style={{
+                                  fontWeight: "bold",
+                                  color: "#333333",
+                                }}
+                              >
+                                Reason for reject this request
+                              </Typography>
+                            </Stack>
+                          </Stack>
+                          <Table style={{ marginTop: "20px" }}>
+                            <Stack>
+                              <Grid container spacing={3}>
+                                <Grid item xs={12} md={6}>
+                                  <Stack spacing={1}>
+                                    <InputLabel htmlFor="name">
+                                      Your comments on this request{" "}
+                                    </InputLabel>
+                                    <OutlinedInput
+                                      className="comment"
+                                      type="text"
+                                      id="name"
+                                      fullWidth
+                                      size="small"
+                                      {...register("message", {
+                                        required: true,
+                                      })}
+                                    />
+                                    {errors.message?.type === "required" && (
+                                      <span style={style}>
+                                        Field is Required *
+                                      </span>
+                                    )}
+                                  </Stack>
                                 </Grid>
-                                <Grid item xs={12} md={12} style={{ marginTop: "20px" }}>
-                                    <Card sx={{ minWidth: 275 }}>
-                                        <CardContent>
-                                            <Stack
-                                                direction="row"
-                                                alignItems="center"
-                                                justifyContent="space-between"
-                                                style={{ padding: "8px" }}
-                                            >
-                                                <Stack>
-                                                    <Typography
-                                                        variant="h5"
-                                                        gutterBottom
-                                                        style={{
-                                                            fontWeight: "bold",
-                                                            color: "#333333",
-                                                        }}
-                                                    >
-                                                        Note by Customer
-                                                    </Typography>
-                                                </Stack>
-                                            </Stack>
-                                            <Typography style={{ padding: "8px" }}>{creditNoteMsg[0]?.message}</Typography>
-                                        </CardContent>
-                                    </Card>
+                                <Grid item xs={12}>
+                                  <Button
+                                    type="submit"
+                                    variant="contained"
+                                    color="primary"
+                                  >
+                                    <b>SAVE</b>
+                                  </Button>
+                                  <Button
+                                    variant="contained"
+                                    style={{
+                                      marginLeft: "10px",
+                                      background: "none",
+                                      color: "#000",
+                                      boxShadow: "none",
+                                    }}
+                                    onClick={closeRejectForm}
+                                  >
+                                    <b>CANCEL</b>
+                                  </Button>
                                 </Grid>
                                 <Grid item xs={12} md={12} style={{ marginTop: "20px" }}>
                                     <Card sx={{ minWidth: 275 }}>
@@ -501,4 +820,3 @@ export default function ViewCreditNotes(props: any) {
         </>
     );
 }
-
