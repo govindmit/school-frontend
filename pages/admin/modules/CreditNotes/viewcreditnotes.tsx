@@ -26,16 +26,15 @@ import { toast } from "react-toastify";
 import ApproveCompForm from "./approvecmp";
 import { useRouter } from "next/router";
 import commmonfunctions from "../../../commonFunctions/commmonfunctions";
-import MainFooter from "../../../commoncmp/mainfooter";
 const style = {
   color: "red",
   fontSize: "12px",
   fontWeight: "bold",
 };
 type FormValues = {
-    message: string;
-    status: number;
-    updatedBy: number
+  message: string;
+  status: number;
+  updatedBy: number
 };
 export default function ViewCreditNotes(props: any) {
   const [creditNoteDet, setcreditNoteDet] = React.useState<any>([]);
@@ -54,17 +53,17 @@ export default function ViewCreditNotes(props: any) {
     if (logintoken === undefined || logintoken === null) {
       router.push("/");
     }
-    commmonfunctions.GivenPermition().then((res) => {
+    commmonfunctions.GivenPermition().then(res => {
       if (res.roleId == 1) {
         setroleid(res.roleId);
         //router.push("/userprofile");
       }
-    });
+    })
   }, []);
   useEffect(() => {
     fetchData();
-    //fetchBallance();
   }, []);
+
   //get credit notes
   const url = `${api_url}/getCreditNotesDetails/${props.id}`;
   const fetchData = async () => {
@@ -76,8 +75,7 @@ export default function ViewCreditNotes(props: any) {
         },
       });
       const json = await response.json();
-      console.log(json.data);
-      fetchBallance(json.data.result[0].id);
+      fetchBallance(json.data.result[0].customerId);
       setcreditNoteDet(json.data.result[0]);
       setcreditNoteMsg(json.data.results);
     } catch (error: any) {
@@ -85,7 +83,7 @@ export default function ViewCreditNotes(props: any) {
     }
   };
 
-  //get credit ballance
+  //get credit ballance 
   const fetchBallance = async (id: number) => {
     const apiurl = `${api_url}/creditballance/${id}`;
     try {
@@ -96,12 +94,13 @@ export default function ViewCreditNotes(props: any) {
         },
       });
       const json = await response.json();
-      // console.log(json.results[0].amount);
-      setcreditball(json.results[0].amount);
+      setcreditball(json.creditBal);
     } catch (error: any) {
       console.log("error", error);
     }
   };
+
+  console.log(creditNoteDet);
 
   const {
     register,
@@ -113,7 +112,7 @@ export default function ViewCreditNotes(props: any) {
     const reqData = {
       message: data.message,
       status: 2,
-      updatedBy: 1,
+      updatedBy: 1
     };
     await axios({
       method: "put",
@@ -127,97 +126,43 @@ export default function ViewCreditNotes(props: any) {
         if (data) {
           toast.success("Credit Notes Updated Successfully !");
           reset();
-          setrejectOpen(false);
+          setrejectOpen(false)
         }
-        commmonfunctions.GivenPermition().then(res => {
-            if (res.roleId == 1) {
-                setroleid(res.roleId);
-                //router.push("/userprofile");
-            }
-        })
-    }, []);
-    useEffect(() => {
-        fetchData();
-    }, []);
+      })
+      .catch((error) => {
+        toast.error(" Internal Server Error !");
+      });
+  };
 
-    //get credit notes
-    const url = `${api_url}/getCreditNotesDetails/${props.id}`;
-    const fetchData = async () => {
-        try {
-            const response = await fetch(url, {
-                method: "GET",
-                headers: {
-                    Authorization: auth_token,
-                },
-            });
-            const json = await response.json();
-            fetchBallance(json.data.result[0].customerId);
-            setcreditNoteDet(json.data.result[0]);
-            setcreditNoteMsg(json.data.results);
-        } catch (error: any) {
-            console.log("error", error);
-        }
-    };
+  //open close delete popup boxes
+  function handleDeleteOpen() {
+    setDeleteOpen(true);
+    setrejectOpen(false)
+    setapproveOpen(false);
+  }
+  const closePoP = (data: any) => {
+    setDeleteOpen(false);
+  };
 
-    //get credit ballance 
-    const fetchBallance = async (id: number) => {
-        const apiurl = `${api_url}/creditballance/${id}`;
-        try {
-            const response = await fetch(apiurl, {
-                method: "GET",
-                headers: {
-                    Authorization: auth_token,
-                },
-            });
-            const json = await response.json();
-            setcreditball(json.creditBal);
-        } catch (error: any) {
-            console.log("error", error);
-        }
-    };
-
-
-    const {
-        register,
-        handleSubmit,
-        reset,
-        formState: { errors },
-    } = useForm<FormValues>();
-    const onSubmit: SubmitHandler<FormValues> = async (data: any) => {
-        const reqData = {
-            message: data.message,
-            status: 2,
-            updatedBy: 1
-        };
-        await axios({
-            method: "put",
-            url: `${api_url}/editCreditNotes/${props.id}`,
-            data: reqData,
-            headers: {
-                Authorization: auth_token,
-            },
-        })
-            .then((data) => {
-                if (data) {
-                    toast.success("Credit Notes Updated Successfully !");
-                    reset();
-                    setrejectOpen(false)
-                }
-            })
-            .catch((error) => {
-                toast.error(" Internal Server Error !");
-            });
-    };
+  //reject open form
+  function handleRejectOpen() {
+    setrejectOpen(true)
+    setapproveOpen(false);
+  }
+  function closeRejectForm() {
+    setrejectOpen(false)
+  }
 
   //approve form open
   function handleApproveOpen() {
     setapproveOpen(true);
-    setrejectOpen(false);
+    setrejectOpen(false)
   }
 
-  const closePoPapprove = (data: any) => { 
+  const closePoPapprove = (data: any) => {
     setapproveOpen(false);
   };
+
 
   return (
     <>
@@ -262,75 +207,30 @@ export default function ViewCreditNotes(props: any) {
                 </Typography>
               </Stack>
               <Stack>
-                <Typography
-                  style={{
-                    color: "#F95A37",
-                    textAlign: "right",
-                    marginBottom: "15px",
-                  }}
-                >
-                  <span style={{ fontSize: "14px" }}>BALANCE </span>{" "}
-                  <b style={{ fontSize: "26px" }}>
-                    {" "}
-                    ${creditball ? creditball : 0}
-                  </b>
+                <Typography style={{ color: "#F95A37" }}>
+                  <span style={{ fontSize: "14PX" }}>BALANCE </span>{" "}
+                  <b style={{ fontSize: "26px" }}>  ${creditball ? creditball : 0}</b>
                 </Typography>
-                {creditNoteDet?.status === 4 ? (
-                  ""
-                ) : (
-                  <Stack direction="row">
-                    {roleid === 1 ? (
-                      <Stack
-                        onClick={handleApproveOpen}
-                        style={{ color: "#02C509", cursor: "pointer" }}
-                      >
-                        <b>Approved By Admin</b>
-                      </Stack>
-                    ) : (
-                      <Stack
-                        onClick={handleApproveOpen}
-                        style={{ color: "#02C509", cursor: "pointer" }}
-                      >
-                        <b>Approved</b>
-                      </Stack>
-                    )}
-                    <Stack
-                      onClick={handleRejectOpen}
-                      style={{
-                        marginLeft: "20px",
-                        color: "#F95A37",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <b>Reject</b>
-                    </Stack>
-                    <Stack
-                      onClick={handleDeleteOpen}
-                      style={{
-                        marginLeft: "20px",
-                        color: "#F95A37",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <b>Delete</b>
-                    </Stack>
-                  </Stack>
-                )}
+                {creditNoteDet?.status === 4 ? ("") : (<Stack direction="row">
+                  {roleid === 1 ? (<Stack onClick={handleApproveOpen} style={{ color: "#02C509", cursor: "pointer" }}><b>Approved By Admin</b></Stack>) : (<Stack onClick={handleApproveOpen} style={{ color: "#02C509", cursor: "pointer" }}><b>Approved</b></Stack>)}
+                  <Stack onClick={handleRejectOpen} style={{ marginLeft: "20px", color: "red", cursor: "pointer" }}><b>Reject</b></Stack>
+                  <Stack onClick={handleDeleteOpen} style={{ marginLeft: "20px", color: "red", cursor: "pointer" }}><b>Delete</b></Stack>
+                </Stack>)}
               </Stack>
             </Stack>
             {/*bread cump */}
             <Grid container spacing={2}>
               <Grid item xs={4}>
                 <Grid item xs={12} md={12}>
-                  <Card sx={{ minWidth: 275 }} style={{ width: "100%" }}>
+                  <Card sx={{ minWidth: 275 }}>
                     <CardContent>
                       <Stack
                         direction="row"
                         alignItems="center"
                         justifyContent="space-between"
-                        style={{ padding: "0px" }}
+                        style={{ padding: "8px" }}
                       >
-                        <CardContent style={{ width: "100%", padding: "0" }}>
+                        <CardContent>
                           <Stack
                             direction="row"
                             alignItems="center"
@@ -349,17 +249,14 @@ export default function ViewCreditNotes(props: any) {
                           </Stack>
                           <Stack style={{ padding: "8px" }}>
                             <Box sx={{ display: "flex" }}>
-                              <div id="profileImage">
-                                <span id="fullName">A</span>
-                              </div>
-                              <CardContent
-                                sx={{ flex: 1 }}
-                                className="text-grey"
-                              >
+                              <div id="profileImage"><span id="fullName">A</span></div>
+                              <CardContent sx={{ flex: 1 }} className="text-grey">
                                 <Typography component="h4" variant="h4">
-                                  {creditNoteDet?.name} Acme Corporation
+                                  {creditNoteDet?.name}
                                 </Typography>
-
+                                <Typography component="h4">
+                                  {creditNoteDet?.email1}
+                                </Typography>
                                 <Typography
                                   variant="subtitle1"
                                   color="text.secondary"
@@ -381,7 +278,7 @@ export default function ViewCreditNotes(props: any) {
                               </CardContent>
                             </Box>
                           </Stack>
-                          <Stack style={{ padding: "8px" }}>
+                          <Stack style={{ padding: "8px" }} >
                             <Typography className="date-box">
                               <span>Cretaed :</span> Jan 10, 2023
                             </Typography>
@@ -393,15 +290,9 @@ export default function ViewCreditNotes(props: any) {
                             style={{ padding: "8px" }}
                           >
                             <Stack>
-                                <Typography style={{ color: "#F95A37" }}>
-                                    <span style={{ fontSize: "14PX" }}>BALANCE </span>{" "}
-                                    <b style={{ fontSize: "26px" }}>  ${creditball ? creditball : 0}</b>
-                                </Typography>
-                                {creditNoteDet?.status === 4 ? ("") : (<Stack direction="row">
-                                    {roleid === 1 ? (<Stack onClick={handleApproveOpen} style={{ color: "#02C509", cursor: "pointer" }}><b>Approved By Admin</b></Stack>) : (<Stack onClick={handleApproveOpen} style={{ color: "#02C509", cursor: "pointer" }}><b>Approved</b></Stack>)}
-                                    <Stack onClick={handleRejectOpen} style={{ marginLeft: "20px", color: "red", cursor: "pointer" }}><b>Reject</b></Stack>
-                                    <Stack onClick={handleDeleteOpen} style={{ marginLeft: "20px", color: "red", cursor: "pointer" }}><b>Delete</b></Stack>
-                                </Stack>)}
+                              <Typography variant="subtitle1">
+                                purchase order : 2342354235
+                              </Typography>
                             </Stack>
                           </Stack>
                         </CardContent>
@@ -431,9 +322,7 @@ export default function ViewCreditNotes(props: any) {
                           </Typography>
                         </Stack>
                       </Stack>
-                      <Typography style={{ padding: "8px" }}>
-                        {creditNoteMsg[0]?.message}
-                      </Typography>
+                      <Typography style={{ padding: "8px" }}>{creditNoteMsg[0]?.message}</Typography>
                     </CardContent>
                   </Card>
                 </Grid>
@@ -459,13 +348,12 @@ export default function ViewCreditNotes(props: any) {
                           </Typography>
                         </Stack>
                       </Stack>
-                      {creditNoteMsg.slice(1).map((data: any) => {
-                        return (
-                          <Typography style={{ padding: "8px" }}>
-                            {data.message}
-                          </Typography>
-                        );
-                      })}
+                      {
+                        creditNoteMsg.slice(1).map((data: any) => {
+                          return (<Typography style={{ padding: "8px" }}>{data.message}</Typography>)
+                        })
+
+                      }
                     </CardContent>
                   </Card>
                 </Grid>
@@ -492,11 +380,9 @@ export default function ViewCreditNotes(props: any) {
                             Line Items
                           </Typography>
                         </Stack>
+
                       </Stack>
-                      <Table
-                        className="invoice-table"
-                        style={{ marginTop: "20px" }}
-                      >
+                      <Table className="invoice-table" style={{ marginTop: "20px" }}>
                         <TableHead>
                           <TableRow>
                             <TableCell>
@@ -518,305 +404,108 @@ export default function ViewCreditNotes(props: any) {
                         </TableHead>
                         <TableBody>
                           <TableRow hover tabIndex={-1}>
-                            <TableCell
-                              align="left"
-                              className="invcss"
-                              style={{ fontWeight: "500", color: "#26CEB3" }}
-                            >
-                              INV-0001
-                            </TableCell>
-                            <TableCell align="left">
-                              Adam Johans Lorem ipsum dollar sit ammet
-                            </TableCell>
+                            <TableCell align="left" className="invcss" style={{ fontWeight: "500", color: "#26CEB3" }}>INV-0001</TableCell>
+                            <TableCell align="left">{creditNoteDet?.activityname}</TableCell>
                             <TableCell align="left">10</TableCell>
-                            <TableCell align="left">
-                              ${creditNoteDet?.amount}
-                            </TableCell>
-                            <TableCell align="left">
-                              ${creditNoteDet?.amount}
-                            </TableCell>
+                            <TableCell align="left">${creditNoteDet?.amount}</TableCell>
+                            <TableCell align="left">${creditNoteDet?.amount}</TableCell>
                           </TableRow>
                           <TableRow hover tabIndex={1}>
-                            <TableCell
-                              align="left"
-                              colSpan={3}
-                              style={{ border: "none !important" }}
-                            ></TableCell>
-                            <TableCell
-                              align="left"
-                              style={{ fontWeight: "600" }}
-                            >
-                              SUBTOTAL
-                            </TableCell>
-                            <TableCell align="left">
-                              ${creditNoteDet?.amount}
-                            </TableCell>
+                            <TableCell align="left" colSpan={3}></TableCell>
+                            <TableCell align="left" style={{ fontWeight: "600" }}>SUBTOTAL</TableCell>
+                            <TableCell align="left">${creditNoteDet?.amount}</TableCell>
                           </TableRow>
                           <TableRow hover tabIndex={2}>
-                            <TableCell
-                              align="left"
-                              colSpan={3}
-                              style={{ border: "none !important" }}
-                            ></TableCell>
-                            <TableCell
-                              align="left"
-                              style={{ fontWeight: "600" }}
-                            >
-                              TOTAL
-                            </TableCell>
-                            <TableCell align="left">
-                              ${creditNoteDet?.amount}
-                            </TableCell>
+                            <TableCell align="left" colSpan={3}></TableCell>
+                            <TableCell align="left" style={{ fontWeight: "600" }}>TOTAL</TableCell>
+                            <TableCell align="left">${creditNoteDet?.amount}</TableCell>
                           </TableRow>
                         </TableBody>
                       </Table>
                     </CardContent>
                   </Card>
                 </Grid>
-                {rejectOpen ? (
-                  <Grid item xs={12} md={12} style={{ marginTop: "20px" }}>
-                    <Card sx={{ minWidth: 275 }}>
-                      <form onSubmit={handleSubmit(onSubmit)}>
-                        <CardContent>
-                          <Stack direction="row" justifyContent="space-between">
-                            <Stack>
-                              <Typography
-                                variant="h5"
-                                style={{
-                                  fontWeight: "bold",
-                                  color: "#333333",
-                                }}
-                              >
-                                Reason for reject this request
-                              </Typography>
-                            </Stack>
+                {rejectOpen ? (<Grid item xs={12} md={12} style={{ marginTop: "20px" }}>
+                  <Card sx={{ minWidth: 275 }}>
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                      <CardContent>
+                        <Stack
+                          direction="row"
+                          justifyContent="space-between"
+                        >
+                          <Stack>
+                            <Typography
+                              variant="h5"
+
+                              style={{
+                                fontWeight: "bold",
+                                color: "#333333",
+                              }}
+                            >
+                              Reason  for reject this request
+                            </Typography>
                           </Stack>
-                          <Table style={{ marginTop: "20px" }}>
-                            <Stack>
-                              <Grid container spacing={3}>
-                                <Grid item xs={12} md={6}>
-                                  <Stack spacing={1}>
-                                    <InputLabel htmlFor="name">
-                                      Your comments on this request{" "}
-                                    </InputLabel>
-                                    <OutlinedInput
-                                      className="comment"
-                                      type="text"
-                                      id="name"
-                                      fullWidth
-                                      size="small"
-                                      {...register("message", {
-                                        required: true,
-                                      })}
-                                    />
-                                    {errors.message?.type === "required" && (
-                                      <span style={style}>
-                                        Field is Required *
-                                      </span>
-                                    )}
-                                  </Stack>
-                                </Grid>
-                                <Grid item xs={12}>
-                                  <Button
-                                    type="submit"
-                                    variant="contained"
-                                    color="primary"
-                                  >
-                                    <b>SAVE</b>
-                                  </Button>
-                                  <Button
-                                    variant="contained"
-                                    style={{
-                                      marginLeft: "10px",
-                                      background: "none",
-                                      color: "#000",
-                                      boxShadow: "none",
-                                    }}
-                                    onClick={closeRejectForm}
-                                  >
-                                    <b>CANCEL</b>
-                                  </Button>
-                                </Grid>
-                                <Grid item xs={12} md={12} style={{ marginTop: "20px" }}>
-                                    <Card sx={{ minWidth: 275 }}>
-                                        <CardContent>
-                                            <Stack
-                                                direction="row"
-                                                alignItems="center"
-                                                justifyContent="space-between"
-                                                style={{ padding: "8px" }}
-                                            >
-                                                <Stack>
-                                                    <Typography
-                                                        variant="h5"
-                                                        gutterBottom
-                                                        style={{
-                                                            fontWeight: "bold",
-                                                            color: "#333333",
-                                                        }}
-                                                    >
-                                                        Note by Admin
-                                                    </Typography>
-                                                </Stack>
-                                            </Stack>
-                                            {
-                                                creditNoteMsg.slice(1).map((data: any) => {
-                                                    return (<Typography style={{ padding: "8px" }}>{data.message}</Typography>)
-                                                })
-
-                                            }
-                                        </CardContent>
-                                    </Card>
-                                </Grid>
+                        </Stack>
+                        <Table style={{ marginTop: "20px" }}>
+                          <Stack>
+                            <Grid container spacing={3}>
+                              <Grid item xs={12} md={6}>
+                                <Stack spacing={1}>
+                                  <InputLabel htmlFor="name">
+                                    Your comments on this request                                                                </InputLabel>
+                                  <OutlinedInput
+                                    className="comment"
+                                    type="text"
+                                    id="name"
+                                    fullWidth
+                                    size="small"
+                                    {...register("message", {
+                                      required: true,
+                                    })}
+                                  />
+                                  {errors.message?.type === "required" && (
+                                    <span style={style}>Field is Required *</span>
+                                  )}
+                                </Stack>
+                              </Grid>
+                              <Grid item xs={12}>
+                                <Button
+                                  type="submit"
+                                  variant="contained"
+                                  color="primary"
+                                >
+                                  <b>SAVE</b>
+                                </Button>
+                                <Button
+                                  variant="contained"
+                                  style={{
+                                    marginLeft: "10px",
+                                    backgroundColor: "#F95A37",
+                                  }}
+                                  onClick={closeRejectForm}
+                                >
+                                  <b>CANCEL</b>
+                                </Button>
+                              </Grid>
                             </Grid>
-                            <Grid item xs={8}>
-                                <Grid item xs={12} md={12}>
-                                    <Card sx={{ minWidth: 275 }}>
-                                        <CardContent>
-                                            <Stack
-                                                direction="row"
-                                                alignItems="center"
-                                                justifyContent="space-between"
-                                                style={{ padding: "8px" }}
-                                            >
-                                                <Stack>
-                                                    <Typography
-                                                        variant="h5"
-                                                        gutterBottom
-                                                        style={{
-                                                            fontWeight: "bold",
-                                                            color: "#333333",
-                                                        }}
-                                                    >
-                                                        Line Items
-                                                    </Typography>
-                                                </Stack>
-
-                                            </Stack>
-                                            <Table style={{ marginTop: "20px" }}>
-                                                <TableHead>
-                                                    <TableRow>
-                                                        <TableCell>
-                                                            <Typography>INVOICE ID</Typography>
-                                                        </TableCell>
-                                                        <TableCell>
-                                                            <Typography>Item</Typography>
-                                                        </TableCell>
-                                                        <TableCell>
-                                                            <Typography>Quantity</Typography>
-                                                        </TableCell>
-                                                        <TableCell>
-                                                            <Typography>Rate</Typography>
-                                                        </TableCell>
-                                                        <TableCell>
-                                                            <Typography>Amount</Typography>
-                                                        </TableCell>
-                                                    </TableRow>
-                                                </TableHead>
-                                                <TableBody>
-                                                    <TableRow hover tabIndex={-1}>
-                                                        <TableCell align="left" className="invcss" style={{ fontWeight: "500", color: "#26CEB3" }}>INV-0001</TableCell>
-                                                        <TableCell align="left">{creditNoteDet?.activityname}</TableCell>
-                                                        <TableCell align="left">10</TableCell>
-                                                        <TableCell align="left">${creditNoteDet?.amount}</TableCell>
-                                                        <TableCell align="left">${creditNoteDet?.amount}</TableCell>
-                                                    </TableRow>
-                                                    <TableRow hover tabIndex={1}>
-                                                        <TableCell align="left" colSpan={3}></TableCell>
-                                                        <TableCell align="left" style={{ fontWeight: "600" }}>SUBTOTAL</TableCell>
-                                                        <TableCell align="left">${creditNoteDet?.amount}</TableCell>
-                                                    </TableRow>
-                                                    <TableRow hover tabIndex={2}>
-                                                        <TableCell align="left" colSpan={3}></TableCell>
-                                                        <TableCell align="left" style={{ fontWeight: "600" }}>TOTAL</TableCell>
-                                                        <TableCell align="left">${creditNoteDet?.amount}</TableCell>
-                                                    </TableRow>
-                                                </TableBody>
-                                            </Table>
-                                        </CardContent>
-                                    </Card>
-                                </Grid>
-                                {rejectOpen ? (<Grid item xs={12} md={12} style={{ marginTop: "20px" }}>
-                                    <Card sx={{ minWidth: 275 }}>
-                                        <form onSubmit={handleSubmit(onSubmit)}>
-                                            <CardContent>
-                                                <Stack
-                                                    direction="row"
-                                                    justifyContent="space-between"
-                                                >
-                                                    <Stack>
-                                                        <Typography
-                                                            variant="h5"
-
-                                                            style={{
-                                                                fontWeight: "bold",
-                                                                color: "#333333",
-                                                            }}
-                                                        >
-                                                            Reason  for reject this request
-                                                        </Typography>
-                                                    </Stack>
-                                                </Stack>
-                                                <Table style={{ marginTop: "20px" }}>
-                                                    <Stack>
-                                                        <Grid container spacing={3}>
-                                                            <Grid item xs={12} md={6}>
-                                                                <Stack spacing={1}>
-                                                                    <InputLabel htmlFor="name">
-                                                                        Your comments on this request                                                                </InputLabel>
-                                                                    <OutlinedInput
-                                                                        type="text"
-                                                                        id="name"
-                                                                        fullWidth
-                                                                        size="small"
-                                                                        {...register("message", {
-                                                                            required: true,
-                                                                        })}
-                                                                    />
-                                                                    {errors.message?.type === "required" && (
-                                                                        <span style={style}>Field is Required *</span>
-                                                                    )}
-                                                                </Stack>
-                                                            </Grid>
-                                                            <Grid item xs={12}>
-                                                                <Button
-                                                                    type="submit"
-                                                                    variant="contained"
-                                                                    color="primary"
-                                                                >
-                                                                    <b>SAVE</b>
-                                                                </Button>
-                                                                <Button
-                                                                    variant="contained"
-                                                                    style={{
-                                                                        marginLeft: "10px",
-                                                                        backgroundColor: "#F95A37",
-                                                                    }}
-                                                                    onClick={closeRejectForm}
-                                                                >
-                                                                    <b>CANCEL</b>
-                                                                </Button>
-                                                            </Grid>
-                                                        </Grid>
-                                                    </Stack>
-                                                </Table>
-                                            </CardContent>
-                                        </form>
-                                    </Card>
-                                </Grid>) : ""}
-                                {approveOpen ? (<Grid item xs={12} md={12} style={{ marginTop: "20px" }}>
-                                    <Card sx={{ minWidth: 275 }}>
-                                        <ApproveCompForm id={props.id} closeDialog={closePoPapprove} roleid={roleid} custId={creditNoteDet?.customerId
-                                        } creditReqId={creditNoteDet?.creditReqId} />
-                                    </Card>
-                                </Grid>) : ""}
-                            </Grid>
-                        </Grid>
-                    </div>
-                    <MainFooter />
-                </Box>
-            </Box >
-            <DeleteFormDialog id={props.id} open={deleteOpen} closeDialog={closePoP} />
-        </>
-    );
+                          </Stack>
+                        </Table>
+                      </CardContent>
+                    </form>
+                  </Card>
+                </Grid>) : ""}
+                {approveOpen ? (<Grid item xs={12} md={12} style={{ marginTop: "20px" }}>
+                  <Card sx={{ minWidth: 275 }}>
+                    <ApproveCompForm id={props.id} closeDialog={closePoPapprove} roleid={roleid} custId={creditNoteDet?.customerId
+                    } creditReqId={creditNoteDet?.creditReqId} />
+                  </Card>
+                </Grid>) : ""}
+              </Grid>
+            </Grid>
+          </div>
+        </Box>
+      </Box >
+      <DeleteFormDialog id={props.id} open={deleteOpen} closeDialog={closePoP} />
+    </>
+  );
 }
