@@ -163,12 +163,12 @@ export default function ViewUser(props: any) {
                         })
                     }
                     if (parsedata[i].UserManagement) {
-                        setonCreditNote(true);
-                        setonCreditNotechecked({
-                            canView: parsedata[i].CreditNote.canView,
-                            canAdd: parsedata[i].CreditNote.canAdd,
-                            canEdit: parsedata[i].CreditNote.canEdit,
-                            canDelete: parsedata[i].CreditNote.canDelete
+                        setonUserManagement(true);
+                        setonUserManagementchecked({
+                            canView: parsedata[i].UserManagement.canView,
+                            canAdd: parsedata[i].UserManagement.canAdd,
+                            canEdit: parsedata[i].UserManagement.canEdit,
+                            canDelete: parsedata[i].UserManagement.canDelete
                         })
                     }
                 }
@@ -552,28 +552,28 @@ export default function ViewUser(props: any) {
                                                         User Management
                                                     </Stack>
                                                     <span style={{ color: "#333333" }}>
-                                                        {onCreditNote ? (<span style={{ color: "#1976d2" }}>ON</span>) : "OFF"}
+                                                        {onUserManagement ? (<span style={{ color: "#1976d2" }}>ON</span>) : "OFF"}
                                                     </span>
                                                 </Stack>
                                                 <Switch
-                                                    checked={onCreditNote}
-                                                    onChange={e => setonCreditNote(e.target.checked)}
+                                                    checked={onUserManagement}
+                                                    onChange={e => setonUserManagement(e.target.checked)}
                                                     inputProps={{ 'aria-label': 'controlled' }}
                                                     disabled
                                                 />
                                             </Stack>
-                                            {onCreditNote ? (<Stack direction="row" style={{ marginTop: "10px" }} >
+                                            {onUserManagement ? (<Stack direction="row" style={{ marginTop: "10px" }} >
                                                 <FormGroup>
-                                                    <FormControlLabel control={<Checkbox checked={onCreditNotechecked.canView} disabled />} label="Can View" />
+                                                    <FormControlLabel control={<Checkbox checked={onUserManagementchecked.canView} disabled />} label="Can View" />
                                                 </FormGroup>
                                                 <FormGroup>
-                                                    <FormControlLabel control={<Checkbox checked={onCreditNotechecked.canAdd} disabled />} label="Can Add" />
+                                                    <FormControlLabel control={<Checkbox checked={onUserManagementchecked.canAdd} disabled />} label="Can Add" />
                                                 </FormGroup>
                                                 <FormGroup>
-                                                    <FormControlLabel control={<Checkbox checked={onCreditNotechecked.canEdit} disabled />} label="Can Edit" />
+                                                    <FormControlLabel control={<Checkbox checked={onUserManagementchecked.canEdit} disabled />} label="Can Edit" />
                                                 </FormGroup>
                                                 <FormGroup>
-                                                    <FormControlLabel control={<Checkbox checked={onCreditNotechecked.canDelete} disabled />} label="Can Delete" />
+                                                    <FormControlLabel control={<Checkbox checked={onUserManagementchecked.canDelete} disabled />} label="Can Delete" />
                                                 </FormGroup>
                                             </Stack>) : ""}
                                         </Box>
