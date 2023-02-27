@@ -101,7 +101,6 @@ export default function ViewCreditNotes(props: any) {
         }
     };
 
-    console.log(creditNoteDet);
 
     const {
         register,

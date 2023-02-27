@@ -276,7 +276,7 @@ export default function Guardians() {
 
     setSelected(newSelected);
     if (newSelected.length === 0) {
-      setItemError("item field is required");
+      setItemError("Item field is required");
     } else {
       setItemError("");
     }
@@ -337,13 +337,13 @@ export default function Guardians() {
     const createdDate = moment(dates).format("DD/MM/YYYY");
 
     if (selected.length < 1) {
-      setItemError("item field is required");
+      setItemError("Item field is required");
     } else {
       setItemError("");
     }
 
     if (invoiceDate === "Invalid date") {
-      setDateError("invoiceDate field is required");
+      setDateError("Invoice Date field is required");
     } else {
       setDateError("");
     }
@@ -534,13 +534,13 @@ export default function Guardians() {
     }
     const createdDate = moment(dates).format("DD/MM/YYYY");
     if (selected.length < 1) {
-      setItemError("item field is required");
+      setItemError("Item field is required");
     } else {
       setItemError("");
     }
 
     if (invoiceDatesss === "Invalid date") {
-      setDateError("invoiceDate field is required");
+      setDateError("Invoice Date field is required");
     } else {
       setDateError("");
     }
@@ -602,7 +602,7 @@ export default function Guardians() {
     if (date) {
       setDateError("");
     } else {
-      setDateError("invoiceDate field is required");
+      setDateError("Invoice Date field is required");
     }
   };
   const handleInvoice = (data: any) => {
@@ -610,7 +610,7 @@ export default function Guardians() {
       setInvoiceError("");
       setInvoiceNo(data);
     } else {
-      setInvoiceError("invoice no is required");
+      setInvoiceError("Invoice no is required");
     }
   };
   return (
