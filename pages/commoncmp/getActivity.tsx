@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { api_url, auth_token } from "../api/hello";
 import AddNewParent from "../customer/addNewParent";
 
-export default function AddActivity({ Data, PId, pname }: { Data: any, PId: any, pname: any }) {
+export default function AddActivity({ Data, PId, pname }:  any) {
   const [users, setUsers] = useState<any>([]);
   const [opens, setOpens] = React.useState(false);
   const [inputValue, setInputValue] = useState("");
@@ -53,6 +53,7 @@ export default function AddActivity({ Data, PId, pname }: { Data: any, PId: any,
         value={value}
         inputValue={inputValue}
         onChange={(event, newValue) => {
+          
           setValue(newValue);
           Data(newValue);
         }}
@@ -67,6 +68,7 @@ export default function AddActivity({ Data, PId, pname }: { Data: any, PId: any,
             {...params}
             variant="outlined"
             placeholder="Search && Select Service"
+
            
           />
         )}

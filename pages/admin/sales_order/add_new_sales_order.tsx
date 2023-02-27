@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect } from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
@@ -134,31 +134,21 @@ export default function AddSalesOrder({
   const [activityId, setActivityId] = React.useState<any>("");
   const [parentsid, setparentsid] = React.useState(0);
   const [parentsname, setparentsname] = React.useState<any>("");
-  const [handleacctid, sethandleacctid] = React.useState("");
+  const [creditAmount, setCreditAmount] = React.useState<any>("");
   const [price, setPrice] = React.useState<any>("");
   const [customerError, setCustomerError] = React.useState<any>("");
   const [activityError, setActivityError] = React.useState<any>("");
   const [paymentPayMethod, setPaymentPayMethod] = React.useState<any>("");
+  const [Check, setCheck] = React.useState(false);
 
-
-
-  let datee=Date();
-  let creditAmount:any="3000"
+  let datee = Date();
   const todayDate = moment(datee).format("DD/MM/YYYY");
   const todaysDate = moment(datee).format("MMM DD,YYYY");
 
-  const handleacctids = (e: any) => {
-    sethandleacctid(e.target.value);
-  }
-
   const handlePaymentName = (data: any) => {
-    setPaymentPayMethod(data)
+    setPaymentPayMethod(data);
   };
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
-  };
-  const [Check, setCheck] = React.useState(false);
   if (Check === true) {
     var hideshowstyle = {
       display: "block",
@@ -169,6 +159,44 @@ export default function AddSalesOrder({
     };
   }
 
+  const insertRemainingNotesAmount = async () => {
+    const reqData = {
+      customerId: customerId,
+      Amount: creditBalance,
+      amountMode: 0,
+    };
+    await axios({
+      method: "PUT",
+      url: `${api_url}/insertAmount`,
+      data: reqData,
+      headers: {
+        Authorization: auth_token,
+      },
+    })
+      .then((data: any) => {
+        if (data) {
+          console.log("@@@@@@@@");
+        }
+      })
+      .catch((error) => {
+        console.log("error", error);
+      });
+  };
+
+  const getCustomerNotes = async (id: any) => {
+    try {
+      const response = await fetch(`${api_url}/creditballance/${id}`, {
+        method: "GET",
+        headers: {
+          Authorization: auth_token,
+        },
+      });
+      const res = await response.json();
+      setCreditAmount(res?.creditBal);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
 
   const {
     register,
@@ -177,54 +205,99 @@ export default function AddSalesOrder({
     formState: { errors },
   } = useForm<FormValues>();
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    if (customerId === "") {
-      setCustomerError("Customer field is Required *");
-    } else {
-      setCustomerError("");
-    }
-    if (activityId === "") {
-      setActivityError("Activity field is Required *");
-    } else {
-      setActivityError("");
-    }
-    setshowspinner(true);
-    setBtnDisabled(true);
+    if (customerId !== "" && activityId !== "") {
+      setshowspinner(true);
+      setBtnDisabled(true);
 
-    const reqData = {
-      amount:price,
-      status:0,
-      userId:customerId,
-      activityId:activityId,
-      transactionId:"Trh4354654457",
-      orderId:46,
-      createdBy:customerId,
-      createdDate:todayDate,
-      paymentMethod:paymentPayMethod === "" ? "Cash" : paymentPayMethod
-    };
-    await axios({
-      method: "POST",
-      url: `${api_url}/addSalesOrders`,
-      data: reqData,
-      headers: {
-        Authorization: auth_token,
-      },
-    })
-      .then((data: any) => {
-        if (data) {
-          setshowspinner(false);
-          setBtnDisabled(false);
-          toast.success("Sales Order Create Successfully !");
-          closeDialog(false);
-          setTimeout(() => {
-            setOpen(false);
-          }, 2000);
-        }
-      })
-      .catch((error) => {
-        toast.error(error?.message);
-        setshowspinner(false);
-        setBtnDisabled(false);
-      });
+      if (Check === true) {
+        const reqData = {
+          amount: totalPrice,
+          status: 0,
+          userId: customerId,
+          activityId: activityId,
+          transactionId: "Trh4354654457",
+          orderId: 46,
+          createdBy: customerId,
+          createdDate: todayDate,
+          paymentMethod: paymentPayMethod === "" ? "Cash" : paymentPayMethod,
+        };
+        await axios({
+          method: "POST",
+          url: `${api_url}/addSalesOrders`,
+          data: reqData,
+          headers: {
+            Authorization: auth_token,
+          },
+        })
+          .then((data: any) => {
+            if (data) {
+              setshowspinner(false);
+              setBtnDisabled(false);
+              insertRemainingNotesAmount();
+              toast.success("Sales Order Create Successfully !");
+              closeDialog(false);
+              setTimeout(() => {
+                setOpen(false);
+              }, 2000);
+            }
+          })
+          .catch((error) => {
+            // toast.error(error?.message);
+            console.log("error", error);
+            setshowspinner(false);
+            setBtnDisabled(false);
+          });
+      } else {
+        const reqData = {
+          amount: price,
+          status: 0,
+          userId: customerId,
+          activityId: activityId,
+          transactionId: "Trh4354654457",
+          orderId: 46,
+          createdBy: customerId,
+          createdDate: todayDate,
+          paymentMethod: paymentPayMethod === "" ? "Cash" : paymentPayMethod,
+        };
+
+        await axios({
+          method: "POST",
+          url: `${api_url}/addSalesOrders`,
+          data: reqData,
+          headers: {
+            Authorization: auth_token,
+          },
+        })
+          .then((data: any) => {
+            if (data) {
+              setshowspinner(false);
+              setBtnDisabled(false);
+              toast.success("Sales Order Create Successfully !");
+              closeDialog(false);
+              setTimeout(() => {
+                setOpen(false);
+              }, 2000);
+            }
+          })
+          .catch((error) => {
+            // toast.error(error?.message);
+            console.log("error", error);
+            setshowspinner(false);
+            setBtnDisabled(false);
+          });
+      }
+    } else {
+      if (customerId === "") {
+        setCustomerError("Customer field is Required *");
+      } else {
+        setCustomerError("");
+      }
+      if (activityId === "") {
+        setActivityError("Activity field is Required *");
+      } else {
+        setActivityError("");
+      }
+    }
   };
 
   const closeDialogs = () => {
@@ -234,28 +307,41 @@ export default function AddSalesOrder({
 
   const Getdata = (item: any) => {
     if (item) {
+      getCustomerNotes(item.id);
       setCustomerId(item?.id);
-    }else{
+    } else {
       setCustomerId("");
     }
   };
-  
 
   const GetActivitydata = (item: any) => {
     if (item) {
       setActivityId(item?.id);
-      setPrice(item?.price)
-    }else{
+      setPrice(item?.price);
+    } else {
       setActivityId("");
-      setPrice("")
+      setCheck(false);
+      setPrice(0);
     }
   };
-  
+
   const style = {
     color: "red",
     fontSize: "12px",
     fontWeight: "bold",
   };
+  let totalPrice =
+    price === 0
+      ? "0"
+      : price < creditAmount
+      ? "0"
+      : Math?.abs(creditAmount - price);
+  let creditBalance =
+    creditAmount === price
+      ? creditAmount
+      : creditAmount > price
+      ? price
+      : creditAmount;
 
   return (
     <BootstrapDialog
@@ -268,16 +354,33 @@ export default function AddSalesOrder({
       </BootstrapDialogTitle>
       <DialogContent dividers>
         <Box sx={{ width: "100%" }}>
-          <form onSubmit={handleSubmit(onSubmit)}>  
-            <TabPanel value={value} index={0}>
-              <Grid>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <TabPanel
+              value={value}
+              index={0}
+              className="new-sale"
+              style={{ padding: "0" }}
+            >
+              <Grid className="">
                 <Stack style={{ marginTop: "5px" }}>
                   <Grid container spacing={2}>
                     <Grid item xs={12} md={12}>
                       <Stack spacing={1}>
                         <InputLabel htmlFor="name">Customer Name</InputLabel>
-                        <AddCustomer Data={Getdata} PId={parentid} pname={parentname}   />
-                        {customerError &&  <span style={style}>Customer field is Required *</span>}
+                        <AddCustomer
+                          Data={Getdata}
+                          PId={parentid}
+                          pname={parentname}
+                        />
+                        {customerId !== "" && customerError ? (
+                          <span style={style}></span>
+                        ) : (
+                          customerError && (
+                            <span style={style}>
+                              Customer field is Required *
+                            </span>
+                          )
+                        )}
                       </Stack>
                     </Grid>
                   </Grid>
@@ -286,15 +389,27 @@ export default function AddSalesOrder({
                   <Grid container spacing={2}>
                     <Grid item xs={12} md={6}>
                       <Stack spacing={1}>
-                        <InputLabel htmlFor="name" >Service</InputLabel>
-                        <AddActivity Data={GetActivitydata} PId={parentsid} pname={parentsname}/>
-                        {activityError &&  <span style={style}>Activity field is Required *</span>}
+                        <InputLabel htmlFor="name">Service</InputLabel>
+                        <AddActivity
+                          Data={GetActivitydata}
+                          PId={parentsid}
+                          pname={parentsname}
+                        />
+                        {activityId !== "" && activityError ? (
+                          <span style={style}></span>
+                        ) : (
+                          activityError && (
+                            <span style={style}>
+                              Activity field is Required *
+                            </span>
+                          )
+                        )}
                       </Stack>
                     </Grid>
                     <Grid item xs={12} md={6}>
                       <Stack spacing={1}>
-                      <InputLabel htmlFor="name">Date</InputLabel>
-                      <OutlinedInput
+                        <InputLabel htmlFor="name">Date</InputLabel>
+                        <OutlinedInput
                           type="text"
                           id="date"
                           value={todaysDate && todaysDate}
@@ -308,84 +423,111 @@ export default function AddSalesOrder({
                 </Stack>
                 <Stack style={{ marginTop: "20px" }}>
                   <Grid container spacing={2}>
-                  <Grid item xs={12} md={6}>
-                    <Stack spacing={1}>
+                    <Grid item xs={12} md={6}>
+                      <Stack spacing={1}>
                         <InputLabel htmlFor="name">
                           Amount<span className="err_str"></span>
                         </InputLabel>
                         <OutlinedInput
                           type="text"
                           id="amount"
+                          disabled
                           value={price && price}
                           placeholder=" Service amount"
                           fullWidth
                           size="small"
                         />
-                        
                       </Stack>
-                     </Grid>
+                    </Grid>
                     <Grid item xs={12} md={6}>
-                    <Stack spacing={1}>
-                        <InputLabel htmlFor="payment">Payment Method</InputLabel>
+                      <Stack spacing={1}>
+                        <InputLabel htmlFor="payment">
+                          Payment Method
+                        </InputLabel>
                         <FormControl fullWidth>
-                          { price > 0 ? 
-                           <Select
-                           labelId="demo-simple-select-label"
-                           id="demo-simple-select"
-                           defaultValue={"Cash"}
-                           size="small"
-                           {...register("payment")}
-                           onChange={(e) => handlePaymentName(e.target.value)}
-                         >
-                           <MenuItem value={"Cash"}>Cash</MenuItem>
-                           <MenuItem value={"Amex"}>Amex</MenuItem>
-                           <MenuItem value={"QPay"}>QPay</MenuItem>
-                           <MenuItem value={"CBQ"}>CBQ</MenuItem>
-                         </Select>
-                           : 
-                           <Select
-                           labelId="demo-simple-select-label"
-                           id="demo-simple-select"
-                           defaultValue={"Cash"}
-                           disabled
-                           size="small"
-                           {...register("payment")}
-                           onChange={(e) => handlePaymentName(e.target.value)}
-                         >
-                           <MenuItem value={"Cash"}>Cash</MenuItem>
-                         </Select>
-                          
-                          }
+                          <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            defaultValue={"Cash"}
+                            size="small"
+                            disabled={
+                              totalPrice === "0" || price < 0 ? true : false
+                            }
+                            {...register("payment")}
+                            onChange={(e) => handlePaymentName(e.target.value)}
+                          >
+                            <MenuItem value={"Cash"}>Cash</MenuItem>
+                            <MenuItem value={"Amex"}>Amex</MenuItem>
+                            <MenuItem value={"QPay"}>QPay</MenuItem>
+                            <MenuItem value={"CBQ"}>CBQ</MenuItem>
+                          </Select>
                         </FormControl>
                       </Stack>
                     </Grid>
                   </Grid>
-                  <Stack style={{ marginTop: "20px" }} >
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={12} >
-                    {price === 0 ? <Checkbox  onChange={(e) => setCheck(e.target.checked)} disabled className="checkbox132"/>:price > 0? <Checkbox  onChange={(e) => setCheck(e.target.checked)} className="checkbox132"/>:<Checkbox  onChange={(e) => setCheck(e.target.checked)} disabled className="checkbox132"/>}
-                      Want to use credit balance ${creditAmount}
-
-                      <InputLabel htmlFor="name" className="paymentcolor">Apply Payment</InputLabel>
-                      <Stack spacing={1} >
-                        <InputLabel htmlFor="name"></InputLabel>
-                        <p>Sales invoice Amount : ${price}</p>
-                      </Stack>
-
-                      <Stack spacing={1} style={hideshowstyle}>
-                        <InputLabel htmlFor="name"></InputLabel>
-                        <p>Total credit balance : ${creditAmount}</p>
-                      </Stack>
-                      <Stack spacing={1} >
-                        <InputLabel htmlFor="name"></InputLabel>
-                       {Check === true ? <p>Total amount : ${creditAmount-price}</p>:<p>Total amount : ${price}</p>} 
-                      </Stack>
+                  <Stack style={{ marginTop: "20px" }}>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} md={12}>
+                        {price === 0 || creditAmount === 0 ? (
+                          ""
+                        ) : price > 0 ? (
+                          <Checkbox
+                            onChange={(e) => setCheck(e.target.checked)}
+                            className="checkbox132"
+                          />
+                        ) : (
+                          ""
+                        )}
+                        {customerId === "" || creditAmount === 0
+                          ? ""
+                          : `Want to use credit balance :$${creditAmount}`}
+                        <div>
+                          <h5 className="apply">Apply Payment</h5>
+                        </div>
+                        <Stack spacing={1}>
+                          <InputLabel htmlFor="name"></InputLabel>
+                          <p>
+                            Sales invoice amount :{" "}
+                            {price === "" ? "$0.00" : "$" + price}
+                          </p>
+                        </Stack>
+                        <Stack spacing={1} style={hideshowstyle}>
+                          <InputLabel htmlFor="name"></InputLabel>
+                          <div className="iadiv">
+                            <div className="hh red">Total Credit Balance:</div>
+                            <div>
+                              $
+                              {creditAmount === price
+                                ? creditAmount
+                                : creditAmount > price
+                                ? price
+                                : creditAmount}
+                            </div>
+                          </div>
+                        </Stack>
+                        <Stack spacing={1}>
+                          <InputLabel htmlFor="name"></InputLabel>
+                          {Check != true ? (
+                            <p>
+                              Total amount :{" "}
+                              {price === "" ? "$0.00" : "$" + price}
+                            </p>
+                          ) : (
+                            <p>
+                              Total amount : $
+                              {price === 0
+                                ? "0.00"
+                                : price < creditAmount
+                                ? "0.00"
+                                : Math?.abs(creditAmount - price)}
+                            </p>
+                          )}
+                        </Stack>
+                      </Grid>
                     </Grid>
-                  </Grid>
-                </Stack>
+                  </Stack>
                 </Stack>
               </Grid>
-
             </TabPanel>
             <DialogActions>
               <Button

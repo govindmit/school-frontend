@@ -19,6 +19,9 @@ type FormValues = {
   status: number;
   amount: number;
   updatedBy: number;
+  customerId: number;
+  amountMode: number;
+  creditRequestId: number;
 };
 const style = {
   color: "red",
@@ -29,10 +32,14 @@ export default function ApproveCompForm({
   id,
   roleid,
   closeDialog,
+  custId,
+  creditReqId,
 }: {
   id: any;
   roleid: any;
   closeDialog: any;
+  custId: any;
+  creditReqId: any;
 }) {
   const {
     register,
@@ -46,6 +53,9 @@ export default function ApproveCompForm({
       amount: data.amount,
       message: data.message,
       status: roleid === 1 ? 4 : 1,
+      customerId: custId,
+      amountMode: 1,
+      creditRequestId: creditReqId,
       updatedBy: 1,
     };
     await axios({
@@ -89,7 +99,7 @@ export default function ApproveCompForm({
           </Stack>
           <Table style={{ marginTop: "20px" }}>
             <Stack>
-              <Grid container xs={6} md={6} spacing={3}>
+              <Grid container spacing={3}>
                 <Grid item xs={12} md={12}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor="name">AMOUNT</InputLabel>
@@ -114,7 +124,6 @@ export default function ApproveCompForm({
                       Your comments on this request{" "}
                     </InputLabel>
                     <OutlinedInput
-                      className="comment"
                       type="text"
                       id="name"
                       fullWidth
@@ -136,9 +145,7 @@ export default function ApproveCompForm({
                     variant="contained"
                     style={{
                       marginLeft: "10px",
-                      background: "none",
-                      color: "#000",
-                      boxShadow: "none",
+                      backgroundColor: "#F95A37",
                     }}
                     onClick={closeDialogs}
                   >
