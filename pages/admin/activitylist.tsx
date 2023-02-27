@@ -24,7 +24,6 @@ import {
   Grid,
   InputLabel,
   Modal,
-  withStyles,
   styled,
 } from "@mui/material";
 import moment from "moment";
@@ -88,7 +87,7 @@ type FormValues = {
 
 export default function ActivityList() {
   const [activites, setactivites] = useState<any>([]);
-  const [filterActivity, setFilterActivity] = useState<any>([]);
+  const [activity, setFullactivites] = useState<any>([]);
   const [searchquery, setsearchquery] = useState("");
   const [searchdata, setsearchdata] = useState([]);
   const [All, setAll] = useState(0);
@@ -111,11 +110,6 @@ export default function ActivityList() {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const [activeTab, setActiveTab] = useState("");
-  const [row_per_page, set_row_per_page] = useState(5);
-  const PER_PAGE = row_per_page;
-  const count = Math.ceil(filterActivity.length / PER_PAGE);
-  const DATA = usePagination(filterActivity, PER_PAGE);
-  let [page, setPage] = useState(1);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -149,7 +143,6 @@ export default function ActivityList() {
     fetchData();
   }, []);
 
-
   //get activites
   const url = `${api_url}/getActivity`;
   const fetchData = async () => {
@@ -163,7 +156,7 @@ export default function ActivityList() {
       });
       const json = await response.json();
       setactivites(json.data);
-      setFilterActivity(json.data);
+      setFullactivites(json.data);
       setsearchdata(json.data);
       setAll(json.data.length);
     } catch (error: any) {
@@ -212,7 +205,7 @@ export default function ActivityList() {
   }
   const filterApply = async (e: any) => {
     e.preventDefault();
-    setFilterActivity([]);
+    setFullactivites([]);
 
     const reqData = {
       status: filterStatus,
@@ -231,10 +224,9 @@ export default function ActivityList() {
       .then((res: any) => {
         if (res.status === 200) {
           setactivites(res?.data?.data);
-          setFilterActivity(res?.data?.data);
+          setFullactivites(res?.data?.data);
           setsearchdata(res?.data?.data);
           setAll(res?.data?.data.length);
-          
         }
       })
       .catch((error: any) => {
@@ -242,15 +234,20 @@ export default function ActivityList() {
       });
   };
 
-  const past = activites?.filter((a: any) => a?.startDate < todayDate);
-  const upcoming = activites?.filter((a: any) => a?.startDate > todayDate);
-  const current = activites?.filter((a: any) => a?.startDate === todayDate);
-  const allListData = activites?.filter((a: any) => a);
+  const past = activity?.filter((a: any) => a?.startDate < todayDate);
+  const upcoming = activity?.filter((a: any) => a?.startDate > todayDate);
+  const current = activity?.filter((a: any) => a?.startDate === todayDate);
+  const allListData = activity?.filter((a: any) => a);
 
   //pagination
+  const [row_per_page, set_row_per_page] = useState(5);
   function handlerowchange(e: any) {
     set_row_per_page(e.target.value);
   }
+  let [page, setPage] = useState(1);
+  const PER_PAGE = row_per_page;
+  const count = Math.ceil(activites.length / PER_PAGE);
+  const DATA = usePagination(activites, PER_PAGE);
   const handlePageChange = (e: any, p: any) => {
     setPage(p);
     DATA.jump(p);
@@ -331,40 +328,39 @@ export default function ActivityList() {
       });
   };
 
-const handleUpcoming = () => {
-  setActiveTab("upcoming");
-  if(DATA?.currentPage === 1){
-    setFilterActivity(upcoming);
-  }else{
-    setFilterActivity(upcoming);
-    handlePageChange("",1)
- }
-};
-
-const handleAll = () => {
-  if(DATA?.currentPage === 1){
-    setFilterActivity(allListData);
-  }else{
-    handlePageChange("",1)
- }
-    // if (filterStatus !== "" && filterType !== "") {
-    // } else {
-      // fetchData();
-    //   setFilterActivity(allListData);
-    // }
+  const handleUpcoming = () => {
+    setActiveTab("upcoming");
+    if(DATA?.currentPage === 1){
+      setactivites(upcoming);
+    }else{
+      setactivites(upcoming);
+      handlePageChange("",1)
+   }
   };
+
+  const handleAll = () => {
+    if(DATA?.currentPage === 1){
+      setactivites(allListData);
+    }else{
+      handlePageChange("",1)
+   }
+  };
+
   const handlePast = () => {
     setActiveTab("past");
     if(DATA?.currentPage === 1){
-      setFilterActivity(past);
+      setactivites(past);
+      // handlePageChange("",1)
     }else{
+      setactivites(past);
        handlePageChange("",1)
     }
   };
+
   const handleCurrent = () => {
     setActiveTab("current");
     if(DATA?.currentPage === 1){
-      setFilterActivity(current);
+      setactivites(current);
     }else{
       handlePageChange("",1)
    }
@@ -382,10 +378,8 @@ const handleAll = () => {
     boxShadow: 24,
     // p: 4,
   };
-  
-
   const AntTab = styled((props: StyledTabProps) => <Tab disableRipple {...props} />)(
-    ({ theme }) => ({
+    ({ theme:any }) => ({
       textTransform: 'none',
     }),
   );
@@ -506,7 +500,7 @@ const handleAll = () => {
                       value={value}
                       onChange={handleChange}
                       aria-label="basic tabs example"
-                      >
+                    >
                       <AntTab
                         className="filter-list"
                         label={`All (${All})`}
@@ -514,11 +508,10 @@ const handleAll = () => {
                         onClick={handleAll}
                       />
                       <AntTab
-                      label={`Upcomming (${upcoming.length})`}
-                      {...a11yProps(1)}
-                      onClick={handleUpcoming}
-                        
-                    />
+                        label={`Upcomming (${upcoming.length})`}
+                        {...a11yProps(1)}
+                        onClick={handleUpcoming}
+                      />
                       <AntTab
                         label={`Past (${past.length})`}
                         {...a11yProps(2)}
@@ -669,7 +662,7 @@ const handleAll = () => {
                         <Box>
                           <MenuItem
                             {...bindTrigger(popupState)}
-                          //onClick={ExportCSV}
+                            //onClick={ExportCSV}
                           >
                             Export
                             {/* <KeyboardArrowDownIcon /> */}
@@ -726,7 +719,7 @@ const handleAll = () => {
                   </TableHead>
                   <TableBody>
                     {/* {DATA.currentData()} */}
-                   {DATA.currentData() &&
+                    {DATA.currentData() &&
                       DATA.currentData().map((item: any, key: any) => {
                         const {
                           id,
@@ -738,7 +731,6 @@ const handleAll = () => {
                           endDate,
                           description,
                         } = item;
-                      
                         return (
                           <TableRow
                             key={key}
@@ -753,7 +745,7 @@ const handleAll = () => {
                             <TableCell align="left">{id}</TableCell>
                             <TableCell align="left">{name}</TableCell>
                             <TableCell align="left">
-                              {type?.charAt(0).toUpperCase() + type?.slice(1)}
+                              {type.charAt(0).toUpperCase() + type.slice(1)}
                             </TableCell>
                             <TableCell align="left">
                               {" "}
@@ -807,7 +799,7 @@ const handleAll = () => {
                                 className="action"
                               >
                                 {(custpermit && custpermit.canView === true) ||
-                                  roleid === 1 ? (
+                                roleid === 1 ? (
                                   <IconButton className="action-view">
                                     <Link
                                       href={`/admin/activitydetail/${id}`}
@@ -822,7 +814,7 @@ const handleAll = () => {
                                   ""
                                 )}
                                 {(custpermit && custpermit.canEdit === true) ||
-                                  roleid === 1 ? (
+                                roleid === 1 ? (
                                   <Link
                                     href={`/admin/editActivity/${id}`}
                                     style={{
@@ -839,7 +831,7 @@ const handleAll = () => {
 
                                 {(custpermit &&
                                   custpermit.canDelete === true) ||
-                                  roleid === 1 ? (
+                                roleid === 1 ? (
                                   <IconButton
                                     className="action-delete"
                                     style={{ color: "#F95A37" }}
@@ -862,12 +854,11 @@ const handleAll = () => {
                             </TableCell>
                           </TableRow>
                         );
-                      })
-                    }
+                      })}
                   </TableBody>
                 </Table>
                 {/* } */}
-                {filterActivity === "" ? <h3>No Record found</h3> : ""}
+                {activites == "" ? <h3>No Record found</h3> : ""}
                 <Stack
                   style={{
                     marginBottom: "10px",

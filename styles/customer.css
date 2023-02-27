@@ -128,3 +128,7 @@ span.addsales {
 footer.footermain {
   text-align: center;
 }
+.trans{
+      display: inline-flex;
+      align-items: center;
+}

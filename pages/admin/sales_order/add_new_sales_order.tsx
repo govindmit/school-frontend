@@ -145,11 +145,9 @@ export default function AddSalesOrder({
   const todayDate = moment(datee).format("DD/MM/YYYY");
   const todaysDate = moment(datee).format("MMM DD,YYYY");
 
-  
   const handlePaymentName = (data: any) => {
     setPaymentPayMethod(data);
   };
-
 
   if (Check === true) {
     var hideshowstyle = {
@@ -163,41 +161,36 @@ export default function AddSalesOrder({
 
   const insertRemainingNotesAmount = async () => {
     const reqData = {
-      customerId:customerId,
-      Amount:creditBalance,
-      amountMode:0
+      customerId: customerId,
+      Amount: creditBalance,
+      amountMode: 0,
     };
     await axios({
-    method: "PUT",
-    url: `${api_url}/insertAmount`,
-    data: reqData,
-    headers: {
-      Authorization: auth_token,
-    },
-  })
-    .then((data: any) => {
-      if (data) {
-        console.log('@@@@@@@@');
-      }
+      method: "PUT",
+      url: `${api_url}/insertAmount`,
+      data: reqData,
+      headers: {
+        Authorization: auth_token,
+      },
     })
-    .catch((error) => {
-      console.log("error", error);
-    });
+      .then((data: any) => {
+        if (data) {
+          console.log("@@@@@@@@");
+        }
+      })
+      .catch((error) => {
+        console.log("error", error);
+      });
   };
 
-
-
-  const getCustomerNotes = async (id:any) => {
+  const getCustomerNotes = async (id: any) => {
     try {
-      const response = await fetch(
-        `${api_url}/creditballance/${id}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: auth_token,
-          },
-        }
-      );
+      const response = await fetch(`${api_url}/creditballance/${id}`, {
+        method: "GET",
+        headers: {
+          Authorization: auth_token,
+        },
+      });
       const res = await response.json();
       setCreditAmount(res?.creditBal);
     } catch (error) {
@@ -211,6 +204,7 @@ export default function AddSalesOrder({
     reset,
     formState: { errors },
   } = useForm<FormValues>();
+
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     if (customerId !== "" && activityId !== "") {
       setshowspinner(true);
@@ -225,35 +219,46 @@ export default function AddSalesOrder({
           transactionId: "Trh4354654457",
           orderId: 46,
           createdBy: customerId,
-          createdDate: todayDate,
-          paymentMethod: paymentPayMethod === "" ? "Cash" : paymentPayMethod,
+          // createdDate: todayDate,
+          // paymentMethod: paymentPayMethod === "" ? "Cash" : paymentPayMethod,
         };
         await axios({
-        method: "POST",
-        url: `${api_url}/addSalesOrders`,
-        data: reqData,
-        headers: {
-          Authorization: auth_token,
-        },
-      })
-        .then((data: any) => {
-          if (data) {
+          method: "POST",
+          url: `${api_url}/addSalesOrders`,
+          data: reqData,
+          headers: {
+            Authorization: auth_token,
+          },
+        })
+          .then(async (data: any) => {
+            if (data) {
+              const unique = keyGen(5);
+              const reqData1 = {
+                totalAmount: totalPrice,
+                paidAmount: totalPrice,
+                transactionId: `case-${unique} `,
+                amexorderId: data?.data?.sageIntacctorderID,
+                paymentMethod:
+                  paymentPayMethod === "" ? "Cash" : paymentPayMethod,
+                idForPayment: data?.data?.sageIntacctorderID,
+              };
+              transactionSave(reqData1);
+              setshowspinner(false);
+              setBtnDisabled(false);
+              insertRemainingNotesAmount();
+              toast.success("Sales Order Create Successfully !");
+              closeDialog(false);
+              setTimeout(() => {
+                setOpen(false);
+              }, 2000);
+            }
+          })
+          .catch((error) => {
+            // toast.error(error?.message);
+            console.log("error", error);
             setshowspinner(false);
             setBtnDisabled(false);
-            insertRemainingNotesAmount();
-            toast.success("Sales Order Create Successfully !");
-            closeDialog(false);
-            setTimeout(() => {
-              setOpen(false);
-            }, 2000);
-          }
-        })
-        .catch((error) => {
-          // toast.error(error?.message);
-          console.log("error", error);
-          setshowspinner(false);
-          setBtnDisabled(false);
-        });
+          });
       } else {
         const reqData = {
           amount: price,
@@ -263,36 +268,46 @@ export default function AddSalesOrder({
           transactionId: "Trh4354654457",
           orderId: 46,
           createdBy: customerId,
-          createdDate: todayDate,
-          paymentMethod: paymentPayMethod === "" ? "Cash" : paymentPayMethod,
+          // createdDate: todayDate,
+          // paymentMethod: paymentPayMethod === "" ? "Cash" : paymentPayMethod,
         };
-
-      await axios({
-        method: "POST",
-        url: `${api_url}/addSalesOrders`,
-        data: reqData,
-        headers: {
-          Authorization: auth_token,
-        },
-      })
-        .then((data: any) => {
-          if (data) {
+        await axios({
+          method: "POST",
+          url: `${api_url}/addSalesOrders`,
+          data: reqData,
+          headers: {
+            Authorization: auth_token,
+          },
+        })
+          .then(async (data: any) => {
+            if (data) {
+              const unique = keyGen(5);
+              const reqData1 = {
+                totalAmount: totalPrice,
+                paidAmount: totalPrice,
+                transactionId: `case-${unique} `,
+                amexorderId: data?.data?.sageIntacctorderID,
+                paymentMethod:
+                  paymentPayMethod === "" ? "Cash" : paymentPayMethod,
+                idForPayment: data?.data?.sageIntacctorderID,
+              };
+              transactionSave(reqData1);
+              setshowspinner(false);
+              setBtnDisabled(false);
+              toast.success("Sales Order Create Successfully !");
+              closeDialog(false);
+              setTimeout(() => {
+                setOpen(false);
+              }, 2000);
+            }
+          })
+          .catch((error) => {
+            // toast.error(error?.message);
+            console.log("error", error);
             setshowspinner(false);
             setBtnDisabled(false);
-            toast.success("Sales Order Create Successfully !");
-            closeDialog(false);
-            setTimeout(() => {
-              setOpen(false);
-            }, 2000);
-          }
-        })
-        .catch((error) => {
-          // toast.error(error?.message);
-          console.log("error", error);
-          setshowspinner(false);
-          setBtnDisabled(false);
-        });
-      }  
+          });
+      }
     } else {
       if (customerId === "") {
         setCustomerError("Customer field is Required *");
@@ -305,6 +320,31 @@ export default function AddSalesOrder({
         setActivityError("");
       }
     }
+  };
+  const keyGen = (keyLength: any) => {
+    var i,
+      key = "",
+      characters =
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    var charactersLength = characters.length;
+    for (i = 0; i < keyLength; i++) {
+      key += characters.substr(
+        Math.floor(Math.random() * charactersLength + 1),
+        1
+      );
+    }
+    return key;
+  };
+
+  const transactionSave = async (data: any) => {
+    await axios({
+      method: "POST",
+      url: `${api_url}/createTransaction`,
+      data: data,
+      headers: {
+        Authorization: auth_token,
+      },
+    });
   };
 
   const closeDialogs = () => {
@@ -337,8 +377,18 @@ export default function AddSalesOrder({
     fontSize: "12px",
     fontWeight: "bold",
   };
-let totalPrice = price === 0 ? "0" :price < creditAmount ? "0" : Math?.abs(creditAmount - price);
-let creditBalance = creditAmount === price ? creditAmount : creditAmount > price ? price:creditAmount;
+  let totalPrice =
+    price === 0
+      ? "0"
+      : price < creditAmount
+      ? "0"
+      : Math?.abs(creditAmount - price);
+  let creditBalance =
+    creditAmount === price
+      ? creditAmount
+      : creditAmount > price
+      ? price
+      : creditAmount;
 
   return (
     <BootstrapDialog
@@ -437,23 +487,25 @@ let creditBalance = creditAmount === price ? creditAmount : creditAmount > price
                           Payment Method
                         </InputLabel>
                         <FormControl fullWidth>
-                            <Select
-                              labelId="demo-simple-select-label"
-                              id="demo-simple-select"
-                              defaultValue={"Cash"}
-                              size="small"
-                              disabled = {totalPrice === "0" && price === 0 || Check === true && creditAmount > price ? true : false}
-                              {...register("payment")}
-                              onChange={(e) =>
-                                handlePaymentName(e.target.value)
-                              }
-                            >
-                              <MenuItem value={"Cash"}>Cash</MenuItem>
-                              <MenuItem value={"Amex"}>Amex</MenuItem>
-                              <MenuItem value={"QPay"}>QPay</MenuItem>
-                              <MenuItem value={"CBQ"}>CBQ</MenuItem>
-                            </Select>
-                    
+                          <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            defaultValue={"Cash"}
+                            size="small"
+                            disabled={
+                              (totalPrice === "0" && price === 0) ||
+                              (Check === true && creditAmount > price)
+                                ? true
+                                : false
+                            }
+                            {...register("payment")}
+                            onChange={(e) => handlePaymentName(e.target.value)}
+                          >
+                            <MenuItem value={"Cash"}>Cash</MenuItem>
+                            <MenuItem value={"Amex"}>Amex</MenuItem>
+                            <MenuItem value={"QPay"}>QPay</MenuItem>
+                            <MenuItem value={"CBQ"}>CBQ</MenuItem>
+                          </Select>
                         </FormControl>
                       </Stack>
                     </Grid>
@@ -462,8 +514,8 @@ let creditBalance = creditAmount === price ? creditAmount : creditAmount > price
                     <Grid container spacing={2}>
                       <Grid item xs={12} md={12}>
                         {price === 0 || creditAmount === 0 ? (
-                         ""
-                        ) : price > 0  ? (
+                          ""
+                        ) : price > 0 ? (
                           <Checkbox
                             onChange={(e) => setCheck(e.target.checked)}
                             className="checkbox132"
@@ -471,27 +523,49 @@ let creditBalance = creditAmount === price ? creditAmount : creditAmount > price
                         ) : (
                           ""
                         )}
-                         {customerId === "" || creditAmount === 0  ? "" : `Want to use credit balance :$${creditAmount}`} 
-                         <div>
-                      <h5 className="apply">Apply Payment</h5>
-                    </div>
+                        {customerId === "" || creditAmount === 0
+                          ? ""
+                          : `Want to use credit balance :$${creditAmount}`}
+                        <div>
+                          <h5 className="apply">Apply Payment</h5>
+                        </div>
                         <Stack spacing={1}>
                           <InputLabel htmlFor="name"></InputLabel>
-                          <p>Sales invoice amount : {price === '' ?'$0.00': "$"+price }</p>
+                          <p>
+                            Sales invoice amount :{" "}
+                            {price === "" ? "$0.00" : "$" + price}
+                          </p>
                         </Stack>
                         <Stack spacing={1} style={hideshowstyle}>
                           <InputLabel htmlFor="name"></InputLabel>
                           <div className="iadiv">
-                      <div className="hh red">Total Credit Balance:</div>
-                      <div>${creditAmount === price ? creditAmount : creditAmount > price ? price:creditAmount}</div>
-                    </div>
+                            <div className="hh red">Total Credit Balance:</div>
+                            <div>
+                              $
+                              {creditAmount === price
+                                ? creditAmount
+                                : creditAmount > price
+                                ? price
+                                : creditAmount}
+                            </div>
+                          </div>
                         </Stack>
                         <Stack spacing={1}>
                           <InputLabel htmlFor="name"></InputLabel>
                           {Check != true ? (
-                            <p>Total amount : {price === '' ?'$0.00': "$"+price }</p>
-                            ) : (
-                            <p>Total amount : ${price === 0 ? "0.00" :price < creditAmount ? "0.00" : Math?.abs(creditAmount - price)}</p>
+                            <p>
+                              Total amount :{" "}
+                              {price === "" ? "$0.00" : "$" + price}
+                            </p>
+                          ) : (
+                            <p>
+                              Total amount : $
+                              {price === 0
+                                ? "0.00"
+                                : price < creditAmount
+                                ? "0.00"
+                                : Math?.abs(creditAmount - price)}
+                            </p>
                           )}
                         </Stack>
                       </Grid>

@@ -280,7 +280,7 @@ export default function ViewCustomer() {
                               SUBTOTAL
                             </TableCell>
                             <TableCell align="left">
-                              $ {userDet && userDet?.amount}
+                              $ {userDet && userDet?.transaction_amount}
                             </TableCell>
                           </TableRow>
                           <TableRow hover tabIndex={2}>
@@ -294,7 +294,7 @@ export default function ViewCustomer() {
                               TOTAL
                             </TableCell>
                             <TableCell align="left">
-                              $ {userDet && userDet?.amount}
+                              $ {userDet && userDet?.transaction_amount}
                             </TableCell>
                           </TableRow>
 
@@ -309,21 +309,7 @@ export default function ViewCustomer() {
                               PAYMENT METHOD
                             </TableCell>
                             <TableCell align="left">
-                              {userDet && userDet?.paymentMethod}
-                            </TableCell>
-                          </TableRow>
-                          <TableRow hover tabIndex={2}>
-                            <TableCell align="left"></TableCell>
-                            <TableCell align="left"></TableCell>
-                            <TableCell align="left"></TableCell>
-                            <TableCell
-                              align="left"
-                              style={{ fontWeight: "600" }}
-                            >
-                              PAYMENT DATE
-                            </TableCell>
-                            <TableCell align="left">
-                            {userDet?.createdDate}
+                              {userDet && userDet?.transaction_paymentMethod}
                             </TableCell>
                           </TableRow>
                         </TableBody>
