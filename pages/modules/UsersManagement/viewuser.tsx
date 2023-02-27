@@ -18,6 +18,7 @@ import MiniDrawer from "../../sidebar";
 import styled from "@emotion/styled";
 import UserService from "./servives";
 import MainFooter from "../../commoncmp/mainfooter";
+import moment from "moment";
 
 const Item = styled(Paper)(({ theme }) => ({
     p: 10,
@@ -222,7 +223,8 @@ export default function ViewUser(props: any) {
                                                 </Typography>
                                                 <Stack>
                                                     <Typography variant="subtitle1">
-                                                        Date:
+                                                        Date: {userdet &&
+                                                            moment(userdet.createdAt).format("DD/MM/YYYY")}
                                                     </Typography>
                                                 </Stack>
                                             </CardContent>
