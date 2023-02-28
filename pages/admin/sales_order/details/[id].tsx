@@ -55,6 +55,9 @@ export default function ViewCustomer() {
     userDet && userDet?.activity_shortDescription?.replace(/&nbsp;/g, " ");
   let removeTags = description && description?.replace(/(<([^>]+)>)/gi, "");
 
+console.log('userDet',userDet && userDet);
+
+
   return (
     <>
       <Box sx={{ display: "flex" }}>
@@ -270,7 +273,8 @@ export default function ViewCustomer() {
                             CREDIT BALANCE:  
                             </TableCell>
                             <TableCell align="left">
-                            {userDet?.activity_price-userDet?.amount === 0 ? "$0" : `-$${userDet?.activity_price-userDet?.amount}`}
+                              {userDet?.transaction_amount === 0 && userDet?.amount !== 0 ? `-$${userDet?.amount}` : userDet?.amount !== 0 && userDet?.transaction_amount !== 0 ?`-$${Math?.abs(userDet?.activity_price - userDet?.transaction_amount)}`:"$0"}
+                            {/* {userDet?.activity_price-userDet?.amount === 0 ? "$0" : `-$${userDet?.activity_price-userDet?.amount}`} */}
                             </TableCell>
                           </TableRow>
                           <TableRow hover tabIndex={1}>
