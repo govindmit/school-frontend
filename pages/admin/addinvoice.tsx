@@ -617,7 +617,6 @@ export default function Guardians() {
     <>
       <Box sx={{ display: "flex" }}>
         <MiniDrawer />
-
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <div className="guardianBar">
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -861,7 +860,6 @@ export default function Guardians() {
                   <div className="invoiceSubTotal">
                     <div>
                       <InputLabel id="demo-select-small">Notes:</InputLabel>
-
                       <OutlinedInput
                         className="invoiceNote"
                         size="medium"

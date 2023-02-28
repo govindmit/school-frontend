@@ -173,6 +173,7 @@ export default function CustomerTypeList() {
     }
   };
 
+
   // apply searching
   const handleSearch = (e: any) => {
     setsearchquery(e.target.value);
@@ -373,7 +374,7 @@ export default function CustomerTypeList() {
                           </TableCell>
                           <TableCell align="left">CUST-000{key}</TableCell>
                           <TableCell align="left">{item.name}</TableCell>
-                          <TableCell align="left"></TableCell>
+                          <TableCell align="left">{item?.user_count}</TableCell>
                           <TableCell align="left">
                             <Stack
                               className="action"

@@ -1,15 +1,11 @@
-import { TableHead, styled } from "@mui/material";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
+import { Breadcrumbs, Card, TableHead, styled } from "@mui/material";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-import { Grid, InputLabel, Stack } from "@mui/material";
+import { InputLabel, Stack } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 import Autocomplete from "@mui/material/Autocomplete";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -36,6 +32,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import MainFooter from "../../commoncmp/mainfooter";
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
     padding: theme.spacing(2),
@@ -61,13 +58,7 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: "center",
-  color: theme.palette.text.secondary,
-}));
+
 export interface FormValues {
   status: Number;
   res: String;
@@ -86,142 +77,16 @@ export interface FormValues {
   date: string;
   Customername: string;
 }
-const rowss = [
-  { id: 1, lastName: "Snow", firstName: "Jon", age: 35 },
-  { id: 2, lastName: "Lannister", firstName: "Cersei", age: 42 },
-  { id: 3, lastName: "Lannister", firstName: "Jaime", age: 45 },
-  { id: 4, lastName: "Stark", firstName: "Arya", age: 16 },
-  { id: 5, lastName: "Targaryen", firstName: "Daenerys", age: null },
-  { id: 6, lastName: "Melisandre", firstName: null, age: 150 },
-  { id: 7, lastName: "Clifford", firstName: "Ferrara", age: 44 },
-  { id: 8, lastName: "Frances", firstName: "Rossini", age: 36 },
-  { id: 9, lastName: "Roxie", firstName: "Harvey", age: 65 },
-];
-const columns: GridColDef[] = [
-  { field: "id", headerName: "ID", width: 70 },
-  { field: "firstName", headerName: "First name", width: 130 },
-  { field: "lastName", headerName: "Last name", width: 130 },
-  {
-    field: "age",
-    headerName: "Age",
-    type: "number",
-    width: 90,
-  },
-  {
-    field: "fullName",
-    headerName: "Full name",
-    description: "This column has a value getter and is not sortable.",
-    sortable: false,
-    width: 160,
-    valueGetter: (params: GridValueGetterParams) =>
-      `${params.row.firstName || ""} ${params.row.lastName || ""}`,
-  },
-];
-
-interface Data {
-  name: string;
-  price: number;
-}
-
-function createData(
-  name: string,
-
-  price: number
-): Data {
-  return {
-    name,
-
-    price,
-  };
-}
-
-const rows = [
-  createData("Cupcake", 305),
-  createData("Donut", 452),
-  createData("Eclair", 262),
-  createData("Frozen yoghurt", 159),
-];
-
-function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
 type Order = "asc" | "desc";
 
-function getComparator<Key extends keyof any>(
-  order: Order,
-  orderBy: Key
-): (
-  a: { [key in Key]: number | string },
-  b: { [key in Key]: number | string }
-) => number {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-function stableSort<T>(
-  array: readonly T[],
-  comparator: (a: T, b: T) => number
-) {
-  const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
-}
 
-interface HeadCell {
-  disablePadding: boolean;
-  id: keyof Data;
-  label: string;
-  numeric: boolean;
-}
-
-const headCells: readonly HeadCell[] = [
-  {
-    id: "name",
-    numeric: false,
-    disablePadding: true,
-    label: "Dessert (100g serving)",
-  },
-  {
-    id: "price",
-    numeric: true,
-    disablePadding: false,
-    label: "Protein (g)",
-  },
-];
-
-interface EnhancedTableProps {
-  numSelected: number;
-  onRequestSort: (
-    event: React.MouseEvent<unknown>,
-    property: keyof Data
-  ) => void;
-  onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  order: Order;
-  orderBy: string;
-  rowCount: number;
-}
 export default function Guardians() {
   let localUrl = process.env.NEXT_PUBLIC_BASE_URL;
   const [opens, setOpens] = useState(false);
   const [userID, setUserId] = useState<FormValues | any>([]);
-
   const [sdates, setDates] = useState<FormValues | any>([]);
   const [Invoicedates, setInvoiceDate] = useState(null);
   const [value, setValue] = useState<any>({ id: null, title: null });
-
   const [user, setUser] = useState<FormValues | any>([]);
   const [dollerOpen, setDollerOpen] = useState(false);
   const [popup, setSecondPop] = useState(false);
@@ -233,10 +98,6 @@ export default function Guardians() {
   const [item, setItem] = useState<FormValues | any>([]);
   const [product, setProduct] = useState<FormValues | any>([]);
   const [selected, setSelected] = useState<readonly string[]>([]);
-  // const [itemId, setItemId] = useState<readonly string[]>([]);
-
-  // var itemId: { id: number }[] = [];
-  // console.log(itemId, "....................................ids");
   const {
     register,
     handleSubmit,
@@ -266,7 +127,6 @@ export default function Guardians() {
         selected.slice(selectedIndex + 1)
       );
     }
-
     setSelected(newSelected);
     getItem();
   };
@@ -318,9 +178,6 @@ export default function Guardians() {
   };
 
   const onSubmit: SubmitHandler<FormValues> = async (data: any) => {
-    // const invoiceDate = moment(data.date).format("DD/MM/YYYY");
-    // const createdDate = moment(dates).format("DD/MM/YYYY");
-
     var itemId: any[] = [];
     const dates = new Date();
     var invoiceDatesss = "";
@@ -380,7 +237,7 @@ export default function Guardians() {
       .then((res) => {
         setItem(res?.data.data);
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
 
   var option: { id: number; title: string }[] = [];
@@ -420,25 +277,6 @@ export default function Guardians() {
   };
   const getItems = async () => {
     invoiceDataById();
-
-    // let requested = {
-    //   id: invoice[0]?.itemId,
-    // };
-    // await axios({
-    //   method: "POST",
-    //   url: `${api_url}/getItembyid`,
-    //   data: requested,
-
-    //   headers: {
-    //     "content-type": "multipart/form-data",
-    //   },
-    // })
-    //   .then((res) => {
-    //     setProduct(res?.data.data);
-    //     console.log(res, "........................h");
-    //     handleCloses();
-    //   })
-    //   .catch((err) => {});
   };
 
   const handleCreate = async () => {
@@ -458,7 +296,7 @@ export default function Guardians() {
         setProduct(res?.data.data);
         handleCloses();
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
   var price = 0;
   for (let d of product) {
@@ -479,7 +317,7 @@ export default function Guardians() {
       .then((res) => {
         setUser(res?.data.data);
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
 
   const handleClickOpen = () => {
@@ -540,12 +378,12 @@ export default function Guardians() {
             .then((res) => {
               setProduct(res?.data.data);
             })
-            .catch((err) => {});
+            .catch((err) => { });
         }
         setUser(res?.data.data);
         setInvoiceNo(res?.data?.invoiceNo);
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
 
   const handleDraft = async () => {
@@ -600,69 +438,97 @@ export default function Guardians() {
     <>
       <Box sx={{ display: "flex" }}>
         <MiniDrawer />
-
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <div className="guardianBar">
             <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="bars">
-                <div>
-                  <Link href="/admin/dashboard">
-                    <span className="smallHeading">Home</span>&nbsp;
-                  </Link>
-                  <span>&gt;</span> &nbsp;{" "}
-                  <span className="secondHeading">Edit Invoices</span>
-                </div>
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                style={{ padding: "8px", marginBottom: "15px" }}
+              >
+                <Stack>
+                  <Stack spacing={3}>
+                    <Breadcrumbs separator="›" aria-label="breadcrumb">
+                      <Link
+                        key="1"
+                        color="inherit"
+                        href="/"
+                        style={{ color: "#1A70C5", textDecoration: "none" }}
+                      >
+                        Home
+                      </Link>
+                      <Link
+                        key="2"
+                        color="inherit"
+                        href="/"
+                        style={{ color: "#7D86A5", textDecoration: "none" }}
+                      >
+                        Edit Invoices
+                      </Link>
+                    </Breadcrumbs>
+                  </Stack>
+                  <Typography
+                    variant="h5"
+                    gutterBottom
+                    style={{ fontWeight: "bold", color: "#333333" }}
+                  >
+                    EDIT INVOICES
+                  </Typography>
+                </Stack>
                 <div className="cinvoice">
                   <div>
-                    <span className="GItitle">EDIT INVOICES</span>
-                  </div>
-                  <div className="isave">
-                    <BootstrapButton onClick={handleDraft} type="button">
+                    <BootstrapButton
+                      onClick={handleDraft}
+                      type="button"
+                      className="grey-button"
+                    >
                       Save as Draft
                     </BootstrapButton>
 
                     <BootstrapButton type="submit">
-                      Save as issue
+                      Save & issue
                     </BootstrapButton>
                   </div>
-                  {/* <Button sx={{ margin: "7px" }} type="button">
-                    Add Guardians
-                  </Button> */}
                 </div>
-              </div>
+              </Stack>
               <div className="midBar">
-                <div className="guardianList">
-                  <div className="required">
-                    <Typography style={style}>
+                <div className="guardianList" style={{ padding: "50px" }}>
+                  <div className="required" style={{ textAlign: "right" }}>
+                    {/* <Typography style={style}>
                       {errors.date ? (
                         <span>Invoice Date Feild is Required **</span>
                       ) : error != "" ? (
-                        <span>{error} **</span>
+                        <span></span>
                       ) : (
                         ""
                       )}
-                    </Typography>
+                    </Typography> */}
                   </div>
                   <div className="aititle">
-                    <div>
-                      {" "}
-                      <Image
-                        className="iaimg"
-                        src="/favicon.ico"
-                        alt="Picture of the author"
-                        width={65}
-                        height={62}
-                      />
-                    </div>
-                    <div className="iatitle">
-                      <span className="iahead">Qatar International School</span>
-                      <span className="line">
-                        Qatar international school W.L.L
-                      </span>
-                      <span className="line">
-                        United Nations St, West Bay, P.O. Box: 5697
-                      </span>
-                      <span className="line">Doha, Qatar</span>
+                    <div className="iatitle flex">
+                      <div className="invoive-img">
+                        {" "}
+                        <Image
+                          className="iaimg"
+                          src="/favicon.ico"
+                          alt="Picture of the author"
+                          width={65}
+                          height={62}
+                        />
+                      </div>
+                      <div className="invoice-name-detail">
+                        <span className="iahead">
+                          Qatar International School
+                        </span>
+                        <span className="line">
+                          Qatar international school W.L.L
+                        </span>
+                        <span className="line">
+                          United Nations St, West Bay, P.O. Box: 5697
+                        </span>
+                        <span className="line">Doha, Qatar</span>
+                      </div>
                     </div>
                     <div className="itele">
                       <span className="Tline">Telephone: 443434343</span>
@@ -679,49 +545,20 @@ export default function Guardians() {
                     <div className="ickk">
                       <InputLabel htmlFor="name">
                         Customer <span className="err_str">*</span>
+                        <div
+                          className="required"
+                          style={{ textAlign: "right" }}
+                        ></div>
                       </InputLabel>
                       <Autocomplete
                         style={{ width: 300 }}
                         fullWidth
-                        value={value}
                         inputValue={inputValue}
-                        onChange={(event, newValue) => {
-                          setValue(newValue);
-                          setUserId(newValue);
-                        }}
-                        onInputChange={(event, newInputValue) => {
-                          setInputValue(newInputValue);
-                        }}
-                        options={option}
-                        getOptionLabel={(option) => option.title || ""}
-                        isOptionEqualToValue={(option, title) =>
-                          option.title === value.title
-                        }
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            variant="outlined"
-                            placeholder="Find or create a parent"
-                          />
-                        )}
-                        noOptionsText={
-                          <Button onClick={handleClickOpen}>
-                            {inputValue === "" ? (
-                              "Please enter 1 or more character"
-                            ) : (
-                              <span>
-                                Add &nbsp;<b>{inputValue}</b>&nbsp;as a new
-                                parent
-                              </span>
-                            )}
-                          </Button>
-                        }
-                      />
-                      {/* <Autocomplete
-                        style={{ width: 300 }}
-                        fullWidth
-                        inputValue={inputValue}
-                        onChange={(event, value) => setUserId(value)}
+                        // onChange={(event, value) => setUserId(value)}
+                        //onChange={(event, value) => handleChange(value)}
+                        // onChange={(event, newValue) => {
+                        //   setValue(newValue);
+                        // }}
                         // defaultValue={{
                         //   name: `${gg[0]?.name}`,
                         // }}
@@ -729,13 +566,7 @@ export default function Guardians() {
                           setInputValue(newInputValue);
                         }}
                         options={user}
-                        value={invoice[0]?.name}
-                        // getOptionLabel={(option: any) => option.name}
-                        getOptionLabel={(option: any) => option.name || ""}
-                        isOptionEqualToValue={(option: any, title) =>
-                          option.name
-                        }
-                        // getOptionLabel={(option) => `${option.name}`}
+                        getOptionLabel={(option: any) => option.name}
                         renderInput={(params) => (
                           <TextField
                             {...params}
@@ -754,41 +585,35 @@ export default function Guardians() {
                             )}
                           </Button>
                         }
-                        // {...register("Customername", {
-                        //   onChange: (event) => {
-                        //     setUserId(event);
-                        //   },
-                        //   required: true,
-                        // })}
-                      /> */}
+                      // {...register("Customername", {
+                      //   onChange: (event) => {
+                      //     setUserId(event);
+                      //   },
+                      //   required: true,
+                      // })}
+                      />
                       <Typography style={style}>
-                        {errors.Customername ? (
-                          <span>Feild is Required **</span>
-                        ) : (
-                          ""
-                        )}
+                        <span>
+                          {error === "customer field is required" ? error : ""}{" "}
+                        </span>
                       </Typography>
                     </div>
                     <div className="invoicedateField">
-                      <InputLabel></InputLabel>
-                      <OutlinedInput
-                        type="text"
-                        id="name"
-                        placeholder="# Generate If blank"
-                        fullWidth
-                        onChange={(e: any) => setInvoiceNo(e.target.value)}
-                        value={!invoiceno ? invoice[0]?.invoiceId : invoiceno}
-                      />
-                      <InputLabel id="demo-select-small"></InputLabel>
                       &nbsp; &nbsp;
                       <DatePicker
                         className="myDatePicker"
                         selected={Invoicedates}
-                        onChange={(date: any) => setInvoiceDate(date)}
-                        name="startDate"
+                        // onChange={(date: any) => setInvoiceDate(date)}
+                        //onChange={(date: any) => handleDate(date)}
+                        name="Date"
                         dateFormat="MM/dd/yyyy"
-                        placeholderText={invoice[0]?.invoiceDate}
+                        placeholderText="Date"
+                        // filterDate={filterDays}
+                        minDate={new Date()}
                       />
+                      <Typography style={style}>
+                        {/* <span>{Dateerror ? Dateerror : ""} </span> */}
+                      </Typography>
                     </div>
                   </div>
                   <div className="invoiceItem">
@@ -806,11 +631,11 @@ export default function Guardians() {
                           {product.map((row: any) => (
                             <TableRow
                               key={row.name}
-                              // sx={{
-                              //   "&:last-child td, &:last-child th": { border: 0 },
-                              // }}
+                            // sx={{
+                            //   "&:last-child td, &:last-child th": { border: 0 },
+                            // }}
                             >
-                              <TableCell component="th" scope="row">
+                              <TableCell >
                                 {row.name}
                               </TableCell>
                               <TableCell>1</TableCell>
@@ -831,12 +656,14 @@ export default function Guardians() {
                         Add items
                       </BootstrapButton>
                     </div>
+                    <Typography style={style}>
+                      {/* <span>{itemError ? itemError : ""} </span> */}
+                    </Typography>
                   </div>
                   &nbsp;&nbsp;
                   <div className="invoiceSubTotal">
                     <div>
                       <InputLabel id="demo-select-small">Notes:</InputLabel>
-
                       <OutlinedInput
                         className="invoiceNote"
                         size="medium"
@@ -850,12 +677,15 @@ export default function Guardians() {
                         <div>$ &nbsp;{price}.00</div>
                       </div>
                       <div className="sdiv">
-                        <div className="sidiv">Total</div>
-                        <div>$ &nbsp;{price}.00</div>
-                      </div>
-                      <div className="sdiv">
-                        <div className="sidiv">Amount Paid</div>
-                        <div>$ &nbsp;0.00</div>
+                        <div className="total">
+                          <div className="sidiv">Total</div>
+                          <div>$ &nbsp;{price}</div>
+                        </div>
+
+                        <div className="amount">
+                          <div className="sidiv">Amount Paid</div>
+                          <div>$ &nbsp;0.00</div>
+                        </div>
                       </div>
                       <div className="sdiv">
                         <div className="sidiv">Balance Due</div>
@@ -905,12 +735,6 @@ export default function Guardians() {
                               {item &&
                                 item.map((row: any) => {
                                   const isItemSelected = isSelected(row.id);
-                                  {
-                                    console.log(
-                                      isItemSelected,
-                                      "selectedddmap"
-                                    );
-                                  }
                                   const labelId = `enhanced-table-checkbox-${row.id}`;
 
                                   return (
@@ -990,8 +814,9 @@ export default function Guardians() {
 
             {opens ? <AddCustomer open={true} closeDialog={handleClose} /> : ""}
           </div>
+          <MainFooter />
         </Box>
-      </Box>
+      </Box >
     </>
   );
 }

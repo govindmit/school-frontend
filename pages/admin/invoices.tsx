@@ -7,8 +7,6 @@ import {
   TableCell,
   Container,
   FormControl,
-  FormControlLabel,
-  FormGroup,
   TableContainer,
   TableHead,
   Menu,
@@ -188,12 +186,12 @@ export default function Guardians() {
   const [roleid, setroleid] = useState(0);
   const router = useRouter();
 
-  const [orderId,setorderId] = useState('');
-  const [amount,setAmount] = useState(0);
-  const [invoiceStatus,setInvoiceStatus] = useState('');
+  const [orderId, setorderId] = useState('');
+  const [amount, setAmount] = useState(0);
+  const [invoiceStatus, setInvoiceStatus] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('');
-  const [showSuccess,setShowSuccess] = useState(false);
-  var Checkout :any 
+  const [showSuccess, setShowSuccess] = useState(false);
+  var Checkout: any
 
   // verify user login and previlegs
   let logintoken: any;
@@ -265,7 +263,6 @@ export default function Guardians() {
       .then((res) => {
         setUser(res?.data.data);
         setInvoice(res?.data.data);
-
         setsearchdata(res?.data.data);
       })
       .catch((err) => { });
@@ -457,142 +454,142 @@ export default function Guardians() {
     let search = router.query;
     let amexOrderId = search.orderid;
     let paymentMethod = search.paymentMethod;
-    if(paymentMethod && amexOrderId){
+    if (paymentMethod && amexOrderId) {
       console.log("order created");
-      orderPlaced(amexOrderId,paymentMethod);
+      orderPlaced(amexOrderId, paymentMethod);
     }
     getUser();
   }, [router.query]);
-  const orderPlaced = async(amexOrderId:any,paymentMethod:any)=>{
-    const data = {orderId :amexOrderId}
+  const orderPlaced = async (amexOrderId: any, paymentMethod: any) => {
+    const data = { orderId: amexOrderId }
     var apiRequest = data;
     var requestUrl = await getwayService.getRequestUrl("REST", apiRequest);
-    getwayService.retriveOrder( requestUrl, function (orderresult:any) {
-      console.log("order result =>",orderresult);
-      if(orderresult.status === 200){
+    getwayService.retriveOrder(requestUrl, function (orderresult: any) {
+      console.log("order result =>", orderresult);
+      if (orderresult.status === 200) {
         const amextransactionData = orderresult.data
         const transactionData = {
-          idForPayment:amexOrderId,
-          totalAmount:amextransactionData?.transaction[0].transaction.amount,
-          paidAmount:amextransactionData?.transaction[0].transaction.amount,
-          paymentMethod:paymentMethod,
-          amexorderId:amexOrderId,
-          transactionId:amextransactionData?.transaction[0].transaction.id
+          idForPayment: amexOrderId,
+          totalAmount: amextransactionData?.transaction[0].transaction.amount,
+          paidAmount: amextransactionData?.transaction[0].transaction.amount,
+          paymentMethod: paymentMethod,
+          amexorderId: amexOrderId,
+          transactionId: amextransactionData?.transaction[0].transaction.id
         }
-        console.log("transactionData",transactionData);
-          transactionSaveInDB(transactionData);
+        console.log("transactionData", transactionData);
+        transactionSaveInDB(transactionData);
       }
-        
-      });
-}
 
-const transactionSaveInDB = async(data:any)=>{
-getwayService.transactionDataSaveInDB(data,function(result:any){
-  console.log("final result =>",result);
-   setShowSuccess(true)
-  setTimeout(callBack_func, 5000);
-  function callBack_func() {
-    setShowSuccess(false)
-    document.location.href = `${process.env.NEXT_PUBLIC_AMEX_INVOICE_REDIRECT_URL}`;
+    });
   }
 
-});
-}
+  const transactionSaveInDB = async (data: any) => {
+    getwayService.transactionDataSaveInDB(data, function (result: any) {
+      console.log("final result =>", result);
+      setShowSuccess(true)
+      setTimeout(callBack_func, 5000);
+      function callBack_func() {
+        setShowSuccess(false)
+        document.location.href = `${process.env.NEXT_PUBLIC_AMEX_INVOICE_REDIRECT_URL}`;
+      }
+
+    });
+  }
 
   const handleCancel = () => {
     handleClose();
   };
   const handleCreate = async (id: any) => {
     // console.log(process.env.NEXT_PUBLIC_REDIRECT_URL,"Checkout =>",(window as any).Checkout);
-   const Checkout : any  =  (window as any).Checkout
-   if(paymentMethod === "Amex"){
-    if(amount === 0 ){
-      toast.error("amount will not be $0 for Amex payment method");
-     }if(invoiceStatus === "draft"){
-      toast.error("Invoice has status with Draft,Only Pending invoice Can Pay ");
-     }
-     else{
-      var requestData = {
-        "apiOperation": "CREATE_CHECKOUT_SESSION",
-        "order": {
+    const Checkout: any = (window as any).Checkout
+    if (paymentMethod === "Amex") {
+      if (amount === 0) {
+        toast.error("amount will not be $0 for Amex payment method");
+      } if (invoiceStatus === "draft") {
+        toast.error("Invoice has status with Draft,Only Pending invoice Can Pay ");
+      }
+      else {
+        var requestData = {
+          "apiOperation": "CREATE_CHECKOUT_SESSION",
+          "order": {
             "id": orderId,
             "amount": amount,
             "currency": "QAR",
             "description": "Orderd",
-        },
-        "interaction": {
-          // "returnUrl":`${process.env.NEXT_PUBLIC_REDIRECT_URL}/?orderid=${orderId}&paymentMethod=${paymentMethod}`,
-          "returnUrl":`${process.env.NEXT_PUBLIC_AMEX_INVOICE_REDIRECT_URL}/?orderid=${orderId}&paymentMethod=${paymentMethod}`,
-          "cancelUrl":`${process.env.NEXT_PUBLIC_AMEX_INVOICE_CANCEL_URL}`,
-          "operation": "PURCHASE",
+          },
+          "interaction": {
+            // "returnUrl":`${process.env.NEXT_PUBLIC_REDIRECT_URL}/?orderid=${orderId}&paymentMethod=${paymentMethod}`,
+            "returnUrl": `${process.env.NEXT_PUBLIC_AMEX_INVOICE_REDIRECT_URL}/?orderid=${orderId}&paymentMethod=${paymentMethod}`,
+            "cancelUrl": `${process.env.NEXT_PUBLIC_AMEX_INVOICE_CANCEL_URL}`,
+            "operation": "PURCHASE",
             "merchant": {
-                "name": "QATAR INTERNATIONAL SCHOOL - ONLINE 634",
-                "address": {
-                    "line1": "200 Sample St",
-                    "line2": "1234 Example Town"
-                }
+              "name": "QATAR INTERNATIONAL SCHOOL - ONLINE 634",
+              "address": {
+                "line1": "200 Sample St",
+                "line2": "1234 Example Town"
+              }
             }
+          }
         }
-     }
-     await getwayService.getSession(requestData,async function(result:any){
-       if(result?.data?.result === "SUCCESS"){
-        // setSessionId(result?.data.session.id)
-        // setsuccessIndicator(result?.data.successIndicator);
-        await Checkout.configure({
-         session: {
-             id:  result?.data.session.id
-         }
-        });
-        await Checkout.showPaymentPage();
+        await getwayService.getSession(requestData, async function (result: any) {
+          if (result?.data?.result === "SUCCESS") {
+            // setSessionId(result?.data.session.id)
+            // setsuccessIndicator(result?.data.successIndicator);
+            await Checkout.configure({
+              session: {
+                id: result?.data.session.id
+              }
+            });
+            await Checkout.showPaymentPage();
+          }
+
+        })
+
       }
-      
-     })
-  
-     }
-   }
-  
- if(paymentMethod === "Cash"){
-  let requestedData = {
-    note: note ? note : null,
-  };
-  if(note <= 0){
-    toast.info(`please for case payment method provide the number of Note`);
-  }else{
-    await axios({
-      method: "PUT",
-      url: `${api_url}/updateInvoice/${id}`,
-      data: requestedData,
-      headers: {
-        "content-type": "multipart/form-data",
-      },
-    })
-      .then((res) => {
-        getUser();
-        setNote("");
-        toast.success("Payment Successfully !");
-  
-        setTimeout(() => {
-          handleCloses();
-        }, 1000);
-      })
-      .catch((err) => { });
-  }
- 
- 
- }
+    }
 
- if(paymentMethod === "QPay"){
-  toast.info(`As of Now This payment method is not supported ${paymentMethod} !`);
- }
+    if (paymentMethod === "Cash") {
+      let requestedData = {
+        note: note ? note : null,
+      };
+      if (note <= 0) {
+        toast.info(`please for case payment method provide the number of Note`);
+      } else {
+        await axios({
+          method: "PUT",
+          url: `${api_url}/updateInvoice/${id}`,
+          data: requestedData,
+          headers: {
+            "content-type": "multipart/form-data",
+          },
+        })
+          .then((res) => {
+            getUser();
+            setNote("");
+            toast.success("Payment Successfully !");
 
- if(paymentMethod === "CBQ"){
-  toast.info(`As of Now This payment method is not supported ${paymentMethod} !`);
- }
-//  if(paymentMethod === "Cashd"){
-//   toast.info(`As of Now This payment method is not supported ${paymentMethod} !`);
-//  }
+            setTimeout(() => {
+              handleCloses();
+            }, 1000);
+          })
+          .catch((err) => { });
+      }
 
-   
+
+    }
+
+    if (paymentMethod === "QPay") {
+      toast.info(`As of Now This payment method is not supported ${paymentMethod} !`);
+    }
+
+    if (paymentMethod === "CBQ") {
+      toast.info(`As of Now This payment method is not supported ${paymentMethod} !`);
+    }
+    //  if(paymentMethod === "Cashd"){
+    //   toast.info(`As of Now This payment method is not supported ${paymentMethod} !`);
+    //  }
+
+
   };
 
   const searchItems = (e: any) => {
@@ -725,11 +722,11 @@ getwayService.transactionDataSaveInDB(data,function(result:any){
   console.log(inputValue, "inputValue");
   return (
     <>
-          <Script  src="https://amexmena.gateway.mastercard.com/static/checkout/checkout.min.js"
-                data-error="errorCallback"
-                data-cancel="cancelCallback"
-                strategy="beforeInteractive"
-               > </Script>
+      <Script src="https://amexmena.gateway.mastercard.com/static/checkout/checkout.min.js"
+        data-error="errorCallback"
+        data-cancel="cancelCallback"
+        strategy="beforeInteractive"
+      > </Script>
       <Box sx={{ display: "flex" }}>
         <MiniDrawer />
 
@@ -769,7 +766,7 @@ getwayService.transactionDataSaveInDB(data,function(result:any){
                 >
                   INVOICES
                 </Typography>
-                { showSuccess &&  <Alert style={{width:'50%',height:50,marginLeft:430,marginTop:"-50px"}} severity="success">Thanks You ! Payment Recieved</Alert>
+                {showSuccess && <Alert style={{ width: '50%', height: 50, marginLeft: 430, marginTop: "-50px" }} severity="success">Thanks You ! Payment Recieved</Alert>
                 }
               </Stack>
               {custpermit && custpermit.canAdd === true || roleid === 1 ? (
@@ -1234,6 +1231,18 @@ getwayService.transactionDataSaveInDB(data,function(result:any){
                                   />
                                 </Button>
                               )}
+                              {user[0].status === "draft" ?
+                                (<IconButton
+                                  className="action-edit"
+                                >
+                                  <Link
+                                    href={`/admin/editInvoice/${item.id}`}
+                                    style={{
+                                      color: "#26CEB3",
+                                    }}
+                                  > <FiEdit /></Link>
+                                </IconButton>) : ""
+                              }
                               {custpermit && custpermit.canDelete === true || roleid === 1 ? (
                                 <Button className="idiv">
                                   <Image
@@ -1406,18 +1415,18 @@ getwayService.transactionDataSaveInDB(data,function(result:any){
                         <Grid item xs={12} md={6}>
                           <Stack spacing={1}>
                             <InputLabel htmlFor="name">
-                            Payment  Method <span className="err_str">*</span>
+                              Payment  Method <span className="err_str">*</span>
                             </InputLabel>
                             <Select
                               labelId="demo-select-small"
                               id="demo-select-small"
                               defaultValue="Cash"
                               size="small"
-                              onChange={(e)=>{setPaymentMethod(e.target.value)}}
+                              onChange={(e) => { setPaymentMethod(e.target.value) }}
                             >
-                                <MenuItem value="All"></MenuItem>
+                              <MenuItem value="All"></MenuItem>
                               <MenuItem value="CBQ">
-                              CBQ
+                                CBQ
                               </MenuItem>
                               <MenuItem value="QPay">QPay</MenuItem>
                               <MenuItem value="Amex">AMEX</MenuItem>

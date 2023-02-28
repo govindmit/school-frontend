@@ -611,7 +611,7 @@ export default function CreditNotesList() {
                                                             <Checkbox />
                                                         </TableCell>
                                                         <TableCell align="left">{item.id}</TableCell>
-                                                        <TableCell align="left">{item.name}</TableCell>
+                                                        <TableCell align="left">{item.customerName}</TableCell>
                                                         <TableCell align="left">{item.email1}</TableCell>
                                                         <TableCell align="left">{item?.status === 0 ? (<span style={{ color: "#FF4026", fontWeight: "bold" }}>Pending</span>) : item?.status === 1 ?
                                                             (<span style={{ color: "#02C509", fontWeight: "bold" }}>Approved</span>) : item?.status === 2 ? (<span style={{ color: "#FF4026", fontWeight: "bold" }}>Reject</span>) : item?.status === 3 ? (<span style={{ color: "#FF4026", fontWeight: "bold" }}>Deleted</span>) : item?.status === 4 ? (<span style={{ color: "#FF4026", fontWeight: "bold" }}>Appr By Admin</span>) : ""}</TableCell>
