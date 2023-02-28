@@ -3,12 +3,22 @@
 import axios  from 'axios';
 
 // import { getApiVersion, getBaseUrl, getMerchantId, getTestMerchantUrl, setAuthentication } from '../util/commonUtils';
-var config = require('../helper/config');
-import commonUtils from '../util/commonUtils'
+// var {AMEX_TOKEN} = require('../helper/config');
+import {IS_CERT_AUTH_ENABLED,AMEX_TOKEN,BASEURL,API_VERSION,MERCHANTID,DB_BASE_URL} from '../helper/config'
 
+import commonUtils from '../util/commonUtils'
+const config :any ={
+  IS_CERT_AUTH_ENABLED,
+  BASEURL,
+  API_VERSION,
+  MERCHANTID,
+  DB_BASE_URL,
+  AMEX_TOKEN
+}
 class getwayService {
   
-  getSession = async (requestData, callback) =>{
+  getSession = async (requestData:any, callback:any) =>{
+    console.log("AMEX_TOKEN =>",AMEX_TOKEN);
     var url = commonUtils.getTestMerchantUrl(config) + "/session";
     var data = JSON.stringify(requestData);
   
@@ -16,7 +26,7 @@ class getwayService {
     method: 'post',
     url : url,
     headers: { 
-      'Authorization': `Basic ${config.TEST_GATEWAY.AMEX_TOKEN}`, 
+      'Authorization': `Basic ${AMEX_TOKEN}`, 
       'Content-Type': 'application/json'
     },
     data : data
@@ -34,14 +44,14 @@ class getwayService {
 };
 
 
-  retriveOrder = async (url, callback) =>{
-    console.log(config.TEST_GATEWAY.AMEX_TOKEN,"config.TEST_GATEWAY.AMEX_TOKEN");
+  retriveOrder = async (url:any, callback:any) =>{
+    console.log(config.AMEX_TOKEN,"config.AMEX_TOKEN");
      var configData = {
       method: 'get',
       // url:'https://amexmena.gateway.mastercard.com/api/rest/version/62/merchant/TEST9767612138/order/EnXt3SGpT2',
       url:url,
       headers: { 
-        'Authorization': `Basic ${config.TEST_GATEWAY.AMEX_TOKEN}`
+        'Authorization': `Basic ${config.AMEX_TOKEN}`
       }
     };
     console.log(configData,"configData");
@@ -57,8 +67,8 @@ class getwayService {
 }
 
 
- apiRequestBody =  async(apiOperation, data) =>{
-  var returnObj = {
+ apiRequestBody =  async(apiOperation:any, data:any) =>{
+  var returnObj :any= {
       "apiOperation": apiOperation
   }
   switch (apiOperation) {
@@ -71,12 +81,13 @@ class getwayService {
     
           
           default:
-            throwUnsupportedProtocolException();
+            // throwUnsupportedProtocolException();
+            "Error in request body"
   }
   return returnObj;
 }
 
- getRequestUrl = async (apiProtocol, request) =>{
+ getRequestUrl = async (apiProtocol:any, request:any) =>{
   var base = commonUtils.getBaseUrl(config);
  
   switch (apiProtocol) {
@@ -90,7 +101,8 @@ class getwayService {
       case "NVP":
           return getApiBaseURL(base, apiProtocol) + "/version/" + commonUtils.getApiVersion(config);
       default:
-          throwUnsupportedProtocolException();
+          // throwUnsupportedProtocolException();
+          "Error in request body"
   }
   return null;
 }
@@ -98,11 +110,11 @@ class getwayService {
  
 
 
-transactionDataSaveInDB = async (data,callback) =>{
+transactionDataSaveInDB = async (data:any,callback:any) =>{
   var Tdata = JSON.stringify(data);
   var configData = {
     method: 'post',
-    url: `${config.TEST_GATEWAY.DB_BASE_URL}/createTransaction`,
+    url: `${config.DB_BASE_URL}/createTransaction`,
     headers: { 
       'Content-Type': 'application/json'
     },
@@ -126,14 +138,15 @@ throwUnsupportedProtocolException = async() =>{
 }
 
 }
-function getApiBaseURL (gatewayHost, apiProtocol){
+function getApiBaseURL (gatewayHost:any, apiProtocol:any){
   switch (apiProtocol) {
       case "REST":
           return gatewayHost + "/api/rest";
       case "NVP":
           return gatewayHost + "/api/nvp"
       default:
-          throwUnsupportedProtocolException();
+          // throwUnsupportedProtocolException();
+          "Error in api base url function"
   }
   return null;
 }

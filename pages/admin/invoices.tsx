@@ -64,7 +64,7 @@ import autoTable from "jspdf-autotable";
 
 import Alert from '@mui/material/Alert';
 import Script from "next/script";
-import getwayService from "../services/gatewayService"
+import getwayService from "../../services/gatewayService"
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
