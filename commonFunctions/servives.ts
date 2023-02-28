@@ -1,5 +1,5 @@
 import axios from "axios";
-import { api_url, auth_token } from "../../api/hello";
+import { api_url, auth_token } from "../pages/api/hello";
 
 class UserService {
   //get user det

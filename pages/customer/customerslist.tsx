@@ -45,7 +45,7 @@ import EditCustomer from "./editcustomer";
 import { useRouter } from "next/router";
 import { CSVDownload } from "react-csv";
 import Loader from "../commoncmp/myload";
-import commmonfunctions from "../commonFunctions/commmonfunctions";
+import commmonfunctions from "../../commonFunctions/commmonfunctions";
 import MainFooter from "../commoncmp/mainfooter";
 
 function a11yProps(index: number) {

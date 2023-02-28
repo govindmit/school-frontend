@@ -27,7 +27,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Avatar from "@mui/material/Avatar";
 import Head from "next/head";
 import { Stack } from "@mui/system";
-import commmonfunctions from "./commonFunctions/commmonfunctions";
+import commmonfunctions from "../commonFunctions/commmonfunctions";
 import Footer from "./commoncmp/footer";
 
 const drawerWidth = 240;
