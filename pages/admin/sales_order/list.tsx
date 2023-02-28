@@ -45,7 +45,7 @@ import ConfirmBox from "../../commoncmp/confirmbox";
 import commmonfunctions from "../../commonFunctions/commmonfunctions";
 import AddSalesOrder from "./add_new_sales_order";
 import MainFooter from "../../commoncmp/mainfooter";
-import getwayService from "../../services/gatewayService"
+import getwayService from "../../../services/gatewayService"
 import Alert from '@mui/material/Alert';
 function a11yProps(index: number) {
   return {

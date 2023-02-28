@@ -34,7 +34,7 @@ import moment from "moment";
 import styled from "@emotion/styled";
 // import commmonfunctions from "../commonFunctions/commmonfunctions";
 import Script from "next/script";
-import getwayService from "../../services/gatewayService"
+import getwayService from "../../../services/gatewayService"
 
 const style = {
   color: "red",
