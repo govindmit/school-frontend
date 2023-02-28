@@ -21,6 +21,7 @@ import {
   Tabs,
   Tab,
   Menu,
+  styled,
   Grid,
   InputLabel,
   Modal,
@@ -51,6 +52,13 @@ function a11yProps(index: number) {
     "aria-controls": `simple-tabpanel-${index}`,
   };
 }
+
+interface StyledTabProps {
+  label: string;
+  onClick:any;
+  className?:any;
+}
+
 //pagination function
 function usePagination(data: any, itemsPerPage: any) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -271,6 +279,12 @@ const [newSalesOpen, setNewSalesOpen] = useState(false);
   };
 
 
+  const AntTab = styled((props: StyledTabProps) => <Tab disableRipple {...props} />)(
+    ({ theme }) => ({
+      textTransform: 'none',
+    }),
+  );
+
   return (
     <>
       <Box sx={{ display: "flex" }}>
@@ -379,18 +393,18 @@ const [newSalesOpen, setNewSalesOpen] = useState(false);
                       onChange={handleChange}
                       aria-label="basic tabs example"
                     >
-                      <Tab
+                      <AntTab
                         className="filter-list"
                         label={`All (${All})`}
                         {...a11yProps(0)}
                         onClick={handleAll}
                       />
-                      <Tab
+                      <AntTab
                         label={`Paid (${paidOrder?.length})`}
                         {...a11yProps(2)}
                         onClick={handlePaid}
                       />
-                      <Tab
+                      <AntTab
                         label={`Delete (${deleteOrder?.length})`}
                         {...a11yProps(1)}
                         onClick={handleDelete}

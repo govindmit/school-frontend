@@ -94,6 +94,7 @@ input {
 .paidcss {
   height: 29px !important;
   text-transform: none !important;
+  margin-bottom: 4px !important;
 }
 
 .linecss {

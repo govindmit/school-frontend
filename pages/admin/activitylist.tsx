@@ -24,6 +24,8 @@ import {
   Grid,
   InputLabel,
   Modal,
+  withStyles,
+  styled,
 } from "@mui/material";
 import moment from "moment";
 import Box from "@mui/material/Box";
@@ -50,6 +52,12 @@ function a11yProps(index: number) {
     "aria-controls": `simple-tabpanel-${index}`,
   };
 }
+interface StyledTabProps {
+  label: string;
+  onClick:any;
+  className?:any;
+}
+
 //pagination function
 function usePagination(data: any, itemsPerPage: any) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -80,7 +88,7 @@ type FormValues = {
 
 export default function ActivityList() {
   const [activites, setactivites] = useState<any>([]);
-  const [activity, setFullactivites] = useState<any>([]);
+  const [filterActivity, setFilterActivity] = useState<any>([]);
   const [searchquery, setsearchquery] = useState("");
   const [searchdata, setsearchdata] = useState([]);
   const [All, setAll] = useState(0);
@@ -103,6 +111,11 @@ export default function ActivityList() {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const [activeTab, setActiveTab] = useState("");
+  const [row_per_page, set_row_per_page] = useState(5);
+  const PER_PAGE = row_per_page;
+  const count = Math.ceil(filterActivity.length / PER_PAGE);
+  const DATA = usePagination(filterActivity, PER_PAGE);
+  let [page, setPage] = useState(1);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -136,6 +149,7 @@ export default function ActivityList() {
     fetchData();
   }, []);
 
+
   //get activites
   const url = `${api_url}/getActivity`;
   const fetchData = async () => {
@@ -149,7 +163,7 @@ export default function ActivityList() {
       });
       const json = await response.json();
       setactivites(json.data);
-      setFullactivites(json.data);
+      setFilterActivity(json.data);
       setsearchdata(json.data);
       setAll(json.data.length);
     } catch (error: any) {
@@ -198,7 +212,7 @@ export default function ActivityList() {
   }
   const filterApply = async (e: any) => {
     e.preventDefault();
-    setFullactivites([]);
+    setFilterActivity([]);
 
     const reqData = {
       status: filterStatus,
@@ -217,9 +231,10 @@ export default function ActivityList() {
       .then((res: any) => {
         if (res.status === 200) {
           setactivites(res?.data?.data);
-          setFullactivites(res?.data?.data);
+          setFilterActivity(res?.data?.data);
           setsearchdata(res?.data?.data);
           setAll(res?.data?.data.length);
+          
         }
       })
       .catch((error: any) => {
@@ -227,20 +242,15 @@ export default function ActivityList() {
       });
   };
 
-  const past = activity?.filter((a: any) => a?.startDate < todayDate);
-  const upcoming = activity?.filter((a: any) => a?.startDate > todayDate);
-  const current = activity?.filter((a: any) => a?.startDate === todayDate);
-  const allListData = activity?.filter((a: any) => a);
+  const past = activites?.filter((a: any) => a?.startDate < todayDate);
+  const upcoming = activites?.filter((a: any) => a?.startDate > todayDate);
+  const current = activites?.filter((a: any) => a?.startDate === todayDate);
+  const allListData = activites?.filter((a: any) => a);
 
   //pagination
-  const [row_per_page, set_row_per_page] = useState(5);
   function handlerowchange(e: any) {
     set_row_per_page(e.target.value);
   }
-  let [page, setPage] = useState(1);
-  const PER_PAGE = row_per_page;
-  const count = Math.ceil(activites.length / PER_PAGE);
-  const DATA = usePagination(activites, PER_PAGE);
   const handlePageChange = (e: any, p: any) => {
     setPage(p);
     DATA.jump(p);
@@ -321,30 +331,43 @@ export default function ActivityList() {
       });
   };
 
-  const handleUpcoming = () => {
-    setActiveTab("upcoming");
-    setactivites(upcoming);
-    setPage(1);
-    DATA.jump(1);
-  };
-  const handleAll = () => {
-    if (filterStatus !== "" && filterType !== "") {
-      setactivites(allListData);
-    } else {
-      fetchData();
-    }
+const handleUpcoming = () => {
+  setActiveTab("upcoming");
+  if(DATA?.currentPage === 1){
+    setFilterActivity(upcoming);
+  }else{
+    setFilterActivity(upcoming);
+    handlePageChange("",1)
+ }
+};
+
+const handleAll = () => {
+  if(DATA?.currentPage === 1){
+    setFilterActivity(allListData);
+  }else{
+    handlePageChange("",1)
+ }
+    // if (filterStatus !== "" && filterType !== "") {
+    // } else {
+      // fetchData();
+    //   setFilterActivity(allListData);
+    // }
   };
   const handlePast = () => {
     setActiveTab("past");
-    setactivites(past);
-    setPage(1);
-    DATA.jump(1);
+    if(DATA?.currentPage === 1){
+      setFilterActivity(past);
+    }else{
+       handlePageChange("",1)
+    }
   };
   const handleCurrent = () => {
     setActiveTab("current");
-    setactivites(current);
-    setPage(1);
-    DATA.jump(1);
+    if(DATA?.currentPage === 1){
+      setFilterActivity(current);
+    }else{
+      handlePageChange("",1)
+   }
   };
 
   const style1 = {
@@ -359,6 +382,13 @@ export default function ActivityList() {
     boxShadow: 24,
     // p: 4,
   };
+  
+
+  const AntTab = styled((props: StyledTabProps) => <Tab disableRipple {...props} />)(
+    ({ theme }) => ({
+      textTransform: 'none',
+    }),
+  );
 
   return (
     <>
@@ -476,24 +506,25 @@ export default function ActivityList() {
                       value={value}
                       onChange={handleChange}
                       aria-label="basic tabs example"
-                    >
-                      <Tab
+                      >
+                      <AntTab
                         className="filter-list"
                         label={`All (${All})`}
                         {...a11yProps(0)}
                         onClick={handleAll}
                       />
-                      <Tab
-                        label={`Upcomming (${upcoming.length})`}
-                        {...a11yProps(1)}
-                        onClick={handleUpcoming}
-                      />
-                      <Tab
+                      <AntTab
+                      label={`Upcomming (${upcoming.length})`}
+                      {...a11yProps(1)}
+                      onClick={handleUpcoming}
+                        
+                    />
+                      <AntTab
                         label={`Past (${past.length})`}
                         {...a11yProps(2)}
                         onClick={handlePast}
                       />
-                      <Tab
+                      <AntTab
                         label={`Current (${current.length})`}
                         {...a11yProps(3)}
                         onClick={handleCurrent}
@@ -695,7 +726,7 @@ export default function ActivityList() {
                   </TableHead>
                   <TableBody>
                     {/* {DATA.currentData()} */}
-                    {DATA.currentData() &&
+                   {DATA.currentData() &&
                       DATA.currentData().map((item: any, key: any) => {
                         const {
                           id,
@@ -707,6 +738,7 @@ export default function ActivityList() {
                           endDate,
                           description,
                         } = item;
+                      
                         return (
                           <TableRow
                             key={key}
@@ -830,11 +862,12 @@ export default function ActivityList() {
                             </TableCell>
                           </TableRow>
                         );
-                      })}
+                      })
+                    }
                   </TableBody>
                 </Table>
                 {/* } */}
-                {activites == "" ? <h3>No Record found</h3> : ""}
+                {filterActivity === "" ? <h3>No Record found</h3> : ""}
                 <Stack
                   style={{
                     marginBottom: "10px",
