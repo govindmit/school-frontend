@@ -20,7 +20,7 @@ import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import MiniDrawer from "../sidebar";
 import dynamic from "next/dynamic";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import commmonfunctions from "../commonFunctions/commmonfunctions";
+import commmonfunctions from "../../commonFunctions/commmonfunctions";
 import { useRouter } from "next/router";
 import MainFooter from "../commoncmp/mainfooter";
 const DynamicComponentWithNoSSR = dynamic(() => import("../chart"), {

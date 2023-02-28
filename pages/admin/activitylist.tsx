@@ -42,7 +42,7 @@ import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import ConfirmBox from "../commoncmp/confirmbox";
-import commmonfunctions from "../commonFunctions/commmonfunctions";
+import commmonfunctions from "../../commonFunctions/commmonfunctions";
 import MainFooter from "../commoncmp/mainfooter";
 
 function a11yProps(index: number) {

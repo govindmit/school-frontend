@@ -42,7 +42,7 @@ import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import ConfirmBox from "../../commoncmp/confirmbox";
-import commmonfunctions from "../../commonFunctions/commmonfunctions";
+import commmonfunctions from "../../../commonFunctions/commmonfunctions";
 import AddSalesOrder from "./add_new_sales_order";
 import MainFooter from "../../commoncmp/mainfooter";
 import getwayService from "../../../services/gatewayService"
@@ -171,7 +171,6 @@ const [showSuccess,setShowSuccess] = React.useState(false);
 
 const transactionSaveInDB = async(data:any)=>{
 getwayService.transactionDataSaveInDB(data,function(result:any){
-  console.log("final result =>",result);
    setShowSuccess(true)
   setTimeout(callBack_func, 5000);
   function callBack_func() {
