@@ -191,7 +191,7 @@ export default function Guardians() {
   const [orderId,setorderId] = useState('');
   const [InvoiceAmount,setInvoiceAmount] = useState(0);
   const [invoiceStatus,setInvoiceStatus] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('Cash');
   const [showSuccess,setShowSuccess] = useState(false);
 
   const [customerTotalCreditNoteBalance ,setCustomerTotalCreditNoteBalance ] = useState(0);
@@ -544,6 +544,7 @@ export default function Guardians() {
         }
         console.log("transactionData",transactionData);
           transactionSaveInDB(transactionData);
+          updateInvoiceAfterPay(amexOrderId)
       }
         
       });
@@ -569,6 +570,7 @@ getwayService.transactionDataSaveInDB(data,function(result:any){
     // console.log(process.env.NEXT_PUBLIC_REDIRECT_URL,"Checkout =>",(window as any).Checkout);
    const Checkout : any  =  (window as any).Checkout
    const creditNotesId = isChecked ? customerCreditNoteRequestId : null
+   console.log("payment method => ",paymentMethod,"isChcked =>",isChecked, "finaltopay =>",finalAmountToPay);
    if(paymentMethod === "Amex" && finalAmountToPay > 0){
     if( finalAmountToPay=== 0 ){
       toast.error("amount will not be $0 for Amex payment method");
@@ -616,7 +618,7 @@ getwayService.transactionDataSaveInDB(data,function(result:any){
      }
    }
 
-   if(paymentMethod === "Amex" && isChecked === true && finalAmountToPay === 0){
+   if(paymentMethod === "Amex" || paymentMethod === "Cash" && isChecked === true && finalAmountToPay === 0){
     try{
 
       const dataforRemaingAmount :any= {
@@ -624,7 +626,7 @@ getwayService.transactionDataSaveInDB(data,function(result:any){
          Amount: applyCreditNoteAmount,
          amountMode: 0,
      }
-     insertRemainingNotesAmount(dataforRemaingAmount);
+    
       const rendomTransactionId = keyGen(5);
       let reqData = {
         totalAmount: InvoiceAmount,
@@ -635,26 +637,63 @@ getwayService.transactionDataSaveInDB(data,function(result:any){
         idForPayment: orderId,
         creditNotesId:customerCreditNoteRequestId
       };
-     
       transactionSaveInDB(reqData);
+      insertRemainingNotesAmount(dataforRemaingAmount);
+      updateInvoiceAfterPay(id)
       handleCloses();
     }catch(error:any){
       console.log("Error ",error.message);
     }
    }
 
+      if(paymentMethod === "Cash"  && finalAmountToPay > 0){
+      try{
+        const dataforRemaingAmount :any= {
+            customerId: customerID,
+            Amount: applyCreditNoteAmount,
+            amountMode: 0,
+        }
+      
+          const rendomTransactionId = keyGen(5);
+          let reqData = {
+            totalAmount: finalAmountToPay,
+            paidAmount: finalAmountToPay,
+            transactionId: `case-${rendomTransactionId} `,
+            amexorderId: orderId,
+            paymentMethod: "Cash",
+            idForPayment: orderId,
+            creditNotesId:customerCreditNoteRequestId
+          };
+        
+         
+          transactionSaveInDB(reqData);
+          insertRemainingNotesAmount(dataforRemaingAmount);
+          updateInvoiceAfterPay(id)
+          handleCloses();
+        }catch(error:any){
+          console.log("Error ",error.message);
+        }
+      }
 
+      if(paymentMethod === "QPay"){
+        toast.info(`As of Now This payment method is not supported ${paymentMethod} !`);
+      }
 
- if(paymentMethod === "Cash"){
-  let requestedData = {
-    note: note ? note : null,
+      if(paymentMethod === "CBQ"){
+        toast.info(`As of Now This payment method is not supported ${paymentMethod} !`);
+      }
+
+   
   };
-  if(note <= 0){
-    toast.info(`please for case payment method provide the number of Note`);
-  }else{
+
+const updateInvoiceAfterPay = async(invoiceId:any)=>{
+  try{
+    let requestedData = {
+      note: note ? note : null,
+    };
     await axios({
       method: "PUT",
-      url: `${api_url}/updateInvoice/${id}`,
+      url: `${api_url}/updateInvoice/${invoiceId}`,
       data: requestedData,
       headers: {
         "content-type": "multipart/form-data",
@@ -670,24 +709,10 @@ getwayService.transactionDataSaveInDB(data,function(result:any){
         }, 1000);
       })
       .catch((err) => { });
+  }catch(error:any){
+    console.log("error => ",error.message);
   }
- 
- 
- }
-
- if(paymentMethod === "QPay"){
-  toast.info(`As of Now This payment method is not supported ${paymentMethod} !`);
- }
-
- if(paymentMethod === "CBQ"){
-  toast.info(`As of Now This payment method is not supported ${paymentMethod} !`);
- }
-//  if(paymentMethod === "Cashd"){
-//   toast.info(`As of Now This payment method is not supported ${paymentMethod} !`);
-//  }
-
-   
-  };
+}
 
   const keyGen = (keyLength: any) => {
     var i,
