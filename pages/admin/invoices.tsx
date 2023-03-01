@@ -568,20 +568,20 @@ export default function Guardians() {
   };
   const handleCreate = async (id: any) => {
     // console.log(process.env.NEXT_PUBLIC_REDIRECT_URL,"Checkout =>",(window as any).Checkout);
-    const Checkout: any = (window as any).Checkout
-    const creditNotesId = isChecked ? customerCreditNoteRequestId : null
-    console.log("payment method => ", paymentMethod, "isChcked =>", isChecked, "finaltopay =>", finalAmountToPay);
-    if (paymentMethod === "Amex" && finalAmountToPay > 0) {
-      if (finalAmountToPay === 0) {
-        toast.error("amount will not be $0 for Amex payment method");
-      } if (invoiceStatus === "draft") {
-        toast.error("Invoice has status with Draft,Only Pending invoice Can Pay ");
-      }
-      else {
-        console.log(customerID, "customerId", applyCreditNoteAmount, "=======> ", creditNotesId);
-        var requestData = {
-          "apiOperation": "CREATE_CHECKOUT_SESSION",
-          "order": {
+   const Checkout : any  =  (window as any).Checkout
+   const creditNotesId = isChecked ? customerCreditNoteRequestId : null
+   console.log("payment method => ",paymentMethod,"isChcked =>",isChecked, "finaltopay =>",finalAmountToPay);
+   if(paymentMethod === "Amex" && finalAmountToPay > 0){
+    if( finalAmountToPay=== 0 ){
+      toast.error("amount will not be $0 for Amex payment method");
+     }if(invoiceStatus === "draft"){
+      toast.error("Invoice has status with Draft,Only Pending invoice Can Pay ");
+     }
+     else{
+      console.log(customerID,"customerId",applyCreditNoteAmount,"=======> ",creditNotesId);
+      var requestData = {
+        "apiOperation": "CREATE_CHECKOUT_SESSION",
+        "order": {
             "id": orderId,
             "amount": finalAmountToPay,
             "currency": "QAR",
@@ -683,6 +683,9 @@ export default function Guardians() {
       toast.info(`As of Now This payment method is not supported ${paymentMethod} !`);
     }
 
+      if(paymentMethod === "CBQ"){
+        toast.info(`As of Now This payment method is not supported ${paymentMethod} !`);
+      }
 
   };
 

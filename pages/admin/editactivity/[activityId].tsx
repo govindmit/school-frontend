@@ -179,10 +179,12 @@ export default function EditActivity() {
     var sDate = "";
     var eDate = "";
     if (startDate) {
-      sDate = moment(startDate).format("DD/MM/YYYY");
+      sDate = moment(startDate).format('YYYY.MM.DD');
+      // sDate = moment(startDate).format("DD/MM/YYYY");
     }
     if (endDate) {
-      eDate = moment(endDate).format("DD/MM/YYYY");
+      eDate = moment(endDate).format('YYYY.MM.DD');
+      // eDate = moment(endDate).format("DD/MM/YYYY");
     }
    
     const reqData = {
@@ -399,7 +401,7 @@ export default function EditActivity() {
                             onChange={(date: any) => setStartDate(date)}
                             name="startDate"
                             dateFormat="MM/dd/yyyy"
-                            placeholderText={Activity[0]?.startDate}
+                            placeholderText={moment(Activity[0]?.startDate).format('L')}
                           />
                         </Stack>
                       </Grid>
@@ -412,7 +414,7 @@ export default function EditActivity() {
                             onChange={(date: any) => setEndDate(date)}
                             name="startDate"
                             dateFormat="MM/dd/yyyy"
-                            placeholderText={Activity[0]?.endDate}
+                            placeholderText={moment(Activity[0]?.endDate).format('L')}
                             minDate={startDate}
                           />
                         </Stack>
