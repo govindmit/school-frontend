@@ -150,7 +150,7 @@ export default function AddSalesOrder({
   const todaysDate = moment(datee).format("MMM DD,YYYY");
   const [orderId,setorderId] = React.useState('');
   const [amount,setAmount] = React.useState(0);
-  const [creditNoteId, setcreditNoteId] = React.useState<any>("");
+  const [creditNoteId, setcreditNoteId] = React.useState<any>(null);
 
   var Checkout :any 
   let creditBalance:any;

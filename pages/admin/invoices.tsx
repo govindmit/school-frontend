@@ -529,7 +529,7 @@ export default function Guardians() {
     const data = {orderId :amexOrderId}
     var apiRequest = data;
     var requestUrl = await getwayService.getRequestUrl("REST", apiRequest);
-    getwayService.retriveOrder( requestUrl, function (orderresult:any) {
+    getwayService.retriveOrder( requestUrl,async function (orderresult:any) {
       console.log("order result =>",orderresult);
       if(orderresult.status === 200){
         const amextransactionData = orderresult.data
@@ -540,11 +540,11 @@ export default function Guardians() {
           paymentMethod:paymentMethod,
           amexorderId:amexOrderId,
           transactionId:amextransactionData?.transaction[0].transaction.id,
-          creditNotesId :creditRequestId
+          creditNotesId :creditRequestId ? creditRequestId : null
         }
         console.log("transactionData",transactionData);
-          transactionSaveInDB(transactionData);
-          updateInvoiceAfterPay(amexOrderId)
+         await transactionSaveInDB(transactionData);
+         await updateInvoiceAfterPay(amexOrderId)
       }
         
       });
