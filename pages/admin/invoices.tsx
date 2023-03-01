@@ -7,6 +7,8 @@ import {
   TableCell,
   Container,
   FormControl,
+  FormControlLabel,
+  FormGroup,
   TableContainer,
   TableHead,
   Menu,
@@ -189,7 +191,7 @@ export default function Guardians() {
   const [orderId, setorderId] = useState('');
   const [InvoiceAmount, setInvoiceAmount] = useState(0);
   const [invoiceStatus, setInvoiceStatus] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('Cash');
   const [showSuccess, setShowSuccess] = useState(false);
 
   const [customerTotalCreditNoteBalance, setCustomerTotalCreditNoteBalance] = useState(0);
@@ -313,6 +315,7 @@ export default function Guardians() {
       .then((res) => {
         setUser(res?.data.data);
         setInvoice(res?.data.data);
+
         setsearchdata(res?.data.data);
       })
       .catch((err) => { });
@@ -541,6 +544,7 @@ export default function Guardians() {
         }
         console.log("transactionData", transactionData);
         transactionSaveInDB(transactionData);
+        updateInvoiceAfterPay(amexOrderId)
       }
 
     });
@@ -566,6 +570,7 @@ export default function Guardians() {
     // console.log(process.env.NEXT_PUBLIC_REDIRECT_URL,"Checkout =>",(window as any).Checkout);
     const Checkout: any = (window as any).Checkout
     const creditNotesId = isChecked ? customerCreditNoteRequestId : null
+    console.log("payment method => ", paymentMethod, "isChcked =>", isChecked, "finaltopay =>", finalAmountToPay);
     if (paymentMethod === "Amex" && finalAmountToPay > 0) {
       if (finalAmountToPay === 0) {
         toast.error("amount will not be $0 for Amex payment method");
@@ -613,34 +618,61 @@ export default function Guardians() {
       }
     }
 
-    if (paymentMethod === "Cash") {
-      let requestedData = {
-        note: note ? note : null,
-      };
-      if (note <= 0) {
-        toast.info(`please for case payment method provide the number of Note`);
-      } else {
-        await axios({
-          method: "PUT",
-          url: `${api_url}/updateInvoice/${id}`,
-          data: requestedData,
-          headers: {
-            "content-type": "multipart/form-data",
-          },
-        })
-          .then((res) => {
-            getUser();
-            setNote("");
-            toast.success("Payment Successfully !");
+    if (paymentMethod === "Amex" || paymentMethod === "Cash" && isChecked === true && finalAmountToPay === 0) {
+      try {
 
-            setTimeout(() => {
-              handleCloses();
-            }, 1000);
-          })
-          .catch((err) => { });
+        const dataforRemaingAmount: any = {
+          customerId: customerID,
+          Amount: applyCreditNoteAmount,
+          amountMode: 0,
+        }
+
+        const rendomTransactionId = keyGen(5);
+        let reqData = {
+          totalAmount: InvoiceAmount,
+          paidAmount: InvoiceAmount,
+          transactionId: `case-${rendomTransactionId} `,
+          amexorderId: orderId,
+          paymentMethod: "Cash",
+          idForPayment: orderId,
+          creditNotesId: customerCreditNoteRequestId
+        };
+        transactionSaveInDB(reqData);
+        insertRemainingNotesAmount(dataforRemaingAmount);
+        updateInvoiceAfterPay(id)
+        handleCloses();
+      } catch (error: any) {
+        console.log("Error ", error.message);
       }
+    }
+
+    if (paymentMethod === "Cash" && finalAmountToPay > 0) {
+      try {
+        const dataforRemaingAmount: any = {
+          customerId: customerID,
+          Amount: applyCreditNoteAmount,
+          amountMode: 0,
+        }
+
+        const rendomTransactionId = keyGen(5);
+        let reqData = {
+          totalAmount: finalAmountToPay,
+          paidAmount: finalAmountToPay,
+          transactionId: `case-${rendomTransactionId} `,
+          amexorderId: orderId,
+          paymentMethod: "Cash",
+          idForPayment: orderId,
+          creditNotesId: customerCreditNoteRequestId
+        };
 
 
+        transactionSaveInDB(reqData);
+        insertRemainingNotesAmount(dataforRemaingAmount);
+        updateInvoiceAfterPay(id)
+        handleCloses();
+      } catch (error: any) {
+        console.log("Error ", error.message);
+      }
     }
 
     if (paymentMethod === "QPay") {
@@ -650,12 +682,37 @@ export default function Guardians() {
     if (paymentMethod === "CBQ") {
       toast.info(`As of Now This payment method is not supported ${paymentMethod} !`);
     }
-    //  if(paymentMethod === "Cashd"){
-    //   toast.info(`As of Now This payment method is not supported ${paymentMethod} !`);
-    //  }
 
 
   };
+
+  const updateInvoiceAfterPay = async (invoiceId: any) => {
+    try {
+      let requestedData = {
+        note: note ? note : null,
+      };
+      await axios({
+        method: "PUT",
+        url: `${api_url}/updateInvoice/${invoiceId}`,
+        data: requestedData,
+        headers: {
+          "content-type": "multipart/form-data",
+        },
+      })
+        .then((res) => {
+          getUser();
+          setNote("");
+          toast.success("Payment Successfully !");
+
+          setTimeout(() => {
+            handleCloses();
+          }, 1000);
+        })
+        .catch((err) => { });
+    } catch (error: any) {
+      console.log("error => ", error.message);
+    }
+  }
 
   const keyGen = (keyLength: any) => {
     var i,
@@ -1335,18 +1392,6 @@ export default function Guardians() {
                                   />
                                 </Button>
                               )}
-                              {user[0].status === "draft" ?
-                                (<IconButton
-                                  className="action-edit"
-                                >
-                                  <Link
-                                    href={`/admin/editInvoice/${item.id}`}
-                                    style={{
-                                      color: "#26CEB3",
-                                    }}
-                                  > <FiEdit /></Link>
-                                </IconButton>) : ""
-                              }
                               {custpermit && custpermit.canDelete === true || roleid === 1 ? (
                                 <Button className="idiv">
                                   <Image

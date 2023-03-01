@@ -38,6 +38,7 @@ import DatePicker from "react-datepicker";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import "react-datepicker/dist/react-datepicker.css";
 import MainFooter from "../commoncmp/mainfooter";
+import { RiDeleteBin5Fill } from "react-icons/ri";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -222,26 +223,20 @@ export default function Guardians() {
   const [value, setValue] = useState<any>({});
   const [opens, setOpens] = useState(false);
   const [userID, setUserId] = useState<FormValues | any>([]);
-
   const [itemError, setItemError] = useState("");
-
   const [sdates, setDates] = useState<FormValues | any>([]);
   const [Invoicedates, setInvoiceDate] = useState(null);
-
   const [user, setUser] = useState<FormValues | any>([]);
   const [dollerOpen, setDollerOpen] = useState(false);
   const [popup, setSecondPop] = useState(false);
   const [inputValue, setInputValue] = useState<FormValues | any>([]);
-  const [newCustOpen, setnewCustOpen] = useState(false);
   const [id, setId] = useState<FormValues | any>([]);
   const [date, setDate] = useState<FormValues | any>([]);
   const [query, setQuery] = useState<FormValues | any>([]);
   const [error, setError] = useState<FormValues | any>([]);
   const [Dateerror, setDateError] = useState("");
   const [invoiceError, setInvoiceError] = useState("");
-
   const [invoiceno, setInvoiceNo] = useState<FormValues | any>([]);
-
   const [item, setItem] = useState<FormValues | any>([]);
   const [product, setProduct] = useState<FormValues | any>([]);
   const [selected, setSelected] = useState<readonly string[]>([]);
@@ -256,7 +251,6 @@ export default function Guardians() {
   setSecondPop;
   const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
     const arr = [];
-
     arr.push(id);
     const selectedIndex = selected.indexOf(id);
     let newSelected: readonly string[] = [];
@@ -435,7 +429,6 @@ export default function Guardians() {
       method: "POST",
       url: `${api_url}/getItembyid`,
       data: requested,
-
       headers: {
         "content-type": "multipart/form-data",
       },
@@ -467,20 +460,7 @@ export default function Guardians() {
       })
       .catch((err) => { });
   };
-  const handleSearch = (e: any) => {
-    setInputValue(e.target.value);
-    if (e.target.value === "") {
-      setInputValue("");
-    } else {
-      const filterres =
-        user &&
-        user.filter((item: any) => {
-          return item.firstName.includes(e.target.value.toLowerCase());
-        });
-      const dtd = filterres;
-      setUser(dtd);
-    }
-  };
+
   const handleClickOpen = () => {
     setOpens(true);
   };
@@ -498,7 +478,6 @@ export default function Guardians() {
     }
   };
   let gg = user.filter((a: any) => a.id === id);
-
   const handlePopup = (stats: any) => {
     if (stats === false) {
       getItem();
@@ -508,7 +487,6 @@ export default function Guardians() {
       setSecondPop(false);
     }
   };
-
   const invoiceNo = async () => {
     await axios({
       method: "GET",
@@ -538,7 +516,6 @@ export default function Guardians() {
     } else {
       setItemError("");
     }
-
     if (invoiceDatesss === "Invalid date") {
       setDateError("Invoice Date field is required");
     } else {
@@ -613,6 +590,16 @@ export default function Guardians() {
       setInvoiceError("Invoice no is required");
     }
   };
+
+
+  console.log(product)
+  function openDelete(item: any) {
+    console.log(item);
+    let gg = product.filter((a: any) => a.id !== item);
+    setProduct(gg);
+  }
+
+
   return (
     <>
       <Box sx={{ display: "flex" }}>
@@ -821,15 +808,13 @@ export default function Guardians() {
                             <TableCell>Quantity</TableCell>
                             <TableCell>Rate</TableCell>
                             <TableCell>Amount</TableCell>
+                            <TableCell>Action</TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody>
                           {product.map((row: any) => (
                             <TableRow
                               key={row.name}
-                            // sx={{
-                            //   "&:last-child td, &:last-child th": { border: 0 },
-                            // }}
                             >
                               <TableCell >
                                 {row.name}
@@ -837,6 +822,13 @@ export default function Guardians() {
                               <TableCell>1</TableCell>
                               <TableCell>{row.price}</TableCell>
                               <TableCell>{row.price}</TableCell>
+                              <TableCell><IconButton
+                                className="action-delete"
+                                style={{ color: "#F95A37" }}
+                                onClick={() => openDelete(row.id)}
+                              >
+                                <RiDeleteBin5Fill />
+                              </IconButton></TableCell>
                             </TableRow>
                           ))}
                         </TableBody>

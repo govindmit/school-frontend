@@ -1,11 +1,12 @@
-import { Breadcrumbs, Card, TableHead, styled } from "@mui/material";
+import { Breadcrumbs, TableHead, styled } from "@mui/material";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-import { InputLabel, Stack } from "@mui/material";
+import { Grid, InputLabel, Stack } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
+import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 import Autocomplete from "@mui/material/Autocomplete";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -32,7 +33,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import MainFooter from "../../commoncmp/mainfooter";
+import { RiDeleteBin5Fill } from "react-icons/ri";
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
     padding: theme.spacing(2),
@@ -58,6 +59,13 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: "center",
+  color: theme.palette.text.secondary,
+}));
 
 export interface FormValues {
   status: Number;
@@ -77,8 +85,21 @@ export interface FormValues {
   date: string;
   Customername: string;
 }
-type Order = "asc" | "desc";
+interface Data {
+  name: string;
+  price: number;
+}
+function createData(
+  name: string,
+  price: number
+): Data {
+  return {
+    name,
 
+    price,
+  };
+}
+type Order = "asc" | "desc";
 
 export default function Guardians() {
   let localUrl = process.env.NEXT_PUBLIC_BASE_URL;
@@ -111,7 +132,6 @@ export default function Guardians() {
   setSecondPop;
   const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
     const arr = [];
-
     arr.push(id);
     const selectedIndex = selected.indexOf(id);
     let newSelected: readonly string[] = [];
@@ -152,7 +172,6 @@ export default function Guardians() {
   };
   function BootstrapDialogTitle(props: DialogTitleProps) {
     const { children, onClose, ...other } = props;
-
     return (
       <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
         {children}
@@ -178,6 +197,9 @@ export default function Guardians() {
   };
 
   const onSubmit: SubmitHandler<FormValues> = async (data: any) => {
+    // const invoiceDate = moment(data.date).format("DD/MM/YYYY");
+    // const createdDate = moment(dates).format("DD/MM/YYYY");
+
     var itemId: any[] = [];
     const dates = new Date();
     var invoiceDatesss = "";
@@ -186,7 +208,6 @@ export default function Guardians() {
     } else {
       invoiceDatesss = invoice[0]?.invoiceDate;
     }
-
     for (let row of product) {
       itemId.push(row.id);
     }
@@ -293,7 +314,8 @@ export default function Guardians() {
       },
     })
       .then((res) => {
-        setProduct(res?.data.data);
+        const merged = [...product, ...res?.data.data];
+        setProduct(merged);
         handleCloses();
       })
       .catch((err) => { });
@@ -399,6 +421,7 @@ export default function Guardians() {
     for (let row of product) {
       itemId.push(row.id);
     }
+
     const createdDate = moment(dates).format("DD/MM/YYYY");
     const requestedData = {
       itemId: itemId,
@@ -434,6 +457,16 @@ export default function Guardians() {
         // console.log(err.response.data.message, "error");
       });
   };
+
+  console.log("Product", product);
+
+  function openDelete(item: any) {
+    console.log(item);
+    let gg = product.filter((a: any) => a.id !== item);
+    setProduct(gg);
+  }
+
+
   return (
     <>
       <Box sx={{ display: "flex" }}>
@@ -441,6 +474,7 @@ export default function Guardians() {
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <div className="guardianBar">
             <form onSubmit={handleSubmit(onSubmit)}>
+              {/*bread cump */}
               <Stack
                 direction="row"
                 alignItems="center"
@@ -453,7 +487,7 @@ export default function Guardians() {
                       <Link
                         key="1"
                         color="inherit"
-                        href="/"
+                        href="/admin/dashboard"
                         style={{ color: "#1A70C5", textDecoration: "none" }}
                       >
                         Home
@@ -490,20 +524,18 @@ export default function Guardians() {
                       Save & issue
                     </BootstrapButton>
                   </div>
+                  {/* <Button sx={{ margin: "7px" }} type="button">
+                    Add Guardians
+                  </Button> */}
                 </div>
+
               </Stack>
+              {/*bread cump */}
               <div className="midBar">
                 <div className="guardianList" style={{ padding: "50px" }}>
-                  <div className="required" style={{ textAlign: "right" }}>
-                    {/* <Typography style={style}>
-                      {errors.date ? (
-                        <span>Invoice Date Feild is Required **</span>
-                      ) : error != "" ? (
-                        <span></span>
-                      ) : (
-                        ""
-                      )}
-                    </Typography> */}
+                  <div className="required">
+                    <Typography style={style}>
+                    </Typography>
                   </div>
                   <div className="aititle">
                     <div className="iatitle flex">
@@ -545,33 +577,29 @@ export default function Guardians() {
                     <div className="ickk">
                       <InputLabel htmlFor="name">
                         Customer <span className="err_str">*</span>
-                        <div
-                          className="required"
-                          style={{ textAlign: "right" }}
-                        ></div>
                       </InputLabel>
                       <Autocomplete
                         style={{ width: 300 }}
                         fullWidth
+                        value={value}
                         inputValue={inputValue}
-                        // onChange={(event, value) => setUserId(value)}
-                        //onChange={(event, value) => handleChange(value)}
-                        // onChange={(event, newValue) => {
-                        //   setValue(newValue);
-                        // }}
-                        // defaultValue={{
-                        //   name: `${gg[0]?.name}`,
-                        // }}
+                        onChange={(event, newValue) => {
+                          setValue(newValue);
+                          setUserId(newValue);
+                        }}
                         onInputChange={(event, newInputValue) => {
                           setInputValue(newInputValue);
                         }}
-                        options={user}
-                        getOptionLabel={(option: any) => option.name}
+                        options={option}
+                        getOptionLabel={(option) => option.title || ""}
+                        isOptionEqualToValue={(option, title) =>
+                          option.title === value.title
+                        }
                         renderInput={(params) => (
                           <TextField
                             {...params}
                             variant="outlined"
-                            placeholder="Find or create a customer"
+                            placeholder="Find or create a parent"
                           />
                         )}
                         noOptionsText={
@@ -580,40 +608,41 @@ export default function Guardians() {
                               "Please enter 1 or more character"
                             ) : (
                               <span>
-                                Add &nbsp;<b>{inputValue}</b>&nbsp;as a customer
+                                Add &nbsp;<b>{inputValue}</b>&nbsp;as a new
+                                parent
                               </span>
                             )}
                           </Button>
                         }
-                      // {...register("Customername", {
-                      //   onChange: (event) => {
-                      //     setUserId(event);
-                      //   },
-                      //   required: true,
-                      // })}
                       />
                       <Typography style={style}>
-                        <span>
-                          {error === "customer field is required" ? error : ""}{" "}
-                        </span>
+                        {errors.Customername ? (
+                          <span>Feild is Required **</span>
+                        ) : (
+                          ""
+                        )}
                       </Typography>
                     </div>
                     <div className="invoicedateField">
+                      <InputLabel></InputLabel>
+                      <OutlinedInput
+                        type="text"
+                        id="name"
+                        placeholder="# Generate If blank"
+                        fullWidth
+                        onChange={(e: any) => setInvoiceNo(e.target.value)}
+                        value={!invoiceno ? invoice[0]?.invoiceId : invoiceno}
+                      />
+                      <InputLabel id="demo-select-small"></InputLabel>
                       &nbsp; &nbsp;
                       <DatePicker
                         className="myDatePicker"
                         selected={Invoicedates}
-                        // onChange={(date: any) => setInvoiceDate(date)}
-                        //onChange={(date: any) => handleDate(date)}
-                        name="Date"
+                        onChange={(date: any) => setInvoiceDate(date)}
+                        name="startDate"
                         dateFormat="MM/dd/yyyy"
-                        placeholderText="Date"
-                        // filterDate={filterDays}
-                        minDate={new Date()}
+                        placeholderText={invoice[0]?.invoiceDate}
                       />
-                      <Typography style={style}>
-                        {/* <span>{Dateerror ? Dateerror : ""} </span> */}
-                      </Typography>
                     </div>
                   </div>
                   <div className="invoiceItem">
@@ -625,15 +654,13 @@ export default function Guardians() {
                             <TableCell>Quantity</TableCell>
                             <TableCell>Rate</TableCell>
                             <TableCell>Amount</TableCell>
+                            <TableCell>Action</TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody>
                           {product.map((row: any) => (
                             <TableRow
                               key={row.name}
-                            // sx={{
-                            //   "&:last-child td, &:last-child th": { border: 0 },
-                            // }}
                             >
                               <TableCell >
                                 {row.name}
@@ -641,6 +668,13 @@ export default function Guardians() {
                               <TableCell>1</TableCell>
                               <TableCell>{row.price}</TableCell>
                               <TableCell>{row.price}</TableCell>
+                              <TableCell><IconButton
+                                className="action-delete"
+                                style={{ color: "#F95A37" }}
+                                onClick={() => openDelete(row.id)}
+                              >
+                                <RiDeleteBin5Fill />
+                              </IconButton></TableCell>
                             </TableRow>
                           ))}
                         </TableBody>
@@ -656,14 +690,12 @@ export default function Guardians() {
                         Add items
                       </BootstrapButton>
                     </div>
-                    <Typography style={style}>
-                      {/* <span>{itemError ? itemError : ""} </span> */}
-                    </Typography>
                   </div>
                   &nbsp;&nbsp;
                   <div className="invoiceSubTotal">
                     <div>
                       <InputLabel id="demo-select-small">Notes:</InputLabel>
+
                       <OutlinedInput
                         className="invoiceNote"
                         size="medium"
@@ -677,15 +709,12 @@ export default function Guardians() {
                         <div>$ &nbsp;{price}.00</div>
                       </div>
                       <div className="sdiv">
-                        <div className="total">
-                          <div className="sidiv">Total</div>
-                          <div>$ &nbsp;{price}</div>
-                        </div>
-
-                        <div className="amount">
-                          <div className="sidiv">Amount Paid</div>
-                          <div>$ &nbsp;0.00</div>
-                        </div>
+                        <div className="sidiv">Total</div>
+                        <div>$ &nbsp;{price}.00</div>
+                      </div>
+                      <div className="sdiv">
+                        <div className="sidiv">Amount Paid</div>
+                        <div>$ &nbsp;0.00</div>
                       </div>
                       <div className="sdiv">
                         <div className="sidiv">Balance Due</div>
@@ -735,6 +764,12 @@ export default function Guardians() {
                               {item &&
                                 item.map((row: any) => {
                                   const isItemSelected = isSelected(row.id);
+                                  {
+                                    console.log(
+                                      isItemSelected,
+                                      "selectedddmap"
+                                    );
+                                  }
                                   const labelId = `enhanced-table-checkbox-${row.id}`;
 
                                   return (
@@ -814,9 +849,10 @@ export default function Guardians() {
 
             {opens ? <AddCustomer open={true} closeDialog={handleClose} /> : ""}
           </div>
-          <MainFooter />
         </Box>
       </Box >
     </>
   );
 }
+
+

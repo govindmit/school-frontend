@@ -24,6 +24,7 @@ import { useRouter } from "next/router";
 import { api_url, auth_token } from "../../api/hello";
 import EditCustomer from "../editcustomer";
 import MainFooter from "../../commoncmp/mainfooter";
+import moment from "moment";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -65,6 +66,7 @@ export default function ViewCustomer() {
   const [creditball, setcreditball] = React.useState(0);
   const [totalinv, settotalinv] = React.useState(2);
   const [btnahow, setbtnahow] = React.useState(false);
+  const [useraddr, setuseraddr] = React.useState<any>([]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -83,6 +85,8 @@ export default function ViewCustomer() {
       });
       const res = await response.json();
       setUserDet(res.data[0]);
+      const addr = JSON.parse(res.data[0]?.address);
+      setuseraddr(addr);
     } catch (error) {
       console.log("error", error);
     }
@@ -273,7 +277,7 @@ export default function ViewCustomer() {
                     <Stack style={{ padding: "8px" }} className="text-grey">
                       <Typography>Address:</Typography>
                       <span>
-                        1234 EZ St City, State 00000-000 United States
+                        {useraddr?.add1 + " , " + useraddr?.city + " , " + useraddr?.state + " , " + useraddr?.postalcode}
                       </span>
                     </Stack>
                     <Stack
@@ -300,7 +304,7 @@ export default function ViewCustomer() {
                       </Stack>
                     </Stack>
                     <Stack style={{ padding: "8px" }}>
-                      <Typography>Cretaed: Jan 10, 2023</Typography>
+                      <Typography>Cretaed :  {userDet && moment(userDet?.createdAt).format("DD/MM/YYYY")}</Typography>
                     </Stack>
                   </CardContent>
                 </Card>
