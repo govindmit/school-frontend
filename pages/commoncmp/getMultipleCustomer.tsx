@@ -3,11 +3,11 @@ import React, { useEffect, useState } from "react";
 
 import { api_url, auth_token } from "../api/hello";
 
-export default function AddCustomer({ Data, PId, pname }: { Data: any, PId: any, pname: any }) {
+export default function AddCustomer({ Data, pemail, pname }: { Data: any, pemail: any, pname: any }) {
   const [users, setUsers] = useState<any>([]);
   const [opens, setOpens] = React.useState(false);
   const [inputValue, setInputValue] = useState([]);
-  const [value, setValue] = useState<any>([{ id: PId, title: pname }]);
+  const [value, setValue] = useState<any>([{ email1: pemail, name: pname }]);
 
   useEffect(() => {
     getUser();
@@ -29,12 +29,12 @@ export default function AddCustomer({ Data, PId, pname }: { Data: any, PId: any,
     }
   };
 
-  const option: { id: number; title: string }[] = [];
+  const option: { email1: string; name: string }[] = [];
   users &&
     users.map((data: any, key: any) => {
       return option.push({
-        id: data.id,
-        title: data.name,
+        email1: data.email1,
+        name: data.name,
       });
     });
 
@@ -43,19 +43,15 @@ export default function AddCustomer({ Data, PId, pname }: { Data: any, PId: any,
        <Autocomplete
         size="small"
         value={value}
-        // inputValue={inputValue}
+        multiple
         onChange={(event, newValue) => {
             setValue(newValue);
             Data(newValue);
         }}
-        // onInputChange={(event, newInputValue) => {
-            //   setInputValue(newInputValue);
-            // }}
             options={option}
-            getOptionLabel={(option) => option.title || ""}
-            isOptionEqualToValue={(option, title) => option.title === value.title}
+            getOptionLabel={(option) => option.name || ""}
+            isOptionEqualToValue={(option, name) => option.name === value.name}
             freeSolo
-            multiple
             renderInput={(params) => (
                 <TextField
                 {...params}

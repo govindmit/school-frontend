@@ -46,19 +46,13 @@ import "react-datepicker/dist/react-datepicker.css";
 import moment from "moment";
 import dynamic from "next/dynamic";
 import AddCustomerName from "../commoncmp/getMultipleCustomer";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import MainFooter from "../commoncmp/mainfooter";
 
 const QuillNoSSRWrapper = dynamic(import("react-quill"), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
 });
-
-const style = {
-  color: "red",
-  fontSize: "12px",
-  fontWeight: "bold",
-};
 
 //dialog box
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({}));
@@ -117,6 +111,7 @@ type FormValues = {
   agegroup: number;
   status1: statusEnum;
   customertype: number;
+  subject:string;
 };
 const modules = {
   toolbar: [
@@ -163,18 +158,21 @@ export default function Composer() {
   const [btnDisabled, setBtnDisabled] = useState(false);
   const [type1, setType1] = useState<FormValues | any>("");
   const [name1, setName1] = useState<FormValues | any>("");
-  const [price1, setPrice1] = useState<FormValues | any>("");
+  const [ageGroup, setAgeGroup] = useState<FormValues | any>([]);
   const [typeError, setTypeError] = useState<FormValues | any>("");
   const [customerId, setCustomerId] = React.useState<any>([]);
-  const [endDateError, setEndDateError] = useState(false);
-  const [parentid, setparentid] = React.useState(0);
+  const [parentid, setparentid] = React.useState("");
   const [custtype, setcusttype] = React.useState<any>([]);
   const [parentname, setparentname] = React.useState<any>([]);
   const [customerError, setCustomerError] = React.useState<any>([]);
-  // const [errorMessage, setErrorMessage] = useState("");
+  const [subjectError, setSubjectError] = useState("");
+  const [messageError, setMessageError] = useState("");
   const [descontent, setDesContent] = useState("");
+  const [anyFieldError, setAnyFieldError] = useState("");
   const [subject, setSubject] = useState("");
+  const [typeData, setTypeData] = React.useState<any>([]);
 
+  let allData: any = [];
 
   React.useEffect(() => {
     getType();
@@ -211,72 +209,137 @@ export default function Composer() {
     }
   };
 
+  
+  
+  const setTypeId = async (id: any) => {
+    if (id !== null) {
+      const reqData = {
+        typeId: id,
+      };
+      await axios({
+        method: "POST",
+        url: `${api_url}/getuser`,
+        data: reqData,
+        headers: {
+          Authorization: auth_token,
+        },
+      })
+        .then((res: any) => {
+          if (res.status === 200) {
+            setTypeData(res?.data?.data);
+          }
+        })
+        .catch((error: any) => {
+          console.log(error);
+        });
+    }
+  };
+
+  const setAgegroupId = async (id: any) => {
+    if (id !== null) {
+      const reqData = {
+        agegroup: id,
+      };
+      await axios({
+        method: "POST",
+        url: `${api_url}/getuser`,
+        data: reqData,
+        headers: {
+          Authorization: auth_token,
+        },
+      })
+        .then((res: any) => {
+          if (res.status === 200) {
+            setAgeGroup(res?.data?.data);
+          }
+        })
+        .catch((error: any) => {
+          console.log(error);
+        });
+    }
+  };
+
+  customerId &&
+    customerId?.map((ea: any) => {
+      if (!allData.includes(ea)) {
+        allData.push({
+          email1: ea.email1,
+          name: ea.name,
+        });
+      }
+    });
+
+  ageGroup &&
+    ageGroup?.map((ea: any) => {
+      if (!allData.includes(ea.email1)) {
+        allData.push({
+          email1: ea.email1,
+          name: ea.name,
+        });
+      }
+    });
+
+  typeData &&
+    typeData?.map((ea: any) => {
+      if (!allData.includes(ea.email1)) {
+        allData.push({
+          email1: ea.email1,
+          name: ea.name,
+        });
+      }
+    });
+
+  const filteredArr = allData.reduce((acc: any, current: any) => {
+    const x = acc.find((ea: any) => ea.name === current.name);
+    if (!x) {
+      return acc.concat([current]);
+    } else {
+      return acc;
+    }
+  }, []);
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    let iddc:any=[];
-    customerId?.map((ea:any)=>{
-      iddc.push(ea.id)
-    })
-    console.log(subject,"@#@$#@$#@#$#$",descontent,"$$$$$$$$",data,'@#############',iddc);
-    // if (startDate1 === null || endDate1 === null) {
-    //   setDateError(true);
-    //   setEndDateError(true);
-    // } else {
-    //    const sDate = moment(startDate1).format('YYYY.MM.DD');
-    //     const eDate = moment(endDate1).format('YYYY.MM.DD');
-    //   // const sDate = moment(startDate1).format("DD/MM/YYYY");
-    //   // const eDate = moment(endDate1).format("DD/MM/YYYY");
-    //   if (type1 === "") {
-    //     setTypeError("Type field is required!");
-    //   } else {
-    //     setTypeError("");
-    //   }
-    //   const reqData = {
-    //     name: name1,
-    //     type: type1,
-    //     startdate: sDate,
-    //     enddate: eDate,
-    //     status: data.status1,
-    //     price: price1 && price1 !== null ? price1 : "00",
-    //     shortDescription: content,
-    //     description: descontent,
-    //   };
+    if(subject === ""){
+      setSubjectError("Subject field is required *")
+    }
+    if(descontent === ""){
+      setMessageError("Message field is required *")
+    }
 
-    //   await axios({
-    //     method: "POST",
-    //     url: `${api_url}/addactivity`,
-    //     data: reqData,
-    //     headers: {
-    //       Authorization: auth_token,
-    //       "content-type": "multipart/form-data",
-    //     },
-    //   })
-    //     .then((data) => {
-    //       if (data.status === 201) {
-    //         toast.success("Activity Added Successfully !");
-    //         router.push("/admin/activitylist");
-    //       }
-    //     })
-    //     .catch((err) => {
-    //       router.push("/admin/activitylist");
-    //       toast.error(err?.response?.data?.message);
-    //     });
-    // }
+    const reqData = {
+      composer:filteredArr,
+      subject:subject,
+      descontent:descontent
+    };
+    if(subject === "" || descontent === "" ){
+      console.log('@@');
+    }else if(filteredArr?.length === 0){
+      setAnyFieldError("Please filled any one of fields");
+    }else{
+
+      await axios({
+        method: "POST",
+        url: `${api_url}/sendcomposer`,
+        data: reqData,
+        headers: {
+          Authorization: auth_token,
+        },
+    })
+      .then((res) => {
+        if (res.status === 200) {
+          toast.success("Mail sent successfully");
+        }
+      })
+      .catch((err) => {
+        console.log('@@@@@@@@@@@@@err',err);
+      });
+    }
   };
 
   const style = {
     color: "red",
     fontSize: "12px",
     fontWeight: "bold",
-  };
-
-  const handleType = (data: any) => {
-    if (data) {
-      setType1(data);
-      setTypeError("");
-    } else {
-      setTypeError("Type field is required");
-    }
   };
 
   return (
@@ -321,7 +384,6 @@ export default function Composer() {
                   COMPOSER
                 </Typography>
               </Stack>
-              
             </Stack>
             <Card
               style={{
@@ -334,26 +396,16 @@ export default function Composer() {
             >
               <form onSubmit={handleSubmit(onSubmit)}>
                 <Grid>
-                    {/* <div style={{display:"flex"}} className="gridview"> */}
-                <Stack style={{ marginTop: "5px" }}>
+                  <Stack style={{ marginTop: "5px" }}>
                     <Grid container spacing={2}>
                       <Grid item xs={4} md={4}>
                         <Stack spacing={1}>
                           <InputLabel htmlFor="name">Customer Name</InputLabel>
                           <AddCustomerName
                             Data={Getdata}
-                            PId={parentid}
+                            pemail={parentid}
                             pname={parentname}
                           />
-                          {/* {customerId !== "" && customerError ? (
-                            <span style={style}></span>
-                          ) : (
-                            customerError && (
-                              <span style={style}>
-                                Customer field is Required *
-                              </span>
-                            )
-                          )} */}
                         </Stack>
                       </Grid>
                     </Grid>
@@ -363,64 +415,65 @@ export default function Composer() {
                     <Grid container spacing={2}>
                       <Grid item xs={4} md={4}>
                         <Stack spacing={1}>
-                        <InputLabel htmlFor="name">as Type</InputLabel>
-                        <FormControl fullWidth>
-                          <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            size="small"
-                            defaultValue={0}
-                            {...register("customertype")}
-                          >
-                            <MenuItem value={0}>Individual</MenuItem>
-                            {custtype &&
-                              custtype.map((data: any, key: any) => {
-                                return (
-                                  <MenuItem key={key} value={data.id}>
-                                    {data.name}
-                                  </MenuItem>
-                                );
-                              })}
-                          </Select>
-                        </FormControl>
+                          <InputLabel htmlFor="name">as Type</InputLabel>
+                          <FormControl fullWidth>
+                            <Select
+                              labelId="demo-simple-select-label"
+                              id="demo-simple-select"
+                              size="small"
+                              onChange={(e) => setTypeId(e?.target?.value)}
+                            >
+                              <MenuItem value={0}>Individual</MenuItem>
+                              {custtype &&
+                                custtype.map((data: any, key: any) => {
+                                  return (
+                                    <MenuItem key={key} value={data.id}>
+                                      {data.name}
+                                    </MenuItem>
+                                  );
+                                })}
+                            </Select>
+                          </FormControl>
                         </Stack>
                       </Grid>
                     </Grid>
                   </Stack>
                   <p>or</p>
                   <Stack style={{ marginTop: "5px" }}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={4} md={4}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="name">Age Group</InputLabel>
-                        <FormControl fullWidth>
-                          <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            defaultValue={1}
-                            size="small"
-                            {...register("agegroup")}
-                          >
-                            <MenuItem value={1}>FS1</MenuItem>
-                            <MenuItem value={2}>FS2</MenuItem>
-                            <MenuItem value={3}>FS3</MenuItem>
-                            <MenuItem value={4}>FS4</MenuItem>
-                            <MenuItem value={5}>FS5</MenuItem>
-                            <MenuItem value={6}>FS6</MenuItem>
-                            <MenuItem value={7}>FS7</MenuItem>
-                            <MenuItem value={8}>FS8</MenuItem>
-                            <MenuItem value={9}>FS9</MenuItem>
-                            <MenuItem value={10}>FS10</MenuItem>
-                            <MenuItem value={11}>FS11</MenuItem>
-                            <MenuItem value={12}>FS12</MenuItem>
-                            <MenuItem value={13}>FS13</MenuItem>
-                          </Select>
-                        </FormControl>
-                      </Stack>
+                    <Grid container spacing={2}>
+                      <Grid item xs={4} md={4}>
+                        <Stack spacing={1}>
+                          <InputLabel htmlFor="name">Age Group</InputLabel>
+                          <FormControl fullWidth>
+                            <Select
+                              labelId="demo-simple-select-label"
+                              id="demo-simple-select"
+                              size="small"
+                              onChange={(e) => setAgegroupId(e?.target?.value)}
+                            >
+                              <MenuItem value={1}>FS1</MenuItem>
+                              <MenuItem value={2}>FS2</MenuItem>
+                              <MenuItem value={3}>FS3</MenuItem>
+                              <MenuItem value={4}>FS4</MenuItem>
+                              <MenuItem value={5}>FS5</MenuItem>
+                              <MenuItem value={6}>FS6</MenuItem>
+                              <MenuItem value={7}>FS7</MenuItem>
+                              <MenuItem value={8}>FS8</MenuItem>
+                              <MenuItem value={9}>FS9</MenuItem>
+                              <MenuItem value={10}>FS10</MenuItem>
+                              <MenuItem value={11}>FS11</MenuItem>
+                              <MenuItem value={12}>FS12</MenuItem>
+                              <MenuItem value={13}>FS13</MenuItem>
+                            </Select>
+                          </FormControl>
+                        </Stack>
+                      </Grid>
                     </Grid>
-                  </Grid>
-                </Stack>
-                  {/* </div> */}
+                  </Stack>
+                  {anyFieldError &&  <span style={style}>
+                                 Please select any fields *
+                            </span>}
+                 
                   <Stack style={{ marginTop: "20px" }}>
                     <Grid container spacing={2}>
                       <Grid item xs={12} md={12}>
@@ -433,13 +486,16 @@ export default function Composer() {
                             id="subject"
                             fullWidth
                             size="small"
-                            onChange={(e)=>setSubject(e?.target?.value)}
+                            onChange={(e) => setSubject(e?.target?.value)}
                           />
+                          {subjectError && subject === "" ? <span style={style}>
+                                 Subject field is Required *
+                            </span>:""}
                         </Stack>
                       </Grid>
-                      </Grid>
-                    </Stack>
-                    <Stack style={{ marginTop: "20px" }}>
+                    </Grid>
+                  </Stack>
+                  <Stack style={{ marginTop: "20px" }}>
                     <Grid container spacing={2}>
                       <Grid item xs={12} md={12}>
                         <Stack spacing={1}>
@@ -452,6 +508,9 @@ export default function Composer() {
                             theme="snow"
                             onChange={setDesContent}
                           />
+                          {messageError && descontent === "" || descontent === "<p><br></p>" ? <span style={style}>
+                                 Message field is Required *
+                            </span>:""}
                         </Stack>
                       </Grid>
                     </Grid>
@@ -470,7 +529,7 @@ export default function Composer() {
               </form>
             </Card>
           </div>
-          <MainFooter/>
+          <MainFooter />
         </Box>
       </Box>
     </>
