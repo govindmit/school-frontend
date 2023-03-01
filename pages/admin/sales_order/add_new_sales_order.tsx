@@ -274,7 +274,7 @@ export default function AddSalesOrder({
                   idForPayment: data?.data?.sageIntacctorderID,
                   creditNotesId: creditNoteId,
                 };
-                transactionSave(reqData1);
+                // transactionSave(reqData1);
                 setshowspinner(false);
                 setBtnDisabled(false);
                 toast.success("Sales Order Create Successfully !");
@@ -318,7 +318,7 @@ export default function AddSalesOrder({
                   idForPayment: data?.data?.sageIntacctorderID,
                   creditNotesId: creditNoteId,
                 };
-                transactionSave(reqData1);
+                // transactionSave(reqData1);
                 setshowspinner(false);
                 setBtnDisabled(false);
                 toast.success("Sales Order Create Successfully !");
@@ -374,7 +374,7 @@ export default function AddSalesOrder({
                 idForPayment: data?.data?.sageIntacctorderID,
                 creditNotesId: null,
               };
-              transactionSave(reqData1);
+              // transactionSave(reqData1);
               setshowspinner(false);
               setBtnDisabled(false);
               toast.success("Sales Order Create Successfully !");
@@ -454,6 +454,7 @@ export default function AddSalesOrder({
 
      if(paymentPayMethod === "Amex" && Check === true && orderamount === 0){
       try{
+       
         const rendomTransactionId = keyGen(5);
         let reqData = {
           totalAmount: price,
@@ -464,8 +465,8 @@ export default function AddSalesOrder({
           idForPayment: sageintacctorderID,
           creditNotesId:creditNoteId
         };
-        console.log("req Data =>",reqData);
-        transactionSave(reqData);
+         transactionSave(reqData);
+       
       }catch(error:any){
         console.log("Error ",error.message);
       }

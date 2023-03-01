@@ -23,12 +23,14 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import commmonfunctions from "../../commonFunctions/commmonfunctions";
 import { useRouter } from "next/router";
 import MainFooter from "../commoncmp/mainfooter";
+import moment from "moment";
 const DynamicComponentWithNoSSR = dynamic(() => import("../chart"), {
   ssr: false,
 });
 
 export default function Dashboard(this: any) {
   const router = useRouter();
+  const [dashboardData,setDashBoardData]=React.useState<any>('');
   React.useEffect(() => {
     const logintoken = localStorage.getItem("QIS_loginToken");
     if (logintoken === undefined || logintoken === null) {
@@ -51,9 +53,28 @@ export default function Dashboard(this: any) {
           }
         })
       }
-    })
+    });
+    getDashboardData();
   }, []);
 
+  const getDashboardData = async ()=>{
+    try{
+      const dashBoardDataResponse = await commmonfunctions.CallculateDashBoardData();
+      console.log("dashBoardData =>",dashBoardDataResponse);
+      setDashBoardData(dashBoardDataResponse)
+    }catch(error:any){
+      console.log("error => ",error.message);
+    }
+  }
+const sendViewAllCustomer = ()=>{
+  router.push("/customer/customerslist");
+}
+const sendViewCreditNote = ()=>{
+  router.push("/admin/creditnotes/creditnoteslist");
+}
+const viewCreditNoteById = (id:any)=>{
+  router.push(`/admin/creditnotes/viewcreditnotes/${id}`);
+}
   const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
     ...theme.typography.body2,
@@ -103,7 +124,7 @@ export default function Dashboard(this: any) {
                         <div>
                           <div className="dmain">
                             <div>
-                              <h1 className="dhead">157</h1>
+                              <h1 className="dhead">{dashboardData?.totalCustomer}</h1>
                             </div>
                             <div className="svg">
                               <PeopleAltIcon
@@ -132,7 +153,7 @@ export default function Dashboard(this: any) {
                       <Item className="dashboard-box">
                         <div>
                           <div className="dmain">
-                            <h1 className="dhead">$1300</h1>
+                            <h1 className="dhead">${dashboardData?.totalEarning}</h1>
                             <AttachMoneyIcon
                               className="dimg"
                               color="primary"
@@ -152,7 +173,7 @@ export default function Dashboard(this: any) {
                         <div>
                           <div className="dmain">
                             <div>
-                              <h1 className="dhead">$1021</h1>
+                              <h1 className="dhead">${dashboardData?.totalCredit}</h1>
                             </div>
                             <div className="svg3">
                               <AttachMoneyIcon
@@ -175,14 +196,14 @@ export default function Dashboard(this: any) {
                         <div className="amo">
                           <div className="dmain">
                             <div className="jk">
-                              <h1 className="dheads">15</h1>
+                              <h1 className="dheads">{dashboardData?.pendingInvoice}</h1>
                               <span className="pend">PENDING INVOICES</span>
                             </div>
                           </div>
 
                           <div className="Dtotals">
                             <div>
-                              <span className="dh2">$2024</span>
+                              <span className="dh2">${dashboardData?.pendingInvoiceAmount}</span>
                             </div>
 
                             <div>
@@ -214,6 +235,9 @@ export default function Dashboard(this: any) {
                                 <div className="Dcredit">
                                   <h3 className="lcr">Latest Credit Report</h3>
                                 </div>
+                                <Button className="dview" variant="text" onClick={()=>{sendViewCreditNote()}}>
+                            View All
+                          </Button>
                                 <Container>
                                   <Card className="box-show-no border-round">
                                     <TableContainer sx={{ minWidth: 800 }}>
@@ -230,7 +254,59 @@ export default function Dashboard(this: any) {
                                             <TableCell>BALANCE</TableCell>
                                           </TableRow>
                                         </TableHead>
-                                        <TableBody>
+                                        {dashboardData && dashboardData?.creditRequestData.map((creditRequest:any)=>{
+                                          const date = creditRequest?.createdAt;
+                                          const dateprint = date?.split(" ")[0]
+                                          return(
+                                            <TableBody>
+                                            <TableRow
+                                              hover
+                                              tabIndex={-1}
+                                              role="checkbox"
+                                            >
+                                              <TableCell padding="checkbox">
+                                                <Checkbox />
+                                              </TableCell>
+                                              <TableCell
+                                                component="th"
+                                                scope="row"
+                                                padding="none"
+                                              >
+                                                <TableCell style={{cursor:'pointer',color:'blue'}} align="left" onClick={()=>{viewCreditNoteById(creditRequest?.creditRequestId)}}>
+                                                  CRD-{creditRequest?.creditRequestId
+}
+                                                </TableCell>
+                                              </TableCell>
+                                              <TableCell
+                                                className="dname"
+                                                align="left"
+                                              >
+                                                {creditRequest?.name}
+                                              </TableCell>
+                                              <TableCell
+                                                className="demail"
+                                                align="left"
+                                              >
+                                              {moment(dateprint, "YYYY/MM/DD").format("ll")}
+                                             
+                                              </TableCell>
+  
+                                              <TableCell
+                                                className="active"
+                                                align="left"
+                                              >
+                                                ${creditRequest?.requestedAmount}
+                                              </TableCell>
+  
+                                              <TableCell align="left">
+                                              ${creditRequest?.creditAmount}
+                                              </TableCell>
+                                            </TableRow>
+                                          </TableBody>
+                                          )
+                                        })}
+                                       
+                                        {/* <TableBody>
                                           <TableRow
                                             hover
                                             tabIndex={-1}
@@ -530,7 +606,7 @@ export default function Dashboard(this: any) {
                                               $500
                                             </TableCell>
                                           </TableRow>
-                                        </TableBody>
+                                        </TableBody> */}
                                       </Table>
                                     </TableContainer>
                                   </Card>
@@ -545,12 +621,38 @@ export default function Dashboard(this: any) {
                       <Item className="box-shadow padding-le-ri-zero">
                         <div className="Dcredit">
                           <h3 className="lcr">Latest Users</h3>
-                          <Button className="dview" variant="text">
+                          <Button className="dview" variant="text" onClick={()=>{sendViewAllCustomer()}}>
                             View All
                           </Button>
                         </div>
                         <div className="padding-22">
-                          <div className="Ddiv1">
+                        {dashboardData && dashboardData?.leatestCustomer.map((customer:any)=>{
+                                          return(
+                                            <div className="Ddiv1">
+                                            <div id="dimage">
+                                              <Avatar
+                                                alt="Remy Sharp"
+                                                src="/image.png"
+                                                sx={{ width: 50, height: 50 }}
+                                              />
+                                            </div>
+                
+                                            <div id="dinfo">
+                                              <div className="diinfo">
+                                                <span className="dname">{customer?.name}</span>{" "}
+                                                <span className="email">
+                                                  {customer?.email1}
+                                                </span>
+                                              </div>
+                                            </div>
+                
+                                            <div id="dstatus">
+                                              <span className="dactive" style={{color:customer?.status === 0 ? "rgb(2 197 9)":"red"}}>{customer?.status === 0 ? "Active" : "InActive"}</span>
+                                            </div>
+                                          </div>
+                                          )
+                                        })}
+                          {/* <div className="Ddiv1">
                             <div id="dimage">
                               <Avatar
                                 alt="Remy Sharp"
@@ -703,7 +805,7 @@ export default function Dashboard(this: any) {
                             <div id="dstatus">
                               <span className="dactive">Active</span>
                             </div>
-                          </div>
+                          </div> */}
                         </div>
                       </Item>
                     </Grid>

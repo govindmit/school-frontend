@@ -521,7 +521,7 @@ export default function Guardians() {
         amountMode: 0,
       };
       console.log("reqData =>", reqData);
-      insertRemainingNotesAmount(reqData);
+      // insertRemainingNotesAmount(reqData);
     }
     getUser();
   }, [router.query]);
@@ -529,22 +529,22 @@ export default function Guardians() {
     const data = { orderId: amexOrderId }
     var apiRequest = data;
     var requestUrl = await getwayService.getRequestUrl("REST", apiRequest);
-    getwayService.retriveOrder(requestUrl, function (orderresult: any) {
-      console.log("order result =>", orderresult);
-      if (orderresult.status === 200) {
+    getwayService.retriveOrder( requestUrl,async function (orderresult:any) {
+      console.log("order result =>",orderresult);
+      if(orderresult.status === 200){
         const amextransactionData = orderresult.data
         const transactionData = {
-          idForPayment: amexOrderId,
-          totalAmount: amextransactionData?.transaction[0].transaction.amount,
-          paidAmount: amextransactionData?.transaction[0].transaction.amount,
-          paymentMethod: paymentMethod,
-          amexorderId: amexOrderId,
-          transactionId: amextransactionData?.transaction[0].transaction.id,
-          creditNotesId: creditRequestId
+          idForPayment:amexOrderId,
+          totalAmount:amextransactionData?.transaction[0].transaction.amount,
+          paidAmount:amextransactionData?.transaction[0].transaction.amount,
+          paymentMethod:paymentMethod,
+          amexorderId:amexOrderId,
+          transactionId:amextransactionData?.transaction[0].transaction.id,
+          creditNotesId :creditRequestId ? creditRequestId : null
         }
-        console.log("transactionData", transactionData);
-        transactionSaveInDB(transactionData);
-        updateInvoiceAfterPay(amexOrderId)
+        console.log("transactionData",transactionData);
+         await transactionSaveInDB(transactionData);
+        //  await updateInvoiceAfterPay(amexOrderId)
       }
 
     });
@@ -612,82 +612,76 @@ export default function Guardians() {
             });
             await Checkout.showPaymentPage();
           }
-
         })
-
       }
     }
-
-    if (paymentMethod === "Amex" || paymentMethod === "Cash" && isChecked === true && finalAmountToPay === 0) {
-      try {
-
-        const dataforRemaingAmount: any = {
+    if(paymentMethod === "Cash"){
+      try{
+  
+        const dataforRemaingAmount :any= {
           customerId: customerID,
-          Amount: applyCreditNoteAmount,
-          amountMode: 0,
-        }
-
+           Amount: applyCreditNoteAmount,
+           amountMode: 0,
+       }
+      
         const rendomTransactionId = keyGen(5);
+        let amount = finalAmountToPay > 0 ? finalAmountToPay :InvoiceAmount
         let reqData = {
-          totalAmount: InvoiceAmount,
-          paidAmount: InvoiceAmount,
+          totalAmount: amount,
+          paidAmount: amount,
           transactionId: `case-${rendomTransactionId} `,
           amexorderId: orderId,
           paymentMethod: "Cash",
           idForPayment: orderId,
-          creditNotesId: customerCreditNoteRequestId
+          creditNotesId:customerCreditNoteRequestId
         };
-        transactionSaveInDB(reqData);
-        insertRemainingNotesAmount(dataforRemaingAmount);
-        updateInvoiceAfterPay(id)
+        
+       await transactionSaveInDB(reqData);
+       await insertRemainingNotesAmount(dataforRemaingAmount);
+       await updateInvoiceAfterPay(id)
         handleCloses();
-      } catch (error: any) {
-        console.log("Error ", error.message);
+      }catch(error:any){
+        console.log("Error ",error.message);
       }
-    }
-
-    if (paymentMethod === "Cash" && finalAmountToPay > 0) {
-      try {
-        const dataforRemaingAmount: any = {
-          customerId: customerID,
-          Amount: applyCreditNoteAmount,
-          amountMode: 0,
+     }
+     if(paymentMethod === "Amex"  && finalAmountToPay === 0){
+        
+      try{
+        const dataforRemaingAmount :any= {
+            customerId: customerID,
+            Amount: applyCreditNoteAmount,
+            amountMode: 0,
         }
-
-        const rendomTransactionId = keyGen(5);
-        let reqData = {
-          totalAmount: finalAmountToPay,
-          paidAmount: finalAmountToPay,
-          transactionId: `case-${rendomTransactionId} `,
-          amexorderId: orderId,
-          paymentMethod: "Cash",
-          idForPayment: orderId,
-          creditNotesId: customerCreditNoteRequestId
-        };
-
-
-        transactionSaveInDB(reqData);
-        insertRemainingNotesAmount(dataforRemaingAmount);
-        updateInvoiceAfterPay(id)
-        handleCloses();
-      } catch (error: any) {
-        console.log("Error ", error.message);
+      
+          const rendomTransactionId = keyGen(5);
+          let reqData = {
+            totalAmount: finalAmountToPay,
+            paidAmount: finalAmountToPay,
+            transactionId: `case-${rendomTransactionId} `,
+            amexorderId: orderId,
+            paymentMethod: "Cash",
+            idForPayment: orderId,
+            creditNotesId:customerCreditNoteRequestId
+          };
+        
+         
+          await transactionSaveInDB(reqData);
+          await insertRemainingNotesAmount(dataforRemaingAmount);
+          await updateInvoiceAfterPay(id)
+          handleCloses();
+        }catch(error:any){
+          console.log("Error ",error.message);
+        }
       }
-    }
-
-    if (paymentMethod === "QPay") {
-      toast.info(`As of Now This payment method is not supported ${paymentMethod} !`);
-    }
-
-    if (paymentMethod === "CBQ") {
-      toast.info(`As of Now This payment method is not supported ${paymentMethod} !`);
-    }
+      if(paymentMethod === "QPay"){
+        toast.info(`As of Now This payment method is not supported ${paymentMethod} !`);
+      }
 
       if(paymentMethod === "CBQ"){
         toast.info(`As of Now This payment method is not supported ${paymentMethod} !`);
       }
 
-  };
+  }
 
   const updateInvoiceAfterPay = async (invoiceId: any) => {
     try {
@@ -827,10 +821,9 @@ export default function Guardians() {
       .catch((err) => { });
   };
 
-  function handlerowchange(e: any) {
+  const handlerowchange = (e: any) =>{
     set_row_per_page(e.target.value);
   }
-
   const PER_PAGE = row_per_page;
   const count = Math.ceil(user.length / PER_PAGE);
   const DATA = usePagination(user, PER_PAGE);
