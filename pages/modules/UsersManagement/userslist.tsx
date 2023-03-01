@@ -115,9 +115,9 @@ export default function UsersList() {
                 },
             });
             const res = await response.json();
-            setUsers(res.data.filter((dt: any) => dt.roleId !== 1));
-            setsearchdata(res.data.filter((dt: any) => dt.roleId !== 1));
-            setAll(res.data.filter((dt: any) => dt.roleId !== 1).length);
+            setUsers(res.data.filter((dt: any) => dt.roleId !== 1 && dt.roleId !== 2));
+            setsearchdata(res.data.filter((dt: any) => dt.roleId !== 1 && dt.roleId !== 2));
+            setAll(res.data.filter((dt: any) => dt.roleId !== 1 && dt.roleId !== 2).length);
         } catch (error) {
             console.log("error", error);
         }

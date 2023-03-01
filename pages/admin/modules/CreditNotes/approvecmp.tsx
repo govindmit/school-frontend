@@ -13,6 +13,8 @@ import * as React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { api_url, auth_token } from "../../../api/hello";
 import { ToastContainer, toast } from "react-toastify";
+import { useRouter } from "next/router";
+
 
 type FormValues = {
   message: string;
@@ -41,6 +43,7 @@ export default function ApproveCompForm({
   custId: any;
   creditReqId: any;
 }) {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -71,6 +74,7 @@ export default function ApproveCompForm({
           toast.success("Credit Notes Updated Successfully !");
           reset();
           closeDialogs();
+          router.push("/admin/creditnotes/creditnoteslist");
         }
       })
       .catch((error) => {
@@ -118,12 +122,13 @@ export default function ApproveCompForm({
                     )}
                   </Stack>
                 </Grid>
-                <Grid item xs={12} md={12}>
+                <Grid item xs={12} md={12} className="delete-popup">
                   <Stack spacing={1}>
                     <InputLabel htmlFor="name">
                       Your comments on this request{" "}
                     </InputLabel>
                     <OutlinedInput
+                      className="comment"
                       type="text"
                       id="name"
                       fullWidth
