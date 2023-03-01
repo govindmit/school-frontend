@@ -37,7 +37,7 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import Chip from "@mui/material/Chip";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
-import { api_url, base_url } from "../api/hello";
+import { api_url, base_url, auth_token } from "../api/hello";
 import moment from "moment";
 import Image from "next/image";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -62,7 +62,7 @@ import autoTable from "jspdf-autotable";
 
 import Alert from '@mui/material/Alert';
 import Script from "next/script";
-import getwayService from "../services/gatewayService"
+import getwayService from "../../services/gatewayService"
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -74,7 +74,7 @@ import {
 import Paper from "@mui/material/Paper";
 import { number } from "yup/lib/locale";
 import { useRouter } from "next/router";
-import commmonfunctions from "../commonFunctions/commmonfunctions";
+import commmonfunctions from "../../commonFunctions/commmonfunctions";
 import MainFooter from "../commoncmp/mainfooter";
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -187,10 +187,18 @@ export default function Guardians() {
   const router = useRouter();
 
   const [orderId, setorderId] = useState('');
-  const [amount, setAmount] = useState(0);
+  const [InvoiceAmount, setInvoiceAmount] = useState(0);
   const [invoiceStatus, setInvoiceStatus] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
+
+  const [customerTotalCreditNoteBalance, setCustomerTotalCreditNoteBalance] = useState(0);
+  const [customerCreditNoteRequestId, setCustomerCreditNoteRequestId] = useState(null);
+  const [applyCreditNoteAmount, setApplyCreditNoteAmount] = useState(0);
+  const [finalAmountToPay, setFinalAmountToPay] = useState(0);
+  const [isChecked, setIsChecked] = useState(false);
+  const [customerID, setCustomerId] = useState(null);
+  const [customerCreditNoteRemaingAmount, setCustomerCreditNoteRemaingAmount] = useState(0);
   var Checkout: any
 
   // verify user login and previlegs
@@ -227,9 +235,51 @@ export default function Guardians() {
       setDollerOpen(true);
     }
     setorderId(item.invoiceId);
-    setAmount(item.amount);
+    setInvoiceAmount(item.amount);
     setInvoiceStatus(item.status);
+    setFinalAmountToPay(item.amount);
+    setCustomerId(item.customerId);
+    getCustomerNotes(item.customerId);
   };
+
+  const getCustomerNotes = async (id: any) => {
+    try {
+      const response = await fetch(`${api_url}/creditballance/${id}`, {
+        method: "GET",
+        headers: {
+          Authorization: auth_token,
+        },
+      });
+      const res = await response.json();
+      console.log("CreditRequestId =>", res);
+      setCustomerCreditNoteRequestId(res?.CreditRequestId)
+      setCustomerTotalCreditNoteBalance(res?.creditBal);
+
+    } catch (error: any) {
+      console.log("error", error.message);
+    }
+  };
+
+
+  const handleCheckBoxClick = async (e: any) => {
+    console.log("event =>", e.target.checked);
+    setIsChecked(e.target.checked);
+    if (e.target.checked === true) {
+      let applyCreditNoteAmout = customerTotalCreditNoteBalance > InvoiceAmount ? InvoiceAmount : customerTotalCreditNoteBalance;
+      let creditNoteRemaingAmount = customerTotalCreditNoteBalance > InvoiceAmount ? customerTotalCreditNoteBalance - InvoiceAmount : 0;
+      setApplyCreditNoteAmount(applyCreditNoteAmout);
+      let actualPay = customerTotalCreditNoteBalance > InvoiceAmount ? 0 : InvoiceAmount - customerTotalCreditNoteBalance;
+      setFinalAmountToPay(actualPay)
+
+      console.log("creditNoteRemaingAmount =>", creditNoteRemaingAmount);
+      setCustomerCreditNoteRemaingAmount(creditNoteRemaingAmount);
+    } else {
+      setApplyCreditNoteAmount(0);
+      setFinalAmountToPay(InvoiceAmount);
+      setCustomerCreditNoteRequestId(null);
+    }
+  }
+
   const handleCloses = () => {
     setDollerOpen(false);
   };
@@ -454,13 +504,25 @@ export default function Guardians() {
     let search = router.query;
     let amexOrderId = search.orderid;
     let paymentMethod = search.paymentMethod;
+    let creditRequestId = search.creditNoteId;
+    let customerid = search.customerID;
+    let remaingAmount = search.remaingAmount;
     if (paymentMethod && amexOrderId) {
       console.log("order created");
-      orderPlaced(amexOrderId, paymentMethod);
+      orderPlaced(amexOrderId, paymentMethod, creditRequestId);
+    }
+    if (creditRequestId) {
+      const reqData: any = {
+        customerId: customerid,
+        Amount: remaingAmount,
+        amountMode: 0,
+      };
+      console.log("reqData =>", reqData);
+      insertRemainingNotesAmount(reqData);
     }
     getUser();
   }, [router.query]);
-  const orderPlaced = async (amexOrderId: any, paymentMethod: any) => {
+  const orderPlaced = async (amexOrderId: any, paymentMethod: any, creditRequestId: any) => {
     const data = { orderId: amexOrderId }
     var apiRequest = data;
     var requestUrl = await getwayService.getRequestUrl("REST", apiRequest);
@@ -474,7 +536,8 @@ export default function Guardians() {
           paidAmount: amextransactionData?.transaction[0].transaction.amount,
           paymentMethod: paymentMethod,
           amexorderId: amexOrderId,
-          transactionId: amextransactionData?.transaction[0].transaction.id
+          transactionId: amextransactionData?.transaction[0].transaction.id,
+          creditNotesId: creditRequestId
         }
         console.log("transactionData", transactionData);
         transactionSaveInDB(transactionData);
@@ -502,24 +565,26 @@ export default function Guardians() {
   const handleCreate = async (id: any) => {
     // console.log(process.env.NEXT_PUBLIC_REDIRECT_URL,"Checkout =>",(window as any).Checkout);
     const Checkout: any = (window as any).Checkout
-    if (paymentMethod === "Amex") {
-      if (amount === 0) {
+    const creditNotesId = isChecked ? customerCreditNoteRequestId : null
+    if (paymentMethod === "Amex" && finalAmountToPay > 0) {
+      if (finalAmountToPay === 0) {
         toast.error("amount will not be $0 for Amex payment method");
       } if (invoiceStatus === "draft") {
         toast.error("Invoice has status with Draft,Only Pending invoice Can Pay ");
       }
       else {
+        console.log(customerID, "customerId", applyCreditNoteAmount, "=======> ", creditNotesId);
         var requestData = {
           "apiOperation": "CREATE_CHECKOUT_SESSION",
           "order": {
             "id": orderId,
-            "amount": amount,
+            "amount": finalAmountToPay,
             "currency": "QAR",
             "description": "Orderd",
           },
           "interaction": {
             // "returnUrl":`${process.env.NEXT_PUBLIC_REDIRECT_URL}/?orderid=${orderId}&paymentMethod=${paymentMethod}`,
-            "returnUrl": `${process.env.NEXT_PUBLIC_AMEX_INVOICE_REDIRECT_URL}/?orderid=${orderId}&paymentMethod=${paymentMethod}`,
+            "returnUrl": `${process.env.NEXT_PUBLIC_AMEX_INVOICE_REDIRECT_URL}/?orderid=${orderId}&paymentMethod=${paymentMethod}&creditNoteId=${creditNotesId}&remaingAmount=${applyCreditNoteAmount}&customerID=${customerID}`,
             "cancelUrl": `${process.env.NEXT_PUBLIC_AMEX_INVOICE_CANCEL_URL}`,
             "operation": "PURCHASE",
             "merchant": {
@@ -591,6 +656,45 @@ export default function Guardians() {
 
 
   };
+
+  const keyGen = (keyLength: any) => {
+    var i,
+      key = "",
+      characters =
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    var charactersLength = characters.length;
+    for (i = 0; i < keyLength; i++) {
+      key += characters.substr(
+        Math.floor(Math.random() * charactersLength + 1),
+        1
+      );
+    }
+    return key;
+  };
+  const insertRemainingNotesAmount = async (reqData: any) => {
+    //  const reqData = {
+    //   customerId: customerId,
+    //   Amount: creditBalance,
+    //   amountMode: 0,
+    // };
+    await axios({
+      method: "PUT",
+      url: `${api_url}/insertAmount`,
+      data: reqData,
+      headers: {
+        Authorization: auth_token,
+      },
+    })
+      .then((data: any) => {
+        if (data) {
+          console.log("@@@@@@@@");
+        }
+      })
+      .catch((error) => {
+        console.log("error", error);
+      });
+  };
+
 
   const searchItems = (e: any) => {
     setsearchquery(e.target.value);
@@ -1479,7 +1583,7 @@ export default function Guardians() {
                         className="want"
                       />
                     </FormGroup> */}
-                    <div>
+                    {/* <div>
                       <h5 className="apply">Apply Payment</h5>
                     </div>
                     <div className="iadiv">
@@ -1489,12 +1593,46 @@ export default function Guardians() {
                     <div className="iadiv">
                       <div className="hh red">Total Credit Balance:</div>
                       <div>$0.00</div>
-                    </div>
+                    </div> */}
+                    <Stack style={{ marginTop: "20px" }}>
+                      <Grid container spacing={2}>
+                        <Grid item xs={12} md={12}>
+
+                          {customerTotalCreditNoteBalance != 0 && <>
+                            <Checkbox
+                              onChange={(e) => { handleCheckBoxClick(e) }}
+                              className="checkbox132"
+                            />
+                            Want to use credit balance :${customerTotalCreditNoteBalance}.00
+                          </>}
+
+                          <div>
+                            <h5 className="apply">Apply Payment</h5>
+                          </div>
+                          <Stack spacing={1}>
+                            <InputLabel htmlFor="name"></InputLabel>
+                            <p>Sales invoice amount : ${InvoiceAmount}.00 </p>
+                          </Stack>
+                          <Stack spacing={1} >
+                            <InputLabel htmlFor="name"></InputLabel>
+                            <div className="iadiv">
+                              <div className="hh red">Total Credit Balance:</div>
+                              <div> ${applyCreditNoteAmount}.00 </div>
+                            </div>
+                          </Stack>
+                          <Stack spacing={1}>
+                            <InputLabel htmlFor="name"></InputLabel>
+                            <p> Total amount :${finalAmountToPay}.00 </p>
+
+                          </Stack>
+                        </Grid>
+                      </Grid>
+                    </Stack>
                   </Grid>
-                  <div className="total-amount">
+                  {/* <div className="total-amount">
                     <div className="hh">Total Amount:</div>
                     <div>${recievedPay.amount}.00</div>
-                  </div>
+                  </div> */}
                 </DialogContent>
                 <DialogActions>
                   <Button

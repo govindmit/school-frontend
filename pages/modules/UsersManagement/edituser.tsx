@@ -25,7 +25,7 @@ import MiniDrawer from "../../sidebar";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import styled from "@emotion/styled";
-import UserService from './servives'
+import UserService from '../../../commonFunctions/servives'
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
 import { api_url, auth_token } from "../../api/hello";

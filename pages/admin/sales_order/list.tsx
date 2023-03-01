@@ -42,10 +42,10 @@ import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import ConfirmBox from "../../commoncmp/confirmbox";
-import commmonfunctions from "../../commonFunctions/commmonfunctions";
+import commmonfunctions from "../../../commonFunctions/commmonfunctions";
 import AddSalesOrder from "./add_new_sales_order";
 import MainFooter from "../../commoncmp/mainfooter";
-import getwayService from "../../services/gatewayService"
+import getwayService from "../../../services/gatewayService"
 import Alert from '@mui/material/Alert';
 function a11yProps(index: number) {
   return {
@@ -171,7 +171,6 @@ const [showSuccess,setShowSuccess] = React.useState(false);
 
 const transactionSaveInDB = async(data:any)=>{
 getwayService.transactionDataSaveInDB(data,function(result:any){
-  console.log("final result =>",result);
    setShowSuccess(true)
   setTimeout(callBack_func, 5000);
   function callBack_func() {
@@ -284,22 +283,29 @@ getwayService.transactionDataSaveInDB(data,function(result:any){
 
   const handleDelete = () => {
     setActiveTab("Delete");
-    setSalesOrder(deleteOrder);
-    setPage(1);
-    DATA.jump(1);
+    if(DATA?.currentPage === 1){
+          setSalesOrder(deleteOrder);
+          handlePageChange("",1)
+    }else{
+        setSalesOrder(deleteOrder);
+       handlePageChange("",1)
+    }
   };
   const handleAll = () => {
-    if (filterStatus !== "" && filterType !== "") {
+    if(DATA?.currentPage === 1){
       setSalesOrder(allListData);
-    } else {
-      fetchData();
+    }else{
+      handlePageChange("",1)
     }
+    // fetchData();
   };
   const handlePaid = () => {
     setActiveTab("Paid");
-    setSalesOrder(paidOrder);
-    setPage(1);
-    DATA.jump(1);
+    if(DATA?.currentPage === 1){
+      setSalesOrder(paidOrder);
+    }else{
+       handlePageChange("",1)
+    }
   };
 
   function handleNewSalesOrder() {

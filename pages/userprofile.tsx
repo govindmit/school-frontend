@@ -19,7 +19,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import router, { useRouter } from "next/router";
 import MiniDrawer from "./sidebar";
-import commmonfunctions from "./commonFunctions/commmonfunctions";
+import commmonfunctions from "../commonFunctions/commmonfunctions";
 import MainFooter from "./commoncmp/mainfooter";
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";

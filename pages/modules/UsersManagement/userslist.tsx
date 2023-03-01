@@ -34,7 +34,7 @@ import ConfirmBox from "../../commoncmp/confirmbox";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
-import commmonfunctions from "../../commonFunctions/commmonfunctions";
+import commmonfunctions from "../../../commonFunctions/commmonfunctions";
 import MainFooter from "../../commoncmp/mainfooter";
 
 function a11yProps(index: number) {
@@ -115,9 +115,9 @@ export default function UsersList() {
                 },
             });
             const res = await response.json();
-            setUsers(res.data.filter((dt: any) => dt.roleId !== 1));
-            setsearchdata(res.data.filter((dt: any) => dt.roleId !== 1));
-            setAll(res.data.filter((dt: any) => dt.roleId !== 1).length);
+            setUsers(res.data.filter((dt: any) => dt.roleId !== 1 && dt.roleId !== 2));
+            setsearchdata(res.data.filter((dt: any) => dt.roleId !== 1 && dt.roleId !== 2));
+            setAll(res.data.filter((dt: any) => dt.roleId !== 1 && dt.roleId !== 2).length);
         } catch (error) {
             console.log("error", error);
         }

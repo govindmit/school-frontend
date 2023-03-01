@@ -4,7 +4,8 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  pageExtensions: ["mdx", "md", "jsx", "js", "tsx", "services.ts","gatewayService.js","commonUtils.js","config.js"],
+  pageExtensions: ["ts","mdx", "md", "jsx", "js", "tsx"],
+  
 };
 
 module.exports = nextConfig;

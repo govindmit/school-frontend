@@ -32,9 +32,9 @@ import "react-toastify/dist/ReactToastify.css";
 import CloseIcon from "@mui/icons-material/Close";
 import moment from "moment";
 import styled from "@emotion/styled";
-// import commmonfunctions from "../commonFunctions/commmonfunctions";
+// import commmonfunctions from ".../commonFunctions/commmonfunctions";
 import Script from "next/script";
-import getwayService from "../../services/gatewayService"
+import getwayService from "../../../services/gatewayService"
 
 const style = {
   color: "red",
@@ -154,6 +154,7 @@ export default function AddSalesOrder({
 
   var Checkout :any 
   let creditBalance:any;
+
   const handlePaymentName = (data: any) => {
     const Checkout : any  =  (window as any).Checkout
     console.log("Checkout=>",Checkout);
@@ -207,10 +208,11 @@ export default function AddSalesOrder({
       });
       const res = await response.json();
       //  creditNoteId = res?.CreditRequestId
+      console.log("CreditRequestId =>",res?.CreditRequestId);
        setcreditNoteId(res?.CreditRequestId)
       setCreditAmount(res?.creditBal);
-    } catch (error) {
-      console.log("error", error);
+    } catch (error:any) {
+      console.log("error",error.message);
     }
   };
 
@@ -220,10 +222,11 @@ export default function AddSalesOrder({
     reset,
     formState: { errors },
   } = useForm<FormValues>();
+
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     const Checkout : any  =  (window as any).Checkout
     let sageintacctorderID : any = "";
-    console.log("price =>",price);
+   
     if (customerId !== "" && activityId !== "") {
       setshowspinner(true);
       setBtnDisabled(true);
@@ -237,40 +240,50 @@ export default function AddSalesOrder({
           transactionId: "Trh4354654457",
           orderId: 46,
           createdBy: customerId,
-          createdDate: todayDate,
-          paymentMethod: paymentPayMethod === "" ? "Cash" : paymentPayMethod,
+          // createdDate: todayDate,
+          // paymentMethod: paymentPayMethod === "" ? "Cash" : paymentPayMethod,
         };
         await axios({
-        method: "POST",
-        url: `${api_url}/addSalesOrders`,
-        data: reqData,
-        headers: {
-          Authorization: auth_token,
-        },
-      })
-        .then((data: any) => {
-          if (data) {
+          method: "POST",
+          url: `${api_url}/addSalesOrders`,
+          data: reqData,
+          headers: {
+            Authorization: auth_token,
+          },
+        })
+          .then(async (data: any) => {
+            if (data) {
               insertRemainingNotesAmount();
-            if(data.status === 200){
-              setorderId(data.data.sageIntacctorderID);
-              sageintacctorderID=data.data.sageIntacctorderID
-              // setAmount(creditBalance)
+              if(data.status === 200){
+                setorderId(data.data.sageIntacctorderID);
+                sageintacctorderID=data.data.sageIntacctorderID
+                // setAmount(creditBalance)
+              }
+              const unique = keyGen(5);
+              const reqData1 = {
+                totalAmount: totalPrice,
+                paidAmount: totalPrice,
+                transactionId: `case-${unique} `,
+                amexorderId: data?.data?.sageIntacctorderID,
+                paymentMethod:paymentPayMethod === "" ? "Cash" : paymentPayMethod,
+                idForPayment: data?.data?.sageIntacctorderID,
+              };
+              transactionSave(reqData1);
+              setshowspinner(false);
+              setBtnDisabled(false);
+              toast.success("Sales Order Create Successfully !");
+              closeDialog(false);
+              setTimeout(() => {
+                setOpen(false);
+              }, 2000);
             }
+          })
+          .catch((error) => {
+            // toast.error(error?.message);
+            console.log("error", error);
             setshowspinner(false);
             setBtnDisabled(false);
-            toast.success("Sales Order Create Successfully !");
-            closeDialog(false);
-            setTimeout(() => {
-              setOpen(false);
-            }, 2000);
-          }
-        })
-        .catch((error) => {
-          // toast.error(error?.message);
-          console.log("error", error);
-          setshowspinner(false);
-          setBtnDisabled(false);
-        });
+          });
       } else {
         const reqData = {
           amount: price,
@@ -280,28 +293,50 @@ export default function AddSalesOrder({
           transactionId: "Trh4354654457",
           orderId: 46,
           createdBy: customerId,
-          createdDate: todayDate,
-          paymentMethod: paymentPayMethod === "" ? "Cash" : paymentPayMethod,
+          // createdDate: todayDate,
+          // paymentMethod: paymentPayMethod === "" ? "Cash" : paymentPayMethod,
         };
-
-      await axios({
-        method: "POST",
-        url: `${api_url}/addSalesOrders`,
-        data: reqData,
-        headers: {
-          Authorization: auth_token,
-        },
-      })
-        .then((data: any) => {
-          if (data) {
-            if(data.status === 200){
-              setorderId(data.data.sageIntacctorderID);
-              sageintacctorderID=data.data.sageIntacctorderID
-              setAmount(price)
+        await axios({
+          method: "POST",
+          url: `${api_url}/addSalesOrders`,
+          data: reqData,
+          headers: {
+            Authorization: auth_token,
+          },
+        })
+          .then(async (data: any) => {
+            if (data) {
+              if(data.status === 200){
+                setorderId(data.data.sageIntacctorderID);
+                sageintacctorderID=data.data.sageIntacctorderID
+                setAmount(price)
+              }
+              const unique = keyGen(5);
+              const reqData1 = {
+                totalAmount: totalPrice,
+                paidAmount: totalPrice,
+                transactionId: `case-${unique} `,
+                amexorderId: data?.data?.sageIntacctorderID,
+                paymentMethod:
+                  paymentPayMethod === "" ? "Cash" : paymentPayMethod,
+                idForPayment: data?.data?.sageIntacctorderID,
+              };
+              transactionSave(reqData1);
+              setshowspinner(false);
+              setBtnDisabled(false);
+              toast.success("Sales Order Create Successfully !");
+              closeDialog(false);
+              setTimeout(() => {
+                setOpen(false);
+              }, 2000);
             }
+          })
+          .catch((error) => {
+            // toast.error(error?.message);
+            console.log("error", error);
             setshowspinner(false);
             setBtnDisabled(false);
-          }});
+          });
       }
     } else {
       if (customerId === "") {
@@ -316,10 +351,11 @@ export default function AddSalesOrder({
       }
     }
 
-
+    let orderamount = Check ?  Math?.abs(price - creditBalance) :price ;
+    console.log("orderamount =>",orderamount);
     // payment getway
-    if(paymentPayMethod === "Amex"){
-      let orderamount = Check ?  Math?.abs(price - creditBalance) :price ;
+    if(paymentPayMethod === "Amex" && orderamount > 0){
+     
       if(price === 0 ){
         toast.error("amount will not be $0 for AMFX payment method");
        }else{
@@ -345,6 +381,7 @@ export default function AddSalesOrder({
               }
           }
        }
+       console.log("requestData =>",requestData);
        await getwayService.getSession(requestData,async function(result:any){
          if(result?.data?.result === "SUCCESS"){
           // setSessionId(result?.data.session.id)
@@ -361,6 +398,25 @@ export default function AddSalesOrder({
     
        }
      }
+
+     if(paymentPayMethod === "Amex" && Check === true && orderamount === 0){
+      try{
+        const rendomTransactionId = keyGen(5);
+        let reqData = {
+          totalAmount: price,
+          paidAmount: price,
+          transactionId: `case-${rendomTransactionId} `,
+          amexorderId: sageintacctorderID,
+          paymentMethod: "Cash",
+          idForPayment: sageintacctorderID,
+          creditNotesId:creditNoteId
+        };
+        console.log("req Data =>",reqData);
+        transactionSave(reqData);
+      }catch(error:any){
+        console.log("Error ",error.message);
+      }
+     }
      if(paymentPayMethod === "CBQ"){
       toast.info(`As of Now This payment method is not supported ${paymentPayMethod} !`);
      }
@@ -368,6 +424,35 @@ export default function AddSalesOrder({
      if(paymentPayMethod === "QPay"){
       toast.info(`As of Now This payment method is not supported ${paymentPayMethod} !`);
      }
+  };
+  const keyGen = (keyLength: any) => {
+    var i,
+      key = "",
+      characters =
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    var charactersLength = characters.length;
+    for (i = 0; i < keyLength; i++) {
+      key += characters.substr(
+        Math.floor(Math.random() * charactersLength + 1),
+        1
+      );
+    }
+    return key;
+  };
+
+  const transactionSave = async (data: any) => {
+    await axios({
+      method: "POST",
+      url: `${api_url}/createTransaction`,
+      data: data,
+      headers: {
+        Authorization: auth_token,
+      },
+    }).then((result:any)=>{
+      console.log("transaction ");
+    }).catch((error:any)=>{
+      console.log("error =>",error);
+    });
   };
 
   const closeDialogs = () => {
@@ -510,24 +595,25 @@ let totalPrice = price === 0 ? "0" :price < creditAmount ? "0" : Math?.abs(credi
                           Payment Method
                         </InputLabel>
                         <FormControl fullWidth>
-
                           <Select
                             labelId="demo-simple-select-label"
                             id="demo-simple-select"
                             defaultValue={"Cash"}
                             size="small"
-                            disabled={totalPrice === "0" && price === 0 || Check === true && creditAmount > price ? true : false}
-                            {...register("payment")}
-                            onChange={(e) =>
-                              handlePaymentName(e.target.value)
+                            disabled={
+                              (totalPrice === "0" && price === 0) ||
+                              (Check === true && creditAmount > price)
+                                ? true
+                                : false
                             }
+                            {...register("payment")}
+                            onChange={(e) => handlePaymentName(e.target.value)}
                           >
                             <MenuItem value={"Cash"}>Cash</MenuItem>
                             <MenuItem value={"Amex"}>Amex</MenuItem>
                             <MenuItem value={"QPay"}>QPay</MenuItem>
                             <MenuItem value={"CBQ"}>CBQ</MenuItem>
                           </Select>
-
                         </FormControl>
                       </Stack>
                     </Grid>
@@ -567,8 +653,8 @@ let totalPrice = price === 0 ? "0" :price < creditAmount ? "0" : Math?.abs(credi
                               {creditAmount === price
                                 ? creditAmount
                                 : creditAmount > price
-                                  ? price
-                                  : creditAmount}
+                                ? price
+                                : creditAmount}
                             </div>
                           </div>
                         </Stack>
@@ -585,8 +671,8 @@ let totalPrice = price === 0 ? "0" :price < creditAmount ? "0" : Math?.abs(credi
                               {price === 0
                                 ? "0.00"
                                 : price < creditAmount
-                                  ? "0.00"
-                                  : Math?.abs(creditAmount - price)}
+                                ? "0.00"
+                                : Math?.abs(creditAmount - price)}
                             </p>
                           )}
                         </Stack>

@@ -29,7 +29,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import styled from "@emotion/styled";
 import { GridCloseIcon } from "@mui/x-data-grid";
-import commmonfunctions from "../commonFunctions/commmonfunctions";
+import commmonfunctions from "../../commonFunctions/commmonfunctions"
 
 //dialog box
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({}));
