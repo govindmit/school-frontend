@@ -111,7 +111,13 @@ type FormValues = {
   parentId: number;
   userRole: String;
   agegroup: number;
-  pregeneratedid: string;
+  attentionto: number;
+  alternatenumber: number;
+  address1: string;
+  address2: string;
+  city: string;
+  state: string;
+  postalcode: number;
 };
 
 export default function AddCustomer({
@@ -129,10 +135,7 @@ export default function AddCustomer({
   const [parentId, setparentId] = React.useState<any>(0);
   const [parentid, setparentid] = React.useState(0);
   const [parentname, setparentname] = React.useState<any>("");
-  const [handleacctid, sethandleacctid] = React.useState("");
-  const handleacctids = (e: any) => {
-    sethandleacctid(e.target.value);
-  }
+  const [cretadeBy, setcretadeBy] = React.useState(0);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -149,10 +152,9 @@ export default function AddCustomer({
 
   React.useEffect(() => {
     getType();
-    commmonfunctions.GetLastInsertId().then(res => {
-      const idd = res.id + 1;
-      sethandleacctid("#CUST" + idd);
-    })
+    commmonfunctions.VerifyLoginUser().then(res => {
+      setcretadeBy(res.id);
+    });
   }, []);
 
   //get type
@@ -175,13 +177,19 @@ export default function AddCustomer({
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm<FormValues>();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setshowspinner(true);
     setBtnDisabled(true);
+    const address = {
+      add1: data.address1,
+      add2: data.address2,
+      city: data.city,
+      state: data.state,
+      postalcode: data.postalcode,
+    };
     const reqData = {
       name: data.name,
       email1: data.email1,
@@ -192,10 +200,13 @@ export default function AddCustomer({
       printUs: data.printUs,
       status: data.status,
       agegroup: data.agegroup,
-      generatedId: handleacctid,
+      attentionto: data.attentionto,
+      phone2: data.alternatenumber,
+      useraddress: address,
       roleId: 2,
       parentId: parentId,
       userRole: "customer",
+      createdby: cretadeBy
     };
     await axios({
       method: "POST",
@@ -284,16 +295,10 @@ export default function AddCustomer({
                           <span style={style}>Name can't be blank *</span>
                         )}
                       </Stack>
-                      <FormGroup>
-                        <FormControlLabel
-                          control={<Checkbox defaultChecked />}
-                          label="This is an individual"
-                        />
-                      </FormGroup>
                     </Grid>
                   </Grid>
                 </Stack>
-                <Stack style={{ marginTop: "8px" }}>
+                <Stack style={{ marginTop: "15px" }}>
                   <Grid container spacing={2}>
                     <Grid item xs={12} md={6}>
                       <Stack spacing={1}>
@@ -410,6 +415,7 @@ export default function AddCustomer({
                           placeholder="Attention To..."
                           fullWidth
                           size="small"
+                          {...register("attentionto")}
                         />
                       </Stack>
                     </Grid>
@@ -422,6 +428,7 @@ export default function AddCustomer({
                           placeholder="Phone..."
                           fullWidth
                           size="small"
+                          {...register("alternatenumber")}
                         />
                       </Stack>
                     </Grid>
@@ -438,6 +445,7 @@ export default function AddCustomer({
                           placeholder="Address1..."
                           fullWidth
                           size="small"
+                          {...register("address1")}
                         />
                       </Stack>
                     </Grid>
@@ -450,6 +458,7 @@ export default function AddCustomer({
                           placeholder="Address2..."
                           fullWidth
                           size="small"
+                          {...register("address2")}
                         />
                       </Stack>
                     </Grid>
@@ -466,6 +475,7 @@ export default function AddCustomer({
                           placeholder="City..."
                           fullWidth
                           size="small"
+                          {...register("city")}
                         />
                       </Stack>
                     </Grid>
@@ -478,6 +488,7 @@ export default function AddCustomer({
                           placeholder="State..."
                           fullWidth
                           size="small"
+                          {...register("state")}
                         />
                       </Stack>
                     </Grid>
@@ -490,39 +501,8 @@ export default function AddCustomer({
                           placeholder="Postal Code..."
                           fullWidth
                           size="small"
+                          {...register("postalcode")}
                         />
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </Stack>
-                <Stack style={{ marginTop: "15px" }}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={12}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="name">Age Group</InputLabel>
-                        <FormControl fullWidth>
-                          <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            defaultValue={1}
-                            size="small"
-                            {...register("agegroup")}
-                          >
-                            <MenuItem value={1}>FS1</MenuItem>
-                            <MenuItem value={2}>FS2</MenuItem>
-                            <MenuItem value={3}>FS3</MenuItem>
-                            <MenuItem value={4}>FS4</MenuItem>
-                            <MenuItem value={5}>FS5</MenuItem>
-                            <MenuItem value={6}>FS6</MenuItem>
-                            <MenuItem value={7}>FS7</MenuItem>
-                            <MenuItem value={8}>FS8</MenuItem>
-                            <MenuItem value={9}>FS9</MenuItem>
-                            <MenuItem value={10}>FS10</MenuItem>
-                            <MenuItem value={11}>FS11</MenuItem>
-                            <MenuItem value={12}>FS12</MenuItem>
-                            <MenuItem value={13}>FS13</MenuItem>
-                          </Select>
-                        </FormControl>
                       </Stack>
                     </Grid>
                   </Grid>
@@ -623,20 +603,36 @@ export default function AddCustomer({
                         )}
                       </Stack>
                     </Grid>
+                  </Grid>
+                </Stack>
+                <Stack style={{ marginTop: "15px" }}>
+                  <Grid container spacing={2}>
                     <Grid item xs={12} md={12}>
                       <Stack spacing={1}>
-                        <InputLabel htmlFor="name">
-                          Account
-                        </InputLabel>
-                        <OutlinedInput
-                          type="text"
-                          id="name"
-                          placeholder="# Generate If blank"
-                          fullWidth
-                          value={handleacctid}
-                          size="small"
-                          onChange={handleacctids}
-                        />
+                        <InputLabel htmlFor="name">Age Group</InputLabel>
+                        <FormControl fullWidth>
+                          <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            defaultValue={1}
+                            size="small"
+                            {...register("agegroup")}
+                          >
+                            <MenuItem value={1}>FS1</MenuItem>
+                            <MenuItem value={2}>FS2</MenuItem>
+                            <MenuItem value={3}>FS3</MenuItem>
+                            <MenuItem value={4}>FS4</MenuItem>
+                            <MenuItem value={5}>FS5</MenuItem>
+                            <MenuItem value={6}>FS6</MenuItem>
+                            <MenuItem value={7}>FS7</MenuItem>
+                            <MenuItem value={8}>FS8</MenuItem>
+                            <MenuItem value={9}>FS9</MenuItem>
+                            <MenuItem value={10}>FS10</MenuItem>
+                            <MenuItem value={11}>FS11</MenuItem>
+                            <MenuItem value={12}>FS12</MenuItem>
+                            <MenuItem value={13}>FS13</MenuItem>
+                          </Select>
+                        </FormControl>
                       </Stack>
                     </Grid>
                   </Grid>
