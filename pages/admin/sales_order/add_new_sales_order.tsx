@@ -32,9 +32,9 @@ import "react-toastify/dist/ReactToastify.css";
 import CloseIcon from "@mui/icons-material/Close";
 import moment from "moment";
 import styled from "@emotion/styled";
-// import commmonfunctions from "../commonFunctions/commmonfunctions";
+// import commmonfunctions from ".../commonFunctions/commmonfunctions";
 import Script from "next/script";
-import getwayService from "../../services/gatewayService";
+import getwayService from "../../../services/gatewayService"
 
 const style = {
   color: "red",
@@ -208,10 +208,11 @@ export default function AddSalesOrder({
       });
       const res = await response.json();
       //  creditNoteId = res?.CreditRequestId
-      setcreditNoteId(res?.CreditRequestId);
+      console.log("CreditRequestId =>",res?.CreditRequestId);
+       setcreditNoteId(res?.CreditRequestId)
       setCreditAmount(res?.creditBal);
-    } catch (error) {
-      console.log("error", error);
+    } catch (error:any) {
+      console.log("error",error.message);
     }
   };
 
@@ -223,9 +224,9 @@ export default function AddSalesOrder({
   } = useForm<FormValues>();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    const Checkout: any = (window as any).Checkout;
-    let sageintacctorderID: any = "";
-    console.log("price =>", price);
+    const Checkout : any  =  (window as any).Checkout
+    let sageintacctorderID : any = "";
+   
     if (customerId !== "" && activityId !== "") {
       setshowspinner(true);
       setBtnDisabled(true);
@@ -402,10 +403,13 @@ export default function AddSalesOrder({
         setActivityError("");
       }
     }
+
+    let orderamount = Check ?  Math?.abs(price - creditBalance) :price ;
+    console.log("orderamount =>",orderamount);
     // payment getway
-    if (paymentPayMethod === "Amex") {
-      let orderamount = Check ? Math?.abs(price - creditBalance) : price;
-      if (price === 0) {
+    if(paymentPayMethod === "Amex" && orderamount > 0){
+     
+      if(price === 0 ){
         toast.error("amount will not be $0 for AMFX payment method");
       } else {
         var requestData = {
@@ -430,34 +434,49 @@ export default function AddSalesOrder({
             },
           },
         };
-        await getwayService.getSession(
-          requestData,
-          async function (result: any) {
-            if (result?.data?.result === "SUCCESS") {
-              // setSessionId(result?.data.session.id)
-              // setsuccessIndicator(result?.data.successIndicator);
-              await Checkout.configure({
-                session: {
-                  id: result?.data.session.id,
-                },
-              });
-              await Checkout.showPaymentPage();
-            }
-          }
-        );
-      }
-    }
-    if (paymentPayMethod === "CBQ") {
-      toast.info(
-        `As of Now This payment method is not supported ${paymentPayMethod} !`
-      );
-    }
+      
+       await getwayService.getSession(requestData,async function(result:any){
+         if(result?.data?.result === "SUCCESS"){
+          // setSessionId(result?.data.session.id)
+          // setsuccessIndicator(result?.data.successIndicator);
+          await Checkout.configure({
+           session: {
+               id:  result?.data.session.id
+           }
+          });
+          await Checkout.showPaymentPage();
+        }
+        
+       })
+    
+       }
+     }
 
-    if (paymentPayMethod === "QPay") {
-      toast.info(
-        `As of Now This payment method is not supported ${paymentPayMethod} !`
-      );
-    }
+     if(paymentPayMethod === "Amex" && Check === true && orderamount === 0){
+      try{
+        const rendomTransactionId = keyGen(5);
+        let reqData = {
+          totalAmount: price,
+          paidAmount: price,
+          transactionId: `case-${rendomTransactionId} `,
+          amexorderId: sageintacctorderID,
+          paymentMethod: "Cash",
+          idForPayment: sageintacctorderID,
+          creditNotesId:creditNoteId
+        };
+        console.log("req Data =>",reqData);
+        transactionSave(reqData);
+      }catch(error:any){
+        console.log("Error ",error.message);
+      }
+     }
+     if(paymentPayMethod === "CBQ"){
+      toast.info(`As of Now This payment method is not supported ${paymentPayMethod} !`);
+     }
+    
+     if(paymentPayMethod === "QPay"){
+      toast.info(`As of Now This payment method is not supported ${paymentPayMethod} !`);
+     }
   };
   const keyGen = (keyLength: any) => {
     var i,
@@ -482,6 +501,10 @@ export default function AddSalesOrder({
       headers: {
         Authorization: auth_token,
       },
+    }).then((result:any)=>{
+      console.log("transaction ");
+    }).catch((error:any)=>{
+      console.log("error =>",error);
     });
   };
 

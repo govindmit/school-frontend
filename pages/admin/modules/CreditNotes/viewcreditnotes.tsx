@@ -25,7 +25,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import ApproveCompForm from "./approvecmp";
 import { useRouter } from "next/router";
-import commmonfunctions from "../../../commonFunctions/commmonfunctions";
+import commmonfunctions from "../../../../commonFunctions/commmonfunctions";
 const style = {
   color: "red",
   fontSize: "12px",

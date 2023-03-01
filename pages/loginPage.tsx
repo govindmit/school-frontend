@@ -21,7 +21,8 @@ import Head from "next/head";
 import AuthHeader from "./commoncmp/authheader";
 import AuthRightTemplate from "./commoncmp/authrighttemplate";
 import Footer from "./commoncmp/footer";
-import commmonfunctions from "./commonFunctions/commmonfunctions";
+// import commmonfunctions from "../commonFunctions/commmonfunctions";
+import commmonfunctions from "../commonFunctions/commmonfunctions";
 const theme = createTheme();
 const style = {
   color: "red",

@@ -1,6 +1,6 @@
 import axios from "axios";
 import jwt_decode from "jwt-decode";
-import { api_url, auth_token } from "../api/hello";
+import { api_url, auth_token } from "../pages/api/hello";
 
 class CommonFunctions {
   VerifyLoginUser = async () => {

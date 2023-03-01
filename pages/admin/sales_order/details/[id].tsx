@@ -273,7 +273,7 @@ console.log('userDet',userDet && userDet);
                             CREDIT BALANCE:  
                             </TableCell>
                             <TableCell align="left">
-                              {userDet?.transaction_amount === 0 && userDet?.amount !== 0 ? `-$${userDet?.amount}` : userDet?.amount !== 0 && userDet?.transaction_amount !== 0 ?`-$${Math?.abs(userDet?.activity_price - userDet?.transaction_amount)}`:"$0"}
+                              {userDet?.transaction_amount === 0 && userDet?.amount !== 0 ? `-$${userDet?.amount}` : userDet?.amount !== 0 && userDet?.transaction_amount !== 0 ?`$${Math?.abs(userDet?.activity_price - userDet?.transaction_amount)}`:"$0"}
                             {/* {userDet?.activity_price-userDet?.amount === 0 ? "$0" : `-$${userDet?.activity_price-userDet?.amount}`} */}
                             </TableCell>
                           </TableRow>

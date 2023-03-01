@@ -16,7 +16,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import MiniDrawer from "../../sidebar";
 import styled from "@emotion/styled";
-import UserService from "./servives";
+import UserService from "../../../commonFunctions/servives";
 import MainFooter from "../../commoncmp/mainfooter";
 
 const Item = styled(Paper)(({ theme }) => ({
