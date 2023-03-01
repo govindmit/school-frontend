@@ -76,7 +76,7 @@ interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
-  className: any
+  className: any;
 }
 
 function TabPanel(props: TabPanelProps) {
@@ -148,16 +148,16 @@ export default function AddSalesOrder({
   let datee = Date();
   const todayDate = moment(datee).format("DD/MM/YYYY");
   const todaysDate = moment(datee).format("MMM DD,YYYY");
-  const [orderId,setorderId] = React.useState('');
-  const [amount,setAmount] = React.useState(0);
-  const [creditNoteId, setcreditNoteId] = React.useState<any>(null);
+  const [orderId, setorderId] = React.useState("");
+  const [amount, setAmount] = React.useState(0);
+  const [creditNoteId, setcreditNoteId] = React.useState<any>("");
 
-  var Checkout :any 
-  let creditBalance:any;
+  var Checkout: any;
+  let creditBalance: any;
 
   const handlePaymentName = (data: any) => {
-    const Checkout : any  =  (window as any).Checkout
-    console.log("Checkout=>",Checkout);
+    const Checkout: any = (window as any).Checkout;
+    console.log("Checkout=>", Checkout);
     setPaymentPayMethod(data);
   };
 
@@ -174,7 +174,7 @@ export default function AddSalesOrder({
   const insertRemainingNotesAmount = async () => {
     // setAmount(creditBalance)
     // setPrice(creditBalance)
- console.log("price =>",creditBalance);
+    console.log("price =>", creditBalance);
     const reqData = {
       customerId: customerId,
       Amount: creditBalance,
@@ -233,7 +233,7 @@ export default function AddSalesOrder({
 
       if (Check === true) {
         const reqData = {
-          amount: totalPrice,
+          amount: totalPrice === 0 ? creditBalance : totalPrice + creditBalance,
           status: 0,
           userId: customerId,
           activityId: activityId,
@@ -243,47 +243,98 @@ export default function AddSalesOrder({
           // createdDate: todayDate,
           // paymentMethod: paymentPayMethod === "" ? "Cash" : paymentPayMethod,
         };
-        await axios({
-          method: "POST",
-          url: `${api_url}/addSalesOrders`,
-          data: reqData,
-          headers: {
-            Authorization: auth_token,
-          },
-        })
-          .then(async (data: any) => {
-            if (data) {
-              insertRemainingNotesAmount();
-              if(data.status === 200){
-                setorderId(data.data.sageIntacctorderID);
-                sageintacctorderID=data.data.sageIntacctorderID
-                // setAmount(creditBalance)
+
+        if (price === 0) {
+          console.log("@@");
+        } else if (price < creditAmount) {
+          await axios({
+            method: "POST",
+            url: `${api_url}/addSalesOrders`,
+            data: reqData,
+            headers: {
+              Authorization: auth_token,
+            },
+          })
+            .then(async (data: any) => {
+              if (data) {
+                insertRemainingNotesAmount();
+                if (data?.status === 200) {
+                  setorderId(data.data.sageIntacctorderID);
+                  sageintacctorderID = data.data.sageIntacctorderID;
+                  // setAmount(creditBalance)
+                }
+                const unique = keyGen(5);
+                const reqData1 = {
+                  totalAmount: 0,
+                  paidAmount: 0,
+                  transactionId: `case-${unique} `,
+                  amexorderId: data?.data?.sageIntacctorderID,
+                  paymentMethod:
+                    paymentPayMethod === "" ? "Cash" : paymentPayMethod,
+                  idForPayment: data?.data?.sageIntacctorderID,
+                  creditNotesId: creditNoteId,
+                };
+                // transactionSave(reqData1);
+                setshowspinner(false);
+                setBtnDisabled(false);
+                toast.success("Sales Order Create Successfully !");
+                closeDialog(false);
+                setTimeout(() => {
+                  setOpen(false);
+                }, 2000);
               }
-              const unique = keyGen(5);
-              const reqData1 = {
-                totalAmount: totalPrice,
-                paidAmount: totalPrice,
-                transactionId: `case-${unique} `,
-                amexorderId: data?.data?.sageIntacctorderID,
-                paymentMethod:paymentPayMethod === "" ? "Cash" : paymentPayMethod,
-                idForPayment: data?.data?.sageIntacctorderID,
-              };
-              transactionSave(reqData1);
+            })
+            .catch((error) => {
+              // toast.error(error?.message);
+              console.log("error", error);
               setshowspinner(false);
               setBtnDisabled(false);
-              toast.success("Sales Order Create Successfully !");
-              closeDialog(false);
-              setTimeout(() => {
-                setOpen(false);
-              }, 2000);
-            }
+            });
+        } else {
+          await axios({
+            method: "POST",
+            url: `${api_url}/addSalesOrders`,
+            data: reqData,
+            headers: {
+              Authorization: auth_token,
+            },
           })
-          .catch((error) => {
-            // toast.error(error?.message);
-            console.log("error", error);
-            setshowspinner(false);
-            setBtnDisabled(false);
-          });
+            .then(async (data: any) => {
+              if (data) {
+                insertRemainingNotesAmount();
+                if (data.status === 200) {
+                  setorderId(data.data.sageIntacctorderID);
+                  sageintacctorderID = data.data.sageIntacctorderID;
+                  // setAmount(creditBalance)
+                }
+                const unique = keyGen(5);
+                const reqData1 = {
+                  totalAmount: Math?.abs(creditAmount - price),
+                  paidAmount: Math?.abs(creditAmount - price),
+                  transactionId: `case-${unique} `,
+                  amexorderId: data?.data?.sageIntacctorderID,
+                  paymentMethod:
+                    paymentPayMethod === "" ? "Cash" : paymentPayMethod,
+                  idForPayment: data?.data?.sageIntacctorderID,
+                  creditNotesId: creditNoteId,
+                };
+                // transactionSave(reqData1);
+                setshowspinner(false);
+                setBtnDisabled(false);
+                toast.success("Sales Order Create Successfully !");
+                closeDialog(false);
+                setTimeout(() => {
+                  setOpen(false);
+                }, 2000);
+              }
+            })
+            .catch((error) => {
+              // toast.error(error?.message);
+              console.log("error", error);
+              setshowspinner(false);
+              setBtnDisabled(false);
+            });
+        }
       } else {
         const reqData = {
           amount: price,
@@ -296,6 +347,7 @@ export default function AddSalesOrder({
           // createdDate: todayDate,
           // paymentMethod: paymentPayMethod === "" ? "Cash" : paymentPayMethod,
         };
+
         await axios({
           method: "POST",
           url: `${api_url}/addSalesOrders`,
@@ -306,10 +358,10 @@ export default function AddSalesOrder({
         })
           .then(async (data: any) => {
             if (data) {
-              if(data.status === 200){
+              if (data.status === 200) {
                 setorderId(data.data.sageIntacctorderID);
-                sageintacctorderID=data.data.sageIntacctorderID
-                setAmount(price)
+                sageintacctorderID = data.data.sageIntacctorderID;
+                setAmount(price);
               }
               const unique = keyGen(5);
               const reqData1 = {
@@ -320,8 +372,9 @@ export default function AddSalesOrder({
                 paymentMethod:
                   paymentPayMethod === "" ? "Cash" : paymentPayMethod,
                 idForPayment: data?.data?.sageIntacctorderID,
+                creditNotesId: null,
               };
-              transactionSave(reqData1);
+              // transactionSave(reqData1);
               setshowspinner(false);
               setBtnDisabled(false);
               toast.success("Sales Order Create Successfully !");
@@ -358,30 +411,30 @@ export default function AddSalesOrder({
      
       if(price === 0 ){
         toast.error("amount will not be $0 for AMFX payment method");
-       }else{
+      } else {
         var requestData = {
-          "apiOperation": "CREATE_CHECKOUT_SESSION",
-          "order": {
-              "id": sageintacctorderID,
-              "amount":  orderamount,
-              "currency": "QAR",
-              "description": "Orderd",
+          apiOperation: "CREATE_CHECKOUT_SESSION",
+          order: {
+            id: sageintacctorderID,
+            amount: orderamount,
+            currency: "QAR",
+            description: "Orderd",
           },
-          "interaction": {
+          interaction: {
             // "returnUrl":`${process.env.NEXT_PUBLIC_REDIRECT_URL}/?orderid=${orderId}&paymentMethod=${paymentMethod}`,
-            "returnUrl":`${process.env.NEXT_PUBLIC_AMEX_SALES_ORDER_REDIRECT_URL}/?orderid=${sageintacctorderID}&paymentMethod=${paymentPayMethod}&creditNoteId=${creditNoteId}`,
-            "cancelUrl":`${process.env.NEXT_PUBLIC_AMEX_SALES_ORDER_CANCEL_URL}`,
-            "operation": "PURCHASE",
-              "merchant": {
-                  "name": "QATAR INTERNATIONAL SCHOOL - ONLINE 634",
-                  "address": {
-                      "line1": "200 Sample St",
-                      "line2": "1234 Example Town"
-                  }
-              }
-          }
-       }
-       console.log("requestData =>",requestData);
+            returnUrl: `${process.env.NEXT_PUBLIC_AMEX_SALES_ORDER_REDIRECT_URL}/?orderid=${sageintacctorderID}&paymentMethod=${paymentPayMethod}&creditNoteId=${creditNoteId}`,
+            cancelUrl: `${process.env.NEXT_PUBLIC_AMEX_SALES_ORDER_CANCEL_URL}`,
+            operation: "PURCHASE",
+            merchant: {
+              name: "QATAR INTERNATIONAL SCHOOL - ONLINE 634",
+              address: {
+                line1: "200 Sample St",
+                line2: "1234 Example Town",
+              },
+            },
+          },
+        };
+      
        await getwayService.getSession(requestData,async function(result:any){
          if(result?.data?.result === "SUCCESS"){
           // setSessionId(result?.data.session.id)
@@ -401,6 +454,7 @@ export default function AddSalesOrder({
 
      if(paymentPayMethod === "Amex" && Check === true && orderamount === 0){
       try{
+       
         const rendomTransactionId = keyGen(5);
         let reqData = {
           totalAmount: price,
@@ -411,8 +465,8 @@ export default function AddSalesOrder({
           idForPayment: sageintacctorderID,
           creditNotesId:creditNoteId
         };
-        console.log("req Data =>",reqData);
-        transactionSave(reqData);
+         transactionSave(reqData);
+       
       }catch(error:any){
         console.log("Error ",error.message);
       }
@@ -485,224 +539,243 @@ export default function AddSalesOrder({
     fontSize: "12px",
     fontWeight: "bold",
   };
-let totalPrice = price === 0 ? "0" :price < creditAmount ? "0" : Math?.abs(creditAmount - price);
- creditBalance = creditAmount === price ? creditAmount : creditAmount > price ? price:creditAmount;
+  let totalPrice =
+    price === 0
+      ? 0
+      : price < creditAmount
+      ? 0
+      : Math?.abs(creditAmount - price);
+  creditBalance =
+    creditAmount === price
+      ? creditAmount
+      : creditAmount > price
+      ? price
+      : creditAmount;
 
   return (
     <>
-      <Script  src="https://amexmena.gateway.mastercard.com/static/checkout/checkout.min.js"
-                data-error="errorCallback"
-                data-cancel="cancelCallback"
-                strategy="beforeInteractive"
-               > </Script>
-                <BootstrapDialog
-      onClose={closeDialog}
-      aria-labelledby="customized-dialog-title"
-      open={opens}
-    >
-      <BootstrapDialogTitle id="customized-dialog-title" onClose={closeDialogs}>
-        New Sales Order
-      </BootstrapDialogTitle>
-      <DialogContent dividers>
-        <Box sx={{ width: "100%" }}>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <TabPanel
-              value={value}
-              index={0}
-              className="new-sale"
-            >
-              <Grid className="">
-                <Stack style={{ marginTop: "5px" }}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={12}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="name">Customer Name</InputLabel>
-                        <AddCustomer
-                          Data={Getdata}
-                          PId={parentid}
-                          pname={parentname}
-                        />
-                        {customerId !== "" && customerError ? (
-                          <span style={style}></span>
-                        ) : (
-                          customerError && (
-                            <span style={style}>
-                              Customer field is Required *
-                            </span>
-                          )
-                        )}
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </Stack>
-                <Stack style={{ marginTop: "20px" }}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="name">Service</InputLabel>
-                        <AddActivity
-                          Data={GetActivitydata}
-                          PId={parentsid}
-                          pname={parentsname}
-                        />
-                        {activityId !== "" && activityError ? (
-                          <span style={style}></span>
-                        ) : (
-                          activityError && (
-                            <span style={style}>
-                              Activity field is Required *
-                            </span>
-                          )
-                        )}
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="name">Date</InputLabel>
-                        <OutlinedInput
-                          type="text"
-                          id="date"
-                          value={todaysDate && todaysDate}
-                          disabled
-                          fullWidth
-                          size="small"
-                        />
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </Stack>
-                <Stack style={{ marginTop: "20px" }}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="name">
-                          Amount<span className="err_str"></span>
-                        </InputLabel>
-                        <OutlinedInput
-                          type="text"
-                          id="amount"
-                          disabled
-                          value={price && price}
-                          placeholder=" Service amount"
-                          fullWidth
-                          size="small"
-                        />
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="payment">
-                          Payment Method
-                        </InputLabel>
-                        <FormControl fullWidth>
-                          <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            defaultValue={"Cash"}
-                            size="small"
-                            disabled={
-                              (totalPrice === "0" && price === 0) ||
-                              (Check === true && creditAmount > price)
-                                ? true
-                                : false
-                            }
-                            {...register("payment")}
-                            onChange={(e) => handlePaymentName(e.target.value)}
-                          >
-                            <MenuItem value={"Cash"}>Cash</MenuItem>
-                            <MenuItem value={"Amex"}>Amex</MenuItem>
-                            <MenuItem value={"QPay"}>QPay</MenuItem>
-                            <MenuItem value={"CBQ"}>CBQ</MenuItem>
-                          </Select>
-                        </FormControl>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                  <Stack style={{ marginTop: "20px" }}>
+      <Script
+        src="https://amexmena.gateway.mastercard.com/static/checkout/checkout.min.js"
+        data-error="errorCallback"
+        data-cancel="cancelCallback"
+        strategy="beforeInteractive"
+      >
+        {" "}
+      </Script>
+      <BootstrapDialog
+        onClose={closeDialog}
+        aria-labelledby="customized-dialog-title"
+        open={opens}
+      >
+        <BootstrapDialogTitle
+          id="customized-dialog-title"
+          onClose={closeDialogs}
+        >
+          New Sales Order
+        </BootstrapDialogTitle>
+        <DialogContent dividers>
+          <Box sx={{ width: "100%" }}>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <TabPanel value={value} index={0} className="new-sale">
+                <Grid className="">
+                  <Stack style={{ marginTop: "5px" }}>
                     <Grid container spacing={2}>
                       <Grid item xs={12} md={12}>
-                        {price === 0 || creditAmount === 0 ? (
-                          ""
-                        ) : price > 0 ? (
-                          <Checkbox
-                            onChange={(e) => setCheck(e.target.checked)}
-                            className="checkbox132"
+                        <Stack spacing={1}>
+                          <InputLabel htmlFor="name">Customer Name</InputLabel>
+                          <AddCustomer
+                            Data={Getdata}
+                            PId={parentid}
+                            pname={parentname}
                           />
-                        ) : (
-                          ""
-                        )}
-                        {customerId === "" || creditAmount === 0
-                          ? ""
-                          : `Want to use credit balance :$${creditAmount}`}
-                        <div>
-                          <h5 className="apply">Apply Payment</h5>
-                        </div>
-                        <Stack spacing={1}>
-                          <InputLabel htmlFor="name"></InputLabel>
-                          <p>
-                            Sales invoice amount :{" "}
-                            {price === "" ? "$0.00" : "$" + price}
-                          </p>
-                        </Stack>
-                        <Stack spacing={1} style={hideshowstyle}>
-                          <InputLabel htmlFor="name"></InputLabel>
-                          <div className="iadiv">
-                            <div className="hh red">Total Credit Balance:</div>
-                            <div>
-                              $
-                              {creditAmount === price
-                                ? creditAmount
-                                : creditAmount > price
-                                ? price
-                                : creditAmount}
-                            </div>
-                          </div>
-                        </Stack>
-                        <Stack spacing={1}>
-                          <InputLabel htmlFor="name"></InputLabel>
-                          {Check != true ? (
-                            <p>
-                              Total amount :{" "}
-                              {price === "" ? "$0.00" : "$" + price}
-                            </p>
+                          {customerId !== "" && customerError ? (
+                            <span style={style}></span>
                           ) : (
-                            <p>
-                              Total amount : $
-                              {price === 0
-                                ? "0.00"
-                                : price < creditAmount
-                                ? "0.00"
-                                : Math?.abs(creditAmount - price)}
-                            </p>
+                            customerError && (
+                              <span style={style}>
+                                Customer field is Required *
+                              </span>
+                            )
                           )}
                         </Stack>
                       </Grid>
                     </Grid>
                   </Stack>
-                </Stack>
-              </Grid>
-            </TabPanel>
-            <DialogActions>
-              <Button
-                type="submit"
-                variant="contained"
-                size="small"
-                sx={{ width: 150 }}
-                autoFocus
-                disabled={btnDisabled}
-              >
-                <b>Create</b>
-                <span style={{ fontSize: "2px", paddingLeft: "10px" }}>
-                  {spinner === true ? <CircularProgress color="inherit" /> : ""}
-                </span>
-              </Button>
-            </DialogActions>
-          </form>
-          <ToastContainer />
-        </Box>
-      </DialogContent>
-    </BootstrapDialog>
+                  <Stack style={{ marginTop: "20px" }}>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} md={6}>
+                        <Stack spacing={1}>
+                          <InputLabel htmlFor="name">Service</InputLabel>
+                          <AddActivity
+                            Data={GetActivitydata}
+                            PId={parentsid}
+                            pname={parentsname}
+                          />
+                          {activityId !== "" && activityError ? (
+                            <span style={style}></span>
+                          ) : (
+                            activityError && (
+                              <span style={style}>
+                                Activity field is Required *
+                              </span>
+                            )
+                          )}
+                        </Stack>
+                      </Grid>
+                      <Grid item xs={12} md={6}>
+                        <Stack spacing={1}>
+                          <InputLabel htmlFor="name">Date</InputLabel>
+                          <OutlinedInput
+                            type="text"
+                            id="date"
+                            value={todaysDate && todaysDate}
+                            disabled
+                            fullWidth
+                            size="small"
+                          />
+                        </Stack>
+                      </Grid>
+                    </Grid>
+                  </Stack>
+                  <Stack style={{ marginTop: "20px" }}>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} md={6}>
+                        <Stack spacing={1}>
+                          <InputLabel htmlFor="name">
+                            Amount<span className="err_str"></span>
+                          </InputLabel>
+                          <OutlinedInput
+                            type="text"
+                            id="amount"
+                            disabled
+                            value={price && price}
+                            placeholder=" Service amount"
+                            fullWidth
+                            size="small"
+                          />
+                        </Stack>
+                      </Grid>
+                      <Grid item xs={12} md={6}>
+                        <Stack spacing={1}>
+                          <InputLabel htmlFor="payment">
+                            Payment Method
+                          </InputLabel>
+                          <FormControl fullWidth>
+                            <Select
+                              labelId="demo-simple-select-label"
+                              id="demo-simple-select"
+                              defaultValue={"Cash"}
+                              size="small"
+                              disabled={
+                                (totalPrice === 0 && price === 0) ||
+                                (Check === true && creditAmount > price)
+                                  ? true
+                                  : false
+                              }
+                              {...register("payment")}
+                              onChange={(e) =>
+                                handlePaymentName(e.target.value)
+                              }
+                            >
+                              <MenuItem value={"Cash"}>Cash</MenuItem>
+                              <MenuItem value={"Amex"}>Amex</MenuItem>
+                              <MenuItem value={"QPay"}>QPay</MenuItem>
+                              <MenuItem value={"CBQ"}>CBQ</MenuItem>
+                            </Select>
+                          </FormControl>
+                        </Stack>
+                      </Grid>
+                    </Grid>
+                    <Stack style={{ marginTop: "20px" }}>
+                      <Grid container spacing={2}>
+                        <Grid item xs={12} md={12}>
+                          {price === 0 || creditAmount === 0 ? (
+                            ""
+                          ) : price > 0 ? (
+                            <Checkbox
+                              onChange={(e) => setCheck(e.target.checked)}
+                              className="checkbox132"
+                            />
+                          ) : (
+                            ""
+                          )}
+                          {customerId === "" || creditAmount === 0
+                            ? ""
+                            : `Want to use credit balance :$${creditAmount}`}
+                          <div>
+                            <h5 className="apply">Apply Payment</h5>
+                          </div>
+                          <Stack spacing={1}>
+                            <InputLabel htmlFor="name"></InputLabel>
+                            <p>
+                              Sales invoice amount :{" "}
+                              {price === "" ? "$0.00" : "$" + price}
+                            </p>
+                          </Stack>
+                          <Stack spacing={1} style={hideshowstyle}>
+                            <InputLabel htmlFor="name"></InputLabel>
+                            <div className="iadiv">
+                              <div className="hh red">
+                                Total Credit Balance:
+                              </div>
+                              <div>
+                                $
+                                {creditAmount === price
+                                  ? creditAmount
+                                  : creditAmount > price
+                                  ? price
+                                  : creditAmount}
+                              </div>
+                            </div>
+                          </Stack>
+                          <Stack spacing={1}>
+                            <InputLabel htmlFor="name"></InputLabel>
+                            {Check != true ? (
+                              <p>
+                                Total amount :{" "}
+                                {price === "" ? "$0.00" : "$" + price}
+                              </p>
+                            ) : (
+                              <p>
+                                Total amount : $
+                                {price === 0
+                                  ? "0.00"
+                                  : price < creditAmount
+                                  ? "0.00"
+                                  : Math?.abs(creditAmount - price)}
+                              </p>
+                            )}
+                          </Stack>
+                        </Grid>
+                      </Grid>
+                    </Stack>
+                  </Stack>
+                </Grid>
+              </TabPanel>
+              <DialogActions>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  size="small"
+                  sx={{ width: 150 }}
+                  autoFocus
+                  disabled={btnDisabled}
+                >
+                  <b>Create</b>
+                  <span style={{ fontSize: "2px", paddingLeft: "10px" }}>
+                    {spinner === true ? (
+                      <CircularProgress color="inherit" />
+                    ) : (
+                      ""
+                    )}
+                  </span>
+                </Button>
+              </DialogActions>
+            </form>
+            <ToastContainer />
+          </Box>
+        </DialogContent>
+      </BootstrapDialog>
     </>
-   
   );
 }

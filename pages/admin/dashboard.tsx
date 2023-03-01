@@ -272,7 +272,7 @@ const viewCreditNoteById = (id:any)=>{
                                                 scope="row"
                                                 padding="none"
                                               >
-                                                <TableCell align="left" onClick={()=>{viewCreditNoteById(creditRequest?.creditRequestId)}}>
+                                                <TableCell style={{cursor:'pointer',color:'blue'}} align="left" onClick={()=>{viewCreditNoteById(creditRequest?.creditRequestId)}}>
                                                   CRD-{creditRequest?.creditRequestId
 }
                                                 </TableCell>

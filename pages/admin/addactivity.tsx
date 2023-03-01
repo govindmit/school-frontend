@@ -183,8 +183,10 @@ export default function AddNewActivity() {
       setDateError(true);
       setEndDateError(true);
     } else {
-      const sDate = moment(startDate1).format("DD/MM/YYYY");
-      const eDate = moment(endDate1).format("DD/MM/YYYY");
+       const sDate = moment(startDate1).format('YYYY.MM.DD');
+        const eDate = moment(endDate1).format('YYYY.MM.DD');
+      // const sDate = moment(startDate1).format("DD/MM/YYYY");
+      // const eDate = moment(endDate1).format("DD/MM/YYYY");
       if (type1 === "") {
         setTypeError("Type field is required!");
       } else {

@@ -618,7 +618,7 @@ getwayService.transactionDataSaveInDB(data,function(result:any){
      }
    }
 
-   if(paymentMethod === "Amex" || paymentMethod === "Cash" && isChecked === true && finalAmountToPay === 0){
+   if(paymentMethod === "Cash"){
     try{
 
       const dataforRemaingAmount :any= {
@@ -628,25 +628,28 @@ getwayService.transactionDataSaveInDB(data,function(result:any){
      }
     
       const rendomTransactionId = keyGen(5);
+      let amount = finalAmountToPay > 0 ? finalAmountToPay :InvoiceAmount
       let reqData = {
-        totalAmount: InvoiceAmount,
-        paidAmount: InvoiceAmount,
+        totalAmount: amount,
+        paidAmount: amount,
         transactionId: `case-${rendomTransactionId} `,
         amexorderId: orderId,
         paymentMethod: "Cash",
         idForPayment: orderId,
         creditNotesId:customerCreditNoteRequestId
       };
-      transactionSaveInDB(reqData);
-      insertRemainingNotesAmount(dataforRemaingAmount);
-      updateInvoiceAfterPay(id)
+      
+     await transactionSaveInDB(reqData);
+     await insertRemainingNotesAmount(dataforRemaingAmount);
+     await updateInvoiceAfterPay(id)
       handleCloses();
     }catch(error:any){
       console.log("Error ",error.message);
     }
    }
 
-      if(paymentMethod === "Cash"  && finalAmountToPay > 0){
+      if(paymentMethod === "Amex"  && finalAmountToPay === 0){
+        
       try{
         const dataforRemaingAmount :any= {
             customerId: customerID,
@@ -666,9 +669,9 @@ getwayService.transactionDataSaveInDB(data,function(result:any){
           };
         
          
-          transactionSaveInDB(reqData);
-          insertRemainingNotesAmount(dataforRemaingAmount);
-          updateInvoiceAfterPay(id)
+          await transactionSaveInDB(reqData);
+          await insertRemainingNotesAmount(dataforRemaingAmount);
+          await updateInvoiceAfterPay(id)
           handleCloses();
         }catch(error:any){
           console.log("Error ",error.message);

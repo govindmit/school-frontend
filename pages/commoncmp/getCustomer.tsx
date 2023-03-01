@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 
 import { api_url, auth_token } from "../api/hello";
 
-export default function AddCustomer({ Data, PId, pname }: { Data: any, PId: any, pname: any }) {
+export default function AddCustomerName({ Data, PId, pname }: { Data: any, PId: any, pname: any }) {
   const [users, setUsers] = useState<any>([]);
   const [opens, setOpens] = React.useState(false);
   const [inputValue, setInputValue] = useState("");
