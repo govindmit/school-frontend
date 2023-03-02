@@ -39,7 +39,6 @@ import "react-quill/dist/quill.snow.css";
 
 import { useRouter } from "next/router";
 import { api_url, auth_token } from "../api/hello";
-import "react-toastify/dist/ReactToastify.css";
 import { GridCloseIcon } from "@mui/x-data-grid";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -537,6 +536,7 @@ export default function AddNewActivity() {
             </Card>
           </div>
           <MainFooter/>
+          <ToastContainer />
         </Box>
       </Box>
     </>

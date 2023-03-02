@@ -522,6 +522,7 @@ export default function EditActivity() {
             </Card>
           </div>
           <MainFooter/>
+          <ToastContainer />
         </Box>
       </Box>
     </>
