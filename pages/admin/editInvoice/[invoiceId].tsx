@@ -533,11 +533,7 @@ export default function Guardians() {
                       Save & issue
                     </BootstrapButton>
                   </div>
-                  {/* <Button sx={{ margin: "7px" }} type="button">
-                    Add Guardians
-                  </Button> */}
                 </div>
-
               </Stack>
               {/*bread cump */}
               <div className="midBar">
@@ -722,10 +718,6 @@ export default function Guardians() {
                       <div className="sdiv">
                         <div className="sidiv">Total</div>
                         <div>$ &nbsp;{price}.00</div>
-                      </div>
-                      <div className="sdiv">
-                        <div className="sidiv">Amount Paid</div>
-                        <div>$ &nbsp;0.00</div>
                       </div>
                       <div className="sdiv">
                         <div className="sidiv">Balance Due</div>

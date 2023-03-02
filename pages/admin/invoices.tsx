@@ -209,7 +209,6 @@ export default function Guardians() {
     })
   }, []);
 
-
   const handleClickOpen = (item: any) => {
     console.log(item, "itemmmmm");
     if (item.status == "paid") {
@@ -1118,25 +1117,11 @@ export default function Guardians() {
                           </TableCell>
 
                           <TableCell component="th" scope="row" padding="none">
-                            {disable ? (
-                              <Link href={`/admin/editInvoice/${item.id}`}>
-                                <TableCell align="left">
-                                  {item.invoiceId}
-                                </TableCell>
-                              </Link>
-                            ) : (
-                              <TableCell align="left">
-                                {item.invoiceId}
-                              </TableCell>
-                            )}
-
-
                             <Link href={`/admin/viewInvoice/${item.id}`}>
                               <TableCell align="left">
                                 {item.invoiceId}
                               </TableCell>
                             </Link>
-
                           </TableCell>
                           <TableCell align="left">
                             <b>{item.name}</b>
@@ -1157,17 +1142,7 @@ export default function Guardians() {
 
                           <TableCell align="left" className="action-td">
                             <div className="btn">
-                              {disable ? (
-                                <Button className="idiv" disabled={true}>
-                                  <Image
-                                    onClick={() => generateSimplePDF(item)}
-                                    src="/download.svg"
-                                    alt="Picture of the author"
-                                    width={35}
-                                    height={35}
-                                  />
-                                </Button>
-                              ) : (
+                              {item.status !== "draft" ? (
                                 <Button className="idiv">
                                   <Image
                                     onClick={() => generateSimplePDF(item)}
@@ -1177,7 +1152,10 @@ export default function Guardians() {
                                     height={35}
                                   />
                                 </Button>
+                              ) : (
+                                ""
                               )}
+
                               {disable || paiddisable ? (
                                 <Button className="idiv" disabled={true}>
                                   <Image
@@ -1215,7 +1193,6 @@ export default function Guardians() {
                               ) : (
                                 <Button className="idiv">
                                   <Image
-                                    onClick={() => handleClickOpen(item)}
                                     src="/doller.svg"
                                     alt="Picture of the author"
                                     width={35}
@@ -1223,6 +1200,18 @@ export default function Guardians() {
                                   />
                                 </Button>
                               )}
+
+                              {item.status === "draft" ? (<Button className="idiv">
+                                <Link href={`/admin/editInvoice/${item.id}`}>
+                                  <Image
+                                    src="/edit.svg"
+                                    alt="Picture of the author"
+                                    width={35}
+                                    height={35}
+                                  />
+                                </Link>
+                              </Button>) : ""}
+
                               {custpermit && custpermit.canDelete === true || roleid === 1 ? (
                                 <Button className="idiv">
                                   <Image

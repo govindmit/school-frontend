@@ -1,4 +1,4 @@
-import { Breadcrumbs, Card, CardContent, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, DialogTitleProps, Grid, IconButton, InputLabel, MenuItem, OutlinedInput, Select, TableHead, styled } from "@mui/material";
+import { Breadcrumbs, Card, CardContent, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, InputLabel, MenuItem, OutlinedInput, Select, TableHead, styled } from "@mui/material";
 import { Stack } from "@mui/material";
 import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
@@ -19,9 +19,15 @@ import "react-datepicker/dist/react-datepicker.css";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import PDFService from '../../../commonFunctions/invoicepdf';
 import { toast } from "react-toastify";
-import { GridCloseIcon } from "@mui/x-data-grid";
+import CloseIcon from "@mui/icons-material/Close";
 import moment from "moment";
 import getwayService from "../../../services/gatewayService"
+
+export interface DialogTitleProps {
+    id: string;
+    children?: React.ReactNode;
+    onClose: () => void;
+}
 
 const BootstrapButton = styled(Button)({
     backgroundColor: "#1A70C5",
@@ -43,6 +49,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 
 function BootstrapDialogTitle(props: DialogTitleProps) {
     const { children, onClose, ...other } = props;
+
     return (
         <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
             {children}
@@ -57,13 +64,12 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
                         color: (theme) => theme.palette.grey[500],
                     }}
                 >
-                    <GridCloseIcon />
+                    <CloseIcon />
                 </IconButton>
             ) : null}
         </DialogTitle>
     );
 }
-
 
 export default function Guardians() {
     const router = useRouter();
@@ -165,7 +171,6 @@ export default function Guardians() {
     // payment functionality
 
     const handleClickOpen = (item: any) => {
-        console.log(item, "itemmmmm");
         if (item.status == "paid") {
             setDollerOpen(false);
             toast.success("Already Paid!");
@@ -196,7 +201,6 @@ export default function Guardians() {
                 },
             });
             const res = await response.json();
-            console.log("CreditRequestId =>", res);
             setCustomerCreditNoteRequestId(res?.CreditRequestId)
             setCustomerTotalCreditNoteBalance(res?.creditBal);
 
@@ -241,65 +245,56 @@ export default function Guardians() {
     }
 
 
-
     const handleCreate = async (id: any) => {
-        // console.log(process.env.NEXT_PUBLIC_REDIRECT_URL,"Checkout =>",(window as any).Checkout);
         const Checkout: any = (window as any).Checkout
         const creditNotesId = isChecked ? customerCreditNoteRequestId : null
         console.log("payment method => ", paymentMethod, "isChcked =>", isChecked, "finaltopay =>", finalAmountToPay);
+
         if (paymentMethod === "Amex" && finalAmountToPay > 0) {
-            if (finalAmountToPay === 0) {
-                toast.error("amount will not be $0 for Amex payment method");
-            } if (invoiceStatus === "draft") {
-                toast.error("Invoice has status with Draft,Only Pending invoice Can Pay ");
-            }
-            else {
-                console.log(customerID, "customerId", applyCreditNoteAmount, "=======> ", creditNotesId);
-                var requestData = {
-                    "apiOperation": "CREATE_CHECKOUT_SESSION",
-                    "order": {
-                        "id": orderId,
-                        "amount": finalAmountToPay,
-                        "currency": "QAR",
-                        "description": "Orderd",
-                    },
-                    "interaction": {
-                        // "returnUrl":`${process.env.NEXT_PUBLIC_REDIRECT_URL}/?orderid=${orderId}&paymentMethod=${paymentMethod}`,
-                        "returnUrl": `${process.env.NEXT_PUBLIC_AMEX_INVOICE_REDIRECT_URL}/?orderid=${orderId}&paymentMethod=${paymentMethod}&creditNoteId=${creditNotesId}&remaingAmount=${applyCreditNoteAmount}&customerID=${customerID}`,
-                        "cancelUrl": `${process.env.NEXT_PUBLIC_AMEX_INVOICE_CANCEL_URL}`,
-                        "operation": "PURCHASE",
-                        "merchant": {
-                            "name": "QATAR INTERNATIONAL SCHOOL - ONLINE 634",
-                            "address": {
-                                "line1": "200 Sample St",
-                                "line2": "1234 Example Town"
-                            }
+            console.log(customerID, "customerId", applyCreditNoteAmount, "=======> ", creditNotesId);
+            var requestData = {
+                "apiOperation": "CREATE_CHECKOUT_SESSION",
+                "order": {
+                    "id": orderId,
+                    "amount": finalAmountToPay,
+                    "currency": "QAR",
+                    "description": "Orderd",
+                },
+                "interaction": {
+                    // "returnUrl":`${process.env.NEXT_PUBLIC_REDIRECT_URL}/?orderid=${orderId}&paymentMethod=${paymentMethod}`,
+                    "returnUrl": `${process.env.NEXT_PUBLIC_AMEX_INVOICE_REDIRECT_URL}/?orderid=${orderId}&paymentMethod=${paymentMethod}&creditNoteId=${creditNotesId}&remaingAmount=${applyCreditNoteAmount}&customerID=${customerID}`,
+                    "cancelUrl": `${process.env.NEXT_PUBLIC_AMEX_INVOICE_CANCEL_URL}`,
+                    "operation": "PURCHASE",
+                    "merchant": {
+                        "name": "QATAR INTERNATIONAL SCHOOL - ONLINE 634",
+                        "address": {
+                            "line1": "200 Sample St",
+                            "line2": "1234 Example Town"
                         }
                     }
                 }
-                await getwayService.getSession(requestData, async function (result: any) {
-                    if (result?.data?.result === "SUCCESS") {
-                        // setSessionId(result?.data.session.id)
-                        // setsuccessIndicator(result?.data.successIndicator);
-                        await Checkout.configure({
-                            session: {
-                                id: result?.data.session.id
-                            }
-                        });
-                        await Checkout.showPaymentPage();
-                    }
-                })
             }
+            await getwayService.getSession(requestData, async function (result: any) {
+                if (result?.data?.result === "SUCCESS") {
+                    // setSessionId(result?.data.session.id)
+                    // setsuccessIndicator(result?.data.successIndicator);
+                    await Checkout.configure({
+                        session: {
+                            id: result?.data.session.id
+                        }
+                    });
+                    await Checkout.showPaymentPage();
+                }
+            })
         }
+
         if (paymentMethod === "Cash") {
             try {
-
                 const dataforRemaingAmount: any = {
                     customerId: customerID,
                     Amount: applyCreditNoteAmount,
                     amountMode: 0,
                 }
-
                 const rendomTransactionId = keyGen(5);
                 let amount = finalAmountToPay > 0 ? finalAmountToPay : InvoiceAmount
                 let reqData = {
@@ -311,15 +306,16 @@ export default function Guardians() {
                     idForPayment: orderId,
                     creditNotesId: customerCreditNoteRequestId
                 };
-
                 await transactionSaveInDB(reqData);
-                await insertRemainingNotesAmount(dataforRemaingAmount);
+                //await insertRemainingNotesAmount(dataforRemaingAmount);
                 await updateInvoiceAfterPay(id)
                 handleCloses();
             } catch (error: any) {
                 console.log("Error ", error.message);
             }
         }
+
+
         if (paymentMethod === "Amex" && finalAmountToPay === 0) {
 
             try {
@@ -346,6 +342,7 @@ export default function Guardians() {
                 console.log("Error ", error.message);
             }
         }
+
         if (paymentMethod === "QPay") {
             toast.info(`As of Now This payment method is not supported ${paymentMethod} !`);
         }
@@ -358,40 +355,14 @@ export default function Guardians() {
 
     const transactionSaveInDB = async (data: any) => {
         getwayService.transactionDataSaveInDB(data, function (result: any) {
-            console.log("final result =>", result);
             setShowSuccess(true)
             setTimeout(callBack_func, 5000);
             function callBack_func() {
                 setShowSuccess(false)
                 document.location.href = `${process.env.NEXT_PUBLIC_AMEX_INVOICE_REDIRECT_URL}`;
             }
-
         });
     }
-
-    const insertRemainingNotesAmount = async (reqData: any) => {
-        //  const reqData = {
-        //   customerId: customerId,
-        //   Amount: creditBalance,
-        //   amountMode: 0,
-        // };
-        await axios({
-            method: "PUT",
-            url: `${api_url}/insertAmount`,
-            data: reqData,
-            headers: {
-                Authorization: auth_token,
-            },
-        })
-            .then((data: any) => {
-                if (data) {
-                    console.log("@@@@@@@@");
-                }
-            })
-            .catch((error) => {
-                console.log("error", error);
-            });
-    };
 
     const updateInvoiceAfterPay = async (invoiceId: any) => {
         try {
@@ -422,6 +393,31 @@ export default function Guardians() {
     }
 
 
+    const insertRemainingNotesAmount = async (reqData: any) => {
+        // const reqData = {
+        //     customerId: customerId,
+        //     Amount: creditBalance,
+        //     amountMode: 0,
+        // };
+        await axios({
+            method: "PUT",
+            url: `${api_url}/insertAmount`,
+            data: reqData,
+            headers: {
+                Authorization: auth_token,
+            },
+        })
+            .then((data: any) => {
+                if (data) {
+                    console.log("@@@@@@@@");
+                }
+            })
+            .catch((error) => {
+                console.log("error", error);
+            });
+    };
+
+
     const getUser = async () => {
         await axios({
             method: "POST",
@@ -436,6 +432,11 @@ export default function Guardians() {
             })
             .catch((err) => { });
     };
+
+
+    console.log(invDet && invDet[0]);
+
+
 
     return (
         <>
@@ -578,12 +579,15 @@ export default function Guardians() {
                                     <div className="ickk">
                                         <div className="cinvoice">
                                             <div>
-                                                <Typography style={{ textAlign: "center" }}><b>${invDet[0]?.amount} DUE</b></Typography>
+                                                {invDet && invDet[0]?.status === "paid" ? (<Typography style={{ textAlign: "center" }}><b>${invDet[0]?.amount} Paid</b></Typography>) :
+                                                    (<Typography style={{ textAlign: "center" }}><b>${invDet[0]?.amount} DUE</b></Typography>)}
+
                                                 <BootstrapButton
                                                     type="button"
                                                     style={{ backgroundColor: "#42D5CD" }}
                                                     sx={{ width: 250, padding: 1, margin: 2 }}
                                                     onClick={() => handleClickOpen(invDet && invDet[0])}
+                                                    disabled={invDet && invDet[0]?.status === "paid" ? true : false}
                                                 >
                                                     Pay Now !
                                                 </BootstrapButton>
@@ -663,7 +667,7 @@ export default function Guardians() {
                                                             <div>$ &nbsp;{price}.00</div>
                                                         </div>
                                                         <div className="sdiv">
-                                                            <div className="sidiv">Balance Due</div>
+                                                            <div className="sidiv">Balance {invDet && invDet[0]?.status === "paid" ? "Paid" : "Due"}</div>
                                                             <div>$ &nbsp;{price}.00</div>
                                                         </div>
                                                     </div>
@@ -685,7 +689,7 @@ export default function Guardians() {
                 >
                     <BootstrapDialogTitle
                         id="customized-dialog-title"
-                    //onClose={handleCloses}
+                        onClose={handleCloses}
                     >
                         Recieve Payment
                     </BootstrapDialogTitle>
@@ -790,24 +794,6 @@ export default function Guardians() {
                                     </Grid>
                                 </Grid>
                             </Stack>
-                            {/* <FormGroup>
-                      <FormControlLabel
-                        control={<Checkbox defaultChecked />}
-                        label="Want to use credit balance $100"
-                        className="want"
-                      />
-                    </FormGroup> */}
-                            {/* <div>
-                      <h5 className="apply">Apply Payment</h5>
-                    </div>
-                    <div className="iadiv">
-                      <div className="hh">Invoice Amount:</div>
-                      <div>${recievedPay.amount}.00</div>
-                    </div>
-                    <div className="iadiv">
-                      <div className="hh red">Total Credit Balance:</div>
-                      <div>$0.00</div>
-                    </div> */}
                             <Stack style={{ marginTop: "20px" }}>
                                 <Grid container spacing={2}>
                                     <Grid item xs={12} md={12}>
@@ -843,10 +829,6 @@ export default function Guardians() {
                                 </Grid>
                             </Stack>
                         </Grid>
-                        {/* <div className="total-amount">
-                    <div className="hh">Total Amount:</div>
-                    <div>${recievedPay.amount}.00</div>
-                  </div> */}
                     </DialogContent>
                     <DialogActions>
                         <Button
