@@ -315,7 +315,6 @@ export default function Guardians() {
             }
         }
 
-
         if (paymentMethod === "Amex" && finalAmountToPay === 0) {
 
             try {
@@ -432,11 +431,6 @@ export default function Guardians() {
             })
             .catch((err) => { });
     };
-
-
-    console.log(invDet && invDet[0]);
-
-
 
     return (
         <>
