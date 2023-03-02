@@ -34,6 +34,7 @@ import { useRouter } from "next/router";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { RiDeleteBin5Fill } from "react-icons/ri";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
     padding: theme.spacing(2),
@@ -510,7 +511,15 @@ export default function Guardians() {
                     EDIT INVOICES
                   </Typography>
                 </Stack>
-                <div className="cinvoice">
+                <div className="cinvoice" >
+                  <div className="buycss" style={{ textAlign: "end", marginTop: "7px", marginRight: "10px" }} >
+                    <Link
+                      href="/admin/invoices"
+                      style={{ color: "#1A70C5", textDecoration: "none" }}
+                    >
+                      <Button variant="contained" startIcon={<ArrowBackIcon />}> <b>Back To List</b></Button>
+                    </Link>
+                  </div>
                   <div>
                     <BootstrapButton
                       onClick={handleDraft}
@@ -524,11 +533,7 @@ export default function Guardians() {
                       Save & issue
                     </BootstrapButton>
                   </div>
-                  {/* <Button sx={{ margin: "7px" }} type="button">
-                    Add Guardians
-                  </Button> */}
                 </div>
-
               </Stack>
               {/*bread cump */}
               <div className="midBar">
@@ -579,6 +584,7 @@ export default function Guardians() {
                         Customer <span className="err_str">*</span>
                       </InputLabel>
                       <Autocomplete
+                        disabled
                         style={{ width: 300 }}
                         fullWidth
                         value={value}
@@ -632,6 +638,7 @@ export default function Guardians() {
                         fullWidth
                         onChange={(e: any) => setInvoiceNo(e.target.value)}
                         value={!invoiceno ? invoice[0]?.invoiceId : invoiceno}
+                        disabled
                       />
                       <InputLabel id="demo-select-small"></InputLabel>
                       &nbsp; &nbsp;
@@ -711,10 +718,6 @@ export default function Guardians() {
                       <div className="sdiv">
                         <div className="sidiv">Total</div>
                         <div>$ &nbsp;{price}.00</div>
-                      </div>
-                      <div className="sdiv">
-                        <div className="sidiv">Amount Paid</div>
-                        <div>$ &nbsp;0.00</div>
                       </div>
                       <div className="sdiv">
                         <div className="sidiv">Balance Due</div>

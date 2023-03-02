@@ -425,6 +425,7 @@ if(Check === true){
       }
      }
      if(paymentPayMethod === "CBQ"){
+      getwayService.redirectCyberSourcePayment();
       toast.info(`As of Now This payment method is not supported ${paymentPayMethod} !`);
      }
     

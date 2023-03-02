@@ -39,6 +39,7 @@ import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import "react-datepicker/dist/react-datepicker.css";
 import MainFooter from "../commoncmp/mainfooter";
 import { RiDeleteBin5Fill } from "react-icons/ri";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -266,8 +267,6 @@ export default function Guardians() {
         selected.slice(selectedIndex + 1)
       );
     }
-    console.log(newSelected.length, "newSelected");
-
     setSelected(newSelected);
     if (newSelected.length === 0) {
       setItemError("Item field is required");
@@ -592,7 +591,7 @@ export default function Guardians() {
   };
 
 
-  console.log(product)
+  console.log("item", product, selected);
   function openDelete(item: any) {
     console.log(item);
     let gg = product.filter((a: any) => a.id !== item);
@@ -643,6 +642,14 @@ export default function Guardians() {
                   </Typography>
                 </Stack>
                 <div className="cinvoice">
+                  <div className="buycss" style={{ textAlign: "end", marginTop: "7px", marginRight: "10px" }} >
+                    <Link
+                      href="/admin/invoices"
+                      style={{ color: "#1A70C5", textDecoration: "none" }}
+                    >
+                      <Button variant="contained" startIcon={<ArrowBackIcon />}> <b>Back To List</b></Button>
+                    </Link>
+                  </div>
                   <div>
                     <BootstrapButton
                       onClick={handleDraft}
