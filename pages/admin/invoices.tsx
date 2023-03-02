@@ -860,7 +860,6 @@ export default function Guardians() {
                       />
                     </Tabs>
                   </Box>
-
                   <Stack
                     direction="row"
                     alignItems="center"
@@ -1178,27 +1177,20 @@ export default function Guardians() {
                                 </Button>
                               )}
 
-                              {disable || paiddisable ? (
-                                <Button className="idiv" disabled={true}>
-                                  {/* <div className="idiv"> */}
-                                  <Image
-                                    onClick={() => handleClickOpen(item)}
-                                    src="/doller.svg"
-                                    alt="Picture of the author"
-                                    width={35}
-                                    height={35}
-                                  />
-                                  {/* </div> */}
+                              {item.status !== "draft" ? (
+                                <Button className="idiv" >
+                                  <div className="idiv">
+                                    <Image
+                                      onClick={() => handleClickOpen(item)}
+                                      src="/doller.svg"
+                                      alt="Picture of the author"
+                                      width={35}
+                                      height={35}
+                                    />
+                                  </div>
                                 </Button>
                               ) : (
-                                <Button className="idiv">
-                                  <Image
-                                    src="/doller.svg"
-                                    alt="Picture of the author"
-                                    width={35}
-                                    height={35}
-                                  />
-                                </Button>
+                                ""
                               )}
 
                               {item.status === "draft" ? (<Button className="idiv">
