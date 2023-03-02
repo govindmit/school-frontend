@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Card,
   Button,
@@ -21,8 +21,6 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import MiniDrawer from "../sidebar";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import styled from "@emotion/styled";
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
@@ -35,19 +33,19 @@ import {
   DialogTitle,
   Menu,
 } from "@mui/material";
-import "react-quill/dist/quill.snow.css";
-
+import { Autocomplete, Chip, TextField } from "@mui/material";
 import { useRouter } from "next/router";
 import { api_url, auth_token } from "../api/hello";
-import "react-toastify/dist/ReactToastify.css";
 import { GridCloseIcon } from "@mui/x-data-grid";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from "moment";
 import dynamic from "next/dynamic";
-import AddCustomerName from "../commoncmp/getMultipleCustomer";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import MainFooter from "../commoncmp/mainfooter";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "react-quill/dist/quill.snow.css";
 
 const QuillNoSSRWrapper = dynamic(import("react-quill"), {
   ssr: false,
@@ -111,7 +109,7 @@ type FormValues = {
   agegroup: number;
   status1: statusEnum;
   customertype: number;
-  subject:string;
+  subject: string;
 };
 const modules = {
   toolbar: [
@@ -156,7 +154,7 @@ const formats = [
 export default function Composer() {
   const [spinner, setshowspinner] = useState(false);
   const [btnDisabled, setBtnDisabled] = useState(false);
-  const [type1, setType1] = useState<FormValues | any>("");
+  const [type, setType] = useState<FormValues | any>("");
   const [name1, setName1] = useState<FormValues | any>("");
   const [ageGroup, setAgeGroup] = useState<FormValues | any>([]);
   const [typeError, setTypeError] = useState<FormValues | any>("");
@@ -171,16 +169,25 @@ export default function Composer() {
   const [anyFieldError, setAnyFieldError] = useState("");
   const [subject, setSubject] = useState("");
   const [typeData, setTypeData] = React.useState<any>([]);
+  const [age, setAge] = useState("");
+  const [valids, setValids] = React.useState(false);
+
+  const [users, setUsers] = useState<any>([]);
+  const [opens, setOpens] = React.useState(false);
+  const [inputValue, setInputValue] = useState([]);
+  const [value, setValue] = useState<any>([]);
 
   let allData: any = [];
 
   React.useEffect(() => {
     getType();
+    getUser();
   }, []);
 
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<FormValues>();
   const router = useRouter();
@@ -209,9 +216,8 @@ export default function Composer() {
     }
   };
 
-  
-  
   const setTypeId = async (id: any) => {
+    setType(id);
     if (id !== null) {
       const reqData = {
         typeId: id,
@@ -236,6 +242,7 @@ export default function Composer() {
   };
 
   const setAgegroupId = async (id: any) => {
+    setAge(id);
     if (id !== null) {
       const reqData = {
         agegroup: id,
@@ -258,9 +265,8 @@ export default function Composer() {
         });
     }
   };
-
-  customerId &&
-    customerId?.map((ea: any) => {
+  value &&
+    value?.map((ea: any) => {
       if (!allData.includes(ea)) {
         allData.push({
           email1: ea.email1,
@@ -298,25 +304,61 @@ export default function Composer() {
     }
   }, []);
 
-  const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    if(subject === ""){
-      setSubjectError("Subject field is required *")
-    }
-    if(descontent === ""){
-      setMessageError("Message field is required *")
-    }
+  const setSub = (e: any) => {
+    setSubject(e?.target?.value);
+    setValids(false);
+  };
 
-    const reqData = {
-      composer:filteredArr,
-      subject:subject,
-      descontent:descontent
-    };
-    if(subject === "" || descontent === "" ){
-      console.log('@@');
-    }else if(filteredArr?.length === 0){
+  const getUser = async () => {
+    const url = `${api_url}/getuser`;
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          Authorization: auth_token,
+        },
+      });
+      const res = await response.json();
+      setUsers(res.data);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  const option: { email1: string; name: string }[] = [];
+  users &&
+    users.map((data: any, key: any) => {
+      return option.push({
+        email1: data.email1,
+        name: data.name,
+      });
+    });
+
+  const onSubmit: SubmitHandler<FormValues> = async (data, e: any) => {
+    setValids(false);
+    if (subject === "") {
+      setSubjectError("Subject field is required *");
+    }
+    if (descontent === "") {
+      setMessageError("Message field is required *");
+    }
+    if (filteredArr?.length === 0) {
       setAnyFieldError("Please filled any one of fields");
-    }else{
+    }
 
+    let reqData = {
+      composer: filteredArr,
+      subject: subject,
+      descontent: descontent,
+    };
+    if (subject === "" || descontent === "") {
+      console.log("@@");
+    } else if (filteredArr?.length === 0) {
+      setAnyFieldError("Please filled any one of fields");
+    } else {
+      if (descontent === "<p><br></p>") {
+        setValids(false);
+      }
       await axios({
         method: "POST",
         url: `${api_url}/sendcomposer`,
@@ -324,15 +366,25 @@ export default function Composer() {
         headers: {
           Authorization: auth_token,
         },
-    })
-      .then((res) => {
-        if (res.status === 200) {
-          toast.success("Mail sent successfully");
-        }
       })
-      .catch((err) => {
-        console.log('@@@@@@@@@@@@@err',err);
-      });
+        .then((res) => {
+          if (res.status === 200) {
+            toast.success("Mail sent successfully");
+            setType("");
+            setAge("");
+            setValue([]);
+            setSubject("");
+            setAnyFieldError("");
+            setSubjectError("");
+            setMessageError("");
+            setDesContent("");
+            e.target.reset();
+            setValids(true);
+          }
+        })
+        .catch((err) => {
+          console.log("err", err);
+        });
     }
   };
 
@@ -401,10 +453,31 @@ export default function Composer() {
                       <Grid item xs={4} md={4}>
                         <Stack spacing={1}>
                           <InputLabel htmlFor="name">Customer Name</InputLabel>
-                          <AddCustomerName
-                            Data={Getdata}
-                            pemail={parentid}
-                            pname={parentname}
+                          <Autocomplete
+                            multiple
+                            size="small"
+                            value={value}
+                            onChange={(event, newValue) => {
+                              setValue(newValue);
+                            }}
+                            // onChange={(e) => setCustomerData(e.target.value)}
+                            options={option}
+                            getOptionLabel={(option) => option.name || ""}
+                            isOptionEqualToValue={(option, name) =>
+                              option.name === value.name
+                            }
+                            renderInput={(params) => (
+                              <TextField
+                                {...params}
+                                variant="outlined"
+                                placeholder="Search && Select Customer"
+                              />
+                            )}
+                            noOptionsText={
+                              <span style={{ color: "red" }}>
+                                The customer doesn't exist with this name.
+                              </span>
+                            }
                           />
                         </Stack>
                       </Grid>
@@ -421,6 +494,7 @@ export default function Composer() {
                               labelId="demo-simple-select-label"
                               id="demo-simple-select"
                               size="small"
+                              value={type}
                               onChange={(e) => setTypeId(e?.target?.value)}
                             >
                               <MenuItem value={0}>Individual</MenuItem>
@@ -447,8 +521,9 @@ export default function Composer() {
                           <FormControl fullWidth>
                             <Select
                               labelId="demo-simple-select-label"
-                              id="demo-simple-select"
+                              id="ageGroup"
                               size="small"
+                              value={age}
                               onChange={(e) => setAgegroupId(e?.target?.value)}
                             >
                               <MenuItem value={1}>FS1</MenuItem>
@@ -470,10 +545,12 @@ export default function Composer() {
                       </Grid>
                     </Grid>
                   </Stack>
-                  {anyFieldError &&  <span style={style}>
-                                 Please select any fields *
-                            </span>}
-                 
+                  {filteredArr?.length !== 0
+                    ? ""
+                    : anyFieldError && (
+                        <span style={style}>Please select any fields *</span>
+                      )}
+
                   <Stack style={{ marginTop: "20px" }}>
                     <Grid container spacing={2}>
                       <Grid item xs={12} md={12}>
@@ -486,11 +563,16 @@ export default function Composer() {
                             id="subject"
                             fullWidth
                             size="small"
-                            onChange={(e) => setSubject(e?.target?.value)}
+                            {...register("subject")}
+                            onChange={(e) => setSub(e)}
                           />
-                          {subjectError && subject === "" ? <span style={style}>
-                                 Subject field is Required *
-                            </span>:""}
+                          {subjectError && subject === "" ? (
+                            <span style={style}>
+                              Subject field is Required *
+                            </span>
+                          ) : (
+                            ""
+                          )}
                         </Stack>
                       </Grid>
                     </Grid>
@@ -503,14 +585,23 @@ export default function Composer() {
                             Message<span className="err_str"></span>
                           </InputLabel>
                           <QuillNoSSRWrapper
+                            value={descontent}
                             modules={modules}
                             formats={formats}
                             theme="snow"
+                            // value={descontent}
                             onChange={setDesContent}
                           />
-                          {messageError && descontent === "" || descontent === "<p><br></p>" ? <span style={style}>
-                                 Message field is Required *
-                            </span>:""}
+                          {(messageError && descontent === "") ||
+                          descontent === "<p><br></p>" ? (
+                            <span style={style}>
+                              {valids === false
+                                ? "Message field is Required **"
+                                : ""}
+                            </span>
+                          ) : (
+                            ""
+                          )}
                         </Stack>
                       </Grid>
                     </Grid>
@@ -530,6 +621,7 @@ export default function Composer() {
             </Card>
           </div>
           <MainFooter />
+          <ToastContainer />
         </Box>
       </Box>
     </>

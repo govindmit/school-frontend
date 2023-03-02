@@ -286,6 +286,181 @@ export default function MiniDrawer() {
         <Drawer variant="permanent" open={open}>
           <h1>Header</h1>
           <List>
+{/* //////////////////////Customer Management////////////////////////// */}
+
+{ userdet?.roleId === 2 ? (
+              <ListItem
+                className="sidebar-link"
+                disablePadding
+                sx={{ display: "block" }}
+                onClick={() => router.push("/user/dashboard")}
+              >
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: open ? "initial" : "center",
+                    px: 2.5,
+                    background: setDashboardBgColor,
+                    color:setDashboardColor,
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : "auto",
+                      justifyContent: "center",
+                    }}
+                  ></ListItemIcon>
+                  <DashboardOutlinedIcon />
+                  <ListItemText
+                    primary="Dashboard"
+                    sx={{ opacity: open ? 1 : 0 }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            ) : (
+              ""
+            )}
+             {userdet?.roleId === 2 ? (
+              <ListItem
+                className="sidebar-link"
+                disablePadding
+                sx={{ display: "block" }}
+                onClick={() => router.push("/user/invoices")}
+              >
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: open ? "initial" : "center",
+                    px: 2.5,
+                    background: setInvoiceBgColor,
+                    color:setInvoiceColor,
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : "auto",
+                      justifyContent: "center",
+                    }}
+                  ></ListItemIcon>
+                  <DescriptionOutlinedIcon />
+                  <ListItemText
+                    primary="Invoices"
+                    sx={{ opacity: open ? 1 : 0 }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            ) : (
+              ""
+            )}
+             {userdet?.roleId === 2 ? (
+              <ListItem
+                className="sidebar-link"
+                disablePadding
+                sx={{ display: "block" }}
+                onClick={() => router.push("/user/salesinvoice")}
+              >
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: open ? "initial" : "center",
+                    px: 2.5,
+                    background: setSalesBgColor,
+                    color:setSalesColor,
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : "auto",
+                      justifyContent: "center",
+                    }}
+                  ></ListItemIcon>
+                  <DescriptionOutlinedIcon />
+                  <ListItemText
+                    primary="Sales Invoice"
+                    sx={{ opacity: open ? 1 : 0 }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            ) : (
+              ""
+            )}
+             {userdet?.roleId === 2 ? (
+              <ListItem
+                className="sidebar-link"
+                disablePadding
+                sx={{ display: "block" }}
+                onClick={() =>
+                  router.push("/user/creditinvoice")
+                }
+              >
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: open ? "initial" : "center",
+                    px: 2.5,
+                    background: setCreditBgColor,
+                    color:setCreditColor,
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : "auto",
+                      justifyContent: "center",
+                    }}
+                  ></ListItemIcon>
+                  <CreditCardOutlinedIcon />
+                  <ListItemText
+                    primary="Credit Invoice"
+                    sx={{ opacity: open ? 1 : 0 }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            ) : (
+              ""
+            )}
+
+            {userdet?.roleId === 2 ? (
+              <ListItem
+                className="sidebar-link"
+                disablePadding
+                sx={{ display: "block" }}
+                onClick={() => router.push("/user/activities")}
+              >
+                <ListItemButton
+                  onClick={handleChangeActive}
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: open ? "initial" : "center",
+                    px: 2.5,
+                    background: setActivityBgColor,
+                    color:setActivityColor,
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : "auto",
+                      justifyContent: "center",
+                    }}
+                  ></ListItemIcon >
+                  <TimelineOutlinedIcon/>
+                  <ListItemText
+                    primary="Activities"
+                    sx={{ opacity: open ? 1 : 0 }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            ) : (
+              ""
+            )}
+
+{/* ///////////////////////////////////////////////////////////////////////// */}
+
+
             {checkdashboard === true || userdet?.roleId === 1 ? (
               <ListItem
                 className="sidebar-link"
@@ -611,7 +786,7 @@ export default function MiniDrawer() {
                 />
               </ListItemButton>
             </ListItem>
-
+            {userdet?.roleId === 1 ? (
             <ListItem
               className="sidebar-link"
               disablePadding
@@ -642,6 +817,10 @@ export default function MiniDrawer() {
                 />
               </ListItemButton>
             </ListItem>
+) : (
+  ""
+)}
+
           </List>
         </Drawer>
         <Divider />
