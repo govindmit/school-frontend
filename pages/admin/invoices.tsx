@@ -36,15 +36,11 @@ import { RiDeleteBin5Fill } from "react-icons/ri";
 import MiniDrawer from "../sidebar";
 import axios from "axios";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-import Chip from "@mui/material/Chip";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import { api_url, base_url, auth_token } from "../api/hello";
 import moment from "moment";
 import Image from "next/image";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
-import Popover from "@mui/material/Popover";
 import PopupState, {
   bindTrigger,
   bindMenu,
@@ -59,25 +55,18 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { jsPDF } from "jspdf";
-import autoTable from "jspdf-autotable";
-
 import Alert from '@mui/material/Alert';
 import Script from "next/script";
 import getwayService from "../../services/gatewayService"
-
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useForm, SubmitHandler } from "react-hook-form";
-import {
-  setSyntheticLeadingComments,
-  setTokenSourceMapRange,
-} from "typescript";
 import Paper from "@mui/material/Paper";
-import { number } from "yup/lib/locale";
 import { useRouter } from "next/router";
 import commmonfunctions from "../../commonFunctions/commmonfunctions";
 import MainFooter from "../commoncmp/mainfooter";
+import PDFService from '../../commonFunctions/invoicepdf';
+
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
     padding: theme.spacing(2),
@@ -135,28 +124,24 @@ export interface FormValues {
 function usePagination(data: any, itemsPerPage: any) {
   const [currentPage, setCurrentPage] = useState(1);
   const maxPage = Math.ceil(data.length / itemsPerPage);
-
   function currentData() {
     const begin = (currentPage - 1) * itemsPerPage;
     const end = begin + itemsPerPage;
     return data.slice(begin, end);
   }
-
   function next() {
     setCurrentPage((currentPage) => Math.min(currentPage + 1, maxPage));
   }
-
   function prev() {
     setCurrentPage((currentPage) => Math.max(currentPage - 1, 1));
   }
-
   function jump(page: any) {
     const pageNumber = Math.max(1, page);
     setCurrentPage((currentPage) => Math.min(pageNumber, maxPage));
   }
-
   return { next, prev, jump, currentData, currentPage, maxPage };
 }
+
 export default function Guardians() {
   let localUrl = process.env.NEXT_PUBLIC_BASE_URL;
   const [token, setToken] = useState([]);
@@ -187,13 +172,11 @@ export default function Guardians() {
   const [custpermit, setcustpermit] = useState<any>([]);
   const [roleid, setroleid] = useState(0);
   const router = useRouter();
-
   const [orderId, setorderId] = useState('');
   const [InvoiceAmount, setInvoiceAmount] = useState(0);
   const [invoiceStatus, setInvoiceStatus] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('Cash');
   const [showSuccess, setShowSuccess] = useState(false);
-
   const [customerTotalCreditNoteBalance, setCustomerTotalCreditNoteBalance] = useState(0);
   const [customerCreditNoteRequestId, setCustomerCreditNoteRequestId] = useState(null);
   const [applyCreditNoteAmount, setApplyCreditNoteAmount] = useState(0);
@@ -393,116 +376,7 @@ export default function Guardians() {
     setStartDate(null);
     setEndDate(null);
   };
-  const generateSimplePDF = async (item: any) => {
-    let requested = {
-      id: item.itemId,
-    };
-    await axios({
-      method: "POST",
-      url: `${api_url}/getItembyid`,
-      data: requested,
 
-      headers: {
-        "content-type": "multipart/form-data",
-      },
-    })
-      .then((res) => {
-        // setItem(res?.data.data);
-        let items = res?.data.data;
-        if (res) {
-          setTimeout(() => {
-            var price = 0;
-            for (let d of items) {
-              price = price + d.price;
-            }
-            const doc = new jsPDF("l", "mm", "a4");
-            doc.setFontSize(20);
-
-            doc.text("Qatar International School", 40, 20);
-            doc.setFontSize(10);
-            doc.text("Qatar International School", 40, 25);
-            doc.setFontSize(10);
-            doc.text("United Nations St, West Bay, P.O. Box: 5697", 40, 30);
-            doc.text("Doha, Qatar", 40, 35);
-            doc.text("Telephone: 44833456", 240, 20);
-            doc.text("Website:  www.qis.org", 240, 28);
-            doc.text("Email:  qisfinance@qis.org", 237, 35);
-
-            doc.setFont("courier");
-
-            doc.setFontSize(40);
-
-            doc.text("INVOICE", 120, 60);
-
-            doc.setFontSize(20);
-
-            doc.text("family ID", 30, 90);
-            doc.text(`12`, 100, 90);
-
-            doc.text("Account Number", 30, 100);
-            doc.text("123", 100, 100);
-
-            doc.text("Invoice No", 200, 90);
-            doc.text(`${item.invoiceId}`, 250, 90);
-
-            doc.text("Date", 200, 100);
-            doc.text(`${item.invoiceDate}`, 250, 100);
-
-            const head = [["ITEM", "AMOUNT"]];
-            var data: any = [];
-            // push each tickcet's info into a row
-            // items.map((it: any) => data.push(Object.values(it)));
-            {
-              items && items.length > 1
-                ? items.map((ticket: any) => {
-                  let ticketData = [
-                    ticket.name,
-                    ticket.price,
-
-                    // called date-fns to format the date on the ticket
-                  ];
-                  // push each tickcet's info into a row
-                  data.push(ticketData);
-                })
-                : data.push([
-                  items && items[0]?.name,
-                  items && items[0]?.price,
-                ]);
-              // push each tickcet's info into a row
-            }
-            doc.setFontSize(20);
-
-            autoTable(doc, {
-              theme: "plain",
-              margin: { top: 120, left: 50 },
-              tableWidth: 500,
-              styles: { fontSize: 15 },
-              columnStyles: { 0: { halign: "left" } },
-              head: head,
-              body: data,
-
-              didDrawCell: (data: any) => { },
-            });
-            if (items.length > 2) {
-              doc.setFontSize(20);
-              doc.text("Grand Total", 195, 163);
-              doc.setFontSize(15);
-
-              doc.text(`${price}`, 258, 163);
-            } else {
-              doc.setFontSize(20);
-              doc.text("Grand Total", 190, 155);
-              doc.setFontSize(15);
-
-              doc.text(`${price}`, 240, 155);
-            }
-
-            doc.save("Document.pdf");
-          }, 2000);
-        }
-      })
-      .catch((err) => { });
-  };
   useEffect(() => {
     let search = router.query;
     let amexOrderId = search.orderid;
@@ -568,20 +442,20 @@ export default function Guardians() {
   };
   const handleCreate = async (id: any) => {
     // console.log(process.env.NEXT_PUBLIC_REDIRECT_URL,"Checkout =>",(window as any).Checkout);
-   const Checkout : any  =  (window as any).Checkout
-   const creditNotesId = isChecked ? customerCreditNoteRequestId : null
-   console.log("payment method => ",paymentMethod,"isChcked =>",isChecked, "finaltopay =>",finalAmountToPay);
-   if(paymentMethod === "Amex" && finalAmountToPay > 0){
-    if( finalAmountToPay=== 0 ){
-      toast.error("amount will not be $0 for Amex payment method");
-     }if(invoiceStatus === "draft"){
-      toast.error("Invoice has status with Draft,Only Pending invoice Can Pay ");
-     }
-     else{
-      console.log(customerID,"customerId",applyCreditNoteAmount,"=======> ",creditNotesId);
-      var requestData = {
-        "apiOperation": "CREATE_CHECKOUT_SESSION",
-        "order": {
+    const Checkout: any = (window as any).Checkout
+    const creditNotesId = isChecked ? customerCreditNoteRequestId : null
+    console.log("payment method => ", paymentMethod, "isChcked =>", isChecked, "finaltopay =>", finalAmountToPay);
+    if (paymentMethod === "Amex" && finalAmountToPay > 0) {
+      if (finalAmountToPay === 0) {
+        toast.error("amount will not be $0 for Amex payment method");
+      } if (invoiceStatus === "draft") {
+        toast.error("Invoice has status with Draft,Only Pending invoice Can Pay ");
+      }
+      else {
+        console.log(customerID, "customerId", applyCreditNoteAmount, "=======> ", creditNotesId);
+        var requestData = {
+          "apiOperation": "CREATE_CHECKOUT_SESSION",
+          "order": {
             "id": orderId,
             "amount": finalAmountToPay,
             "currency": "QAR",
@@ -665,7 +539,6 @@ export default function Guardians() {
           creditNotesId: customerCreditNoteRequestId
         };
 
-
         transactionSaveInDB(reqData);
         insertRemainingNotesAmount(dataforRemaingAmount);
         updateInvoiceAfterPay(id)
@@ -683,9 +556,9 @@ export default function Guardians() {
       toast.info(`As of Now This payment method is not supported ${paymentMethod} !`);
     }
 
-      if(paymentMethod === "CBQ"){
-        toast.info(`As of Now This payment method is not supported ${paymentMethod} !`);
-      }
+    if (paymentMethod === "CBQ") {
+      toast.info(`As of Now This payment method is not supported ${paymentMethod} !`);
+    }
 
   };
 
@@ -755,89 +628,6 @@ export default function Guardians() {
       });
   };
 
-
-  const searchItems = (e: any) => {
-    setsearchquery(e.target.value);
-    if (e.target.value === "") {
-      setUser(searchdata);
-    } else {
-      const filterres = user.filter((item: any) => {
-        return (
-          item.name.toLowerCase().includes(e.target.value.toLowerCase()) ||
-          `${item.amount}`.includes(e.target.value) ||
-          item.invoiceId
-            ?.toLowerCase()
-            .includes(e.target.value.toLowerCase()) ||
-          moment(item?.invoiceDate, "DD/MM/YYYY")
-            .format("ll")
-            .toLowerCase()
-            .includes(e.target.value.toLowerCase()) ||
-          moment(item?.createdDate, "DD/MM/YYYY")
-            .format("ll")
-            .toLowerCase()
-            .includes(e.target.value.toLowerCase())
-        );
-      });
-
-      const dtd = filterres;
-      setUser(dtd);
-    }
-
-    console.log(user == "", "dtddddd");
-  };
-  const handleShare = async (item: any) => {
-    setInvoiceId(item?.id);
-    setShare(true);
-  };
-  const handledelete = async () => {
-    let reqData = {
-      userId: "2",
-    };
-    await axios({
-      method: "DELETE",
-      url: `${api_url}/deleteInvoice/${id}`,
-      data: reqData,
-      headers: {
-        "content-type": "multipart/form-data",
-      },
-    })
-      .then((res) => {
-        getUser();
-        toast.success("Deleted Successfully !");
-
-        setTimeout(() => {
-          handleClose();
-        }, 2000);
-      })
-      .catch((err) => { });
-  };
-  const handleSend = async () => {
-    await axios({
-      method: "GET",
-      url: `${api_url}/sendInvoiceEmail/${invoiceId}`,
-      headers: {
-        "content-type": "multipart/form-data",
-      },
-    })
-      .then((res) => {
-        toast.success("Send Invoice Mail Successfully !");
-
-        setShare(false);
-      })
-      .catch((err) => { });
-  };
-
-  function handlerowchange(e: any) {
-    set_row_per_page(e.target.value);
-  }
-
-  const PER_PAGE = row_per_page;
-  const count = Math.ceil(user.length / PER_PAGE);
-  const DATA = usePagination(user, PER_PAGE);
-  const handlePageChange = (e: any, p: any) => {
-    setPage(p);
-    DATA.jump(p);
-  };
   const pending = Invoicedata?.filter((a: any) => a.status == "pending");
   const paid = Invoicedata?.filter((a: any) => a.status == "paid");
   const draft = Invoicedata?.filter((a: any) => a.status == "draft");
@@ -883,7 +673,98 @@ export default function Guardians() {
     setValue(newValue);
   };
 
-  console.log(inputValue, "inputValue");
+
+  //handle delete
+  const handledelete = async () => {
+    let reqData = {
+      userId: "2",
+    };
+    await axios({
+      method: "DELETE",
+      url: `${api_url}/deleteInvoice/${id}`,
+      data: reqData,
+      headers: {
+        "content-type": "multipart/form-data",
+      },
+    })
+      .then((res) => {
+        getUser();
+        toast.success("Deleted Successfully !");
+
+        setTimeout(() => {
+          handleClose();
+        }, 2000);
+      })
+      .catch((err) => { });
+  };
+
+  // send email func
+  const handleSend = async () => {
+    await axios({
+      method: "GET",
+      url: `${api_url}/sendInvoiceEmail/${invoiceId}`,
+      headers: {
+        "content-type": "multipart/form-data",
+      },
+    })
+      .then((res) => {
+        toast.success("Send Invoice Mail Successfully !");
+
+        setShare(false);
+      })
+      .catch((err) => { });
+  };
+
+  const handleShare = async (item: any) => {
+    setInvoiceId(item?.id);
+    setShare(true);
+  };
+
+  // pagination func
+  function handlerowchange(e: any) {
+    set_row_per_page(e.target.value);
+  }
+  const PER_PAGE = row_per_page;
+  const count = Math.ceil(user.length / PER_PAGE);
+  const DATA = usePagination(user, PER_PAGE);
+  const handlePageChange = (e: any, p: any) => {
+    setPage(p);
+    DATA.jump(p);
+  };
+
+  // searching functionality
+  const searchItems = (e: any) => {
+    setsearchquery(e.target.value);
+    if (e.target.value === "") {
+      setUser(searchdata);
+    } else {
+      const filterres = user.filter((item: any) => {
+        return (
+          item.name.toLowerCase().includes(e.target.value.toLowerCase()) ||
+          `${item.amount}`.includes(e.target.value) ||
+          item.invoiceId
+            ?.toLowerCase()
+            .includes(e.target.value.toLowerCase()) ||
+          moment(item?.invoiceDate, "DD/MM/YYYY")
+            .format("ll")
+            .toLowerCase()
+            .includes(e.target.value.toLowerCase()) ||
+          moment(item?.createdDate, "DD/MM/YYYY")
+            .format("ll")
+            .toLowerCase()
+            .includes(e.target.value.toLowerCase())
+        );
+      });
+      const dtd = filterres;
+      setUser(dtd);
+    }
+  };
+
+  //generate pdf
+  const generateSimplePDF = async (item: any) => {
+    PDFService.generateSimplePDF(item);
+  };
+
   return (
     <>
       <Script src="https://amexmena.gateway.mastercard.com/static/checkout/checkout.min.js"
@@ -1024,33 +905,6 @@ export default function Guardians() {
                                         <InputLabel id="demo-select-small">
                                           Customer
                                         </InputLabel>
-
-                                        {/* <Autocomplete
-                                          style={{ width: 300 }}
-                                          fullWidth
-                                          onChange={(event: any, value: any) =>
-                                            setUserId(value)
-                                          }
-                                          inputValue={inputValue}
-                                          onInputChange={(e, value, reason) => {
-                                            setInputValue(value);
-                                          }}
-                                          //   if (!value) {
-                                          //     setOpen(false);
-                                          //   }
-                                          multiple
-                                          id="free-solo-demo"
-                                          options={Invoicedata}
-                                          getOptionLabel={(option: any) =>
-                                            option?.name
-                                          }
-                                          renderInput={(params: any) => (
-                                            <TextField
-                                              {...params}
-                                              placeholder="Select a customer"
-                                            />
-                                          )}
-                                        /> */}
                                         <Autocomplete
                                           multiple
                                           id="tags-outlined"
@@ -1139,11 +993,7 @@ export default function Guardians() {
                                           labelId="demo-select-small"
                                           id="demo-select-small"
                                           label="Status"
-                                        // {...register("sort")}
                                         >
-                                          {/* <MenuItem value={sort}>
-                                            <em>None</em>
-                                          </MenuItem> */}
                                           <MenuItem value="ASC">
                                             Date, Oldest First
                                           </MenuItem>
@@ -1166,8 +1016,6 @@ export default function Guardians() {
                                           id="demo-select-small"
                                           value={status}
                                           label="Status"
-                                        // {...register("status")}
-                                        // onChange={handleChange}
                                         >
                                           <MenuItem value="All">All</MenuItem>
                                           <MenuItem value="pending">
@@ -1221,17 +1069,6 @@ export default function Guardians() {
                             Export
                             <KeyboardArrowDownIcon />
                           </MenuItem>
-                          {/* <Menu {...bindMenu(popupState)}>
-                            <MenuItem onClick={popupState.close}>
-                              Profile
-                            </MenuItem>
-                            <MenuItem onClick={popupState.close}>
-                              My account
-                            </MenuItem>
-                            <MenuItem onClick={popupState.close}>
-                              Logout
-                            </MenuItem>
-                          </Menu> */}
                         </Box>
                       )}
                     </PopupState>
@@ -1245,17 +1082,6 @@ export default function Guardians() {
                             Import
                             <KeyboardArrowDownIcon />
                           </MenuItem>
-                          {/* <Menu {...bindMenu(popupState)}>
-                            <MenuItem onClick={popupState.close}>
-                              Profile
-                            </MenuItem>
-                            <MenuItem onClick={popupState.close}>
-                              My account
-                            </MenuItem>
-                            <MenuItem onClick={popupState.close}>
-                              Logout
-                            </MenuItem>
-                          </Menu> */}
                         </Box>
                       )}
                     </PopupState>
@@ -1309,6 +1135,14 @@ export default function Guardians() {
                                 {item.invoiceId}
                               </TableCell>
                             )}
+
+
+                            <Link href={`/admin/viewInvoice/${item.id}`}>
+                              <TableCell align="left">
+                                {item.invoiceId}
+                              </TableCell>
+                            </Link>
+
                           </TableCell>
                           <TableCell align="left">
                             <b>{item.name}</b>
