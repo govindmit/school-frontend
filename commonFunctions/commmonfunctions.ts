@@ -164,6 +164,19 @@ class CommonFunctions {
     });
     return response.data.data[0];
   };
+
+  CallculateDashBoardData = async ()=>{
+    try{
+      let response = await axios.get(`${api_url}/dashboardData`, {
+        headers: {
+          Authorization: auth_token,
+        },
+      });
+      return response.data;
+    }catch(error:any){
+      console.log("error => ",error.message);
+    }
+  }
 }
 
 export default new CommonFunctions();
