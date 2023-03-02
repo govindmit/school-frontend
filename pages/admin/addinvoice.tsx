@@ -39,6 +39,7 @@ import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import "react-datepicker/dist/react-datepicker.css";
 import MainFooter from "../commoncmp/mainfooter";
 import { RiDeleteBin5Fill } from "react-icons/ri";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -643,6 +644,14 @@ export default function Guardians() {
                   </Typography>
                 </Stack>
                 <div className="cinvoice">
+                  <div className="buycss" style={{ textAlign: "end", marginTop: "7px", marginRight: "10px" }} >
+                    <Link
+                      href="/admin/invoices"
+                      style={{ color: "#1A70C5", textDecoration: "none" }}
+                    >
+                      <Button variant="contained" startIcon={<ArrowBackIcon />}> <b>Back To List</b></Button>
+                    </Link>
+                  </div>
                   <div>
                     <BootstrapButton
                       onClick={handleDraft}
