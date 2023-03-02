@@ -45,7 +45,8 @@ import ConfirmBox from "../../commoncmp/confirmbox";
 import commmonfunctions from "../../commonFunctions/commmonfunctions";
 import AddSalesOrder from "./add_new_sales_order";
 import MainFooter from "../../commoncmp/mainfooter";
-
+import getwayService from "../../services/gatewayService"
+import Alert from '@mui/material/Alert';
 function a11yProps(index: number) {
   return {
     id: `simple-tab-${index}`,
@@ -102,8 +103,7 @@ export default function SalesOrderList() {
   const handleOpen = () => setOpen(true);
   const [activeTab, setActiveTab] = useState("");
 const [newSalesOpen, setNewSalesOpen] = useState(false);
-
-
+const [showSuccess,setShowSuccess] = React.useState(false);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -133,8 +133,54 @@ const [newSalesOpen, setNewSalesOpen] = useState(false);
   }, []);
 
   useEffect(() => {
+          let search = router.query;
+          let amexOrderId = search.orderid;
+          let paymentMethod = search.paymentMethod;
+          let creditNoteId = search.creditNoteId;
+          if(paymentMethod && amexOrderId){
+            console.log("order created");
+            
+            orderPlaced(amexOrderId,paymentMethod,creditNoteId);
+          }
     fetchData();
-  }, []);
+  }, [router.query]);
+
+  const orderPlaced = async(amexOrderId:any,paymentMethod:any,creditNoteId:any)=>{
+    const data = {orderId :amexOrderId}
+    var apiRequest = data;
+    var requestUrl = await getwayService.getRequestUrl("REST", apiRequest);
+    getwayService.retriveOrder( requestUrl, function (orderresult:any) {
+      console.log("order result =>",orderresult);
+      if(orderresult.status === 200){
+        const amextransactionData = orderresult.data
+        const transactionData = {
+          idForPayment:amexOrderId,
+          totalAmount:amextransactionData?.transaction[0].transaction.amount,
+          paidAmount:amextransactionData?.transaction[0].transaction.amount,
+          paymentMethod:paymentMethod,
+          amexorderId:amexOrderId,
+          transactionId:amextransactionData?.transaction[0].transaction.id,
+          creditNotesId: creditNoteId
+        }
+        console.log("transactionData",transactionData);
+          transactionSaveInDB(transactionData);
+      }
+        
+      });
+}
+
+const transactionSaveInDB = async(data:any)=>{
+getwayService.transactionDataSaveInDB(data,function(result:any){
+  console.log("final result =>",result);
+   setShowSuccess(true)
+  setTimeout(callBack_func, 5000);
+  function callBack_func() {
+    setShowSuccess(false)
+    document.location.href = `${process.env.NEXT_PUBLIC_AMEX_SALES_ORDER_REDIRECT_URL}`;
+  }
+
+});
+}
 
   //get salesOrder
   const url = `${api_url}/getSalesOrders`;
@@ -238,22 +284,29 @@ const [newSalesOpen, setNewSalesOpen] = useState(false);
 
   const handleDelete = () => {
     setActiveTab("Delete");
-    setSalesOrder(deleteOrder);
-    setPage(1);
-    DATA.jump(1);
+    if(DATA?.currentPage === 1){
+          setSalesOrder(deleteOrder);
+          handlePageChange("",1)
+    }else{
+        setSalesOrder(deleteOrder);
+       handlePageChange("",1)
+    }
   };
   const handleAll = () => {
-    if (filterStatus !== "" && filterType !== "") {
+    if(DATA?.currentPage === 1){
       setSalesOrder(allListData);
-    } else {
-      fetchData();
+    }else{
+      handlePageChange("",1)
     }
+    // fetchData();
   };
   const handlePaid = () => {
     setActiveTab("Paid");
-    setSalesOrder(paidOrder);
-    setPage(1);
-    DATA.jump(1);
+    if(DATA?.currentPage === 1){
+      setSalesOrder(paidOrder);
+    }else{
+       handlePageChange("",1)
+    }
   };
 
   function handleNewSalesOrder() {
@@ -361,6 +414,8 @@ const [newSalesOpen, setNewSalesOpen] = useState(false);
                 >
                   SALES ORDER
                 </Typography>
+                {        showSuccess &&    <Alert style={{width:'50%',height:50,marginLeft:430,marginTop:"-50px"}} severity="success">Thanks You ! Payment Recieved</Alert>
+}
               </Stack>
               <Stack>
               <Button

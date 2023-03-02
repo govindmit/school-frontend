@@ -62,6 +62,9 @@ export default function ViewCustomer() {
   const [closeinvoice, setCloseinvoice] = useState<any>([]);
   const [editCustOpen, seteditCustOpen] = React.useState(false);
   const [editid, seteditid] = useState<any>(0);
+  const [creditball, setcreditball] = React.useState(0);
+  const [totalinv, settotalinv] = React.useState(2);
+  const [btnahow, setbtnahow] = React.useState(false);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -93,9 +96,9 @@ export default function ViewCustomer() {
       },
     });
     const res = await response.json();
-    console.log("hellooooo view", res);
     setUserinvoice(res);
   };
+
   const getUserCloseInvoice = async () => {
     const response = await fetch(
       `${api_url}/getInvoicebyUser/${customerId}?key=close`,
@@ -107,17 +110,33 @@ export default function ViewCustomer() {
       }
     );
     const res = await response.json();
-    console.log(res, "resulttttts");
     setCloseinvoice(res);
+  };
+
+  //get credit ballance 
+  const fetchBallance = async () => {
+    const apiurl = `${api_url}/creditballance/${customerId}`;
+    try {
+      const response = await fetch(apiurl, {
+        method: "GET",
+        headers: {
+          Authorization: auth_token,
+        },
+      });
+      const json = await response.json();
+      console.log(json);
+      setcreditball(json.creditBal);
+    } catch (error: any) {
+      console.log("error", error);
+    }
   };
 
   useEffect(() => {
     getUserDet();
-
+    fetchBallance();
     getUserCloseInvoice();
     getUserInvoice();
   }, []);
-  console.log(value, "value");
 
   //edit customer
   function handleEditCustomerOpen(id: any) {
@@ -129,6 +148,18 @@ export default function ViewCustomer() {
     seteditCustOpen(false);
     getUserDet();
   };
+
+  //handle view all
+  function handleView() {
+    settotalinv(invoice.length);
+    setbtnahow(true);
+  }
+
+  //handle view less
+  function handleViewLess() {
+    settotalinv(2);
+    setbtnahow(false);
+  }
 
   return (
     <>
@@ -179,7 +210,7 @@ export default function ViewCustomer() {
                 </Typography>
                 <Typography style={{ color: "rgba(125, 134, 165, 0.6)" }}>
                   <span style={{ fontSize: "14PX" }}>CREDITS </span>
-                  <b style={{ fontSize: "26px" }}> $0.00</b>
+                  <b style={{ fontSize: "26px" }}> ${creditball}</b>
                 </Typography>
               </Stack>
             </Stack>
@@ -297,9 +328,11 @@ export default function ViewCustomer() {
                           </Typography>
                         </Stack>
                         <Stack>
-                          <Typography style={{ color: "#1A70C5" }}>
-                            VIEW ALL
-                          </Typography>
+                          {btnahow === false ? (<Typography style={{ color: "#1A70C5", cursor: "pointer" }} onClick={handleView}>
+                            <b>VIEW ALL</b>
+                          </Typography>) : (<Typography style={{ color: "#1A70C5", cursor: "pointer" }} onClick={handleViewLess}>
+                            <b>VIEW LESS</b>
+                          </Typography>)}
                         </Stack>
                       </Stack>
                       <Box sx={{ width: "100%" }}>
@@ -332,7 +365,7 @@ export default function ViewCustomer() {
                               </TableRow>
                             </TableHead>
                             {invoice.length > 0 ? (
-                              invoice.map((item: any) => (
+                              invoice.slice(0, totalinv).map((item: any) => (
                                 <TableBody>
                                   <TableRow hover tabIndex={-1}>
                                     <TableCell align="left">

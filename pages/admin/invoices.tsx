@@ -62,6 +62,10 @@ import CloseIcon from "@mui/icons-material/Close";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 
+import Alert from '@mui/material/Alert';
+import Script from "next/script";
+import getwayService from "../services/gatewayService"
+
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -184,6 +188,13 @@ export default function Guardians() {
   const [roleid, setroleid] = useState(0);
   const router = useRouter();
 
+  const [orderId,setorderId] = useState('');
+  const [amount,setAmount] = useState(0);
+  const [invoiceStatus,setInvoiceStatus] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('');
+  const [showSuccess,setShowSuccess] = useState(false);
+  var Checkout :any 
+
   // verify user login and previlegs
   let logintoken: any;
   useEffect(() => {
@@ -217,6 +228,9 @@ export default function Guardians() {
       setRecieved(item);
       setDollerOpen(true);
     }
+    setorderId(item.invoiceId);
+    setAmount(item.amount);
+    setInvoiceStatus(item.status);
   };
   const handleCloses = () => {
     setDollerOpen(false);
@@ -440,17 +454,110 @@ export default function Guardians() {
       .catch((err) => { });
   };
   useEffect(() => {
+    let search = router.query;
+    let amexOrderId = search.orderid;
+    let paymentMethod = search.paymentMethod;
+    if(paymentMethod && amexOrderId){
+      console.log("order created");
+      orderPlaced(amexOrderId,paymentMethod);
+    }
     getUser();
-  }, []);
+  }, [router.query]);
+  const orderPlaced = async(amexOrderId:any,paymentMethod:any)=>{
+    const data = {orderId :amexOrderId}
+    var apiRequest = data;
+    var requestUrl = await getwayService.getRequestUrl("REST", apiRequest);
+    getwayService.retriveOrder( requestUrl, function (orderresult:any) {
+      console.log("order result =>",orderresult);
+      if(orderresult.status === 200){
+        const amextransactionData = orderresult.data
+        const transactionData = {
+          idForPayment:amexOrderId,
+          totalAmount:amextransactionData?.transaction[0].transaction.amount,
+          paidAmount:amextransactionData?.transaction[0].transaction.amount,
+          paymentMethod:paymentMethod,
+          amexorderId:amexOrderId,
+          transactionId:amextransactionData?.transaction[0].transaction.id
+        }
+        console.log("transactionData",transactionData);
+          transactionSaveInDB(transactionData);
+      }
+        
+      });
+}
+
+const transactionSaveInDB = async(data:any)=>{
+getwayService.transactionDataSaveInDB(data,function(result:any){
+  console.log("final result =>",result);
+   setShowSuccess(true)
+  setTimeout(callBack_func, 5000);
+  function callBack_func() {
+    setShowSuccess(false)
+    document.location.href = `${process.env.NEXT_PUBLIC_AMEX_INVOICE_REDIRECT_URL}`;
+  }
+
+});
+}
 
   const handleCancel = () => {
     handleClose();
   };
   const handleCreate = async (id: any) => {
-    let requestedData = {
-      note: note ? note : null,
-    };
-    console.log(requestedData, "requestedData");
+    // console.log(process.env.NEXT_PUBLIC_REDIRECT_URL,"Checkout =>",(window as any).Checkout);
+   const Checkout : any  =  (window as any).Checkout
+   if(paymentMethod === "Amex"){
+    if(amount === 0 ){
+      toast.error("amount will not be $0 for Amex payment method");
+     }if(invoiceStatus === "draft"){
+      toast.error("Invoice has status with Draft,Only Pending invoice Can Pay ");
+     }
+     else{
+      var requestData = {
+        "apiOperation": "CREATE_CHECKOUT_SESSION",
+        "order": {
+            "id": orderId,
+            "amount": amount,
+            "currency": "QAR",
+            "description": "Orderd",
+        },
+        "interaction": {
+          // "returnUrl":`${process.env.NEXT_PUBLIC_REDIRECT_URL}/?orderid=${orderId}&paymentMethod=${paymentMethod}`,
+          "returnUrl":`${process.env.NEXT_PUBLIC_AMEX_INVOICE_REDIRECT_URL}/?orderid=${orderId}&paymentMethod=${paymentMethod}`,
+          "cancelUrl":`${process.env.NEXT_PUBLIC_AMEX_INVOICE_CANCEL_URL}`,
+          "operation": "PURCHASE",
+            "merchant": {
+                "name": "QATAR INTERNATIONAL SCHOOL - ONLINE 634",
+                "address": {
+                    "line1": "200 Sample St",
+                    "line2": "1234 Example Town"
+                }
+            }
+        }
+     }
+     await getwayService.getSession(requestData,async function(result:any){
+       if(result?.data?.result === "SUCCESS"){
+        // setSessionId(result?.data.session.id)
+        // setsuccessIndicator(result?.data.successIndicator);
+        await Checkout.configure({
+         session: {
+             id:  result?.data.session.id
+         }
+        });
+        await Checkout.showPaymentPage();
+      }
+      
+     })
+  
+     }
+   }
+  
+ if(paymentMethod === "Cash"){
+  let requestedData = {
+    note: note ? note : null,
+  };
+  if(note <= 0){
+    toast.info(`please for case payment method provide the number of Note`);
+  }else{
     await axios({
       method: "PUT",
       url: `${api_url}/updateInvoice/${id}`,
@@ -463,12 +570,29 @@ export default function Guardians() {
         getUser();
         setNote("");
         toast.success("Payment Successfully !");
-
+  
         setTimeout(() => {
           handleCloses();
         }, 1000);
       })
       .catch((err) => { });
+  }
+ 
+ 
+ }
+
+ if(paymentMethod === "QPay"){
+  toast.info(`As of Now This payment method is not supported ${paymentMethod} !`);
+ }
+
+ if(paymentMethod === "CBQ"){
+  toast.info(`As of Now This payment method is not supported ${paymentMethod} !`);
+ }
+//  if(paymentMethod === "Cashd"){
+//   toast.info(`As of Now This payment method is not supported ${paymentMethod} !`);
+//  }
+
+   
   };
 
   const searchItems = (e: any) => {
@@ -601,6 +725,11 @@ export default function Guardians() {
   console.log(inputValue, "inputValue");
   return (
     <>
+          <Script  src="https://amexmena.gateway.mastercard.com/static/checkout/checkout.min.js"
+                data-error="errorCallback"
+                data-cancel="cancelCallback"
+                strategy="beforeInteractive"
+               > </Script>
       <Box sx={{ display: "flex" }}>
         <MiniDrawer />
 
@@ -640,6 +769,8 @@ export default function Guardians() {
                 >
                   INVOICES
                 </Typography>
+                { showSuccess &&  <Alert style={{width:'50%',height:50,marginLeft:430,marginTop:"-50px"}} severity="success">Thanks You ! Payment Recieved</Alert>
+                }
               </Stack>
               {custpermit && custpermit.canAdd === true || roleid === 1 ? (
                 <Link href="/admin/addinvoice">
@@ -1275,24 +1406,25 @@ export default function Guardians() {
                         <Grid item xs={12} md={6}>
                           <Stack spacing={1}>
                             <InputLabel htmlFor="name">
-                              Method <span className="err_str">*</span>
+                            Payment  Method <span className="err_str">*</span>
                             </InputLabel>
                             <Select
                               labelId="demo-select-small"
                               id="demo-select-small"
                               defaultValue="Cash"
                               size="small"
+                              onChange={(e)=>{setPaymentMethod(e.target.value)}}
                             >
-                              <MenuItem value="All"></MenuItem>
-                              <MenuItem value="Credit Card">
-                                Credit Card
+                                <MenuItem value="All"></MenuItem>
+                              <MenuItem value="CBQ">
+                              CBQ
                               </MenuItem>
-                              <MenuItem value="Debit Card">Debit Card</MenuItem>
-                              <MenuItem value="AMFX">AMFX</MenuItem>
+                              <MenuItem value="QPay">QPay</MenuItem>
+                              <MenuItem value="Amex">AMEX</MenuItem>
                               <MenuItem value="Cash">Cash</MenuItem>
-                              <MenuItem value="Cashd">
+                              {/* <MenuItem value="Cashd">
                                 Cash on Delivery
-                              </MenuItem>
+                              </MenuItem> */}
                             </Select>
                           </Stack>
                         </Grid>
@@ -1302,7 +1434,7 @@ export default function Guardians() {
                       <Grid container spacing={2}>
                         <Grid item xs={12} md={6}>
                           <Stack spacing={1}>
-                            <InputLabel htmlFor="name">Reerence</InputLabel>
+                            <InputLabel htmlFor="name">Reference</InputLabel>
                             <OutlinedInput
                               onChange={(e) => setNote(e.target.value)}
                               type="text"

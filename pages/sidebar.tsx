@@ -117,6 +117,9 @@ export default function MiniDrawer() {
   const [checkSalesInvoice, setcheckSalesInvoice] = React.useState<any>(false);
   const [checkComposer, setcheckComposer] = React.useState<any>(false);
   const [isActive, setIsActive] = useState(false);
+  let path = router?.pathname;
+  let mngbackground = "#1976d2";
+  let textcolor = "white !important";
   const [profileActive, setprofileActive] = useState(false);
 
   const handleClick = () => {
@@ -152,7 +155,37 @@ export default function MiniDrawer() {
     });
   }, []);
 
-  let mngbackground = "blue";
+  let setActivityBgColor = path.includes("activity") ? mngbackground : "";
+  let setActivityColor = path.includes("activity") ? textcolor : "";
+
+  let setSalesBgColor = path.includes("sales_order") ? mngbackground : "";
+  let setSalesColor = path.includes("sales_order") ? textcolor : "";
+
+  let setCreditBgColor = path.includes("creditnotes") ? mngbackground : "";
+  let setCreditColor = path.includes("creditnotes") ? textcolor : "";
+
+  let setDashboardBgColor = path.includes("dashboard") ? mngbackground : "";
+  let setDashboardColor = path.includes("dashboard") ? textcolor : "";
+
+  let setCostomerBgColor = path.includes("customer") ? mngbackground : "";
+  let setCostomerColor = path.includes("customer") ? textcolor : "";
+
+  let setInvoiceBgColor = path.includes("invoice") ? mngbackground : "";
+  let setInvoiceColor = path.includes("invoice") ? textcolor : "";
+
+  let setUserManagementBgColor = path.includes("usermanagement")
+    ? mngbackground
+    : "";
+  let setUserManagementColor = path.includes("usermanagement") ? textcolor : "";
+
+  let setComposerBgColor = path.includes("composer") ? mngbackground : "";
+  let setComposerColor = path.includes("composer") ? textcolor : "";
+
+  let setLogoutBgColor = path.includes("logout") ? mngbackground : "";
+  let setLogoutColor = path.includes("logout") ? textcolor : "";
+
+  let setProfileBgColor = path.includes("userprofile") ? mngbackground : "";
+  let setProfileColor = path.includes("userprofile") ? textcolor : "";
 
   return (
     <>
@@ -160,7 +193,7 @@ export default function MiniDrawer() {
         <title>QATAR INTERNATIONAL SCHOOL - QIS</title>
         <link rel="shortcut icon" href="/public/svg-icon/qatar-logo.png" />
       </Head>
-      <Box sx={{ display: "flex" }}>
+      <Box sx={{ display: "flex" }} className="mainbgcss">
         <CssBaseline />
         <AppBar className="sder" position="fixed" open={false}>
           <div className="maiDiv">
@@ -249,7 +282,7 @@ export default function MiniDrawer() {
         </AppBar>
         <Drawer variant="permanent" open={open}>
           <h1>Header</h1>
-          <List>
+          <List className="sidebar-box">
             {checkdashboard === true || userdet?.roleId === 1 ? (
               <ListItem
                 className="sidebar-link"
@@ -262,6 +295,8 @@ export default function MiniDrawer() {
                     minHeight: 48,
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
+                    background: setDashboardBgColor,
+                    color: setDashboardColor,
                   }}
                 >
                   <ListItemIcon
@@ -294,6 +329,8 @@ export default function MiniDrawer() {
                     minHeight: 48,
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
+                    background: setCostomerBgColor,
+                    color: setCostomerColor,
                   }}
                 >
                   <ListItemIcon
@@ -348,6 +385,8 @@ export default function MiniDrawer() {
                     minHeight: 48,
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
+                    background: setInvoiceBgColor,
+                    color: setInvoiceColor,
                   }}
                 >
                   <ListItemIcon
@@ -382,6 +421,8 @@ export default function MiniDrawer() {
                     minHeight: 48,
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
+                    background: setCreditBgColor,
+                    color: setCreditColor,
                   }}
                 >
                   <ListItemIcon
@@ -415,7 +456,8 @@ export default function MiniDrawer() {
                     minHeight: 48,
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
-                    // background:mngbackground
+                    background: setActivityBgColor,
+                    color: setActivityColor,
                   }}
                 >
                   <ListItemIcon
@@ -447,6 +489,8 @@ export default function MiniDrawer() {
                     minHeight: 48,
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
+                    background: setSalesBgColor,
+                    color: setSalesColor,
                   }}
                 >
                   <ListItemIcon
@@ -478,6 +522,8 @@ export default function MiniDrawer() {
                     minHeight: 48,
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
+                    background: setUserManagementBgColor,
+                    color: setUserManagementColor,
                   }}
                 >
                   <ListItemIcon
@@ -509,6 +555,8 @@ export default function MiniDrawer() {
                     minHeight: 48,
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
+                    background: setComposerBgColor,
+                    color: setComposerColor,
                   }}
                 >
                   <ListItemIcon
@@ -541,6 +589,39 @@ export default function MiniDrawer() {
                   minHeight: 48,
                   justifyContent: open ? "initial" : "center",
                   px: 2.5,
+                  background: setLogoutBgColor,
+                  color: setLogoutColor,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                ></ListItemIcon>
+                <LockOutlinedIcon />
+                <ListItemText
+                  primary="Log Out"
+                  sx={{ opacity: open ? 1 : 0 }}
+                  onClick={() => router.push("/logout")}
+                />
+              </ListItemButton>
+            </ListItem>
+
+            <ListItem
+              className="sidebar-link"
+              disablePadding
+              sx={{ display: "block" }}
+              // onClick={() => router.push("/activites/activitylist")}
+            >
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                  background: setProfileBgColor,
+                  color: setProfileColor,
                 }}
               >
                 <ListItemIcon

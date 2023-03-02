@@ -85,11 +85,45 @@ input.MuiInputBase-input.MuiInput-input.css-1x51dt5-MuiInputBase-input-MuiInput-
   padding: 0;
 }
 
+fieldset .MuiOutlinedInput-notchedOutline {
+  height: 50px;
+}
+.MuiSvgIcon-root.MuiSvgIcon-fontSizeMedium.MuiSelect-icon.MuiSelect-iconOutlined {
+  top: calc(50% - 0.8em) !important;
+}
+
+.select-height .MuiSelect-select {
+  height: 33px;
+}
+
+.MuiOutlinedInput-notchedOutline legend {
+  display: none !important;
+}
+
+.user-property-title + span {
+  font-size: 14px;
+  font-weight: 500;
+  color: #5a6873 !important;
+}
+
 #demo-simple-select {
   height: 50px !important;
   border-radius: 5px;
   padding: 0 15px !important;
   line-height: 50px;
+}
+
+.user-property-title {
+  color: #8d96ae;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.MuiList-root.MuiList-padding.sidebar-box {
+  padding: 8px 10px;
+}
+.sidebar-link > div > div:first-child {
+  display: none;
 }
 
 body .new-sale .MuiOutlinedInput-root.MuiInputBase-sizeSmall {
@@ -247,12 +281,19 @@ body .guardianBar {
 }
 .sidebar-link > div svg {
   margin-right: 8px;
-  fill: #7d86a5;
+  /* fill: #7d86a5; */
+}
+.mainbgcss .css-1yafa72-MuiButtonBase-root-MuiListItemButton-root:hover {
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  background-color: #4e8cc9 !important;
 }
 .sidebar-link > div {
   display: flex;
   align-items: center;
   color: #7d86a5;
+  border-radius: 25px;
+  margin-left: 2px;
 }
 
 body .button-new {
