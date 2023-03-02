@@ -267,8 +267,6 @@ export default function Guardians() {
         selected.slice(selectedIndex + 1)
       );
     }
-    console.log(newSelected.length, "newSelected");
-
     setSelected(newSelected);
     if (newSelected.length === 0) {
       setItemError("Item field is required");
@@ -593,7 +591,7 @@ export default function Guardians() {
   };
 
 
-  console.log(product)
+  console.log("item", product, selected);
   function openDelete(item: any) {
     console.log(item);
     let gg = product.filter((a: any) => a.id !== item);
