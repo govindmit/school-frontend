@@ -10,6 +10,7 @@ class cyberSourceSecureConfig {
       return this.signData(this.buildDataToSign(params), SECRET_KEY);
     };
     
+    
      signData = (data:any, secretKey:any) =>{
         // console.log("data =>",data);
         // console.log("secretKey =>",secretKey);
