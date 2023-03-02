@@ -100,14 +100,13 @@ export default function ViewCreditNotes(props: any) {
     }
   };
 
-  console.log(creditNoteDet);
-
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm<FormValues>();
+
   const onSubmit: SubmitHandler<FormValues> = async (data: any) => {
     const reqData = {
       message: data.message,
@@ -127,6 +126,7 @@ export default function ViewCreditNotes(props: any) {
           toast.success("Credit Notes Updated Successfully !");
           reset();
           setrejectOpen(false)
+          router.push("/admin/creditnotes/creditnoteslist");
         }
       })
       .catch((error) => {

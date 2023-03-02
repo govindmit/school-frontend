@@ -39,7 +39,7 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import Chip from "@mui/material/Chip";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
-import { api_url, base_url,auth_token } from "../api/hello";
+import { api_url, base_url, auth_token } from "../api/hello";
 import moment from "moment";
 import Image from "next/image";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -188,20 +188,20 @@ export default function Guardians() {
   const [roleid, setroleid] = useState(0);
   const router = useRouter();
 
-  const [orderId,setorderId] = useState('');
-  const [InvoiceAmount,setInvoiceAmount] = useState(0);
-  const [invoiceStatus,setInvoiceStatus] = useState('');
+  const [orderId, setorderId] = useState('');
+  const [InvoiceAmount, setInvoiceAmount] = useState(0);
+  const [invoiceStatus, setInvoiceStatus] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('Cash');
-  const [showSuccess,setShowSuccess] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
-  const [customerTotalCreditNoteBalance ,setCustomerTotalCreditNoteBalance ] = useState(0);
-  const [customerCreditNoteRequestId,setCustomerCreditNoteRequestId] = useState(null);
-  const [applyCreditNoteAmount , setApplyCreditNoteAmount] = useState(0);
-  const [finalAmountToPay,setFinalAmountToPay] = useState(0);
-  const [isChecked,setIsChecked] = useState(false);
-  const [customerID,setCustomerId]=useState(null);
-  const[customerCreditNoteRemaingAmount ,setCustomerCreditNoteRemaingAmount] = useState(0);
-  var Checkout :any 
+  const [customerTotalCreditNoteBalance, setCustomerTotalCreditNoteBalance] = useState(0);
+  const [customerCreditNoteRequestId, setCustomerCreditNoteRequestId] = useState(null);
+  const [applyCreditNoteAmount, setApplyCreditNoteAmount] = useState(0);
+  const [finalAmountToPay, setFinalAmountToPay] = useState(0);
+  const [isChecked, setIsChecked] = useState(false);
+  const [customerID, setCustomerId] = useState(null);
+  const [customerCreditNoteRemaingAmount, setCustomerCreditNoteRemaingAmount] = useState(0);
+  var Checkout: any
 
   // verify user login and previlegs
   let logintoken: any;
@@ -253,33 +253,33 @@ export default function Guardians() {
         },
       });
       const res = await response.json();
-      console.log("CreditRequestId =>",res);
-       setCustomerCreditNoteRequestId(res?.CreditRequestId)
+      console.log("CreditRequestId =>", res);
+      setCustomerCreditNoteRequestId(res?.CreditRequestId)
       setCustomerTotalCreditNoteBalance(res?.creditBal);
-      
-    } catch (error:any) {
-      console.log("error",error.message);
+
+    } catch (error: any) {
+      console.log("error", error.message);
     }
   };
 
 
-  const handleCheckBoxClick = async(e:any)=>{
-     console.log("event =>",e.target.checked);
-      setIsChecked(e.target.checked);
-     if(e.target.checked === true){
-      let applyCreditNoteAmout = customerTotalCreditNoteBalance > InvoiceAmount ? InvoiceAmount : customerTotalCreditNoteBalance ;
-      let creditNoteRemaingAmount = customerTotalCreditNoteBalance > InvoiceAmount ? customerTotalCreditNoteBalance - InvoiceAmount : 0 ;
+  const handleCheckBoxClick = async (e: any) => {
+    console.log("event =>", e.target.checked);
+    setIsChecked(e.target.checked);
+    if (e.target.checked === true) {
+      let applyCreditNoteAmout = customerTotalCreditNoteBalance > InvoiceAmount ? InvoiceAmount : customerTotalCreditNoteBalance;
+      let creditNoteRemaingAmount = customerTotalCreditNoteBalance > InvoiceAmount ? customerTotalCreditNoteBalance - InvoiceAmount : 0;
       setApplyCreditNoteAmount(applyCreditNoteAmout);
       let actualPay = customerTotalCreditNoteBalance > InvoiceAmount ? 0 : InvoiceAmount - customerTotalCreditNoteBalance;
       setFinalAmountToPay(actualPay)
 
-      console.log("creditNoteRemaingAmount =>",creditNoteRemaingAmount);
+      console.log("creditNoteRemaingAmount =>", creditNoteRemaingAmount);
       setCustomerCreditNoteRemaingAmount(creditNoteRemaingAmount);
-     }else{
+    } else {
       setApplyCreditNoteAmount(0);
       setFinalAmountToPay(InvoiceAmount);
       setCustomerCreditNoteRequestId(null);
-     }
+    }
   }
 
   const handleCloses = () => {
@@ -510,26 +510,26 @@ export default function Guardians() {
     let creditRequestId = search.creditNoteId;
     let customerid = search.customerID;
     let remaingAmount = search.remaingAmount;
-    if(paymentMethod && amexOrderId){
+    if (paymentMethod && amexOrderId) {
       console.log("order created");
-      orderPlaced(amexOrderId,paymentMethod,creditRequestId);
+      orderPlaced(amexOrderId, paymentMethod, creditRequestId);
     }
-    if(creditRequestId){
-         const reqData:any = {
+    if (creditRequestId) {
+      const reqData: any = {
         customerId: customerid,
         Amount: remaingAmount,
         amountMode: 0,
-        };
-        console.log("reqData =>",reqData);
-        insertRemainingNotesAmount(reqData);
+      };
+      console.log("reqData =>", reqData);
+      // insertRemainingNotesAmount(reqData);
     }
     getUser();
   }, [router.query]);
-  const orderPlaced = async(amexOrderId:any,paymentMethod:any,creditRequestId:any)=>{
-    const data = {orderId :amexOrderId}
+  const orderPlaced = async (amexOrderId: any, paymentMethod: any, creditRequestId: any) => {
+    const data = { orderId: amexOrderId }
     var apiRequest = data;
     var requestUrl = await getwayService.getRequestUrl("REST", apiRequest);
-    getwayService.retriveOrder( requestUrl, function (orderresult:any) {
+    getwayService.retriveOrder( requestUrl,async function (orderresult:any) {
       console.log("order result =>",orderresult);
       if(orderresult.status === 200){
         const amextransactionData = orderresult.data
@@ -540,28 +540,28 @@ export default function Guardians() {
           paymentMethod:paymentMethod,
           amexorderId:amexOrderId,
           transactionId:amextransactionData?.transaction[0].transaction.id,
-          creditNotesId :creditRequestId
+          creditNotesId :creditRequestId ? creditRequestId : null
         }
         console.log("transactionData",transactionData);
-          transactionSaveInDB(transactionData);
-          updateInvoiceAfterPay(amexOrderId)
+         await transactionSaveInDB(transactionData);
+        //  await updateInvoiceAfterPay(amexOrderId)
       }
-        
-      });
-}
 
-const transactionSaveInDB = async(data:any)=>{
-getwayService.transactionDataSaveInDB(data,function(result:any){
-  console.log("final result =>",result);
-   setShowSuccess(true)
-  setTimeout(callBack_func, 5000);
-  function callBack_func() {
-    setShowSuccess(false)
-    document.location.href = `${process.env.NEXT_PUBLIC_AMEX_INVOICE_REDIRECT_URL}`;
+    });
   }
 
-});
-}
+  const transactionSaveInDB = async (data: any) => {
+    getwayService.transactionDataSaveInDB(data, function (result: any) {
+      console.log("final result =>", result);
+      setShowSuccess(true)
+      setTimeout(callBack_func, 5000);
+      function callBack_func() {
+        setShowSuccess(false)
+        document.location.href = `${process.env.NEXT_PUBLIC_AMEX_INVOICE_REDIRECT_URL}`;
+      }
+
+    });
+  }
 
   const handleCancel = () => {
     handleClose();
@@ -586,67 +586,66 @@ getwayService.transactionDataSaveInDB(data,function(result:any){
             "amount": finalAmountToPay,
             "currency": "QAR",
             "description": "Orderd",
-        },
-        "interaction": {
-          // "returnUrl":`${process.env.NEXT_PUBLIC_REDIRECT_URL}/?orderid=${orderId}&paymentMethod=${paymentMethod}`,
-          "returnUrl":`${process.env.NEXT_PUBLIC_AMEX_INVOICE_REDIRECT_URL}/?orderid=${orderId}&paymentMethod=${paymentMethod}&creditNoteId=${creditNotesId}&remaingAmount=${applyCreditNoteAmount}&customerID=${customerID}`,
-          "cancelUrl":`${process.env.NEXT_PUBLIC_AMEX_INVOICE_CANCEL_URL}`,
-          "operation": "PURCHASE",
+          },
+          "interaction": {
+            // "returnUrl":`${process.env.NEXT_PUBLIC_REDIRECT_URL}/?orderid=${orderId}&paymentMethod=${paymentMethod}`,
+            "returnUrl": `${process.env.NEXT_PUBLIC_AMEX_INVOICE_REDIRECT_URL}/?orderid=${orderId}&paymentMethod=${paymentMethod}&creditNoteId=${creditNotesId}&remaingAmount=${applyCreditNoteAmount}&customerID=${customerID}`,
+            "cancelUrl": `${process.env.NEXT_PUBLIC_AMEX_INVOICE_CANCEL_URL}`,
+            "operation": "PURCHASE",
             "merchant": {
-                "name": "QATAR INTERNATIONAL SCHOOL - ONLINE 634",
-                "address": {
-                    "line1": "200 Sample St",
-                    "line2": "1234 Example Town"
-                }
+              "name": "QATAR INTERNATIONAL SCHOOL - ONLINE 634",
+              "address": {
+                "line1": "200 Sample St",
+                "line2": "1234 Example Town"
+              }
             }
+          }
         }
-     }
-     await getwayService.getSession(requestData,async function(result:any){
-       if(result?.data?.result === "SUCCESS"){
-        // setSessionId(result?.data.session.id)
-        // setsuccessIndicator(result?.data.successIndicator);
-        await Checkout.configure({
-         session: {
-             id:  result?.data.session.id
-         }
-        });
-        await Checkout.showPaymentPage();
+        await getwayService.getSession(requestData, async function (result: any) {
+          if (result?.data?.result === "SUCCESS") {
+            // setSessionId(result?.data.session.id)
+            // setsuccessIndicator(result?.data.successIndicator);
+            await Checkout.configure({
+              session: {
+                id: result?.data.session.id
+              }
+            });
+            await Checkout.showPaymentPage();
+          }
+        })
       }
-      
-     })
-  
-     }
-   }
-
-   if(paymentMethod === "Amex" || paymentMethod === "Cash" && isChecked === true && finalAmountToPay === 0){
-    try{
-
-      const dataforRemaingAmount :any= {
-        customerId: customerID,
-         Amount: applyCreditNoteAmount,
-         amountMode: 0,
-     }
-    
-      const rendomTransactionId = keyGen(5);
-      let reqData = {
-        totalAmount: InvoiceAmount,
-        paidAmount: InvoiceAmount,
-        transactionId: `case-${rendomTransactionId} `,
-        amexorderId: orderId,
-        paymentMethod: "Cash",
-        idForPayment: orderId,
-        creditNotesId:customerCreditNoteRequestId
-      };
-      transactionSaveInDB(reqData);
-      insertRemainingNotesAmount(dataforRemaingAmount);
-      updateInvoiceAfterPay(id)
-      handleCloses();
-    }catch(error:any){
-      console.log("Error ",error.message);
     }
-   }
-
-      if(paymentMethod === "Cash"  && finalAmountToPay > 0){
+    if(paymentMethod === "Cash"){
+      try{
+  
+        const dataforRemaingAmount :any= {
+          customerId: customerID,
+           Amount: applyCreditNoteAmount,
+           amountMode: 0,
+       }
+      
+        const rendomTransactionId = keyGen(5);
+        let amount = finalAmountToPay > 0 ? finalAmountToPay :InvoiceAmount
+        let reqData = {
+          totalAmount: amount,
+          paidAmount: amount,
+          transactionId: `case-${rendomTransactionId} `,
+          amexorderId: orderId,
+          paymentMethod: "Cash",
+          idForPayment: orderId,
+          creditNotesId:customerCreditNoteRequestId
+        };
+        
+       await transactionSaveInDB(reqData);
+       await insertRemainingNotesAmount(dataforRemaingAmount);
+       await updateInvoiceAfterPay(id)
+        handleCloses();
+      }catch(error:any){
+        console.log("Error ",error.message);
+      }
+     }
+     if(paymentMethod === "Amex"  && finalAmountToPay === 0){
+        
       try{
         const dataforRemaingAmount :any= {
             customerId: customerID,
@@ -666,15 +665,14 @@ getwayService.transactionDataSaveInDB(data,function(result:any){
           };
         
          
-          transactionSaveInDB(reqData);
-          insertRemainingNotesAmount(dataforRemaingAmount);
-          updateInvoiceAfterPay(id)
+          await transactionSaveInDB(reqData);
+          await insertRemainingNotesAmount(dataforRemaingAmount);
+          await updateInvoiceAfterPay(id)
           handleCloses();
         }catch(error:any){
           console.log("Error ",error.message);
         }
       }
-
       if(paymentMethod === "QPay"){
         toast.info(`As of Now This payment method is not supported ${paymentMethod} !`);
       }
@@ -683,36 +681,35 @@ getwayService.transactionDataSaveInDB(data,function(result:any){
         toast.info(`As of Now This payment method is not supported ${paymentMethod} !`);
       }
 
-   
-  };
-
-const updateInvoiceAfterPay = async(invoiceId:any)=>{
-  try{
-    let requestedData = {
-      note: note ? note : null,
-    };
-    await axios({
-      method: "PUT",
-      url: `${api_url}/updateInvoice/${invoiceId}`,
-      data: requestedData,
-      headers: {
-        "content-type": "multipart/form-data",
-      },
-    })
-      .then((res) => {
-        getUser();
-        setNote("");
-        toast.success("Payment Successfully !");
-  
-        setTimeout(() => {
-          handleCloses();
-        }, 1000);
-      })
-      .catch((err) => { });
-  }catch(error:any){
-    console.log("error => ",error.message);
   }
-}
+
+  const updateInvoiceAfterPay = async (invoiceId: any) => {
+    try {
+      let requestedData = {
+        note: note ? note : null,
+      };
+      await axios({
+        method: "PUT",
+        url: `${api_url}/updateInvoice/${invoiceId}`,
+        data: requestedData,
+        headers: {
+          "content-type": "multipart/form-data",
+        },
+      })
+        .then((res) => {
+          getUser();
+          setNote("");
+          toast.success("Payment Successfully !");
+
+          setTimeout(() => {
+            handleCloses();
+          }, 1000);
+        })
+        .catch((err) => { });
+    } catch (error: any) {
+      console.log("error => ", error.message);
+    }
+  }
 
   const keyGen = (keyLength: any) => {
     var i,
@@ -728,7 +725,7 @@ const updateInvoiceAfterPay = async(invoiceId:any)=>{
     }
     return key;
   };
-  const insertRemainingNotesAmount = async (reqData:any) => {
+  const insertRemainingNotesAmount = async (reqData: any) => {
     //  const reqData = {
     //   customerId: customerId,
     //   Amount: creditBalance,
@@ -824,10 +821,9 @@ const updateInvoiceAfterPay = async(invoiceId:any)=>{
       .catch((err) => { });
   };
 
-  function handlerowchange(e: any) {
+  const handlerowchange = (e: any) =>{
     set_row_per_page(e.target.value);
   }
-
   const PER_PAGE = row_per_page;
   const count = Math.ceil(user.length / PER_PAGE);
   const DATA = usePagination(user, PER_PAGE);
@@ -883,11 +879,11 @@ const updateInvoiceAfterPay = async(invoiceId:any)=>{
   console.log(inputValue, "inputValue");
   return (
     <>
-          <Script  src="https://amexmena.gateway.mastercard.com/static/checkout/checkout.min.js"
-                data-error="errorCallback"
-                data-cancel="cancelCallback"
-                strategy="beforeInteractive"
-               > </Script>
+      <Script src="https://amexmena.gateway.mastercard.com/static/checkout/checkout.min.js"
+        data-error="errorCallback"
+        data-cancel="cancelCallback"
+        strategy="beforeInteractive"
+      > </Script>
       <Box sx={{ display: "flex" }}>
         <MiniDrawer />
 
@@ -927,7 +923,7 @@ const updateInvoiceAfterPay = async(invoiceId:any)=>{
                 >
                   INVOICES
                 </Typography>
-                { showSuccess &&  <Alert style={{width:'50%',height:50,marginLeft:430,marginTop:"-50px"}} severity="success">Thanks You ! Payment Recieved</Alert>
+                {showSuccess && <Alert style={{ width: '50%', height: 50, marginLeft: 430, marginTop: "-50px" }} severity="success">Thanks You ! Payment Recieved</Alert>
                 }
               </Stack>
               {custpermit && custpermit.canAdd === true || roleid === 1 ? (
@@ -1564,18 +1560,18 @@ const updateInvoiceAfterPay = async(invoiceId:any)=>{
                         <Grid item xs={12} md={6}>
                           <Stack spacing={1}>
                             <InputLabel htmlFor="name">
-                            Payment  Method <span className="err_str">*</span>
+                              Payment  Method <span className="err_str">*</span>
                             </InputLabel>
                             <Select
                               labelId="demo-select-small"
                               id="demo-select-small"
                               defaultValue="Cash"
                               size="small"
-                              onChange={(e)=>{setPaymentMethod(e.target.value)}}
+                              onChange={(e) => { setPaymentMethod(e.target.value) }}
                             >
-                                <MenuItem value="All"></MenuItem>
+                              <MenuItem value="All"></MenuItem>
                               <MenuItem value="CBQ">
-                              CBQ
+                                CBQ
                               </MenuItem>
                               <MenuItem value="QPay">QPay</MenuItem>
                               <MenuItem value="Amex">AMEX</MenuItem>
@@ -1639,40 +1635,40 @@ const updateInvoiceAfterPay = async(invoiceId:any)=>{
                       <div className="hh red">Total Credit Balance:</div>
                       <div>$0.00</div>
                     </div> */}
-                     <Stack style={{ marginTop: "20px" }}>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} md={12}>
-                       
-                        { customerTotalCreditNoteBalance != 0 && <>
-                          <Checkbox
-                            onChange={(e) => {handleCheckBoxClick(e)}}
-                            className="checkbox132"
-                          /> 
-                           Want to use credit balance :${customerTotalCreditNoteBalance}.00
-                        </>}
-                          
-                        <div>
-                          <h5 className="apply">Apply Payment</h5>
-                        </div>
-                        <Stack spacing={1}>
-                          <InputLabel htmlFor="name"></InputLabel>
-                          <p>Sales invoice amount : ${InvoiceAmount}.00 </p>
-                        </Stack>
-                        <Stack spacing={1} >
-                          <InputLabel htmlFor="name"></InputLabel>
-                          <div className="iadiv">
-                            <div className="hh red">Total Credit Balance:</div>
-                            <div> ${applyCreditNoteAmount}.00 </div>
+                    <Stack style={{ marginTop: "20px" }}>
+                      <Grid container spacing={2}>
+                        <Grid item xs={12} md={12}>
+
+                          {customerTotalCreditNoteBalance != 0 && <>
+                            <Checkbox
+                              onChange={(e) => { handleCheckBoxClick(e) }}
+                              className="checkbox132"
+                            />
+                            Want to use credit balance :${customerTotalCreditNoteBalance}.00
+                          </>}
+
+                          <div>
+                            <h5 className="apply">Apply Payment</h5>
                           </div>
-                        </Stack>
-                        <Stack spacing={1}>
-                          <InputLabel htmlFor="name"></InputLabel>
-                           <p> Total amount :${finalAmountToPay}.00 </p>
-                         
-                        </Stack>
+                          <Stack spacing={1}>
+                            <InputLabel htmlFor="name"></InputLabel>
+                            <p>Sales invoice amount : ${InvoiceAmount}.00 </p>
+                          </Stack>
+                          <Stack spacing={1} >
+                            <InputLabel htmlFor="name"></InputLabel>
+                            <div className="iadiv">
+                              <div className="hh red">Total Credit Balance:</div>
+                              <div> ${applyCreditNoteAmount}.00 </div>
+                            </div>
+                          </Stack>
+                          <Stack spacing={1}>
+                            <InputLabel htmlFor="name"></InputLabel>
+                            <p> Total amount :${finalAmountToPay}.00 </p>
+
+                          </Stack>
+                        </Grid>
                       </Grid>
-                    </Grid>
-                  </Stack>
+                    </Stack>
                   </Grid>
                   {/* <div className="total-amount">
                     <div className="hh">Total Amount:</div>
