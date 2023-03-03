@@ -1,7 +1,4 @@
-import { TableHead, styled } from "@mui/material";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
+import { Breadcrumbs, TableHead, styled } from "@mui/material";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -36,6 +33,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { RiDeleteBin5Fill } from "react-icons/ri";
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
     padding: theme.spacing(2),
@@ -68,6 +66,7 @@ const Item = styled(Paper)(({ theme }) => ({
   textAlign: "center",
   color: theme.palette.text.secondary,
 }));
+
 export interface FormValues {
   status: Number;
   res: String;
@@ -86,46 +85,12 @@ export interface FormValues {
   date: string;
   Customername: string;
 }
-const rowss = [
-  { id: 1, lastName: "Snow", firstName: "Jon", age: 35 },
-  { id: 2, lastName: "Lannister", firstName: "Cersei", age: 42 },
-  { id: 3, lastName: "Lannister", firstName: "Jaime", age: 45 },
-  { id: 4, lastName: "Stark", firstName: "Arya", age: 16 },
-  { id: 5, lastName: "Targaryen", firstName: "Daenerys", age: null },
-  { id: 6, lastName: "Melisandre", firstName: null, age: 150 },
-  { id: 7, lastName: "Clifford", firstName: "Ferrara", age: 44 },
-  { id: 8, lastName: "Frances", firstName: "Rossini", age: 36 },
-  { id: 9, lastName: "Roxie", firstName: "Harvey", age: 65 },
-];
-const columns: GridColDef[] = [
-  { field: "id", headerName: "ID", width: 70 },
-  { field: "firstName", headerName: "First name", width: 130 },
-  { field: "lastName", headerName: "Last name", width: 130 },
-  {
-    field: "age",
-    headerName: "Age",
-    type: "number",
-    width: 90,
-  },
-  {
-    field: "fullName",
-    headerName: "Full name",
-    description: "This column has a value getter and is not sortable.",
-    sortable: false,
-    width: 160,
-    valueGetter: (params: GridValueGetterParams) =>
-      `${params.row.firstName || ""} ${params.row.lastName || ""}`,
-  },
-];
-
 interface Data {
   name: string;
   price: number;
 }
-
 function createData(
   name: string,
-
   price: number
 ): Data {
   return {
@@ -134,94 +99,15 @@ function createData(
     price,
   };
 }
-
-const rows = [
-  createData("Cupcake", 305),
-  createData("Donut", 452),
-  createData("Eclair", 262),
-  createData("Frozen yoghurt", 159),
-];
-
-function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
 type Order = "asc" | "desc";
 
-function getComparator<Key extends keyof any>(
-  order: Order,
-  orderBy: Key
-): (
-  a: { [key in Key]: number | string },
-  b: { [key in Key]: number | string }
-) => number {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-function stableSort<T>(
-  array: readonly T[],
-  comparator: (a: T, b: T) => number
-) {
-  const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
-}
-
-interface HeadCell {
-  disablePadding: boolean;
-  id: keyof Data;
-  label: string;
-  numeric: boolean;
-}
-
-const headCells: readonly HeadCell[] = [
-  {
-    id: "name",
-    numeric: false,
-    disablePadding: true,
-    label: "Dessert (100g serving)",
-  },
-  {
-    id: "price",
-    numeric: true,
-    disablePadding: false,
-    label: "Protein (g)",
-  },
-];
-
-interface EnhancedTableProps {
-  numSelected: number;
-  onRequestSort: (
-    event: React.MouseEvent<unknown>,
-    property: keyof Data
-  ) => void;
-  onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  order: Order;
-  orderBy: string;
-  rowCount: number;
-}
 export default function Guardians() {
   let localUrl = process.env.NEXT_PUBLIC_BASE_URL;
   const [opens, setOpens] = useState(false);
   const [userID, setUserId] = useState<FormValues | any>([]);
-
   const [sdates, setDates] = useState<FormValues | any>([]);
   const [Invoicedates, setInvoiceDate] = useState(null);
   const [value, setValue] = useState<any>({ id: null, title: null });
-
   const [user, setUser] = useState<FormValues | any>([]);
   const [dollerOpen, setDollerOpen] = useState(false);
   const [popup, setSecondPop] = useState(false);
@@ -233,10 +119,6 @@ export default function Guardians() {
   const [item, setItem] = useState<FormValues | any>([]);
   const [product, setProduct] = useState<FormValues | any>([]);
   const [selected, setSelected] = useState<readonly string[]>([]);
-  // const [itemId, setItemId] = useState<readonly string[]>([]);
-
-  // var itemId: { id: number }[] = [];
-  // console.log(itemId, "....................................ids");
   const {
     register,
     handleSubmit,
@@ -250,7 +132,6 @@ export default function Guardians() {
   setSecondPop;
   const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
     const arr = [];
-
     arr.push(id);
     const selectedIndex = selected.indexOf(id);
     let newSelected: readonly string[] = [];
@@ -266,7 +147,6 @@ export default function Guardians() {
         selected.slice(selectedIndex + 1)
       );
     }
-
     setSelected(newSelected);
     getItem();
   };
@@ -292,7 +172,6 @@ export default function Guardians() {
   };
   function BootstrapDialogTitle(props: DialogTitleProps) {
     const { children, onClose, ...other } = props;
-
     return (
       <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
         {children}
@@ -329,7 +208,6 @@ export default function Guardians() {
     } else {
       invoiceDatesss = invoice[0]?.invoiceDate;
     }
-
     for (let row of product) {
       itemId.push(row.id);
     }
@@ -380,7 +258,7 @@ export default function Guardians() {
       .then((res) => {
         setItem(res?.data.data);
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
 
   var option: { id: number; title: string }[] = [];
@@ -420,25 +298,6 @@ export default function Guardians() {
   };
   const getItems = async () => {
     invoiceDataById();
-
-    // let requested = {
-    //   id: invoice[0]?.itemId,
-    // };
-    // await axios({
-    //   method: "POST",
-    //   url: `${api_url}/getItembyid`,
-    //   data: requested,
-
-    //   headers: {
-    //     "content-type": "multipart/form-data",
-    //   },
-    // })
-    //   .then((res) => {
-    //     setProduct(res?.data.data);
-    //     console.log(res, "........................h");
-    //     handleCloses();
-    //   })
-    //   .catch((err) => {});
   };
 
   const handleCreate = async () => {
@@ -455,10 +314,11 @@ export default function Guardians() {
       },
     })
       .then((res) => {
-        setProduct(res?.data.data);
+        const merged = [...product, ...res?.data.data];
+        setProduct(merged);
         handleCloses();
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
   var price = 0;
   for (let d of product) {
@@ -479,7 +339,7 @@ export default function Guardians() {
       .then((res) => {
         setUser(res?.data.data);
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
 
   const handleClickOpen = () => {
@@ -540,12 +400,12 @@ export default function Guardians() {
             .then((res) => {
               setProduct(res?.data.data);
             })
-            .catch((err) => {});
+            .catch((err) => { });
         }
         setUser(res?.data.data);
         setInvoiceNo(res?.data?.invoiceNo);
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
 
   const handleDraft = async () => {
@@ -561,6 +421,7 @@ export default function Guardians() {
     for (let row of product) {
       itemId.push(row.id);
     }
+
     const createdDate = moment(dates).format("DD/MM/YYYY");
     const requestedData = {
       itemId: itemId,
@@ -596,73 +457,110 @@ export default function Guardians() {
         // console.log(err.response.data.message, "error");
       });
   };
+
+  console.log("Product", product);
+
+  function openDelete(item: any) {
+    console.log(item);
+    let gg = product.filter((a: any) => a.id !== item);
+    setProduct(gg);
+  }
+
+
   return (
     <>
       <Box sx={{ display: "flex" }}>
         <MiniDrawer />
-
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <div className="guardianBar">
             <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="bars">
-                <div>
-                  <Link href="/admin/dashboard">
-                    <span className="smallHeading">Home</span>&nbsp;
-                  </Link>
-                  <span>&gt;</span> &nbsp;{" "}
-                  <span className="secondHeading">Edit Invoices</span>
-                </div>
+              {/*bread cump */}
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                style={{ padding: "8px", marginBottom: "15px" }}
+              >
+                <Stack>
+                  <Stack spacing={3}>
+                    <Breadcrumbs separator="›" aria-label="breadcrumb">
+                      <Link
+                        key="1"
+                        color="inherit"
+                        href="/admin/dashboard"
+                        style={{ color: "#1A70C5", textDecoration: "none" }}
+                      >
+                        Home
+                      </Link>
+                      <Link
+                        key="2"
+                        color="inherit"
+                        href="/"
+                        style={{ color: "#7D86A5", textDecoration: "none" }}
+                      >
+                        Edit Invoices
+                      </Link>
+                    </Breadcrumbs>
+                  </Stack>
+                  <Typography
+                    variant="h5"
+                    gutterBottom
+                    style={{ fontWeight: "bold", color: "#333333" }}
+                  >
+                    EDIT INVOICES
+                  </Typography>
+                </Stack>
                 <div className="cinvoice">
                   <div>
-                    <span className="GItitle">EDIT INVOICES</span>
-                  </div>
-                  <div className="isave">
-                    <BootstrapButton onClick={handleDraft} type="button">
+                    <BootstrapButton
+                      onClick={handleDraft}
+                      type="button"
+                      className="grey-button"
+                    >
                       Save as Draft
                     </BootstrapButton>
 
                     <BootstrapButton type="submit">
-                      Save as issue
+                      Save & issue
                     </BootstrapButton>
                   </div>
                   {/* <Button sx={{ margin: "7px" }} type="button">
                     Add Guardians
                   </Button> */}
                 </div>
-              </div>
+
+              </Stack>
+              {/*bread cump */}
               <div className="midBar">
-                <div className="guardianList">
+                <div className="guardianList" style={{ padding: "50px" }}>
                   <div className="required">
                     <Typography style={style}>
-                      {errors.date ? (
-                        <span>Invoice Date Feild is Required **</span>
-                      ) : error != "" ? (
-                        <span>{error} **</span>
-                      ) : (
-                        ""
-                      )}
                     </Typography>
                   </div>
                   <div className="aititle">
-                    <div>
-                      {" "}
-                      <Image
-                        className="iaimg"
-                        src="/favicon.ico"
-                        alt="Picture of the author"
-                        width={65}
-                        height={62}
-                      />
-                    </div>
-                    <div className="iatitle">
-                      <span className="iahead">Qatar International School</span>
-                      <span className="line">
-                        Qatar international school W.L.L
-                      </span>
-                      <span className="line">
-                        United Nations St, West Bay, P.O. Box: 5697
-                      </span>
-                      <span className="line">Doha, Qatar</span>
+                    <div className="iatitle flex">
+                      <div className="invoive-img">
+                        {" "}
+                        <Image
+                          className="iaimg"
+                          src="/favicon.ico"
+                          alt="Picture of the author"
+                          width={65}
+                          height={62}
+                        />
+                      </div>
+                      <div className="invoice-name-detail">
+                        <span className="iahead">
+                          Qatar International School
+                        </span>
+                        <span className="line">
+                          Qatar international school W.L.L
+                        </span>
+                        <span className="line">
+                          United Nations St, West Bay, P.O. Box: 5697
+                        </span>
+                        <span className="line">Doha, Qatar</span>
+                      </div>
                     </div>
                     <div className="itele">
                       <span className="Tline">Telephone: 443434343</span>
@@ -717,50 +615,6 @@ export default function Guardians() {
                           </Button>
                         }
                       />
-                      {/* <Autocomplete
-                        style={{ width: 300 }}
-                        fullWidth
-                        inputValue={inputValue}
-                        onChange={(event, value) => setUserId(value)}
-                        // defaultValue={{
-                        //   name: `${gg[0]?.name}`,
-                        // }}
-                        onInputChange={(event, newInputValue) => {
-                          setInputValue(newInputValue);
-                        }}
-                        options={user}
-                        value={invoice[0]?.name}
-                        // getOptionLabel={(option: any) => option.name}
-                        getOptionLabel={(option: any) => option.name || ""}
-                        isOptionEqualToValue={(option: any, title) =>
-                          option.name
-                        }
-                        // getOptionLabel={(option) => `${option.name}`}
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            variant="outlined"
-                            placeholder="Find or create a customer"
-                          />
-                        )}
-                        noOptionsText={
-                          <Button onClick={handleClickOpen}>
-                            {inputValue === "" ? (
-                              "Please enter 1 or more character"
-                            ) : (
-                              <span>
-                                Add &nbsp;<b>{inputValue}</b>&nbsp;as a customer
-                              </span>
-                            )}
-                          </Button>
-                        }
-                        // {...register("Customername", {
-                        //   onChange: (event) => {
-                        //     setUserId(event);
-                        //   },
-                        //   required: true,
-                        // })}
-                      /> */}
                       <Typography style={style}>
                         {errors.Customername ? (
                           <span>Feild is Required **</span>
@@ -800,22 +654,27 @@ export default function Guardians() {
                             <TableCell>Quantity</TableCell>
                             <TableCell>Rate</TableCell>
                             <TableCell>Amount</TableCell>
+                            <TableCell>Action</TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody>
                           {product.map((row: any) => (
                             <TableRow
                               key={row.name}
-                              // sx={{
-                              //   "&:last-child td, &:last-child th": { border: 0 },
-                              // }}
                             >
-                              <TableCell component="th" scope="row">
+                              <TableCell >
                                 {row.name}
                               </TableCell>
                               <TableCell>1</TableCell>
                               <TableCell>{row.price}</TableCell>
                               <TableCell>{row.price}</TableCell>
+                              <TableCell><IconButton
+                                className="action-delete"
+                                style={{ color: "#F95A37" }}
+                                onClick={() => openDelete(row.id)}
+                              >
+                                <RiDeleteBin5Fill />
+                              </IconButton></TableCell>
                             </TableRow>
                           ))}
                         </TableBody>
@@ -991,7 +850,9 @@ export default function Guardians() {
             {opens ? <AddCustomer open={true} closeDialog={handleClose} /> : ""}
           </div>
         </Box>
-      </Box>
+      </Box >
     </>
   );
 }
+
+

@@ -39,7 +39,7 @@ import styled from "@emotion/styled";
 import { GridCloseIcon } from "@mui/x-data-grid";
 import { useForm, SubmitHandler } from "react-hook-form";
 import EditType from "./editType";
-import commmonfunctions from "../commonFunctions/commmonfunctions";
+import commmonfunctions from "../../commonFunctions/commmonfunctions";
 import { useRouter } from "next/router";
 import MainFooter from "../commoncmp/mainfooter";
 
@@ -172,6 +172,7 @@ export default function CustomerTypeList() {
       console.log("error", error);
     }
   };
+
 
   // apply searching
   const handleSearch = (e: any) => {
@@ -373,7 +374,7 @@ export default function CustomerTypeList() {
                           </TableCell>
                           <TableCell align="left">CUST-000{key}</TableCell>
                           <TableCell align="left">{item.name}</TableCell>
-                          <TableCell align="left"></TableCell>
+                          <TableCell align="left">{item?.user_count}</TableCell>
                           <TableCell align="left">
                             <Stack
                               className="action"

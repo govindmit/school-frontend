@@ -42,7 +42,7 @@ import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import ConfirmBox from "../commoncmp/confirmbox";
-import commmonfunctions from "../commonFunctions/commmonfunctions";
+import commmonfunctions from "../../commonFunctions/commmonfunctions";
 import MainFooter from "../commoncmp/mainfooter";
 
 function a11yProps(index: number) {
@@ -104,7 +104,7 @@ export default function ActivityList() {
   const [value, setValue] = React.useState(0);
   const [editid, seteditid] = useState<any>(0);
   const { register, handleSubmit } = useForm<FormValues>();
-  const todayDate = moment(new Date()).format("DD/MM/YYYY");
+  const todayDate = moment(new Date()).format("YYYY.MM.DD");
   const [custpermit, setcustpermit] = useState<any>([]);
   const [roleid, setroleid] = useState(0);
   const [open, setOpen] = React.useState(false);
@@ -238,6 +238,7 @@ export default function ActivityList() {
   const upcoming = activity?.filter((a: any) => a?.startDate > todayDate);
   const current = activity?.filter((a: any) => a?.startDate === todayDate);
   const allListData = activity?.filter((a: any) => a);
+
 
   //pagination
   const [row_per_page, set_row_per_page] = useState(5);
@@ -749,11 +750,11 @@ export default function ActivityList() {
                             </TableCell>
                             <TableCell align="left">
                               {" "}
-                              {moment(startDate, "DD/MM/YYYY").format("ll")}
+                              {moment(startDate, "YYYY.MM.DD").format("ll")}
                             </TableCell>
                             <TableCell align="left">
                               {" "}
-                              {moment(endDate, "DD/MM/YYYY").format("ll")}
+                              {moment(endDate, "YYYY.MM.DD").format("ll")}
                             </TableCell>
                             <TableCell align="left">
                               {todayDate === startDate ? (

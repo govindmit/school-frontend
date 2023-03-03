@@ -25,7 +25,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import ApproveCompForm from "./approvecmp";
 import { useRouter } from "next/router";
-import commmonfunctions from "../../../commonFunctions/commmonfunctions";
+import commmonfunctions from "../../../../commonFunctions/commmonfunctions";
 const style = {
   color: "red",
   fontSize: "12px",
@@ -100,14 +100,13 @@ export default function ViewCreditNotes(props: any) {
     }
   };
 
-  console.log(creditNoteDet);
-
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm<FormValues>();
+
   const onSubmit: SubmitHandler<FormValues> = async (data: any) => {
     const reqData = {
       message: data.message,
@@ -127,6 +126,7 @@ export default function ViewCreditNotes(props: any) {
           toast.success("Credit Notes Updated Successfully !");
           reset();
           setrejectOpen(false)
+          router.push("/admin/creditnotes/creditnoteslist");
         }
       })
       .catch((error) => {

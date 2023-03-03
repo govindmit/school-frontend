@@ -28,7 +28,7 @@ import styled from "@emotion/styled";
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
 import { api_url, auth_token } from "../../api/hello";
-import UserService from "./servives";
+import UserService from "../../../commonFunctions/servives";
 import { useRouter } from "next/router";
 import AddRole from "./addrole";
 import MainFooter from "../../commoncmp/mainfooter";
@@ -63,6 +63,7 @@ export default function AddNewUser() {
     Customers?: any;
     Cumposers?: any;
     CreditNote?: any;
+    UserManagement?: any;
   }[] = [];
   const [onDashboard, setonDashboard] = React.useState(false);
   const [roleid, setroleid] = React.useState<FormValues | any>("");
@@ -148,6 +149,19 @@ export default function AddNewUser() {
   if (onCreditNote) {
     permitions.push({
       CreditNote: CreditNotechecked,
+    });
+  }
+
+  const [onUserManagement, setonUserManagement] = React.useState(false);
+  const [UserManagemenChecked, setUserManagemenChecked] = React.useState<any>({
+    canView: false,
+    canAdd: false,
+    canEdit: false,
+    canDelete: false,
+  });
+  if (onUserManagement) {
+    permitions.push({
+      UserManagement: UserManagemenChecked,
     });
   }
 
@@ -376,7 +390,7 @@ export default function AddNewUser() {
                             <InputLabel htmlFor="name">
                               Role <span className="err_str">*</span>
                             </InputLabel>
-                            <FormControl fullWidth className="select-height">
+                            <FormControl fullWidth>
                               <Select
                                 labelId="demo-simple-select-label"
                                 size="small"
@@ -481,9 +495,7 @@ export default function AddNewUser() {
                           }}
                         >
                           <Stack>
-                            <Stack spacing={3} className="user-property-title">
-                              DASHBOARD
-                            </Stack>
+                            <Stack spacing={3}>DASHBOARD</Stack>
                             <span style={{ color: "#333333" }}>
                               {onDashboard ? (
                                 <span style={{ color: "#1976d2" }}>ON</span>
@@ -580,9 +592,7 @@ export default function AddNewUser() {
                           }}
                         >
                           <Stack>
-                            <Stack spacing={3} className="user-property-title">
-                              INVOICE
-                            </Stack>
+                            <Stack spacing={3}>INVOICE</Stack>
                             <span style={{ color: "#333333" }}>
                               {onInvoice ? (
                                 <span style={{ color: "#1976d2" }}>ON</span>
@@ -679,9 +689,7 @@ export default function AddNewUser() {
                           }}
                         >
                           <Stack>
-                            <Stack spacing={3} className="user-property-title">
-                              SALES INVOICE
-                            </Stack>
+                            <Stack spacing={3}>SALES INVOICE</Stack>
                             <span style={{ color: "#333333" }}>
                               {onSalesInvoice ? (
                                 <span style={{ color: "#1976d2" }}>ON</span>
@@ -779,9 +787,7 @@ export default function AddNewUser() {
                           }}
                         >
                           <Stack>
-                            <Stack spacing={3} className="user-property-title">
-                              ACTIVITY
-                            </Stack>
+                            <Stack spacing={3}>ACTIVITY</Stack>
                             <span style={{ color: "#333333" }}>
                               {onActivity ? (
                                 <span style={{ color: "#1976d2" }}>ON</span>
@@ -878,9 +884,7 @@ export default function AddNewUser() {
                           }}
                         >
                           <Stack>
-                            <Stack spacing={3} className="user-property-title">
-                              CUSTOMER
-                            </Stack>
+                            <Stack spacing={3}>CUSTOMER</Stack>
                             <span style={{ color: "#333333" }}>
                               {onCustomer ? (
                                 <span style={{ color: "#1976d2" }}>ON</span>
@@ -976,9 +980,7 @@ export default function AddNewUser() {
                           }}
                         >
                           <Stack>
-                            <Stack spacing={3} className="user-property-title">
-                              COMPOSER
-                            </Stack>
+                            <Stack spacing={3}>COMPOSER</Stack>
                             <span style={{ color: "#333333" }}>
                               {onComposer ? (
                                 <span style={{ color: "#1976d2" }}>ON</span>
@@ -1074,9 +1076,7 @@ export default function AddNewUser() {
                           }}
                         >
                           <Stack>
-                            <Stack spacing={3} className="user-property-title">
-                              CREDIT NOTE
-                            </Stack>
+                            <Stack spacing={3}>CREDIT NOTE</Stack>
                             <span style={{ color: "#333333" }}>
                               {onCreditNote ? (
                                 <span style={{ color: "#1976d2" }}>ON</span>
@@ -1149,6 +1149,104 @@ export default function AddNewUser() {
                                     onChange={(e) =>
                                       setCreditNotechecked({
                                         ...CreditNotechecked,
+                                        canDelete: e.target.checked,
+                                      })
+                                    }
+                                  />
+                                }
+                                label="Can Delete"
+                              />
+                            </FormGroup>
+                          </Stack>
+                        ) : (
+                          ""
+                        )}
+                        <Stack
+                          direction="row"
+                          alignItems="center"
+                          justifyContent="space-between"
+                          style={{
+                            backgroundColor: "#F0F4FF",
+                            padding: "10px",
+                            marginTop: "15px",
+                          }}
+                        >
+                          <Stack>
+                            <Stack spacing={3}>USER MANAGEMENT</Stack>
+                            <span style={{ color: "#333333" }}>
+                              {onUserManagement ? (
+                                <span style={{ color: "#1976d2" }}>ON</span>
+                              ) : (
+                                "OFF"
+                              )}
+                            </span>
+                          </Stack>
+                          <Switch
+                            checked={onUserManagement}
+                            onChange={(e) =>
+                              setonUserManagement(e.target.checked)
+                            }
+                            inputProps={{ "aria-label": "controlled" }}
+                          />
+                        </Stack>
+                        {onUserManagement ? (
+                          <Stack direction="row" style={{ marginTop: "10px" }}>
+                            <FormGroup>
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    checked={UserManagemenChecked.canView}
+                                    onChange={(e) =>
+                                      setUserManagemenChecked({
+                                        ...UserManagemenChecked,
+                                        canView: e.target.checked,
+                                      })
+                                    }
+                                  />
+                                }
+                                label="Can View"
+                              />
+                            </FormGroup>
+                            <FormGroup>
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    checked={UserManagemenChecked.canAdd}
+                                    onChange={(e) =>
+                                      setUserManagemenChecked({
+                                        ...UserManagemenChecked,
+                                        canAdd: e.target.checked,
+                                      })
+                                    }
+                                  />
+                                }
+                                label="Can Add"
+                              />
+                            </FormGroup>
+                            <FormGroup>
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    checked={UserManagemenChecked.canEdit}
+                                    onChange={(e) =>
+                                      setUserManagemenChecked({
+                                        ...UserManagemenChecked,
+                                        canEdit: e.target.checked,
+                                      })
+                                    }
+                                  />
+                                }
+                                label="Can Edit"
+                              />
+                            </FormGroup>
+                            <FormGroup>
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    checked={UserManagemenChecked.canDelete}
+                                    onChange={(e) =>
+                                      setUserManagemenChecked({
+                                        ...UserManagemenChecked,
                                         canDelete: e.target.checked,
                                       })
                                     }

@@ -1,6 +1,6 @@
 import axios from "axios";
 import jwt_decode from "jwt-decode";
-import { api_url, auth_token } from "../api/hello";
+import { api_url, auth_token } from "../pages/api/hello";
 
 class CommonFunctions {
   VerifyLoginUser = async () => {
@@ -164,6 +164,19 @@ class CommonFunctions {
     });
     return response.data.data[0];
   };
+
+  CallculateDashBoardData = async ()=>{
+    try{
+      let response = await axios.get(`${api_url}/dashboardData`, {
+        headers: {
+          Authorization: auth_token,
+        },
+      });
+      return response.data;
+    }catch(error:any){
+      console.log("error => ",error.message);
+    }
+  }
 }
 
 export default new CommonFunctions();

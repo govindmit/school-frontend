@@ -37,7 +37,7 @@ import "react-toastify/dist/ReactToastify.css";
 import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
-import commmonfunctions from "../../commonFunctions/commmonfunctions";
+import commmonfunctions from "../../../commonFunctions/commmonfunctions";
 import { api_url, auth_token } from "../../api/hello";
 import MiniDrawer from "../../sidebar";
 import ConfirmBox from "../../commoncmp/confirmbox";

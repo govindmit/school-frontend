@@ -25,7 +25,7 @@ import MiniDrawer from "../../sidebar";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import styled from "@emotion/styled";
-import UserService from './servives'
+import UserService from '../../../commonFunctions/servives'
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
 import { api_url, auth_token } from "../../api/hello";
@@ -54,7 +54,7 @@ export default function EditUser(props: any) {
     const [btnDisabled, setBtnDisabled] = React.useState(false);
     const [roles, setroles] = React.useState<any>([])
     const [rolestatus, setrolestatus] = React.useState<any>("");
-    let permitions: { Dashboard?: any; Invoices?: any; SalesInvoices?: any; Activites?: any; Customers?: any; Cumposers?: any; CreditNote?: any }[] = [];
+    let permitions: { Dashboard?: any; Invoices?: any; SalesInvoices?: any; Activites?: any; Customers?: any; Cumposers?: any; CreditNote?: any; UserManagement?: any; }[] = [];
     const [onDashboard, setonDashboard] = React.useState(false);
     const [Dashboardchecked, setDashboardchecked] = React.useState<any>({
         canView: false,
@@ -144,6 +144,19 @@ export default function EditUser(props: any) {
         })
     }
 
+    const [onUserManagement, setonUserManagement] = React.useState(false);
+    const [UserManagemenChecked, setUserManagemenChecked] = React.useState<any>({
+        canView: false,
+        canAdd: false,
+        canEdit: false,
+        canDelete: false
+    });
+    if (onUserManagement) {
+        permitions.push({
+            UserManagement: UserManagemenChecked
+        })
+    }
+
     console.log(permitions);
 
     useEffect(() => {
@@ -222,6 +235,15 @@ export default function EditUser(props: any) {
                                 canAdd: parsedata[i].CreditNote.canAdd,
                                 canEdit: parsedata[i].CreditNote.canEdit,
                                 canDelete: parsedata[i].CreditNote.canDelete
+                            })
+                        }
+                        if (parsedata[i].UserManagement) {
+                            setonUserManagement(true);
+                            setUserManagemenChecked({
+                                canView: parsedata[i].UserManagement.canView,
+                                canAdd: parsedata[i].UserManagement.canAdd,
+                                canEdit: parsedata[i].UserManagement.canEdit,
+                                canDelete: parsedata[i].UserManagement.canDelete
                             })
                         }
                     }
@@ -735,6 +757,41 @@ export default function EditUser(props: any) {
                                                     </FormGroup>
                                                     <FormGroup>
                                                         <FormControlLabel control={<Checkbox checked={CreditNotechecked.canDelete} onChange={e => setCreditNotechecked({ ...CreditNotechecked, canDelete: e.target.checked })} />} label="Can Delete" />
+                                                    </FormGroup>
+                                                </Stack>) : ""}
+                                                <Stack
+                                                    direction="row"
+                                                    alignItems="center"
+                                                    justifyContent="space-between"
+                                                    style={{ backgroundColor: "#F0F4FF", padding: "10px", marginTop: "15px" }}
+
+                                                >
+                                                    <Stack>
+                                                        <Stack spacing={3}>
+                                                            USER MANAGEMENT
+                                                        </Stack>
+                                                        <span style={{ color: "#333333" }}>
+                                                            {onUserManagement ? (<span style={{ color: "#1976d2" }}>ON</span>) : "OFF"}
+                                                        </span>
+                                                    </Stack>
+                                                    <Switch
+                                                        checked={onUserManagement}
+                                                        onChange={e => setonUserManagement(e.target.checked)}
+                                                        inputProps={{ 'aria-label': 'controlled' }}
+                                                    />
+                                                </Stack>
+                                                {onUserManagement ? (<Stack direction="row" style={{ marginTop: "10px" }} >
+                                                    <FormGroup>
+                                                        <FormControlLabel control={<Checkbox checked={UserManagemenChecked.canView} onChange={e => setUserManagemenChecked({ ...UserManagemenChecked, canView: e.target.checked })} />} label="Can View" />
+                                                    </FormGroup>
+                                                    <FormGroup>
+                                                        <FormControlLabel control={<Checkbox checked={UserManagemenChecked.canAdd} onChange={e => setUserManagemenChecked({ ...UserManagemenChecked, canAdd: e.target.checked })} />} label="Can Add" />
+                                                    </FormGroup>
+                                                    <FormGroup>
+                                                        <FormControlLabel control={<Checkbox checked={UserManagemenChecked.canEdit} onChange={e => setUserManagemenChecked({ ...UserManagemenChecked, canEdit: e.target.checked })} />} label="Can Edit" />
+                                                    </FormGroup>
+                                                    <FormGroup>
+                                                        <FormControlLabel control={<Checkbox checked={UserManagemenChecked.canDelete} onChange={e => setUserManagemenChecked({ ...UserManagemenChecked, canDelete: e.target.checked })} />} label="Can Delete" />
                                                     </FormGroup>
                                                 </Stack>) : ""}
                                             </Box>

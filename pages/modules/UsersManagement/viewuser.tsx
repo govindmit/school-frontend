@@ -16,8 +16,9 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import MiniDrawer from "../../sidebar";
 import styled from "@emotion/styled";
-import UserService from "./servives";
+import UserService from "../../../commonFunctions/servives";
 import MainFooter from "../../commoncmp/mainfooter";
+import moment from "moment";
 
 const Item = styled(Paper)(({ theme }) => ({
     p: 10,
@@ -71,6 +72,14 @@ export default function ViewUser(props: any) {
 
     const [onCreditNote, setonCreditNote] = React.useState(false);
     const [onCreditNotechecked, setonCreditNotechecked] = React.useState<any>({
+        canView: false,
+        canAdd: false,
+        canEdit: false,
+        canDelete: false
+    });
+
+    const [onUserManagement, setonUserManagement] = React.useState(false);
+    const [onUserManagementchecked, setonUserManagementchecked] = React.useState<any>({
         canView: false,
         canAdd: false,
         canEdit: false,
@@ -144,7 +153,6 @@ export default function ViewUser(props: any) {
                             canDelete: parsedata[i].SalesInvoices.canDelete
                         })
                     }
-
                     if (parsedata[i].CreditNote) {
                         setonCreditNote(true);
                         setonCreditNotechecked({
@@ -152,6 +160,15 @@ export default function ViewUser(props: any) {
                             canAdd: parsedata[i].CreditNote.canAdd,
                             canEdit: parsedata[i].CreditNote.canEdit,
                             canDelete: parsedata[i].CreditNote.canDelete
+                        })
+                    }
+                    if (parsedata[i].UserManagement) {
+                        setonUserManagement(true);
+                        setonUserManagementchecked({
+                            canView: parsedata[i].UserManagement.canView,
+                            canAdd: parsedata[i].UserManagement.canAdd,
+                            canEdit: parsedata[i].UserManagement.canEdit,
+                            canDelete: parsedata[i].UserManagement.canDelete
                         })
                     }
                 }
@@ -222,7 +239,8 @@ export default function ViewUser(props: any) {
                                                 </Typography>
                                                 <Stack>
                                                     <Typography variant="subtitle1">
-                                                        Date:
+                                                        Date: {userdet &&
+                                                            moment(userdet.createdAt).format("DD/MM/YYYY")}
                                                     </Typography>
                                                 </Stack>
                                             </CardContent>
@@ -520,6 +538,42 @@ export default function ViewUser(props: any) {
                                                 </FormGroup>
                                                 <FormGroup>
                                                     <FormControlLabel control={<Checkbox checked={onCreditNotechecked.canDelete} disabled />} label="Can Delete" />
+                                                </FormGroup>
+                                            </Stack>) : ""}
+                                            <Stack
+                                                direction="row"
+                                                alignItems="center"
+                                                justifyContent="space-between"
+                                                style={{ backgroundColor: "#F0F4FF", padding: "10px", marginTop: "15px" }}
+
+                                            >
+                                                <Stack>
+                                                    <Stack spacing={3}>
+                                                        User Management
+                                                    </Stack>
+                                                    <span style={{ color: "#333333" }}>
+                                                        {onUserManagement ? (<span style={{ color: "#1976d2" }}>ON</span>) : "OFF"}
+                                                    </span>
+                                                </Stack>
+                                                <Switch
+                                                    checked={onUserManagement}
+                                                    onChange={e => setonUserManagement(e.target.checked)}
+                                                    inputProps={{ 'aria-label': 'controlled' }}
+                                                    disabled
+                                                />
+                                            </Stack>
+                                            {onUserManagement ? (<Stack direction="row" style={{ marginTop: "10px" }} >
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={onUserManagementchecked.canView} disabled />} label="Can View" />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={onUserManagementchecked.canAdd} disabled />} label="Can Add" />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={onUserManagementchecked.canEdit} disabled />} label="Can Edit" />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <FormControlLabel control={<Checkbox checked={onUserManagementchecked.canDelete} disabled />} label="Can Delete" />
                                                 </FormGroup>
                                             </Stack>) : ""}
                                         </Box>
