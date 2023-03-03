@@ -35,6 +35,7 @@ import styled from "@emotion/styled";
 // import commmonfunctions from ".../commonFunctions/commmonfunctions";
 import Script from "next/script";
 import getwayService from "../../../services/gatewayService"
+import cyberSourceSecureConfig from '../../../helper/cyberSourceSecureConfig'
 
 const style = {
   color: "red",
@@ -151,14 +152,40 @@ export default function AddSalesOrder({
   const [orderId, setorderId] = React.useState("");
   const [amount, setAmount] = React.useState(0);
   const [creditNoteId, setcreditNoteId] = React.useState<any>("");
+  const [cyberSignature,setCyberSignature]=useState('');
 
   var Checkout: any;
   let creditBalance: any;
-
-  const handlePaymentName = (data: any) => {
+  const currentDateTime = new Date().toISOString().split('.')[0]+"Z"
+  const handlePaymentName = async (data: any) => {
     const Checkout: any = (window as any).Checkout;
-    console.log("Checkout=>", Checkout);
-    setPaymentPayMethod(data);
+    console.log("currentDateTime=>", currentDateTime);
+    // setPaymentPayMethod(data);
+    console.log("currentDateTime =>",currentDateTime);
+    if(data === 'CBQ'){
+     
+      const params : any ={
+        access_key:"cfc1af4483773756a54a990e585ce7c5",
+        profile_id:"70647EEB-EDE3-4859-9DD9-6E4605C9FABE",
+        req_profile_id:"70647EEB-EDE3-4859-9DD9-6E4605C9FABE",
+        ots_profileid:"70647EEB-EDE3-4859-9DD9-6E4605C9FABE",
+        merchant_id:"cbq_qis_qar",
+        transaction_uuid:"6401b9f5e7bb8",
+        signed_field_names:"access_key,profile_id,transaction_uuid,signed_field_names,unsigned_field_names,signed_date_time,locale,transaction_type,reference_number,amount,currency",
+        unsigned_field_names:"",
+        signed_date_time:currentDateTime,
+        locale:"en",
+        transaction_type:"sale,create_payment_token",
+        reference_number:"1250",
+        amount:"70",
+        currency:"QAR",
+        submit:"Submit"
+    
+  }
+      const signature = await cyberSourceSecureConfig.sign(params);
+      console.log("signature =>",signature);
+      setCyberSignature(signature);
+    }
   };
 
   if (Check === true) {
@@ -471,8 +498,9 @@ export default function AddSalesOrder({
         console.log("Error ",error.message);
       }
      }
-     if(paymentPayMethod === "CBQ"){
-      getwayService.redirectCyberSourcePayment();
+     if(paymentPayMethod === "CBQ"){ 
+      // getwayService.redirectCyberSourcePayment();
+  
       toast.info(`As of Now This payment method is not supported ${paymentPayMethod} !`);
      }
     
@@ -576,7 +604,7 @@ export default function AddSalesOrder({
         </BootstrapDialogTitle>
         <DialogContent dividers>
           <Box sx={{ width: "100%" }}>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form id="payment_confirmation"  action="https://testsecureacceptance.cybersource.com/pay" method="post">
               <TabPanel value={value} index={0} className="new-sale">
                 <Grid className="">
                   <Stack style={{ marginTop: "5px" }}>
@@ -673,7 +701,7 @@ export default function AddSalesOrder({
                                   ? true
                                   : false
                               }
-                              {...register("payment")}
+                              // {...register("payment")}
                               onChange={(e) =>
                                 handlePaymentName(e.target.value)
                               }
@@ -772,6 +800,25 @@ export default function AddSalesOrder({
                   </span>
                 </Button>
               </DialogActions>
+
+              <input type="hidden" id="access_key" name="access_key" value="cfc1af4483773756a54a990e585ce7c5"/>
+              <input type="hidden"  id="profile_id" name="profile_id" value="70647EEB-EDE3-4859-9DD9-6E4605C9FABE"/>
+              <input type="hidden" id="req_profile_id" name="req_profile_id" value="70647EEB-EDE3-4859-9DD9-6E4605C9FABE"/>
+              <input type="hidden" id="ots_profileid" name="ots_profileid" value="70647EEB-EDE3-4859-9DD9-6E4605C9FABE"/>
+              <input type="hidden" id="merchant_id"  name="merchant_id" value="cbq_qis_qar"/>
+              <input type="hidden" id="transaction_uuid" name="transaction_uuid" value="6401b9f5e7bb8"/>
+              <input type="hidden" id="signed_field_names" name="signed_field_names" value="access_key,profile_id,transaction_uuid,signed_field_names,unsigned_field_names,signed_date_time,locale,transaction_type,reference_number,amount,currency"/>
+              <input type="hidden" id="unsigned_field_names" name="unsigned_field_names"/>
+              <input type="hidden" id="signed_date_time" name="signed_date_time" value={currentDateTime}/>
+              <input type="hidden" id="locale" name="locale" value="en"/>
+              <input type="hidden"  id="transaction_type" name="transaction_type" value="sale,create_payment_token"></input>
+              <input type="hidden"  id="reference_number" name="reference_number" value="1250"></input>
+              <input type="hidden" id="amount" name="amount" value="70" ></input>
+              <input type="hidden" id="currency" name="currency" value="QAR"></input>
+              <input type="hidden" id="signature" name="signature" value={cyberSignature}></input>
+              <input type="hidden" name="submit"value="Submit"/>
+              
+              <input type="submit" id="submit" value="Confirm"/>
             </form>
             <ToastContainer />
           </Box>
