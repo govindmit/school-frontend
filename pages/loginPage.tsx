@@ -88,7 +88,9 @@ export default function LoginPage() {
           const redirect = () => {
             if (role === 1) {
               router.push("/admin/dashboard");
-            } else {
+            }else if (role === 2) {
+              router.push("/user/dashboard");
+            }  else {
               router.push("/userprofile");
             }
           };

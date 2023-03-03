@@ -231,124 +231,76 @@ export default function AddSalesOrder({
       setshowspinner(true);
       setBtnDisabled(true);
 
-      if (Check === true) {
-        const reqData = {
-          amount: totalPrice === 0 ? creditBalance : totalPrice + creditBalance,
-          status: 0,
-          userId: customerId,
-          activityId: activityId,
-          transactionId: "Trh4354654457",
-          orderId: 46,
-          createdBy: customerId,
-          // createdDate: todayDate,
-          // paymentMethod: paymentPayMethod === "" ? "Cash" : paymentPayMethod,
-        };
+console.log("price",price,Check,"Check","totalPrice",totalPrice,"creditBalance",creditBalance,"paymentPayMethod",paymentPayMethod);
 
-        if (price === 0) {
-          console.log("@@");
-        } else if (price < creditAmount) {
-          await axios({
-            method: "POST",
-            url: `${api_url}/addSalesOrders`,
-            data: reqData,
-            headers: {
-              Authorization: auth_token,
-            },
-          })
-            .then(async (data: any) => {
-              if (data) {
-                insertRemainingNotesAmount();
-                if (data?.status === 200) {
-                  setorderId(data.data.sageIntacctorderID);
-                  sageintacctorderID = data.data.sageIntacctorderID;
-                  // setAmount(creditBalance)
-                }
-                const unique = keyGen(5);
-                const reqData1 = {
-                  totalAmount: 0,
-                  paidAmount: 0,
-                  transactionId: `case-${unique} `,
-                  amexorderId: data?.data?.sageIntacctorderID,
-                  paymentMethod:
+// let amountttt= price > creditBalance ? totalPrice : creditBalance === price ? 0 : price;
+
+if(Check === true){
+  const reqData = {
+        amount: price,
+        status: 0,
+        userId: customerId,
+        activityId: activityId,
+        transactionId: "Trh4354654457",
+        orderId: 46,
+        createdBy: customerId,
+      };
+      await axios({
+              method: "POST",
+              url: `${api_url}/addSalesOrders`,
+              data: reqData,
+              headers: {
+                Authorization: auth_token,
+              },
+            })
+              .then(async (data: any) => {
+                if (data) {
+                  insertRemainingNotesAmount();
+                  if (data?.status === 200) {
+                    setorderId(data.data.sageIntacctorderID);
+                    sageintacctorderID = data.data.sageIntacctorderID;
+                    // setAmount(creditBalance)
+                  }
+                  const unique = keyGen(5);
+                  const reqData1 = {
+                    totalAmount: totalPrice,
+                    paidAmount: totalPrice,
+                    transactionId: `case-${unique} `,
+                    amexorderId: data?.data?.sageIntacctorderID,
+                    paymentMethod:
                     paymentPayMethod === "" ? "Cash" : paymentPayMethod,
-                  idForPayment: data?.data?.sageIntacctorderID,
-                  creditNotesId: creditNoteId,
-                };
-                // transactionSave(reqData1);
+                    idForPayment: data?.data?.sageIntacctorderID,
+                    creditNotesId: creditNoteId,
+                  };
+                  transactionSave(reqData1);
+                  setshowspinner(false);
+                  setBtnDisabled(false);
+                  toast.success("Sales Order Create Successfully !");
+                  closeDialog(false);
+                  setTimeout(() => {
+                    setOpen(false);
+                  }, 2000);
+                }
+              }).catch((error) => {
+                // toast.error(error?.message);
+                console.log("error", error);
                 setshowspinner(false);
                 setBtnDisabled(false);
-                toast.success("Sales Order Create Successfully !");
-                closeDialog(false);
-                setTimeout(() => {
-                  setOpen(false);
-                }, 2000);
-              }
-            })
-            .catch((error) => {
-              // toast.error(error?.message);
-              console.log("error", error);
-              setshowspinner(false);
-              setBtnDisabled(false);
-            });
-        } else {
-          await axios({
-            method: "POST",
-            url: `${api_url}/addSalesOrders`,
-            data: reqData,
-            headers: {
-              Authorization: auth_token,
-            },
-          })
-            .then(async (data: any) => {
-              if (data) {
-                insertRemainingNotesAmount();
-                if (data.status === 200) {
-                  setorderId(data.data.sageIntacctorderID);
-                  sageintacctorderID = data.data.sageIntacctorderID;
-                  // setAmount(creditBalance)
-                }
-                const unique = keyGen(5);
-                const reqData1 = {
-                  totalAmount: Math?.abs(creditAmount - price),
-                  paidAmount: Math?.abs(creditAmount - price),
-                  transactionId: `case-${unique} `,
-                  amexorderId: data?.data?.sageIntacctorderID,
-                  paymentMethod:
-                    paymentPayMethod === "" ? "Cash" : paymentPayMethod,
-                  idForPayment: data?.data?.sageIntacctorderID,
-                  creditNotesId: creditNoteId,
-                };
-                // transactionSave(reqData1);
-                setshowspinner(false);
-                setBtnDisabled(false);
-                toast.success("Sales Order Create Successfully !");
-                closeDialog(false);
-                setTimeout(() => {
-                  setOpen(false);
-                }, 2000);
-              }
-            })
-            .catch((error) => {
-              // toast.error(error?.message);
-              console.log("error", error);
-              setshowspinner(false);
-              setBtnDisabled(false);
-            });
-        }
-      } else {
-        const reqData = {
-          amount: price,
-          status: 0,
-          userId: customerId,
-          activityId: activityId,
-          transactionId: "Trh4354654457",
-          orderId: 46,
-          createdBy: customerId,
-          // createdDate: todayDate,
-          // paymentMethod: paymentPayMethod === "" ? "Cash" : paymentPayMethod,
-        };
+              });
 
-        await axios({
+}else{
+
+  const reqData = {
+    amount: price,
+    status: 0,
+    userId: customerId,
+    activityId: activityId,
+    transactionId: "Trh4354654457",
+    orderId: 46,
+    createdBy: customerId,
+  };
+
+  await axios({
           method: "POST",
           url: `${api_url}/addSalesOrders`,
           data: reqData,
@@ -358,23 +310,25 @@ export default function AddSalesOrder({
         })
           .then(async (data: any) => {
             if (data) {
-              if (data.status === 200) {
+              // insertRemainingNotesAmount();
+              if (data?.status === 200) {
                 setorderId(data.data.sageIntacctorderID);
                 sageintacctorderID = data.data.sageIntacctorderID;
-                setAmount(price);
+                // setAmount(creditBalance)
               }
               const unique = keyGen(5);
               const reqData1 = {
-                totalAmount: totalPrice,
-                paidAmount: totalPrice,
+                totalAmount: price,
+                paidAmount: price,
                 transactionId: `case-${unique} `,
                 amexorderId: data?.data?.sageIntacctorderID,
                 paymentMethod:
-                  paymentPayMethod === "" ? "Cash" : paymentPayMethod,
+                paymentPayMethod === "" ? "Cash" : paymentPayMethod,
                 idForPayment: data?.data?.sageIntacctorderID,
                 creditNotesId: null,
               };
-              // transactionSave(reqData1);
+
+              transactionSave(reqData1);
               setshowspinner(false);
               setBtnDisabled(false);
               toast.success("Sales Order Create Successfully !");
@@ -383,14 +337,13 @@ export default function AddSalesOrder({
                 setOpen(false);
               }, 2000);
             }
-          })
-          .catch((error) => {
+          }).catch((error) => {
             // toast.error(error?.message);
             console.log("error", error);
             setshowspinner(false);
             setBtnDisabled(false);
           });
-      }
+}
     } else {
       if (customerId === "") {
         setCustomerError("Customer field is Required *");
@@ -472,6 +425,7 @@ export default function AddSalesOrder({
       }
      }
      if(paymentPayMethod === "CBQ"){
+      getwayService.redirectCyberSourcePayment();
       toast.info(`As of Now This payment method is not supported ${paymentPayMethod} !`);
      }
     
