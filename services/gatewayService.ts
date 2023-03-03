@@ -160,6 +160,7 @@ var config = {
   url: 'https://testsecureacceptance.cybersource.com/pay',
   headers: { 
     'Content-Type': 'application/json',
+    'Accept':'*/*',
     'Cookie': '__cfruid=227c111277165e4848bf015230ce8aeade2f6065-1677732597',
   },
   data : data

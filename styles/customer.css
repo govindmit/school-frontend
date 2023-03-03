@@ -101,7 +101,6 @@ input {
   border-bottom: 1px solid #d3cccc;
   margin-top: 10px;
 }
-
 .confirmcss {
   margin-top: 18px;
   margin-left: 27px;
@@ -109,7 +108,6 @@ input {
 .deleteusercss {
   margin-top: 18px;
   margin-left: 27px;
-
 }
 .copycss {
   min-width: 33px !important;
@@ -131,7 +129,51 @@ span.addsales {
 footer.footermain {
   text-align: center;
 }
-.trans{
-      display: inline-flex;
-      align-items: center;
+.trans {
+  display: inline-flex;
+  align-items: center;
+}
+
+.composer-top {
+  display: flex;
+  flex: 1;
+  align-items: flex-start;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 25px;
+}
+.composer-top > div {
+  flex: 0 0 33%;
+}
+.composer-top > div div {
+  width: 100%;
+  flex-basis: 100%;
+  max-width: 100%;
+}
+
+.MuiAutocomplete-endAdornment {
+  display: none;
+}
+
+.composer-top p {
+  margin: 0;
+  position: relative;
+  top: 40px;
+  left: -7px;
+}
+
+.composer-top > div div.MuiChip-filled.MuiChip-sizeSmall {
+  display: none;
+}
+.customer-name .MuiAutocomplete-root .MuiInputBase-root fieldset {
+  height: 50px;
+}
+
+.MuiOutlinedInput-notchedOutline {
+  height: 50px !important;
+  top: 0 !important;
+}
+
+.customer-name
+  .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary {
+  padding: 0;
 }
