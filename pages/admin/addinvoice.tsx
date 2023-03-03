@@ -442,6 +442,9 @@ export default function Guardians() {
   for (let d of product) {
     price = price + d.price;
   }
+
+  console.log(price);
+
   const handleNew = () => {
     setSecondPop(true);
   };
@@ -590,14 +593,13 @@ export default function Guardians() {
     }
   };
 
-
-  console.log("item", product, selected);
   function openDelete(item: any) {
     console.log(item);
     let gg = product.filter((a: any) => a.id !== item);
     setProduct(gg);
+    const arr = selected.filter(it => it !== item)
+    setSelected(arr);
   }
-
 
   return (
     <>
