@@ -224,7 +224,7 @@ export default function CustomerList() {
     })
       .then((res) => {
         if (res.status === 200) {
-          setUsers(res.data.data.filter((dt: any) => dt.customerId !== null));
+          //setUsers(res.data.data.filter((dt: any) => dt.customerId !== null));
         }
       })
       .catch((error) => {

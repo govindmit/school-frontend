@@ -119,7 +119,7 @@ export default function MiniDrawer() {
   const [isActive, setIsActive] = useState(false);
   let path = router?.pathname;
   let mngbackground = "#1976d2";
-  let textcolor='white !important';
+  let textcolor = 'white !important';
   const [profileActive, setprofileActive] = useState(false);
 
   const handleClick = () => {
@@ -239,7 +239,7 @@ export default function MiniDrawer() {
                   className="sidebar-link"
                   disablePadding
                   sx={{ display: "block" }}
-                  // onClick={() => router.push("/activites/activitylist")}
+                // onClick={() => router.push("/activites/activitylist")}
                 >
                   <ListItemButton
                     sx={{
@@ -261,7 +261,7 @@ export default function MiniDrawer() {
                   className="sidebar-link"
                   disablePadding
                   sx={{ display: "block" }}
-                  // onClick={() => router.push("/activites/activitylist")}
+                // onClick={() => router.push("/activites/activitylist")}
                 >
                   <ListItemButton
                     sx={{
@@ -286,9 +286,9 @@ export default function MiniDrawer() {
         <Drawer variant="permanent" open={open}>
           <h1>Header</h1>
           <List>
-{/* //////////////////////Customer Management////////////////////////// */}
+            {/* //////////////////////Customer Management////////////////////////// */}
 
-{ userdet?.roleId === 2 ? (
+            {userdet?.roleId === 2 ? (
               <ListItem
                 className="sidebar-link"
                 disablePadding
@@ -301,7 +301,7 @@ export default function MiniDrawer() {
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
                     background: setDashboardBgColor,
-                    color:setDashboardColor,
+                    color: setDashboardColor,
                   }}
                 >
                   <ListItemIcon
@@ -321,12 +321,12 @@ export default function MiniDrawer() {
             ) : (
               ""
             )}
-             {userdet?.roleId === 2 ? (
+            {userdet?.roleId === 2 ? (
               <ListItem
                 className="sidebar-link"
                 disablePadding
                 sx={{ display: "block" }}
-                onClick={() => router.push("/user/invoices")}
+                onClick={() => router.push("/user/invoices/invoiceslist")}
               >
                 <ListItemButton
                   sx={{
@@ -334,7 +334,7 @@ export default function MiniDrawer() {
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
                     background: setInvoiceBgColor,
-                    color:setInvoiceColor,
+                    color: setInvoiceColor,
                   }}
                 >
                   <ListItemIcon
@@ -354,7 +354,7 @@ export default function MiniDrawer() {
             ) : (
               ""
             )}
-             {userdet?.roleId === 2 ? (
+            {userdet?.roleId === 2 ? (
               <ListItem
                 className="sidebar-link"
                 disablePadding
@@ -367,7 +367,7 @@ export default function MiniDrawer() {
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
                     background: setSalesBgColor,
-                    color:setSalesColor,
+                    color: setSalesColor,
                   }}
                 >
                   <ListItemIcon
@@ -387,7 +387,7 @@ export default function MiniDrawer() {
             ) : (
               ""
             )}
-             {userdet?.roleId === 2 ? (
+            {userdet?.roleId === 2 ? (
               <ListItem
                 className="sidebar-link"
                 disablePadding
@@ -402,7 +402,7 @@ export default function MiniDrawer() {
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
                     background: setCreditBgColor,
-                    color:setCreditColor,
+                    color: setCreditColor,
                   }}
                 >
                   <ListItemIcon
@@ -437,7 +437,7 @@ export default function MiniDrawer() {
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
                     background: setActivityBgColor,
-                    color:setActivityColor,
+                    color: setActivityColor,
                   }}
                 >
                   <ListItemIcon
@@ -447,7 +447,7 @@ export default function MiniDrawer() {
                       justifyContent: "center",
                     }}
                   ></ListItemIcon >
-                  <TimelineOutlinedIcon/>
+                  <TimelineOutlinedIcon />
                   <ListItemText
                     primary="Activities"
                     sx={{ opacity: open ? 1 : 0 }}
@@ -458,7 +458,7 @@ export default function MiniDrawer() {
               ""
             )}
 
-{/* ///////////////////////////////////////////////////////////////////////// */}
+            {/* ///////////////////////////////////////////////////////////////////////// */}
 
 
             {checkdashboard === true || userdet?.roleId === 1 ? (
@@ -474,7 +474,7 @@ export default function MiniDrawer() {
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
                     background: setDashboardBgColor,
-                    color:setDashboardColor,
+                    color: setDashboardColor,
                   }}
                 >
                   <ListItemIcon
@@ -508,7 +508,7 @@ export default function MiniDrawer() {
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
                     background: setCostomerBgColor,
-                    color:setCostomerColor,
+                    color: setCostomerColor,
                   }}
                 >
                   <ListItemIcon
@@ -564,7 +564,7 @@ export default function MiniDrawer() {
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
                     background: setInvoiceBgColor,
-                    color:setInvoiceColor,
+                    color: setInvoiceColor,
                   }}
                 >
                   <ListItemIcon
@@ -600,7 +600,7 @@ export default function MiniDrawer() {
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
                     background: setCreditBgColor,
-                    color:setCreditColor,
+                    color: setCreditColor,
                   }}
                 >
                   <ListItemIcon
@@ -635,7 +635,7 @@ export default function MiniDrawer() {
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
                     background: setActivityBgColor,
-                    color:setActivityColor,
+                    color: setActivityColor,
                   }}
                 >
                   <ListItemIcon
@@ -645,7 +645,7 @@ export default function MiniDrawer() {
                       justifyContent: "center",
                     }}
                   ></ListItemIcon >
-                  <TimelineOutlinedIcon/>
+                  <TimelineOutlinedIcon />
                   <ListItemText
                     primary="Activities"
                     sx={{ opacity: open ? 1 : 0 }}
@@ -656,7 +656,7 @@ export default function MiniDrawer() {
               ""
             )}
 
-           
+
 
             {checkSalesInvoice === true || userdet?.roleId === 1 ? (
               <ListItem
@@ -671,7 +671,7 @@ export default function MiniDrawer() {
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
                     background: setSalesBgColor,
-                    color:setSalesColor,
+                    color: setSalesColor,
                   }}
                 >
                   <ListItemIcon
@@ -704,7 +704,7 @@ export default function MiniDrawer() {
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
                     background: setUserManagementBgColor,
-                    color:setUserManagementColor,
+                    color: setUserManagementColor,
                   }}
                 >
                   <ListItemIcon
@@ -729,7 +729,7 @@ export default function MiniDrawer() {
                 className="sidebar-link"
                 disablePadding
                 sx={{ display: "block" }}
-                 onClick={() => router.push("/admin/composer")}
+                onClick={() => router.push("/admin/composer")}
               >
                 <ListItemButton
                   sx={{
@@ -737,7 +737,7 @@ export default function MiniDrawer() {
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
                     background: setComposerBgColor,
-                    color:setComposerColor,
+                    color: setComposerColor,
                   }}
                 >
                   <ListItemIcon
@@ -751,7 +751,7 @@ export default function MiniDrawer() {
                   <ListItemText
                     primary="Composer"
                     sx={{ opacity: open ? 1 : 0 }}
-                    //onClick={() => router.push("/logout")}
+                  //onClick={() => router.push("/logout")}
                   />
                 </ListItemButton>
               </ListItem>
@@ -763,7 +763,7 @@ export default function MiniDrawer() {
               className="sidebar-link"
               disablePadding
               sx={{ display: "block" }}
-              // onClick={() => router.push("/activites/activitylist")}
+            // onClick={() => router.push("/activites/activitylist")}
             >
               <ListItemButton
                 sx={{
@@ -771,7 +771,7 @@ export default function MiniDrawer() {
                   justifyContent: open ? "initial" : "center",
                   px: 2.5,
                   background: setLogoutBgColor,
-                  color:setLogoutColor,
+                  color: setLogoutColor,
                 }}
               >
                 <ListItemIcon
@@ -790,39 +790,39 @@ export default function MiniDrawer() {
               </ListItemButton>
             </ListItem>
             {userdet?.roleId === 1 ? (
-            <ListItem
-              className="sidebar-link"
-              disablePadding
-              sx={{ display: "block" }}
+              <ListItem
+                className="sidebar-link"
+                disablePadding
+                sx={{ display: "block" }}
               // onClick={() => router.push("/activites/activitylist")}
-            >
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                  background: setProfileBgColor,
-                  color:setProfileColor,
-                }}
               >
-                <ListItemIcon
+                <ListItemButton
                   sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
+                    minHeight: 48,
+                    justifyContent: open ? "initial" : "center",
+                    px: 2.5,
+                    background: setProfileBgColor,
+                    color: setProfileColor,
                   }}
-                ></ListItemIcon>
-                <PeopleAltOutlinedIcon />
-                <ListItemText
-                  primary="Profile"
-                  sx={{ opacity: open ? 1 : 0 }}
-                  onClick={() => router.push("/userprofile")}
-                />
-              </ListItemButton>
-            </ListItem>
-) : (
-  ""
-)}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : "auto",
+                      justifyContent: "center",
+                    }}
+                  ></ListItemIcon>
+                  <PeopleAltOutlinedIcon />
+                  <ListItemText
+                    primary="Profile"
+                    sx={{ opacity: open ? 1 : 0 }}
+                    onClick={() => router.push("/userprofile")}
+                  />
+                </ListItemButton>
+              </ListItem>
+            ) : (
+              ""
+            )}
 
           </List>
         </Drawer>

@@ -2,9 +2,9 @@ import { Breadcrumbs, Card, CardContent, Checkbox, Dialog, DialogActions, Dialog
 import { Stack } from "@mui/material";
 import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
-import MiniDrawer from "../../sidebar";
+import MiniDrawer from "../../../sidebar";
 import axios from "axios";
-import { api_url, auth_token } from "../../api/hello";
+import { api_url, auth_token } from "../../../api/hello";
 import Image from "next/image";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
@@ -17,11 +17,12 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import "react-datepicker/dist/react-datepicker.css";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import PDFService from '../../../commonFunctions/invoicepdf';
+import PDFService from '../../../../commonFunctions/invoicepdf';
 import { toast } from "react-toastify";
 import CloseIcon from "@mui/icons-material/Close";
 import moment from "moment";
-import getwayService from "../../../services/gatewayService"
+import getwayService from "../../../../services/gatewayService"
+import Loader from "../../../commoncmp/myload";
 
 export interface DialogTitleProps {
     id: string;
@@ -73,7 +74,7 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
 
 export default function Guardians() {
     const router = useRouter();
-    const { invoiceId } = router.query;
+    const { id } = router.query;
     const [value, setValue] = useState<any>({ id: null, title: null });
     const [invoiceno, setInvoiceNo] = useState();
     const [invoice, setInvoice] = useState<any>([]);
@@ -96,6 +97,7 @@ export default function Guardians() {
     const [orderId, setorderId] = useState('');
     const [showSuccess, setShowSuccess] = useState(false);
     const [user, setUser] = useState<any>([]);
+    const [myload, setmyload] = useState(false)
 
     useEffect(() => {
         invoiceDataById();
@@ -120,14 +122,16 @@ export default function Guardians() {
 
     // get invoice det
     const invoiceDataById = async () => {
+        setmyload(true);
         await axios({
             method: "POST",
-            url: `${api_url}/getInvoice/${invoiceId}`,
+            url: `${api_url}/getInvoice/${id}`,
             headers: {
                 Authorization: auth_token,
             },
         })
             .then((res) => {
+                setmyload(false);
                 setInvoice(res?.data.data);
                 setValue({
                     id: res?.data.data[0].id,
@@ -191,7 +195,6 @@ export default function Guardians() {
         setDollerOpen(false);
     };
 
-
     const getCustomerNotes = async (id: any) => {
         try {
             const response = await fetch(`${api_url}/creditballance/${id}`, {
@@ -224,7 +227,6 @@ export default function Guardians() {
         return key;
     };
 
-
     const handleCheckBoxClick = async (e: any) => {
         console.log("event =>", e.target.checked);
         setIsChecked(e.target.checked);
@@ -243,7 +245,6 @@ export default function Guardians() {
             setCustomerCreditNoteRequestId(null);
         }
     }
-
 
     const handleCreate = async (id: any) => {
         const Checkout: any = (window as any).Checkout
@@ -477,7 +478,7 @@ export default function Guardians() {
                             </Stack>
                             <div className="buycss" style={{ textAlign: "end" }}>
                                 <Link
-                                    href="/admin/invoices"
+                                    href="/user/invoices/invoiceslist"
                                     style={{ color: "#1A70C5", textDecoration: "none" }}
                                 >
                                     <Button variant="contained" startIcon={<ArrowBackIcon />}> <b>Back To List</b></Button>
@@ -519,157 +520,159 @@ export default function Guardians() {
                                         <span className="Tline">Email: qisfinance@qis.org</span>
                                     </div>
                                 </div>
-                                <div className="icenter">
-                                    <div className="invoice">
-                                        {/*bread cump */}
-                                        <Stack
-                                            direction="row"
-                                            alignItems="center"
-                                            justifyContent="space-between"
-                                            style={{ padding: "8px", marginBottom: "15px" }}
-                                        >
-                                            <Stack style={{ paddingLeft: "50px", paddingRight: "50px" }}>
-                                                <Stack spacing={3}>
+                                {myload ? <Loader /> :
+                                    <><div className="icenter">
+                                        <div className="invoice">
+                                            {/*bread cump */}
+                                            <Stack
+                                                direction="row"
+                                                alignItems="center"
+                                                justifyContent="space-between"
+                                                style={{ padding: "8px", marginBottom: "15px" }}
+                                            >
+                                                <Stack style={{ paddingLeft: "50px", paddingRight: "50px" }}>
+                                                    <Stack spacing={3}>
+                                                        <Typography
+
+                                                            gutterBottom
+                                                            style={{ fontWeight: "bold", color: "#333333" }}
+                                                        >
+                                                            Bill To :
+                                                        </Typography>
+                                                    </Stack>
                                                     <Typography
 
                                                         gutterBottom
                                                         style={{ fontWeight: "bold", color: "#333333" }}
                                                     >
-                                                        Bill To :
+                                                        {invDet[0]?.name}
                                                     </Typography>
                                                 </Stack>
-                                                <Typography
 
-                                                    gutterBottom
-                                                    style={{ fontWeight: "bold", color: "#333333" }}
-                                                >
-                                                    {invDet[0]?.name}
-                                                </Typography>
-                                            </Stack>
+                                                <Stack>
+                                                    <Stack spacing={3}>
+                                                        <Typography
 
-                                            <Stack>
-                                                <Stack spacing={3}>
+                                                            gutterBottom
+                                                            style={{ fontWeight: "bold", color: "#333333" }}
+                                                        >
+                                                            Date To :
+                                                        </Typography>
+                                                    </Stack>
                                                     <Typography
 
                                                         gutterBottom
                                                         style={{ fontWeight: "bold", color: "#333333" }}
                                                     >
-                                                        Date To :
+                                                        {invDet[0]?.invoiceDate}
+
                                                     </Typography>
                                                 </Stack>
-                                                <Typography
-
-                                                    gutterBottom
-                                                    style={{ fontWeight: "bold", color: "#333333" }}
-                                                >
-                                                    {invDet[0]?.invoiceDate}
-
-                                                </Typography>
                                             </Stack>
-                                        </Stack>
-                                    </div>
-                                </div>
-                                <div className="ickks" style={{ display: "flex", justifyContent: "center" }}>
-                                    <div className="ickk">
-                                        <div className="cinvoice">
-                                            <div>
-                                                {invDet && invDet[0]?.status === "paid" ? (<Typography style={{ textAlign: "center" }}><b>${invDet[0]?.amount} Paid</b></Typography>) :
-                                                    (<Typography style={{ textAlign: "center" }}><b>${invDet[0]?.amount} DUE</b></Typography>)}
-
-                                                <BootstrapButton
-                                                    type="button"
-                                                    style={{ backgroundColor: "#42D5CD" }}
-                                                    sx={{ width: 250, padding: 1, margin: 2 }}
-                                                    onClick={() => handleClickOpen(invDet && invDet[0])}
-                                                    disabled={invDet && invDet[0]?.status === "paid" && invDet || invDet[0]?.status === "draft" ? true : false}
-                                                >
-                                                    Pay Now !
-                                                </BootstrapButton>
-
-                                                <BootstrapButton sx={{ width: 250, padding: 1, margin: 2 }} onClick={() => generateSimplePDF(invDet && invDet[0])}>
-                                                    Download Statement
-                                                </BootstrapButton>
-                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <Card sx={{ minWidth: 275 }}>
-                                    <CardContent>
-                                        <Stack
-                                            direction="row"
-                                            alignItems="center"
-                                            justifyContent="space-between"
-                                            style={{ padding: "8px" }}
-                                        >
-                                            <Stack>
-                                                <Typography
-                                                    variant="h5"
-                                                    gutterBottom
-                                                    style={{
-                                                        fontWeight: "bold",
-                                                        color: "#333333",
-                                                    }}
-                                                >
-                                                    Line Items
-                                                </Typography>
-                                            </Stack>
+                                        <div className="ickks" style={{ display: "flex", justifyContent: "center" }}>
+                                            <div className="ickk">
+                                                <div className="cinvoice">
+                                                    <div>
+                                                        {invDet && invDet[0]?.status === "paid" ? (<Typography style={{ textAlign: "center" }}><b>${invDet[0]?.amount} Paid</b></Typography>) :
+                                                            (<Typography style={{ textAlign: "center" }}><b>${invDet[0]?.amount} DUE</b></Typography>)}
 
-                                        </Stack>
-                                        <Table className="invoice-table" style={{ marginTop: "20px" }}>
-                                            <TableHead>
-                                                <TableRow>
-                                                    <TableCell>
-                                                        <Typography>INVOICE ID</Typography>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <Typography>Item</Typography>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <Typography>Quantity</Typography>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <Typography>Rate</Typography>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <Typography>Amount</Typography>
-                                                    </TableCell>
-                                                </TableRow>
-                                            </TableHead>
-                                            <TableBody>
+                                                        <BootstrapButton
+                                                            type="button"
+                                                            style={{ backgroundColor: "#42D5CD" }}
+                                                            sx={{ width: 250, padding: 1, margin: 2 }}
+                                                            onClick={() => handleClickOpen(invDet && invDet[0])}
+                                                            disabled={invDet && invDet[0]?.status === "paid" && invDet || invDet[0]?.status === "draft" ? true : false}
+                                                        >
+                                                            Pay Now !
+                                                        </BootstrapButton>
 
-                                                {product.map((row: any) => (
-                                                    <TableRow
-                                                        key={row.name}
-                                                    >
-                                                        <TableCell >
-                                                            INV{row.id}
-                                                        </TableCell>
-                                                        <TableCell>{row.name}</TableCell>
-                                                        <TableCell>1</TableCell>
-                                                        <TableCell>{row.price}</TableCell>
-                                                        <TableCell>{row.price}</TableCell>
-                                                    </TableRow>
-                                                ))}
-                                                <div className="invoiceSubTotal" >
-                                                    <div className="invoiceTotalamount">
-                                                        <div className="sdiv">
-                                                            <div className="sidiv">Subtotal</div>
-                                                            <div>$ &nbsp;{price}.00</div>
-                                                        </div>
-                                                        <div className="sdiv">
-                                                            <div className="sidiv">Total</div>
-                                                            <div>$ &nbsp;{price}.00</div>
-                                                        </div>
-                                                        <div className="sdiv">
-                                                            <div className="sidiv">Balance {invDet && invDet[0]?.status === "paid" ? "Paid" : "Due"}</div>
-                                                            <div>$ &nbsp;{price}.00</div>
-                                                        </div>
+                                                        <BootstrapButton sx={{ width: 250, padding: 1, margin: 2 }} onClick={() => generateSimplePDF(invDet && invDet[0])}>
+                                                            Download Statement
+                                                        </BootstrapButton>
                                                     </div>
                                                 </div>
-                                            </TableBody>
-                                        </Table>
-                                    </CardContent>
-                                </Card>
+                                            </div>
+                                        </div>
+                                        <Card sx={{ minWidth: 275 }}>
+                                            <CardContent>
+                                                <Stack
+                                                    direction="row"
+                                                    alignItems="center"
+                                                    justifyContent="space-between"
+                                                    style={{ padding: "8px" }}
+                                                >
+                                                    <Stack>
+                                                        <Typography
+                                                            variant="h5"
+                                                            gutterBottom
+                                                            style={{
+                                                                fontWeight: "bold",
+                                                                color: "#333333",
+                                                            }}
+                                                        >
+                                                            Line Items
+                                                        </Typography>
+                                                    </Stack>
+
+                                                </Stack>
+                                                <Table className="invoice-table" style={{ marginTop: "20px" }}>
+                                                    <TableHead>
+                                                        <TableRow>
+                                                            <TableCell>
+                                                                <Typography>INVOICE ID</Typography>
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                <Typography>Item</Typography>
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                <Typography>Quantity</Typography>
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                <Typography>Rate</Typography>
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                <Typography>Amount</Typography>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    </TableHead>
+                                                    <TableBody>
+
+                                                        {product.map((row: any) => (
+                                                            <TableRow
+                                                                key={row.name}
+                                                            >
+                                                                <TableCell >
+                                                                    INV{row.id}
+                                                                </TableCell>
+                                                                <TableCell>{row.name}</TableCell>
+                                                                <TableCell>1</TableCell>
+                                                                <TableCell>{row.price}</TableCell>
+                                                                <TableCell>{row.price}</TableCell>
+                                                            </TableRow>
+                                                        ))}
+                                                        <div className="invoiceSubTotal" >
+                                                            <div className="invoiceTotalamount">
+                                                                <div className="sdiv">
+                                                                    <div className="sidiv">Subtotal</div>
+                                                                    <div>$ &nbsp;{price}.00</div>
+                                                                </div>
+                                                                <div className="sdiv">
+                                                                    <div className="sidiv">Total</div>
+                                                                    <div>$ &nbsp;{price}.00</div>
+                                                                </div>
+                                                                <div className="sdiv">
+                                                                    <div className="sidiv">Balance {invDet && invDet[0]?.status === "paid" ? "Paid" : "Due"}</div>
+                                                                    <div>$ &nbsp;{price}.00</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </TableBody>
+                                                </Table>
+                                            </CardContent>
+                                        </Card>
+                                    </>}
                             </div>
                         </div>
                     </div>

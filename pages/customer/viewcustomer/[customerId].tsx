@@ -277,7 +277,7 @@ export default function ViewCustomer() {
                     <Stack style={{ padding: "8px" }} className="text-grey">
                       <Typography>Address:</Typography>
                       <span>
-                        {useraddr?.add1 + " , " + useraddr?.city + " , " + useraddr?.state + " , " + useraddr?.postalcode}
+                        {useraddr && useraddr?.add1 + " , " + useraddr?.city + " , " + useraddr?.state + " , " + useraddr?.postalcode}
                       </span>
                     </Stack>
                     <Stack
