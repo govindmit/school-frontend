@@ -869,9 +869,6 @@ export default function UserInvoices() {
                                                                                         Pending
                                                                                     </MenuItem>
                                                                                     <MenuItem value="paid">Paid</MenuItem>
-                                                                                    <MenuItem value="draft">
-                                                                                        Draft
-                                                                                    </MenuItem>
                                                                                 </Select>
                                                                             </Stack>
                                                                         </Grid>
@@ -976,7 +973,7 @@ export default function UserInvoices() {
                                                         )}
                                                     </TableCell>
                                                     <TableCell align="left">{item?.status === "pending" ? (<span style={{ color: "#FF4026", fontWeight: "bold" }}>Pending</span>) : item?.status === "paid" ?
-                                                        (<span style={{ color: "#02C509", fontWeight: "bold" }}>paid</span>) : item?.status === "draft" ? (<span style={{ color: "#FF4026", fontWeight: "bold" }}>draft</span>) : ""}
+                                                        (<span style={{ color: "#02C509", fontWeight: "bold" }}>paid</span>) : ""}
                                                     </TableCell>
                                                     <TableCell align="left">
                                                         <b>${item.amount}.00</b>
