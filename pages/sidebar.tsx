@@ -236,7 +236,7 @@ export default function MiniDrawer() {
                   className="sidebar-link"
                   disablePadding
                   sx={{ display: "block" }}
-                // onClick={() => router.push("/activites/activitylist")}
+                  // onClick={() => router.push("/activites/activitylist")}
                 >
                   <ListItemButton
                     sx={{
@@ -258,7 +258,7 @@ export default function MiniDrawer() {
                   className="sidebar-link"
                   disablePadding
                   sx={{ display: "block" }}
-                // onClick={() => router.push("/activites/activitylist")}
+                  // onClick={() => router.push("/activites/activitylist")}
                 >
                   <ListItemButton
                     sx={{
@@ -282,7 +282,7 @@ export default function MiniDrawer() {
         </AppBar>
         <Drawer variant="permanent" open={open}>
           <h1>Header</h1>
-          <List>
+          <List style={{ padding: "0 7px" }}>
             {/* //////////////////////Customer Management////////////////////////// */}
 
             {userdet?.roleId === 2 ? (
@@ -650,8 +650,6 @@ export default function MiniDrawer() {
               ""
             )}
 
-
-
             {checkSalesInvoice === true || userdet?.roleId === 1 ? (
               <ListItem
                 className="sidebar-link"
@@ -745,7 +743,7 @@ export default function MiniDrawer() {
                   <ListItemText
                     primary="Composer"
                     sx={{ opacity: open ? 1 : 0 }}
-                  //onClick={() => router.push("/logout")}
+                    //onClick={() => router.push("/logout")}
                   />
                 </ListItemButton>
               </ListItem>
@@ -757,7 +755,7 @@ export default function MiniDrawer() {
               className="sidebar-link"
               disablePadding
               sx={{ display: "block" }}
-            // onClick={() => router.push("/activites/activitylist")}
+              // onClick={() => router.push("/activites/activitylist")}
             >
               <ListItemButton
                 sx={{
