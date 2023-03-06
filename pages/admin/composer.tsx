@@ -441,110 +441,121 @@ export default function Composer() {
               style={{
                 margin: "10px",
                 padding: "15px",
-                width: "60%",
+                width: "100%",
                 paddingBottom: "30px",
               }}
               className="box-shadow"
             >
-              <form onSubmit={handleSubmit(onSubmit)}>
+              <form
+                onSubmit={handleSubmit(onSubmit)}
+                style={{
+                  width: "60%",
+                }}
+              >
                 <Grid>
-                  <Stack style={{ marginTop: "5px" }}>
-                    <Grid container spacing={2}>
-                      <Grid item xs={4} md={4}>
-                        <Stack spacing={1}>
-                          <InputLabel htmlFor="name">Customer Name</InputLabel>
-                          <Autocomplete
-                            multiple
-                            size="small"
-                            value={value}
-                            onChange={(event, newValue) => {
-                              setValue(newValue);
-                            }}
-                            // onChange={(e) => setCustomerData(e.target.value)}
-                            options={option}
-                            getOptionLabel={(option) => option.name || ""}
-                            isOptionEqualToValue={(option, name) =>
-                              option.name === value.name
-                            }
-                            renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                variant="outlined"
-                                placeholder="Search && Select Customer"
-                              />
-                            )}
-                            noOptionsText={
-                              <span style={{ color: "red" }}>
-                                The customer doesn't exist with this name.
-                              </span>
-                            }
-                          />
-                        </Stack>
-                      </Grid>
-                    </Grid>
-                  </Stack>
-                  <p>or</p>
-                  <Stack style={{ marginTop: "5px" }}>
-                    <Grid container spacing={2}>
-                      <Grid item xs={4} md={4}>
-                        <Stack spacing={1}>
-                          <InputLabel htmlFor="name">as Type</InputLabel>
-                          <FormControl fullWidth>
-                            <Select
-                              labelId="demo-simple-select-label"
-                              id="demo-simple-select"
+                  <div className="composer-top">
+                    <Stack style={{}}>
+                      <Grid container spacing={2}>
+                        <Grid item xs={4} md={4}>
+                          <Stack spacing={1} className="customer-name">
+                            <InputLabel htmlFor="name">
+                              Customer Name
+                            </InputLabel>
+                            <Autocomplete
+                              multiple
                               size="small"
-                              value={type}
-                              onChange={(e) => setTypeId(e?.target?.value)}
-                            >
-                              <MenuItem value={0}>Individual</MenuItem>
-                              {custtype &&
-                                custtype.map((data: any, key: any) => {
-                                  return (
-                                    <MenuItem key={key} value={data.id}>
-                                      {data.name}
-                                    </MenuItem>
-                                  );
-                                })}
-                            </Select>
-                          </FormControl>
-                        </Stack>
+                              value={value}
+                              onChange={(event, newValue) => {
+                                setValue(newValue);
+                              }}
+                              // onChange={(e) => setCustomerData(e.target.value)}
+                              options={option}
+                              getOptionLabel={(option) => option.name || ""}
+                              isOptionEqualToValue={(option, name) =>
+                                option.name === value.name
+                              }
+                              renderInput={(params) => (
+                                <TextField
+                                  {...params}
+                                  variant="outlined"
+                                  placeholder="Search && Select Customer"
+                                />
+                              )}
+                              noOptionsText={
+                                <span style={{ color: "red" }}>
+                                  The customer doesn't exist with this name.
+                                </span>
+                              }
+                            />
+                          </Stack>
+                        </Grid>
                       </Grid>
-                    </Grid>
-                  </Stack>
-                  <p>or</p>
-                  <Stack style={{ marginTop: "5px" }}>
-                    <Grid container spacing={2}>
-                      <Grid item xs={4} md={4}>
-                        <Stack spacing={1}>
-                          <InputLabel htmlFor="name">Age Group</InputLabel>
-                          <FormControl fullWidth>
-                            <Select
-                              labelId="demo-simple-select-label"
-                              id="ageGroup"
-                              size="small"
-                              value={age}
-                              onChange={(e) => setAgegroupId(e?.target?.value)}
-                            >
-                              <MenuItem value={1}>FS1</MenuItem>
-                              <MenuItem value={2}>FS2</MenuItem>
-                              <MenuItem value={3}>FS3</MenuItem>
-                              <MenuItem value={4}>FS4</MenuItem>
-                              <MenuItem value={5}>FS5</MenuItem>
-                              <MenuItem value={6}>FS6</MenuItem>
-                              <MenuItem value={7}>FS7</MenuItem>
-                              <MenuItem value={8}>FS8</MenuItem>
-                              <MenuItem value={9}>FS9</MenuItem>
-                              <MenuItem value={10}>FS10</MenuItem>
-                              <MenuItem value={11}>FS11</MenuItem>
-                              <MenuItem value={12}>FS12</MenuItem>
-                              <MenuItem value={13}>FS13</MenuItem>
-                            </Select>
-                          </FormControl>
-                        </Stack>
+                    </Stack>
+                    <p>or</p>
+                    <Stack style={{}} className="padding-top-0">
+                      <Grid container spacing={2}>
+                        <Grid item xs={4} md={4}>
+                          <Stack spacing={1}>
+                            <InputLabel htmlFor="name">as Type</InputLabel>
+                            <FormControl fullWidth>
+                              <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                size="small"
+                                value={type}
+                                onChange={(e) => setTypeId(e?.target?.value)}
+                              >
+                                <MenuItem value={0}>Individual</MenuItem>
+                                {custtype &&
+                                  custtype.map((data: any, key: any) => {
+                                    return (
+                                      <MenuItem key={key} value={data.id}>
+                                        {data.name}
+                                      </MenuItem>
+                                    );
+                                  })}
+                              </Select>
+                            </FormControl>
+                          </Stack>
+                        </Grid>
                       </Grid>
-                    </Grid>
-                  </Stack>
+                    </Stack>
+                    <p>or</p>
+                    <Stack style={{}} className="padding-top-0">
+                      <Grid container spacing={2}>
+                        <Grid item xs={4} md={4}>
+                          <Stack spacing={1}>
+                            <InputLabel htmlFor="name">Age Group</InputLabel>
+                            <FormControl fullWidth>
+                              <Select
+                                labelId="demo-simple-select-label"
+                                id="ageGroup"
+                                size="small"
+                                value={age}
+                                onChange={(e) =>
+                                  setAgegroupId(e?.target?.value)
+                                }
+                              >
+                                <MenuItem value={1}>FS1</MenuItem>
+                                <MenuItem value={2}>FS2</MenuItem>
+                                <MenuItem value={3}>FS3</MenuItem>
+                                <MenuItem value={4}>FS4</MenuItem>
+                                <MenuItem value={5}>FS5</MenuItem>
+                                <MenuItem value={6}>FS6</MenuItem>
+                                <MenuItem value={7}>FS7</MenuItem>
+                                <MenuItem value={8}>FS8</MenuItem>
+                                <MenuItem value={9}>FS9</MenuItem>
+                                <MenuItem value={10}>FS10</MenuItem>
+                                <MenuItem value={11}>FS11</MenuItem>
+                                <MenuItem value={12}>FS12</MenuItem>
+                                <MenuItem value={13}>FS13</MenuItem>
+                              </Select>
+                            </FormControl>
+                          </Stack>
+                        </Grid>
+                      </Grid>
+                    </Stack>
+                  </div>
                   {filteredArr?.length !== 0
                     ? ""
                     : anyFieldError && (

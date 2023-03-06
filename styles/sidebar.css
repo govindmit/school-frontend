@@ -77,6 +77,10 @@ input.MuiInputBase-input.MuiInput-input.css-1x51dt5-MuiInputBase-input-MuiInput-
   cursor: pointer;
 }
 
+.react-datepicker__input-container .myDatePicker {
+  font-size: 16px;
+}
+
 .avatar-box > div svg {
   color: #000;
   margin: 0;
@@ -85,11 +89,67 @@ input.MuiInputBase-input.MuiInput-input.css-1x51dt5-MuiInputBase-input-MuiInput-
   padding: 0;
 }
 
+.customer-title {
+  font-size: 15px;
+  color: #8d96ae;
+  font-weight: 500;
+}
+
+.custome-text .MuiInputBase-root {
+  padding: 0;
+  padding-right: 0px;
+  margin-top: 10px;
+}
+
+.table-outer .MuiTableContainer-root {
+  overflow-x: hidden !important;
+}
+
+.customer-title + span {
+  font-size: 16px;
+  color: #5a6873 !important;
+  font-weight: 600;
+}
+
+fieldset .MuiOutlinedInput-notchedOutline {
+  height: 50px;
+}
+.MuiSvgIcon-root.MuiSvgIcon-fontSizeMedium.MuiSelect-icon.MuiSelect-iconOutlined {
+  top: calc(50% - 0.8em) !important;
+}
+
+.select-height .MuiSelect-select {
+  height: 33px;
+}
+
+.MuiOutlinedInput-notchedOutline legend {
+  display: none !important;
+}
+
+.user-property-title + span {
+  font-size: 14px;
+  font-weight: 500;
+  color: #5a6873 !important;
+}
+
 #demo-simple-select {
   height: 50px !important;
   border-radius: 5px;
   padding: 0 15px !important;
   line-height: 50px;
+}
+
+.user-property-title {
+  color: #8d96ae;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.MuiList-root.MuiList-padding.sidebar-box {
+  padding: 8px 10px;
+}
+.sidebar-link > div > div:first-child {
+  display: none;
 }
 
 body .new-sale .MuiOutlinedInput-root.MuiInputBase-sizeSmall {

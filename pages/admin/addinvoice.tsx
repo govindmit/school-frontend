@@ -39,7 +39,9 @@ import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import "react-datepicker/dist/react-datepicker.css";
 import MainFooter from "../commoncmp/mainfooter";
 import { RiDeleteBin5Fill } from "react-icons/ri";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { CheckBox } from "@mui/icons-material";
+import Checkbox from "@mui/material/Checkbox";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -391,7 +393,7 @@ export default function Guardians() {
       .then((res) => {
         setItem(res?.data.data);
       })
-      .catch((err) => { });
+      .catch((err) => {});
   };
   console.log(Dateerror, "Dateerror");
   useEffect(() => {
@@ -436,12 +438,15 @@ export default function Guardians() {
         setProduct(res?.data.data);
         handleCloses();
       })
-      .catch((err) => { });
+      .catch((err) => {});
   };
   var price = 0;
   for (let d of product) {
     price = price + d.price;
   }
+
+  console.log(price);
+
   const handleNew = () => {
     setSecondPop(true);
   };
@@ -457,7 +462,7 @@ export default function Guardians() {
       .then((res) => {
         setUser(res?.data.data);
       })
-      .catch((err) => { });
+      .catch((err) => {});
   };
 
   const handleClickOpen = () => {
@@ -499,7 +504,7 @@ export default function Guardians() {
         setInvoiceNo(res?.data?.invoiceNo);
         // console.log(res, "response");
       })
-      .catch((err) => { });
+      .catch((err) => {});
   };
 
   const handleDraft = async () => {
@@ -590,14 +595,13 @@ export default function Guardians() {
     }
   };
 
-
-  console.log("item", product, selected);
   function openDelete(item: any) {
     console.log(item);
     let gg = product.filter((a: any) => a.id !== item);
     setProduct(gg);
+    const arr = selected.filter((it) => it !== item);
+    setSelected(arr);
   }
-
 
   return (
     <>
@@ -642,12 +646,22 @@ export default function Guardians() {
                   </Typography>
                 </Stack>
                 <div className="cinvoice">
-                  <div className="buycss" style={{ textAlign: "end", marginTop: "7px", marginRight: "10px" }} >
+                  <div
+                    className="buycss"
+                    style={{
+                      textAlign: "end",
+                      marginTop: "7px",
+                      marginRight: "10px",
+                    }}
+                  >
                     <Link
                       href="/admin/invoices"
                       style={{ color: "#1A70C5", textDecoration: "none" }}
                     >
-                      <Button variant="contained" startIcon={<ArrowBackIcon />}> <b>Back To List</b></Button>
+                      <Button variant="contained" startIcon={<ArrowBackIcon />}>
+                        {" "}
+                        <b>Back To List</b>
+                      </Button>
                     </Link>
                   </div>
                   <div>
@@ -730,6 +744,7 @@ export default function Guardians() {
                         style={{ width: 300 }}
                         fullWidth
                         inputValue={inputValue}
+                        className="custome-text"
                         // onChange={(event, value) => setUserId(value)}
                         onChange={(event, value) => handleChange(value)}
                         // onChange={(event, newValue) => {
@@ -761,12 +776,12 @@ export default function Guardians() {
                             )}
                           </Button>
                         }
-                      // {...register("Customername", {
-                      //   onChange: (event) => {
-                      //     setUserId(event);
-                      //   },
-                      //   required: true,
-                      // })}
+                        // {...register("Customername", {
+                        //   onChange: (event) => {
+                        //     setUserId(event);
+                        //   },
+                        //   required: true,
+                        // })}
                       />
                       <Typography style={style}>
                         <span>
@@ -789,7 +804,7 @@ export default function Guardians() {
                         <span>{invoiceError ? invoiceError : ""} </span>
                       </Typography>
                       <InputLabel id="demo-select-small"></InputLabel>
-                      &nbsp; &nbsp;
+
                       <DatePicker
                         className="myDatePicker"
                         selected={Invoicedates}
@@ -812,30 +827,30 @@ export default function Guardians() {
                         <TableHead>
                           <TableRow>
                             <TableCell>Item</TableCell>
-                            <TableCell>Quantity</TableCell>
-                            <TableCell>Rate</TableCell>
-                            <TableCell>Amount</TableCell>
-                            <TableCell>Action</TableCell>
+                            <TableCell align="center">Quantity</TableCell>
+                            <TableCell align="center">Rate</TableCell>
+                            <TableCell align="center">Amount</TableCell>
+                            <TableCell style={{ width: "150px" }}>
+                              Action
+                            </TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody>
                           {product.map((row: any) => (
-                            <TableRow
-                              key={row.name}
-                            >
-                              <TableCell >
-                                {row.name}
+                            <TableRow key={row.name} className="boder-bottom">
+                              <TableCell>{row.name}</TableCell>
+                              <TableCell align="center">1</TableCell>
+                              <TableCell align="center">{row.price}</TableCell>
+                              <TableCell align="center">{row.price}</TableCell>
+                              <TableCell className="action">
+                                <IconButton
+                                  className="action-delete"
+                                  style={{ color: "#F95A37" }}
+                                  onClick={() => openDelete(row.id)}
+                                >
+                                  <RiDeleteBin5Fill />
+                                </IconButton>
                               </TableCell>
-                              <TableCell>1</TableCell>
-                              <TableCell>{row.price}</TableCell>
-                              <TableCell>{row.price}</TableCell>
-                              <TableCell><IconButton
-                                className="action-delete"
-                                style={{ color: "#F95A37" }}
-                                onClick={() => openDelete(row.id)}
-                              >
-                                <RiDeleteBin5Fill />
-                              </IconButton></TableCell>
                             </TableRow>
                           ))}
                         </TableBody>
@@ -919,13 +934,37 @@ export default function Guardians() {
                           <Button onClick={handleNew}>New</Button>
                         </div>
                       </div>
-                      <Paper sx={{ width: "100%", mb: 2 }}>
+                      <Paper
+                        className="table-outer"
+                        sx={{ width: "100%", mb: 2, mt: 3, boxShadow: "none" }}
+                      >
                         <TableContainer>
                           <Table
                             sx={{ minWidth: 550 }}
                             aria-labelledby="tableTitle"
                             size="small"
                           >
+                            <TableHead>
+                              <TableRow>
+                                <TableCell align="right"></TableCell>
+                                <TableCell
+                                  style={{
+                                    paddingLeft: "0",
+                                    color: "#000 !important",
+                                  }}
+                                >
+                                  Name
+                                </TableCell>
+                                <TableCell
+                                  style={{
+                                    paddingLeft: "0",
+                                    color: "#000 !important",
+                                  }}
+                                >
+                                  Price
+                                </TableCell>
+                              </TableRow>
+                            </TableHead>
                             <TableBody>
                               {item &&
                                 item.map((row: any) => {
@@ -944,7 +983,20 @@ export default function Guardians() {
                                       key={row.name}
                                       selected={isItemSelected}
                                     >
-                                      <TableCell padding="checkbox"></TableCell>
+                                      <TableCell
+                                        component="th"
+                                        scope="row"
+                                        padding="none"
+                                      >
+                                        {isItemSelected ? (
+                                          <Checkbox defaultChecked />
+                                        ) : (
+                                          <span>
+                                            <Checkbox />
+                                          </span>
+                                        )}
+                                        {/* <TableCell align="right">{row.protein}</TableCell> */}
+                                      </TableCell>
                                       <TableCell
                                         component="th"
                                         id={labelId}
@@ -952,18 +1004,23 @@ export default function Guardians() {
                                         padding="none"
                                       >
                                         <div className="table">
-                                          <div>{row.name}</div>
-                                          <div>{row.price}</div>
+                                          <div style={{ fontWeight: "normal" }}>
+                                            {row.name}
+                                          </div>
                                         </div>
                                       </TableCell>
-                                      {isItemSelected ? (
-                                        <span className="selectss">
-                                          selected
-                                        </span>
-                                      ) : (
-                                        <span className="plus">+</span>
-                                      )}
-                                      {/* <TableCell align="right">{row.protein}</TableCell> */}
+                                      <TableCell
+                                        component="th"
+                                        id={labelId}
+                                        scope="row"
+                                        padding="none"
+                                      >
+                                        <div className="table">
+                                          <div style={{ fontWeight: "normal" }}>
+                                            {row.price}
+                                          </div>
+                                        </div>
+                                      </TableCell>
                                     </TableRow>
                                   );
                                 })}
