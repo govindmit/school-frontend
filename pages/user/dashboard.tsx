@@ -225,7 +225,7 @@ export default function ViewCustomer() {
   };
 
   const getUserInvoice = async (id: any) => {
-    const response = await fetch(`${api_url}/getInvoicebyUser/${id}`, {
+    const response = await fetch(`${api_url}/getPendingInvoices/${id}`, {
       method: "POST",
       headers: {
         Authorization: auth_token,
@@ -233,8 +233,9 @@ export default function ViewCustomer() {
     });
     const res = await response.json();
     setGetinvoice(res);
+    
   };
-
+  
   const {
     register,
     handleSubmit,
@@ -326,6 +327,11 @@ export default function ViewCustomer() {
     setbtnahow(false);
   }
 
+
+let invoiceDue=invoiceData && invoiceData.reduce(
+    (sum:any, item:any) => sum +  item?.amount,
+    0
+  )
 
   return (
     <>
@@ -489,7 +495,7 @@ export default function ViewCustomer() {
                       <Table style={{ marginTop: "1px" }}>
                         <TableBody>
                           <TableRow hover tabIndex={-1}>
-                            <TableCell align="left">Invoice Due: $298</TableCell>
+                            <TableCell align="left">Invoice Due: ${invoiceDue && invoiceDue}</TableCell>
                             <TableCell align="left">
                               Credit Balance: ${creditball && creditball}
                             </TableCell>
