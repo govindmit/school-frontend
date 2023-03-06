@@ -187,6 +187,12 @@ export default function MiniDrawer() {
   let setProfileBgColor = path.includes("userprofile") ? mngbackground : "";
   let setProfileColor = path.includes("userprofile") ? textcolor : "";
 
+  ///////////////////////////customer////////////////////////////
+
+  let setActivitiesBgColor = path.includes("activities") ? mngbackground : "";
+  let setActivitiesColor = path.includes("activities") ? textcolor : "";
+
+
   return (
     <>
       <Head>
@@ -431,8 +437,8 @@ export default function MiniDrawer() {
                     minHeight: 48,
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
-                    background: setActivityBgColor,
-                    color: setActivityColor,
+                    background: setActivitiesBgColor,
+                    color:setActivitiesColor,
                   }}
                 >
                   <ListItemIcon

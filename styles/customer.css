@@ -133,47 +133,62 @@ footer.footermain {
   display: inline-flex;
   align-items: center;
 }
+p.pendingcss {
+  font-size: smaller;
+  margin-left: 25px;
+  font-weight: 500;
+  margin-top: 1;
+  color: #0ce1e1;
+}
+h4.h4heading {
+  text-align: left;
+  color: black;
+}
+p.actpara {
+  text-align: left;
+  font-weight: 500;
+  font-size: 12px;
+  margin-top: -18px;
+  color: grey;
+}
+.headingmargin {
+  margin-left: 115px;
+}
+.paradate {
+  font-size: 12px !important;
+  text-transform: uppercase;
+}
+.paradate1 {
+  color: orangered !important;
+  font-size: 12px !important;
+  text-transform: uppercase;
+}
+.btnCustomerdetail {
+  height: 34px !important;
+  font-size: 13px !important;
+  text-transform: none !important;
+  color: #ffffff !important;
+  background: #3cddb8 !important;
+  font-weight: 700 !important;
+}
+.btnCustomerdetail1 {
+  height: 34px !important;
+  font-size: 13px !important;
+  text-transform: none !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  width:80px !important;
+}
 
-.composer-top {
-  display: flex;
-  flex: 1;
-  align-items: flex-start;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 25px;
+.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation1.cardcss.css-1sir9cm-MuiPaper-root{
+  background: #f5f5f5 !important;
+  box-shadow: none !important;
 }
-.composer-top > div {
-  flex: 0 0 33%;
-}
-.composer-top > div div {
-  width: 100%;
-  flex-basis: 100%;
-  max-width: 100%;
-}
-
-.MuiAutocomplete-endAdornment {
-  display: none;
-}
-
-.composer-top p {
-  margin: 0;
-  position: relative;
-  top: 40px;
-  left: -7px;
-}
-
-.composer-top > div div.MuiChip-filled.MuiChip-sizeSmall {
-  display: none;
-}
-.customer-name .MuiAutocomplete-root .MuiInputBase-root fieldset {
-  height: 50px;
-}
-
-.MuiOutlinedInput-notchedOutline {
-  height: 50px !important;
-  top: 0 !important;
-}
-
-.customer-name
-  .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary {
-  padding: 0;
+.btnCustomerdetailPay{
+  height: 36px !important;
+  font-size: 13px !important;
+  text-transform: none !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  width: 100px !important;
 }
