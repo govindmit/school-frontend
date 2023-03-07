@@ -33,19 +33,19 @@ import {
   import { BiFilterAlt, BiShow } from "react-icons/bi";
   import { FiEdit } from "react-icons/fi";
   import { RiDeleteBin5Fill, RiFileCopyLine } from "react-icons/ri";
-  import MiniDrawer from "../../sidebar";
-  import { api_url, auth_token } from "../../api/hello";
+  import MiniDrawer from "../../../sidebar";
+  import { api_url, auth_token } from "../../../api/hello";
   import axios from "axios";
   import { ToastContainer, toast } from "react-toastify";
   import "react-toastify/dist/ReactToastify.css";
   import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
   import { useForm } from "react-hook-form";
   import { useRouter } from "next/router";
-  import ConfirmBox from "../../commoncmp/confirmbox";
-  import commmonfunctions from "../../../commonFunctions/commmonfunctions";
-  import AddSalesOrder from "./add_new_sales_order";
-  import MainFooter from "../../commoncmp/mainfooter";
-  import getwayService from "../../../services/gatewayService"
+  import ConfirmBox from "../../../commoncmp/confirmbox";
+  import commmonfunctions from "../../../../commonFunctions/commmonfunctions";
+  import AddSalesOrder from "../add_new_sales_order";
+  import MainFooter from "../../../commoncmp/mainfooter";
+  import getwayService from "../../../../services/gatewayService"
   import Alert from '@mui/material/Alert';
   function a11yProps(index: number) {
     return {

@@ -37,6 +37,7 @@ import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import getwayService from "../../services/gatewayService";
+import Loader from "../commoncmp/myload";
 
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -138,6 +139,7 @@ export default function ActivityList() {
   const [activityId, setActivityId] = React.useState<any>("");
   const [paymentPayMethod, setPaymentPayMethod] = React.useState<any>("");
   const [orderId, setorderId] = React.useState("");
+  const [myload, setmyload] = useState(false)
 
   var Checkout: any;
   let creditBalance: any;
@@ -205,6 +207,7 @@ export default function ActivityList() {
   const url = `${api_url}/getActivity`;
   const fetchData = async () => {
     try {
+      setmyload(true);
       const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -214,8 +217,10 @@ export default function ActivityList() {
       });
       const json = await response.json();
       setactivites(json.data);
+      setmyload(false);
     } catch (error: any) {
       console.log("error", error);
+      setmyload(false);
     }
   };
 
@@ -752,90 +757,91 @@ export default function ActivityList() {
               </Stack>
             </Stack>
             {/*bread cump */}
-            <Card
-              style={{ margin: "10px", padding: "15px" }}
-              className="box-shadow"
-            >
-              <Box sx={{ flexGrow: 1 }}>
-                <Grid
-                  container
-                  spacing={{ xs: 2, md: 3 }}
-                  columns={{ xs: 4, sm: 8, md: 12 }}
-                >
-                  {DATA.currentData() &&
-                    DATA.currentData().map((item: any, key: any) => {
-                      const {
-                        id,
-                        name,
-                        price,
-                        type,
-                        startDate,
-                        status,
-                        endDate,
-                        description,
-                      } = item;
-                      return (
-                        <Grid item xs={2} sm={3} md={3} key={key}>
-                          <Item className="cardcss">
-                            <h4 className="h4heading">Activity Name</h4>
-                            <p className="actpara">{name}</p>
-                            <span style={{ display: "flex" }}>
-                              <span style={{ position: "absolute" }}>
-                                <h4 className="h4heading">Start Date</h4>
-                                <p className="actpara paradate"> {moment(startDate).format("MMM DD, YYYY")}</p>
-                              </span>
-                              <span>
-                                <h4 className="h4heading headingmargin">End Date</h4>
-                                <p className="actpara headingmargin paradate1">{moment(endDate).format("MMM DD, YYYY")}</p>
-                              </span>
-                            </span>
-                            <h4 className="h4heading">Amount</h4>
-                            <p className="actpara">${price}</p>
-
-                            <span style={{ display: "flex" }}>
-                              <span>
-                                <Link
-                                  href={`/user/activitydetail/${id}`}
-                                  style={{
-                                    color: "#26CEB3",
-                                  }}
-                                >
-                                  <Button variant="contained" size="large" className="btnCustomerdetail">
-                                    Detail
-                                  </Button>
-                                </Link>
-                              </span>
-                              &emsp;
-                              <span>
-                                <Button variant="contained" size="large" className="btnCustomerdetail1" onClick={() => handlePopupOpen(item)}>
-                                  Buy
-                                </Button>
-                              </span>
-                            </span>
-                          </Item>
-                        </Grid>
-                      );
-                    })}
-                </Grid>
-              </Box>
-              {/* {activites === "" ? <h3>No Record found</h3> : ""} */}
-              <Stack
-                style={{
-                  marginBottom: "10px",
-                  marginTop: "10px",
-                  justifyContent: "end",
-                  alignItems: "center",
-                }}
-                direction="row"
+            {myload ? <Loader /> :
+              <Card
+                style={{ margin: "10px", padding: "15px" }}
+                className="box-shadow"
               >
-                <Pagination
-                  className="pagination"
-                  count={count}
-                  page={page}
-                  color="primary"
-                  onChange={handlePageChange}
-                />
-                {/* <FormControl>
+                <Box sx={{ flexGrow: 1 }}>
+                  <Grid
+                    container
+                    spacing={{ xs: 2, md: 3 }}
+                    columns={{ xs: 4, sm: 8, md: 12 }}
+                  >
+                    {DATA.currentData() &&
+                      DATA.currentData().map((item: any, key: any) => {
+                        const {
+                          id,
+                          name,
+                          price,
+                          type,
+                          startDate,
+                          status,
+                          endDate,
+                          description,
+                        } = item;
+                        return (
+                          <Grid item xs={2} sm={3} md={3} key={key}>
+                            <Item className="cardcss">
+                              <h4 className="h4heading">Activity Name</h4>
+                              <p className="actpara">{name}</p>
+                              <span style={{ display: "flex" }}>
+                                <span style={{ position: "absolute" }}>
+                                  <h4 className="h4heading">Start Date</h4>
+                                  <p className="actpara paradate"> {moment(startDate).format("MMM DD, YYYY")}</p>
+                                </span>
+                                <span>
+                                  <h4 className="h4heading headingmargin">End Date</h4>
+                                  <p className="actpara headingmargin paradate1">{moment(endDate).format("MMM DD, YYYY")}</p>
+                                </span>
+                              </span>
+                              <h4 className="h4heading">Amount</h4>
+                              <p className="actpara">${price}</p>
+
+                              <span style={{ display: "flex" }}>
+                                <span>
+                                  <Link
+                                    href={`/user/activitydetail/${id}`}
+                                    style={{
+                                      color: "#26CEB3",
+                                    }}
+                                  >
+                                    <Button variant="contained" size="large" className="btnCustomerdetail">
+                                      Detail
+                                    </Button>
+                                  </Link>
+                                </span>
+                                &emsp;
+                                <span>
+                                  <Button variant="contained" size="large" className="btnCustomerdetail1" onClick={() => handlePopupOpen(item)}>
+                                    Buy
+                                  </Button>
+                                </span>
+                              </span>
+                            </Item>
+                          </Grid>
+                        );
+                      })}
+                  </Grid>
+                </Box>
+                {/* {activites === "" ? <h3>No Record found</h3> : ""} */}
+                <Stack
+                  style={{
+                    marginBottom: "10px",
+                    marginTop: "10px",
+                    justifyContent: "end",
+                    alignItems: "center",
+                  }}
+                  direction="row"
+                >
+                  <Pagination
+                    className="pagination"
+                    count={count}
+                    page={page}
+                    color="primary"
+                    onChange={handlePageChange}
+                  />
+                  {/* <FormControl>
                       <Select
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
@@ -848,8 +854,9 @@ export default function ActivityList() {
                         <MenuItem value={50}>50</MenuItem>
                       </Select>
                     </FormControl> */}
-              </Stack>
-            </Card>
+                </Stack>
+              </Card>
+            }
           </div>
           <MainFooter />
         </Box>

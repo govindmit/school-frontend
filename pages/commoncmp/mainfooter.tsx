@@ -8,7 +8,7 @@ export default function MainFooter() {
   return (
     <footer className="footermain " style={{ marginTop: "20px", marginBottom: "20px" }}>
       <Typography style={{ fontSize: "15px" }}>
-        © 2023 QIS. All Rights Reserved{" "}
+        © 2022 Qatar International School. All Rights Reserved{" "}
         <a href="http://www.polymer-project.org/" target="_blank">
           <SlSocialFacebook />
         </a>
