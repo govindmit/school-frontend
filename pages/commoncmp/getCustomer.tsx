@@ -57,7 +57,7 @@ export default function AddCustomerName({ Data, PId, pname }: { Data: any, PId: 
           <TextField
             {...params}
             variant="outlined"
-            placeholder="Search && Select Customer"
+            placeholder="Search or Select Customer"
           />
         )}
         noOptionsText={

@@ -67,7 +67,7 @@ export default function AddActivity({ Data, PId, pname }:  any) {
           <TextField
             {...params}
             variant="outlined"
-            placeholder="Search && Select Service"
+            placeholder="Search or Select Service"
 
            
           />

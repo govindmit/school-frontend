@@ -16,6 +16,7 @@ import {
   FormControlLabel,
   Checkbox,
   FormControl,
+  InputAdornment,
   Select,
   MenuItem,
 } from "@mui/material";
@@ -191,6 +192,7 @@ export default function AddNewActivity() {
       } else {
         setTypeError("");
       }
+      setshowspinner(true);
       const reqData = {
         name: name1,
         type: type1,
@@ -214,11 +216,14 @@ export default function AddNewActivity() {
         .then((data) => {
           if (data.status === 201) {
             toast.success("Activity Added Successfully !");
+      setshowspinner(false);
             router.push("/admin/activitylist");
           }
         })
         .catch((err) => {
           router.push("/admin/activitylist");
+      setshowspinner(false);
+
           toast.error(err?.response?.data?.message);
         });
     }
@@ -466,6 +471,7 @@ export default function AddNewActivity() {
                               placeholder="Amount ..."
                               fullWidth
                               size="small"
+                              startAdornment={<InputAdornment position="end">$</InputAdornment>}
                               {...register("price1", {
                                 required: true,
                                 pattern: /^[0-9+-]+$/,
@@ -530,6 +536,13 @@ export default function AddNewActivity() {
                     disabled={btnDisabled}
                   >
                     <b>Save</b>
+                    <span style={{ fontSize: "2px", paddingLeft: "10px" }}>
+                            {spinner === true ? (
+                              <CircularProgress color="inherit" />
+                            ) : (
+                              ""
+                            )}
+                          </span>
                   </Button>
                 </Grid>
               </form>

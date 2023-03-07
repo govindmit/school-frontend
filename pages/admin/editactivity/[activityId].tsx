@@ -17,6 +17,7 @@ import {
   FormControl,
   Select,
   MenuItem,
+  InputAdornment,
 } from "@mui/material";
 import Link from "next/link";
 import MiniDrawer from "../../sidebar";
@@ -427,7 +428,7 @@ export default function EditActivity() {
                       <Grid item xs={12} md={6}>
                         <Stack spacing={1}>
                           <InputLabel htmlFor="name">
-                            Ammount<span className="err_str">*</span>
+                            Amount<span className="err_str">*</span>
                           </InputLabel>
                           <OutlinedInput
                             type="text"
@@ -435,6 +436,7 @@ export default function EditActivity() {
                             placeholder="Activity Amount ..."
                             fullWidth
                             size="small"
+                            startAdornment={<InputAdornment position="end">$</InputAdornment>}
                             {...register("price", {
                               required: true,
                               pattern: /^[0-9+-]+$/,

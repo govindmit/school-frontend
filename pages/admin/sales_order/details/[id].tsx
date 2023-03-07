@@ -103,7 +103,7 @@ console.log('userDet',userDet && userDet);
               <Stack>
                 <div className="buycss" style={{ textAlign: "end" }}>
                   <Link
-                    href="/admin/sales_order/list"
+                    href="/admin/sales_order/list/sale"
                     style={{ color: "#1A70C5", textDecoration: "none" }}
                   >
                     <Button variant="contained" startIcon={<ArrowBackIcon />}>

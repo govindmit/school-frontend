@@ -38,7 +38,7 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import getwayService from "../../services/gatewayService";
 import Loader from "../commoncmp/myload";
-
+import Modal from '@mui/material/Modal';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -48,6 +48,18 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     padding: theme.spacing(1),
   },
 }));
+
+
+const style = {
+  position: 'absolute' as 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 331,
+  bgcolor: 'background.paper',
+  boxShadow: 24,
+  p: 2,
+};
 
 export interface DialogTitleProps {
   id: string;
@@ -141,6 +153,10 @@ export default function ActivityList() {
   const [orderId, setorderId] = React.useState("");
   const [myload, setmyload] = useState(false)
 
+  const [openThank, setOpenThank] = React.useState(false);
+  const handleThanksOpen = () => setOpenThank(true);
+  const handleThanksClose = () => setOpenThank(false);
+
   var Checkout: any;
   let creditBalance: any;
 
@@ -152,7 +168,6 @@ export default function ActivityList() {
 
   let today = new Date();
   const todaysDate = moment(today).format("MMM DD,YYYY");
-
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -250,9 +265,6 @@ export default function ActivityList() {
   }
 
   const insertRemainingNotesAmount = async () => {
-    // setAmount(creditBalance)
-    // setPrice(creditBalance)
-    console.log("price =>", creditBalance);
     const reqData = {
       customerId: userDetail?.id,
       Amount: creditBalance,
@@ -357,9 +369,11 @@ export default function ActivityList() {
               setshowspinner(false);
               setBtnDisabled(false);
               toast.success("Activity purchase Successfully !");
+              setOpen(false);
+              handleThanksOpen();
               setTimeout(() => {
-                setOpen(false);
-              }, 2000);
+                handleThanksClose();
+              }, 3000);
             }
           }).catch((error) => {
             // toast.error(error?.message);
@@ -406,14 +420,15 @@ export default function ActivityList() {
                 idForPayment: data?.data?.sageIntacctorderID,
                 creditNotesId: null,
               };
-
               transactionSave(reqData1);
               setshowspinner(false);
               setBtnDisabled(false);
               toast.success("Activity purchase Successfully !");
+              setOpen(false);
+              handleThanksOpen();
               setTimeout(() => {
-                setOpen(false);
-              }, 2000);
+                handleThanksClose();
+              }, 3000);
             }
           }).catch((error) => {
             // toast.error(error?.message);
@@ -859,6 +874,20 @@ export default function ActivityList() {
                 </Stack>
               </Card>
             }
+          </div>
+          <div>
+            <Modal
+              open={openThank}
+              // onClose={handleClose}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box sx={style}>
+                <h2 style={{ textAlign: "center", color: "orangered", position: "relative", top: "30px" }}>Thank You for </h2>
+                <br />
+                <h2 style={{ textAlign: "center", color: "orangered", position: "relative", bottom: "30px" }}>Payment</h2>
+              </Box>
+            </Modal>
           </div>
           <MainFooter />
         </Box>
