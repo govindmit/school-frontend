@@ -151,7 +151,6 @@ export default function ActivityList() {
   let today = new Date();
   const todaysDate = moment(today).format("MMM DD,YYYY");
 
-
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -384,6 +383,7 @@ export default function ActivityList() {
         })
           .then(async (data: any) => {
             if (data) {
+              console.log('@############',data);
               // insertRemainingNotesAmount();
               if (data?.status === 200) {
                 setorderId(data.data.sageIntacctorderID);
@@ -401,7 +401,7 @@ export default function ActivityList() {
                 idForPayment: data?.data?.sageIntacctorderID,
                 creditNotesId: null,
               };
-
+console.log('@@@@@@@@@@@@@@@@',reqData1);
               transactionSave(reqData1);
               setshowspinner(false);
               setBtnDisabled(false);
