@@ -130,9 +130,8 @@ export default function UserInvoices() {
     const handleAll = () => {
         GetCreditReqByUser(custid);
     };
-
     const handleApproved = () => {
-        setCreditReq(approved);
+        setgetCreditReq(approved);
     };
     const handlePending = () => {
         setgetCreditReq(pendings);
@@ -339,7 +338,7 @@ export default function UserInvoices() {
                                     direction="row"
                                 >
                                     <Pagination
-                                        //count={count}
+                                        count={count}
                                         page={page}
                                         color="primary"
                                         onChange={handlePageChange}

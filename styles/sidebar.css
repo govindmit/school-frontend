@@ -77,12 +77,38 @@ input.MuiInputBase-input.MuiInput-input.css-1x51dt5-MuiInputBase-input-MuiInput-
   cursor: pointer;
 }
 
+.react-datepicker__input-container .myDatePicker {
+  font-size: 16px;
+}
+
 .avatar-box > div svg {
   color: #000;
   margin: 0;
 }
 .new-sale .MuiBox-root {
   padding: 0;
+}
+
+.customer-title {
+  font-size: 15px;
+  color: #8d96ae;
+  font-weight: 500;
+}
+
+.custome-text .MuiInputBase-root {
+  padding: 0;
+  padding-right: 0px;
+  margin-top: 10px;
+}
+
+.table-outer .MuiTableContainer-root {
+  overflow-x: hidden !important;
+}
+
+.customer-title + span {
+  font-size: 16px;
+  color: #5a6873 !important;
+  font-weight: 600;
 }
 
 fieldset .MuiOutlinedInput-notchedOutline {

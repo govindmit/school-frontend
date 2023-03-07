@@ -21,10 +21,13 @@ import { useRouter } from "next/router";
 import MainFooter from "../../../commoncmp/mainfooter";
 import moment from "moment";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import RequestFormCmp from "../requestFormCmp";
+import { ToastContainer } from "react-toastify";
 
 
 export default function ViewCreditNotes(props: any) {
-    const [creditNoteDet, setcreditNoteDet] = React.useState<any>([]);
+    const [salesOrderDet, setsalesOrderDet] = React.useState<any>([]);
+    const [CreditReqFormOpen, setCreditReqFormOpen] = React.useState(false);
     const router = useRouter();
     const { id } = router.query;
 
@@ -38,7 +41,6 @@ export default function ViewCreditNotes(props: any) {
         fetchData();
     }, []);
 
-
     //get credit notes
     const url = `${api_url}/getSalesOrdersDetails/${id}`;
     const fetchData = async () => {
@@ -50,13 +52,21 @@ export default function ViewCreditNotes(props: any) {
                 },
             });
             const json = await response.json();
-            setcreditNoteDet(json.data.result[0]);
+            setsalesOrderDet(json?.data[0]);
         } catch (error: any) {
             console.log("error", error);
         }
     };
 
-    console.log(creditNoteDet);
+    //Credit Request
+    const handleClickOpen = () => {
+        setCreditReqFormOpen(true);
+    };
+
+    const closePoP = (data: any) => {
+        setCreditReqFormOpen(false);
+        fetchData();
+    };
 
     return (
         <>
@@ -111,9 +121,15 @@ export default function ViewCreditNotes(props: any) {
                                         </Link>
                                     </div>
                                     <div>
-                                        <Button size="small" variant="contained"
-                                        //onClick={() => handleClickOpen(item)}
-                                        ><b>Create Request</b></Button>
+                                        {salesOrderDet?.amount !== 0 ? (<div>
+                                            {salesOrderDet.isRequested === 1 ? (<Button size="small" variant="contained" style={{ backgroundColor: "#D1D2D2", color: "whitesmoke" }} disabled sx={{ width: 135 }}
+                                                onClick={() => handleClickOpen()}
+                                            ><b>Requested</b></Button>) : (<Button size="small" variant="contained"
+                                                onClick={() => handleClickOpen()}
+                                            ><b>Create Request</b></Button>)}
+
+                                        </div>) : (<Button disabled size="small" variant="contained"
+                                        ><b>Create Request</b></Button>)}
                                     </div>
                                 </div>
                             </Stack>
@@ -152,16 +168,16 @@ export default function ViewCreditNotes(props: any) {
                                                             <div id="profileImage"><span id="fullName">A</span></div>
                                                             <CardContent sx={{ flex: 1 }} className="text-grey">
                                                                 <Typography component="h4" variant="h4">
-                                                                    {creditNoteDet?.name}
+                                                                    {salesOrderDet?.user_name}
                                                                 </Typography>
                                                                 <Typography component="h4">
-                                                                    {creditNoteDet?.email1}
+                                                                    {salesOrderDet?.user_email1}
                                                                 </Typography>
                                                                 <Typography
                                                                     variant="subtitle1"
                                                                     color="text.secondary"
                                                                 >
-                                                                    CUST-00002
+                                                                    CUST-0000{salesOrderDet?.userId}
                                                                 </Typography>
                                                                 <Typography
                                                                     component="h4"
@@ -181,7 +197,7 @@ export default function ViewCreditNotes(props: any) {
                                                     <Stack style={{ padding: "8px" }} >
                                                         <Typography className="date-box">
                                                             <span>Cretaed :</span> {
-                                                                moment(creditNoteDet?.createdAt).format("DD/MM/YYYY")}
+                                                                moment(salesOrderDet?.user_create_Date).format("DD/MM/YYYY")}
                                                         </Typography>
                                                     </Stack>
                                                     <Stack
@@ -245,20 +261,20 @@ export default function ViewCreditNotes(props: any) {
                                                 </TableHead>
                                                 <TableBody>
                                                     <TableRow hover tabIndex={-1}>
-                                                        <TableCell align="left" className="invcss" style={{ fontWeight: "500", color: "#26CEB3" }}>INV-0001</TableCell>
-                                                        <TableCell align="left">{creditNoteDet?.activityname}</TableCell>
-                                                        <TableCell align="left">${creditNoteDet?.amount}</TableCell>
-                                                        <TableCell align="left">${creditNoteDet?.amount}</TableCell>
+                                                        <TableCell align="left" className="invcss" style={{ fontWeight: "500", color: "#26CEB3" }}>INV-000{id}</TableCell>
+                                                        <TableCell align="left">{salesOrderDet?.activity_name}</TableCell>
+                                                        <TableCell align="left">${salesOrderDet?.amount}</TableCell>
+                                                        <TableCell align="left">${salesOrderDet?.amount}</TableCell>
                                                     </TableRow>
                                                     <TableRow hover tabIndex={1}>
                                                         <TableCell align="left" colSpan={2}></TableCell>
                                                         <TableCell align="left" style={{ fontWeight: "600" }}>SUBTOTAL</TableCell>
-                                                        <TableCell align="left">${creditNoteDet?.amount}</TableCell>
+                                                        <TableCell align="left">${salesOrderDet?.amount}</TableCell>
                                                     </TableRow>
                                                     <TableRow hover tabIndex={2}>
                                                         <TableCell align="left" colSpan={2}></TableCell>
                                                         <TableCell align="left" style={{ fontWeight: "600" }}>TOTAL</TableCell>
-                                                        <TableCell align="left">${creditNoteDet?.amount}</TableCell>
+                                                        <TableCell align="left">${salesOrderDet?.amount}</TableCell>
                                                     </TableRow>
                                                 </TableBody>
                                             </Table>
@@ -269,8 +285,16 @@ export default function ViewCreditNotes(props: any) {
                         </Grid>
                     </div>
                     <MainFooter />
+                    <ToastContainer />
                 </Box>
             </Box >
+            {
+                CreditReqFormOpen ? (
+                    <RequestFormCmp open={RequestFormCmp} reqDet={salesOrderDet} closeDialog={closePoP} />
+                ) : (
+                    ""
+                )
+            }
         </>
     );
 }

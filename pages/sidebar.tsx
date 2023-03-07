@@ -187,7 +187,22 @@ export default function MiniDrawer() {
   let setProfileBgColor = path.includes("userprofile") ? mngbackground : "";
   let setProfileColor = path.includes("userprofile") ? textcolor : "";
 
+  ///////////////////////////customer////////////////////////////
 
+  let setActivitiesBgColor = path.includes("activities") ? mngbackground : "";
+  let setActivitiesColor = path.includes("activities") ? textcolor : "";
+
+  let setsalesinvoiceBgColor = path.includes("salesinvoices") ? mngbackground : "";
+  let setsalesinvoiceColor = path.includes("salesinvoices") ? textcolor : "";
+
+  let setcreditinvoiceBgColor = path.includes("creditinvoices") ? mngbackground : "";
+  let setcreditinvoiceColor = path.includes("creditinvoices") ? textcolor : "";
+
+
+  let userinvoicesBgColor = path.includes("user/invoices/") ? mngbackground : "";
+  let userinvoicesColor = path.includes("user/invoices/") ? textcolor : "";
+
+  
   return (
     <>
       <Head>
@@ -283,7 +298,7 @@ export default function MiniDrawer() {
         </AppBar>
         <Drawer variant="permanent" open={open}>
           <h1>Header</h1>
-          <List>
+          <List style={{ padding: "0 7px" }}>
             {/* //////////////////////Customer Management////////////////////////// */}
 
             {userdet?.roleId === 2 ? (
@@ -331,8 +346,8 @@ export default function MiniDrawer() {
                     minHeight: 48,
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
-                    background: setInvoiceBgColor,
-                    color: setInvoiceColor,
+                    background: userinvoicesBgColor,
+                    color: userinvoicesColor,
                   }}
                 >
                   <ListItemIcon
@@ -364,8 +379,8 @@ export default function MiniDrawer() {
                     minHeight: 48,
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
-                    background: setSalesBgColor,
-                    color: setSalesColor,
+                    background: setsalesinvoiceBgColor,
+                    color: setsalesinvoiceColor,
                   }}
                 >
                   <ListItemIcon
@@ -397,8 +412,8 @@ export default function MiniDrawer() {
                     minHeight: 48,
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
-                    background: setCreditBgColor,
-                    color: setCreditColor,
+                    background: setcreditinvoiceBgColor,
+                    color: setcreditinvoiceColor,
                   }}
                 >
                   <ListItemIcon
@@ -432,8 +447,8 @@ export default function MiniDrawer() {
                     minHeight: 48,
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
-                    background: setActivityBgColor,
-                    color: setActivityColor,
+                    background: setActivitiesBgColor,
+                    color: setActivitiesColor,
                   }}
                 >
                   <ListItemIcon
@@ -650,8 +665,6 @@ export default function MiniDrawer() {
             ) : (
               ""
             )}
-
-
 
             {checkSalesInvoice === true || userdet?.roleId === 1 ? (
               <ListItem

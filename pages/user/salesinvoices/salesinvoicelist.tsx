@@ -28,7 +28,6 @@ import "react-datepicker/dist/react-datepicker.css";
 import MenuItem from "@mui/material/MenuItem";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { SubmitHandler, useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import commmonfunctions from "../../../commonFunctions/commmonfunctions";
 import { api_url, auth_token } from "../../api/hello";
@@ -80,6 +79,7 @@ export default function UserInvoices() {
     const [searchquery, setsearchquery] = useState("");
     const [value, setValue] = useState(0);
     const [reqDet, setreqDet] = useState<any>([]);
+    const [custid, setcustid] = useState(0);
     const router = useRouter();
     const [CreditReqFormOpen, setCreditReqFormOpen] = useState(false);
     const handleChanges = (event: React.SyntheticEvent, newValue: number) => {
@@ -95,6 +95,7 @@ export default function UserInvoices() {
                 router.push("/");
             }
             if (res && res?.id) {
+                setcustid(res?.id);
                 getSalesOrdersByUser(res.id);
             }
         });
@@ -161,6 +162,8 @@ export default function UserInvoices() {
 
     const closePoP = (data: any) => {
         setCreditReqFormOpen(false);
+        getSalesOrdersByUser(custid);
+
     };
 
     return (
@@ -288,9 +291,12 @@ export default function UserInvoices() {
                                                         <b>${item.amount}.00</b>
                                                     </TableCell>
                                                     <TableCell align="left" className="action-td">
-                                                        <div className="btn">
-                                                            <Button size="small" variant="outlined" onClick={() => handleClickOpen(item)} ><b>Create Request</b></Button>
-                                                        </div>
+                                                        {item?.amount !== 0 ? (<div className="btn">
+                                                            {item.isRequested === 1 ? (<Button size="small" variant="outlined" style={{ backgroundColor: "#D1D2D2", color: "whitesmoke" }} disabled sx={{ width: 135 }} ><b>Requested</b></Button>) : (<Button size="small" variant="outlined" onClick={() => handleClickOpen(item)} ><b>Create Request</b></Button>)}
+                                                        </div>) : (<div className="btn">
+                                                            {(<Button size="small" variant="outlined" disabled style={{ backgroundColor: "#D1D2D2", color: "whitesmoke" }}><b>Create Request</b></Button>)}
+                                                        </div>)}
+
                                                     </TableCell>
                                                 </TableRow>
                                             ))
@@ -310,7 +316,7 @@ export default function UserInvoices() {
                                     direction="row"
                                 >
                                     <Pagination
-                                        //count={count}
+                                        count={count}
                                         page={page}
                                         color="primary"
                                         onChange={handlePageChange}

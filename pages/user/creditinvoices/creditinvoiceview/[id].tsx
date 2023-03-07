@@ -20,15 +20,11 @@ import { useRouter } from "next/router";
 import MainFooter from "../../../commoncmp/mainfooter";
 import moment from "moment";
 
-type FormValues = {
-    message: string;
-    status: number;
-    updatedBy: number
-};
 export default function ViewCreditNotes(props: any) {
     const [creditNoteDet, setcreditNoteDet] = React.useState<any>([]);
     const [creditNoteMsg, setcreditNoteMsg] = React.useState<any>([]);
     const [creditball, setcreditball] = React.useState(0);
+    const [apprball, setapprball] = React.useState<any>([]);
     const router = useRouter();
     const { id } = router.query;
 
@@ -57,11 +53,11 @@ export default function ViewCreditNotes(props: any) {
             fetchBallance(json.data.result[0].customerId);
             setcreditNoteDet(json.data.result[0]);
             setcreditNoteMsg(json.data.results);
+            setapprball(json?.data?.appramt[0])
         } catch (error: any) {
             console.log("error", error);
         }
     };
-
     //get credit ballance 
     const fetchBallance = async (id: number) => {
         const apiurl = `${api_url}/creditballance/${id}`;
@@ -257,7 +253,7 @@ export default function ViewCreditNotes(props: any) {
                                                     >
                                                         Credit Invoice
                                                     </Typography>
-                                                    <Typography variant="h6" style={{ color: "#26CEB3" }}>INV-0003</Typography>
+                                                    <Typography variant="h6" style={{ color: "#26CEB3" }}>INV-000{id}</Typography>
                                                 </Stack>
                                                 <Stack direction="row">
                                                     {creditNoteDet?.status === 4 ? (<Stack style={{ color: "#02C509" }}><b>Approved</b></Stack>) : creditNoteDet?.status === 0 ? (<Stack style={{ marginLeft: "20px", color: "red", cursor: "pointer" }}><b>Pending</b></Stack>) : creditNoteDet?.status === 2 ? (<Stack style={{ marginLeft: "20px", color: "red", cursor: "pointer" }}><b>Reject</b></Stack>) : ""}
@@ -336,9 +332,9 @@ export default function ViewCreditNotes(props: any) {
                                                 </TableHead>
                                                 <TableBody>
                                                     <TableRow hover tabIndex={-1}>
-                                                        <TableCell align="left">{creditNoteDet?.activityname}</TableCell>
-                                                        <TableCell align="left">10</TableCell>
-                                                        <TableCell align="left">${creditNoteDet?.amount}</TableCell>
+                                                        <TableCell align="left">{moment(apprball?.createdAt).format("DD/MM/YYYY")}</TableCell>
+                                                        <TableCell align="left">INV-000{id}</TableCell>
+                                                        <TableCell align="left">${apprball?.amount}</TableCell>
                                                     </TableRow>
                                                 </TableBody>
                                             </Table>) : ""}
