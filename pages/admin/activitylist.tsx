@@ -343,7 +343,8 @@ export default function ActivityList() {
     if(DATA?.currentPage === 1){
       setactivites(allListData);
     }else{
-      handlePageChange("",1)
+      handlePageChange("",1);
+      setactivites(allListData);
    }
   };
 
@@ -363,6 +364,7 @@ export default function ActivityList() {
     if(DATA?.currentPage === 1){
       setactivites(current);
     }else{
+      setactivites(current);
       handlePageChange("",1)
    }
   };

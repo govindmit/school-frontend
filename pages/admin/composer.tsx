@@ -478,7 +478,7 @@ export default function Composer() {
                                 <TextField
                                   {...params}
                                   variant="outlined"
-                                  placeholder="Search && Select Customer"
+                                  placeholder="Search or Select Customer"
                                 />
                               )}
                               noOptionsText={

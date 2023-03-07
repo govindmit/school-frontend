@@ -463,7 +463,7 @@ let invoiceDue=invoiceData && invoiceData.reduce(
                         Created :{" "}
                         {userDet?.createdAt === null
                           ? ""
-                          : moment(userDet?.createdAt).format("DD/MM/YYYY")}
+                          : moment(userDet?.createdAt,"YYYY-MM-DD").format("MMM DD, YYYY")}
                       </Typography>
                     </Stack>
                   </CardContent>
@@ -730,7 +730,7 @@ let invoiceDue=invoiceData && invoiceData.reduce(
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {purchasedActivity &&
+                          {purchasedActivity?.length > 0 ? (
                             purchasedActivity?.slice(0, totalinv).map((item: any) => (
                               <TableRow hover tabIndex={-1}>
                                 <TableCell align="left">
@@ -748,7 +748,10 @@ let invoiceDue=invoiceData && invoiceData.reduce(
                                   $ {item?.activity_price}
                                 </TableCell>
                               </TableRow>
-                            ))}
+                           ))
+                           ) : (
+                             <h3>No record found</h3>
+                           )}
                         </TableBody>
                       </Table>
                     </CardContent>
