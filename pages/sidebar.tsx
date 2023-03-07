@@ -187,6 +187,7 @@ export default function MiniDrawer() {
   let setProfileBgColor = path.includes("userprofile") ? mngbackground : "";
   let setProfileColor = path.includes("userprofile") ? textcolor : "";
 
+
   return (
     <>
       <Head>
@@ -356,7 +357,7 @@ export default function MiniDrawer() {
                 className="sidebar-link"
                 disablePadding
                 sx={{ display: "block" }}
-                onClick={() => router.push("/user/salesinvoice")}
+                onClick={() => router.push("/user/salesinvoices/salesinvoicelist")}
               >
                 <ListItemButton
                   sx={{
@@ -389,7 +390,7 @@ export default function MiniDrawer() {
                 className="sidebar-link"
                 disablePadding
                 sx={{ display: "block" }}
-                onClick={() => router.push("/user/creditinvoice")}
+                onClick={() => router.push("/user/creditinvoices/creditinvoicelist")}
               >
                 <ListItemButton
                   sx={{
@@ -788,7 +789,7 @@ export default function MiniDrawer() {
                 className="sidebar-link"
                 disablePadding
                 sx={{ display: "block" }}
-                // onClick={() => router.push("/activites/activitylist")}
+              // onClick={() => router.push("/activites/activitylist")}
               >
                 <ListItemButton
                   sx={{
