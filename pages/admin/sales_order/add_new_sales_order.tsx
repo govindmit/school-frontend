@@ -21,6 +21,7 @@ import {
   OutlinedInput,
   Select,
   Stack,
+  InputAdornment,
 } from "@mui/material";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { api_url, auth_token } from "../../api/hello";
@@ -656,6 +657,7 @@ export default function AddSalesOrder({
                             id="amount"
                             disabled
                             value={price && price}
+                            startAdornment={<InputAdornment position="end">$</InputAdornment>}
                             placeholder=" Service amount"
                             fullWidth
                             size="small"

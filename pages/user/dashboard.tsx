@@ -315,11 +315,17 @@ export default function ViewCustomer() {
     seteditid(id);
   }
 
-  //handle view all
-  // function handleView() {
-  //   settotalinv(creditdata.length);
-  //   setbtnahow(true);
-  // }
+  const handleInvoiceListView = () => {
+    router.push("/user/invoices/invoiceslist");
+  }
+
+  const handleCreditNotesList = () => {
+    router.push("/user/creditinvoices/creditinvoicelist");
+  }
+  
+  const handleActivityList = () => {
+    router.push("/user/salesinvoices/salesinvoicelist");
+  }
 
   //handle view less
   function handleViewLess() {
@@ -463,7 +469,7 @@ let invoiceDue=invoiceData && invoiceData.reduce(
                         Created :{" "}
                         {userDet?.createdAt === null
                           ? ""
-                          : moment(userDet?.createdAt).format("DD/MM/YYYY")}
+                          : moment(userDet?.createdAt,"YYYY-MM-DD").format("MMM DD, YYYY")}
                       </Typography>
                     </Stack>
                   </CardContent>
@@ -531,14 +537,14 @@ let invoiceDue=invoiceData && invoiceData.reduce(
                           {btnahow === false ? (
                             <Typography
                               style={{ color: "#1A70C5", cursor: "pointer" }}
-                              // onClick={handleView}
+                               onClick={handleInvoiceListView}
                             >
                               <b>VIEW ALL</b>
                             </Typography>
                           ) : (
                             <Typography
                               style={{ color: "#1A70C5", cursor: "pointer" }}
-                              onClick={handleViewLess}
+                              // onClick={handleViewLess}
                             >
                               <b>VIEW LESS</b>
                             </Typography>
@@ -623,9 +629,12 @@ let invoiceDue=invoiceData && invoiceData.reduce(
                           </Typography>
                         </Stack>
                         <Stack>
-                          <Typography style={{ color: "#1A70C5" }}>
-                            VIEW ALL
-                          </Typography>
+                        <Typography
+                              style={{ color: "#1A70C5", cursor: "pointer" }}
+                               onClick={handleCreditNotesList}
+                            >
+                              <b>VIEW ALL</b>
+                            </Typography>
                         </Stack>
                       </Stack>
                       <Table style={{ marginTop: "20px" }}>
@@ -707,9 +716,12 @@ let invoiceDue=invoiceData && invoiceData.reduce(
                           </Typography>
                         </Stack>
                         <Stack>
-                          <Typography style={{ color: "#1A70C5" }}>
-                            VIEW ALL
-                          </Typography>
+                        <Typography
+                              style={{ color: "#1A70C5", cursor: "pointer" }}
+                               onClick={handleActivityList}
+                            >
+                              <b>VIEW ALL</b>
+                            </Typography>
                         </Stack>
                       </Stack>
                       <Table style={{ marginTop: "20px" }}>
@@ -730,7 +742,7 @@ let invoiceDue=invoiceData && invoiceData.reduce(
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {purchasedActivity &&
+                          {purchasedActivity?.length > 0 ? (
                             purchasedActivity?.slice(0, totalinv).map((item: any) => (
                               <TableRow hover tabIndex={-1}>
                                 <TableCell align="left">
@@ -748,7 +760,10 @@ let invoiceDue=invoiceData && invoiceData.reduce(
                                   $ {item?.activity_price}
                                 </TableCell>
                               </TableRow>
-                            ))}
+                           ))
+                           ) : (
+                             <h3>No record found</h3>
+                           )}
                         </TableBody>
                       </Table>
                     </CardContent>

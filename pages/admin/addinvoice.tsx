@@ -369,7 +369,7 @@ export default function Guardians() {
           reset();
           toast.success("Invoice created Successfully !");
           setTimeout(() => {
-            router.push("/admin/invoices");
+            router.push("/admin/invoices/invoice");
           }, 1000);
         }
       })
@@ -655,7 +655,7 @@ export default function Guardians() {
                     }}
                   >
                     <Link
-                      href="/admin/invoices"
+                      href="/admin/invoices/invoice"
                       style={{ color: "#1A70C5", textDecoration: "none" }}
                     >
                       <Button variant="contained" startIcon={<ArrowBackIcon />}>

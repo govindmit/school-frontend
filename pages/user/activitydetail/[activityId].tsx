@@ -42,7 +42,6 @@ import commmonfunctions from "../../../commonFunctions/commmonfunctions";
 import { useForm, SubmitHandler } from "react-hook-form";
 import Box from "@mui/material/Box";
 
-
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
     padding: theme.spacing(2),
@@ -51,6 +50,18 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     padding: theme.spacing(1),
   },
 }));
+
+
+const style = {
+  position: 'absolute' as 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 331,
+  bgcolor: 'background.paper',
+  boxShadow: 24,
+  p: 2,
+};
 
 export interface DialogTitleProps {
   id: string;
@@ -134,6 +145,10 @@ export default function Guardians() {
   const [activityId, setActivityId] = React.useState<any>("");
   const [paymentPayMethod, setPaymentPayMethod] = React.useState<any>("");
   const [orderId, setorderId] = React.useState("");
+
+  const [openThank, setOpenThank] = React.useState(false);
+  const handleThanksOpen = () => setOpenThank(true);
+  const handleThanksClose = () => setOpenThank(false);
 
   const router = useRouter();
   const activityid  = router?.query?.activityId;
@@ -337,10 +352,12 @@ export default function Guardians() {
               setshowspinner(false);
               setBtnDisabled(false);
               toast.success("Activity purchase Successfully !");
+              setOpen(false);
+              handleThanksOpen();
               setTimeout(() => {
-                setOpen(false);
+                handleThanksClose();
                 router.push("/user/activities");
-              }, 2000);
+              }, 3000);
             }
           }).catch((error) => {
             // toast.error(error?.message);
@@ -393,10 +410,12 @@ export default function Guardians() {
               setshowspinner(false);
               setBtnDisabled(false);
               toast.success("Activity purchase Successfully !");
+              handleClose();
+              handleThanksOpen();
               setTimeout(() => {
-                setOpen(false);
+                handleThanksClose();
                 router.push("/user/activities");
-              }, 2000);
+              }, 3000);
             }
           }).catch((error) => {
             // toast.error(error?.message);
@@ -810,6 +829,20 @@ export default function Guardians() {
                 </Button>
               </div>
             </Card>
+          </div>
+          <div>
+      <Modal
+        open={openThank}
+        // onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <h2 style={{textAlign:"center",color:"orangered",position:"relative",top:"30px"}}>Thank You for </h2> 
+          <br />
+          <h2 style={{textAlign:"center",color:"orangered",position:"relative",bottom:"30px"}}>Payment</h2>
+        </Box>
+      </Modal>
           </div>
           <MainFooter />
         </Box>

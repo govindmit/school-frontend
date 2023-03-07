@@ -477,7 +477,7 @@ export default function Guardians() {
                             </Stack>
                             <div className="buycss" style={{ textAlign: "end" }}>
                                 <Link
-                                    href="/admin/invoices"
+                                    href="/admin/invoices/invoice"
                                     style={{ color: "#1A70C5", textDecoration: "none" }}
                                 >
                                     <Button variant="contained" startIcon={<ArrowBackIcon />}> <b>Back To List</b></Button>
