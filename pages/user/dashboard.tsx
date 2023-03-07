@@ -315,11 +315,17 @@ export default function ViewCustomer() {
     seteditid(id);
   }
 
-  //handle view all
-  // function handleView() {
-  //   settotalinv(creditdata.length);
-  //   setbtnahow(true);
-  // }
+  const handleInvoiceListView = () => {
+    router.push("/user/invoices/invoiceslist");
+  }
+
+  const handleCreditNotesList = () => {
+    router.push("/user/creditinvoices/creditinvoicelist");
+  }
+  
+  const handleActivityList = () => {
+    router.push("/user/salesinvoices/salesinvoicelist");
+  }
 
   //handle view less
   function handleViewLess() {
@@ -531,14 +537,14 @@ let invoiceDue=invoiceData && invoiceData.reduce(
                           {btnahow === false ? (
                             <Typography
                               style={{ color: "#1A70C5", cursor: "pointer" }}
-                              // onClick={handleView}
+                               onClick={handleInvoiceListView}
                             >
                               <b>VIEW ALL</b>
                             </Typography>
                           ) : (
                             <Typography
                               style={{ color: "#1A70C5", cursor: "pointer" }}
-                              onClick={handleViewLess}
+                              // onClick={handleViewLess}
                             >
                               <b>VIEW LESS</b>
                             </Typography>
@@ -623,9 +629,12 @@ let invoiceDue=invoiceData && invoiceData.reduce(
                           </Typography>
                         </Stack>
                         <Stack>
-                          <Typography style={{ color: "#1A70C5" }}>
-                            VIEW ALL
-                          </Typography>
+                        <Typography
+                              style={{ color: "#1A70C5", cursor: "pointer" }}
+                               onClick={handleCreditNotesList}
+                            >
+                              <b>VIEW ALL</b>
+                            </Typography>
                         </Stack>
                       </Stack>
                       <Table style={{ marginTop: "20px" }}>
@@ -707,9 +716,12 @@ let invoiceDue=invoiceData && invoiceData.reduce(
                           </Typography>
                         </Stack>
                         <Stack>
-                          <Typography style={{ color: "#1A70C5" }}>
-                            VIEW ALL
-                          </Typography>
+                        <Typography
+                              style={{ color: "#1A70C5", cursor: "pointer" }}
+                               onClick={handleActivityList}
+                            >
+                              <b>VIEW ALL</b>
+                            </Typography>
                         </Stack>
                       </Stack>
                       <Table style={{ marginTop: "20px" }}>

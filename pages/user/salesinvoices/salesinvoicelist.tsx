@@ -111,7 +111,6 @@ export default function UserInvoices() {
             },
         })
             .then((res) => {
-                console.log(res?.data?.data);
                 setgetSalesInvoices(res?.data?.data);
                 setsearchdata(res?.data?.data);
             })
