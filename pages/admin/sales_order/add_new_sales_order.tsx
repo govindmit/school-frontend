@@ -257,11 +257,11 @@ export default function AddSalesOrder({
       });
       const res = await response.json();
       //  creditNoteId = res?.CreditRequestId
-      console.log("CreditRequestId =>",res?.CreditRequestId);
-       setcreditNoteId(res?.CreditRequestId)
+      console.log("CreditRequestId =>", res?.CreditRequestId);
+      setcreditNoteId(res?.CreditRequestId)
       setCreditAmount(res?.creditBal);
-    } catch (error:any) {
-      console.log("error",error.message);
+    } catch (error: any) {
+      console.log("error", error.message);
     }
   };
 
@@ -273,84 +273,83 @@ export default function AddSalesOrder({
   } = useForm<FormValues>();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    const Checkout : any  =  (window as any).Checkout
-    let sageintacctorderID : any = "";
-   
+    const Checkout: any = (window as any).Checkout
+    let sageintacctorderID: any = "";
+
     if (customerId !== "" && activityId !== "") {
       setshowspinner(true);
       setBtnDisabled(true);
 
-console.log("price",price,Check,"Check","totalPrice",totalPrice,"creditBalance",creditBalance,"paymentPayMethod",paymentPayMethod);
+      console.log("price", price, Check, "Check", "totalPrice", totalPrice, "creditBalance", creditBalance, "paymentPayMethod", paymentPayMethod);
 
-// let amountttt= price > creditBalance ? totalPrice : creditBalance === price ? 0 : price;
+      // let amountttt= price > creditBalance ? totalPrice : creditBalance === price ? 0 : price;
 
-if(Check === true){
-  const reqData = {
-        amount: price,
-        status: 0,
-        userId: customerId,
-        activityId: activityId,
-        transactionId: "Trh4354654457",
-        orderId: 46,
-        createdBy: customerId,
-      };
-      await axios({
-              method: "POST",
-              url: `${api_url}/addSalesOrders`,
-              data: reqData,
-              headers: {
-                Authorization: auth_token,
-              },
-            })
-              .then(async (data: any) => {
-                if (data) {
-                  insertRemainingNotesAmount();
-                  if (data?.status === 200) {
-                    setorderId(data.data.sageIntacctorderID);
-                    sageintacctorderID = data.data.sageIntacctorderID;
-                    // setAmount(creditBalance)
-                  }
-                  const unique = keyGen(5);
-                  const reqData1 = {
-                    totalAmount: totalPrice,
-                    paidAmount: totalPrice,
-                    transactionId: `case-${unique} `,
-                    amexorderId: data?.data?.sageIntacctorderID,
-                    paymentMethod:
-                    paymentPayMethod === "" ? "Cash" : paymentPayMethod,
-                    idForPayment: data?.data?.sageIntacctorderID,
-                    creditNotesId: creditNoteId,
-                  };
-                  transactionSave(reqData1);
-                  setshowspinner(false);
-                  setBtnDisabled(false);
-                  toast.success("Sales Order Create Successfully !");
-                  closeDialog(false);
-                  setTimeout(() => {
-                    setOpen(false);
-                  }, 2000);
-                }
-              }).catch((error) => {
-                // toast.error(error?.message);
-                console.log("error", error);
-                setshowspinner(false);
-                setBtnDisabled(false);
-              });
+      if (Check === true) {
+        const reqData = {
+          amount: price,
+          status: 0,
+          userId: customerId,
+          activityId: activityId,
+          transactionId: "Trh4354654457",
+          orderId: 46,
+          createdBy: customerId,
+        };
+        await axios({
+          method: "POST",
+          url: `${api_url}/addSalesOrders`,
+          data: reqData,
+          headers: {
+            Authorization: auth_token,
+          },
+        })
+          .then(async (data: any) => {
+            if (data) {
+              insertRemainingNotesAmount();
+              if (data?.status === 200) {
+                setorderId(data.data.sageIntacctorderID);
+                sageintacctorderID = data.data.sageIntacctorderID;
+                // setAmount(creditBalance)
+              }
+              const unique = keyGen(5);
+              const reqData1 = {
+                totalAmount: totalPrice,
+                paidAmount: totalPrice,
+                transactionId: `case-${unique} `,
+                amexorderId: data?.data?.sageIntacctorderID,
+                paymentMethod:
+                  paymentPayMethod === "" ? "Cash" : paymentPayMethod,
+                idForPayment: data?.data?.sageIntacctorderID,
+                creditNotesId: creditNoteId,
+              };
+              transactionSave(reqData1);
+              setshowspinner(false);
+              setBtnDisabled(false);
+              toast.success("Sales Order Create Successfully !");
+              closeDialog(false);
+              setTimeout(() => {
+                setOpen(false);
+              }, 2000);
+            }
+          }).catch((error) => {
+            // toast.error(error?.message);
+            console.log("error", error);
+            setshowspinner(false);
+            setBtnDisabled(false);
+          });
 
-}
-else{
+      } else {
 
-  const reqData = {
-    amount: price,
-    status: 0,
-    userId: customerId,
-    activityId: activityId,
-    transactionId: "Trh4354654457",
-    orderId: 46,
-    createdBy: customerId,
-  };
+        const reqData = {
+          amount: price,
+          status: 0,
+          userId: customerId,
+          activityId: activityId,
+          transactionId: "Trh4354654457",
+          orderId: 46,
+          createdBy: customerId,
+        };
 
-  await axios({
+        await axios({
           method: "POST",
           url: `${api_url}/addSalesOrders`,
           data: reqData,
@@ -373,7 +372,7 @@ else{
                 transactionId: `case-${unique} `,
                 amexorderId: data?.data?.sageIntacctorderID,
                 paymentMethod:
-                paymentPayMethod === "" ? "Cash" : paymentPayMethod,
+                  paymentPayMethod === "" ? "Cash" : paymentPayMethod,
                 idForPayment: data?.data?.sageIntacctorderID,
                 creditNotesId: null,
               };
@@ -408,12 +407,12 @@ else{
       }
     }
 
-    let orderamount = Check ?  Math?.abs(price - creditBalance) :price ;
-    console.log("orderamount =>",orderamount);
+    let orderamount = Check ? Math?.abs(price - creditBalance) : price;
+    console.log("orderamount =>", orderamount);
     // payment getway
-    if(paymentPayMethod === "Amex" && orderamount > 0){
-     
-      if(price === 0 ){
+    if (paymentPayMethod === "Amex" && orderamount > 0) {
+
+      if (price === 0) {
         toast.error("amount will not be $0 for AMFX payment method");
       } else {
         var requestData = {
@@ -438,27 +437,27 @@ else{
             },
           },
         };
-      
-       await getwayService.getSession(requestData,async function(result:any){
-         if(result?.data?.result === "SUCCESS"){
-          // setSessionId(result?.data.session.id)
-          // setsuccessIndicator(result?.data.successIndicator);
-          await Checkout.configure({
-           session: {
-               id:  result?.data.session.id
-           }
-          });
-          await Checkout.showPaymentPage();
-        }
-        
-       })
-    
-       }
-     }
 
-     if(paymentPayMethod === "Amex" && Check === true && orderamount === 0){
-      try{
-       
+        await getwayService.getSession(requestData, async function (result: any) {
+          if (result?.data?.result === "SUCCESS") {
+            // setSessionId(result?.data.session.id)
+            // setsuccessIndicator(result?.data.successIndicator);
+            await Checkout.configure({
+              session: {
+                id: result?.data.session.id
+              }
+            });
+            await Checkout.showPaymentPage();
+          }
+
+        })
+
+      }
+    }
+
+    if (paymentPayMethod === "Amex" && Check === true && orderamount === 0) {
+      try {
+
         const rendomTransactionId = keyGen(5);
         let reqData = {
           totalAmount: price,
@@ -467,12 +466,12 @@ else{
           amexorderId: sageintacctorderID,
           paymentMethod: "Cash",
           idForPayment: sageintacctorderID,
-          creditNotesId:creditNoteId
+          creditNotesId: creditNoteId
         };
-         transactionSave(reqData);
-       
-      }catch(error:any){
-        console.log("Error ",error.message);
+        transactionSave(reqData);
+
+      } catch (error: any) {
+        console.log("Error ", error.message);
       }
      }
      
@@ -481,11 +480,11 @@ else{
       return (billingHtml)
   
       toast.info(`As of Now This payment method is not supported ${paymentPayMethod} !`);
-     }
-    
-     if(paymentPayMethod === "QPay"){
+    }
+
+    if (paymentPayMethod === "QPay") {
       toast.info(`As of Now This payment method is not supported ${paymentPayMethod} !`);
-     }
+    }
   };
   const keyGen = (keyLength: any) => {
     var i,
@@ -510,10 +509,10 @@ else{
       headers: {
         Authorization: auth_token,
       },
-    }).then((result:any)=>{
+    }).then((result: any) => {
       console.log("transaction ");
-    }).catch((error:any)=>{
-      console.log("error =>",error);
+    }).catch((error: any) => {
+      console.log("error =>", error);
     });
   };
 
@@ -551,14 +550,14 @@ else{
     price === 0
       ? 0
       : price < creditAmount
-      ? 0
-      : Math?.abs(creditAmount - price);
+        ? 0
+        : Math?.abs(creditAmount - price);
   creditBalance =
     creditAmount === price
       ? creditAmount
       : creditAmount > price
-      ? price
-      : creditAmount;
+        ? price
+        : creditAmount;
 
   return (
     <>
@@ -676,7 +675,7 @@ else{
                               size="small"
                               disabled={
                                 (totalPrice === 0 && price === 0) ||
-                                (Check === true && creditAmount > price)
+                                  (Check === true && creditAmount > price)
                                   ? true
                                   : false
                               }
@@ -731,8 +730,8 @@ else{
                                 {creditAmount === price
                                   ? creditAmount
                                   : creditAmount > price
-                                  ? price
-                                  : creditAmount}
+                                    ? price
+                                    : creditAmount}
                               </div>
                             </div>
                           </Stack>
@@ -749,8 +748,8 @@ else{
                                 {price === 0
                                   ? "0.00"
                                   : price < creditAmount
-                                  ? "0.00"
-                                  : Math?.abs(creditAmount - price)}
+                                    ? "0.00"
+                                    : Math?.abs(creditAmount - price)}
                               </p>
                             )}
                           </Stack>

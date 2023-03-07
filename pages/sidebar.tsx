@@ -192,7 +192,17 @@ export default function MiniDrawer() {
   let setActivitiesBgColor = path.includes("activities") ? mngbackground : "";
   let setActivitiesColor = path.includes("activities") ? textcolor : "";
 
+  let setsalesinvoiceBgColor = path.includes("salesinvoices") ? mngbackground : "";
+  let setsalesinvoiceColor = path.includes("salesinvoices") ? textcolor : "";
 
+  let setcreditinvoiceBgColor = path.includes("creditinvoices") ? mngbackground : "";
+  let setcreditinvoiceColor = path.includes("creditinvoices") ? textcolor : "";
+
+
+  let userinvoicesBgColor = path.includes("user/invoices/") ? mngbackground : "";
+  let userinvoicesColor = path.includes("user/invoices/") ? textcolor : "";
+
+  
   return (
     <>
       <Head>
@@ -242,7 +252,7 @@ export default function MiniDrawer() {
                   className="sidebar-link"
                   disablePadding
                   sx={{ display: "block" }}
-                  // onClick={() => router.push("/activites/activitylist")}
+                // onClick={() => router.push("/activites/activitylist")}
                 >
                   <ListItemButton
                     sx={{
@@ -264,7 +274,7 @@ export default function MiniDrawer() {
                   className="sidebar-link"
                   disablePadding
                   sx={{ display: "block" }}
-                  // onClick={() => router.push("/activites/activitylist")}
+                // onClick={() => router.push("/activites/activitylist")}
                 >
                   <ListItemButton
                     sx={{
@@ -336,8 +346,8 @@ export default function MiniDrawer() {
                     minHeight: 48,
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
-                    background: setInvoiceBgColor,
-                    color: setInvoiceColor,
+                    background: userinvoicesBgColor,
+                    color: userinvoicesColor,
                   }}
                 >
                   <ListItemIcon
@@ -362,15 +372,15 @@ export default function MiniDrawer() {
                 className="sidebar-link"
                 disablePadding
                 sx={{ display: "block" }}
-                onClick={() => router.push("/user/salesinvoice")}
+                onClick={() => router.push("/user/salesinvoices/salesinvoicelist")}
               >
                 <ListItemButton
                   sx={{
                     minHeight: 48,
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
-                    background: setSalesBgColor,
-                    color: setSalesColor,
+                    background: setsalesinvoiceBgColor,
+                    color: setsalesinvoiceColor,
                   }}
                 >
                   <ListItemIcon
@@ -395,15 +405,15 @@ export default function MiniDrawer() {
                 className="sidebar-link"
                 disablePadding
                 sx={{ display: "block" }}
-                onClick={() => router.push("/user/creditinvoice")}
+                onClick={() => router.push("/user/creditinvoices/creditinvoicelist")}
               >
                 <ListItemButton
                   sx={{
                     minHeight: 48,
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
-                    background: setCreditBgColor,
-                    color: setCreditColor,
+                    background: setcreditinvoiceBgColor,
+                    color: setcreditinvoiceColor,
                   }}
                 >
                   <ListItemIcon
@@ -438,7 +448,7 @@ export default function MiniDrawer() {
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
                     background: setActivitiesBgColor,
-                    color:setActivitiesColor,
+                    color: setActivitiesColor,
                   }}
                 >
                   <ListItemIcon
@@ -749,7 +759,7 @@ export default function MiniDrawer() {
                   <ListItemText
                     primary="Composer"
                     sx={{ opacity: open ? 1 : 0 }}
-                    //onClick={() => router.push("/logout")}
+                  //onClick={() => router.push("/logout")}
                   />
                 </ListItemButton>
               </ListItem>
@@ -761,7 +771,7 @@ export default function MiniDrawer() {
               className="sidebar-link"
               disablePadding
               sx={{ display: "block" }}
-              // onClick={() => router.push("/activites/activitylist")}
+            // onClick={() => router.push("/activites/activitylist")}
             >
               <ListItemButton
                 sx={{
@@ -792,7 +802,7 @@ export default function MiniDrawer() {
                 className="sidebar-link"
                 disablePadding
                 sx={{ display: "block" }}
-                // onClick={() => router.push("/activites/activitylist")}
+              // onClick={() => router.push("/activites/activitylist")}
               >
                 <ListItemButton
                   sx={{

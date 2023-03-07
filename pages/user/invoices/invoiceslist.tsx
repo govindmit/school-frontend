@@ -35,7 +35,6 @@ import Image from "next/image";
 import PopupState, {
     bindTrigger,
     bindMenu,
-    bindPopover,
 } from "material-ui-popup-state";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -46,7 +45,6 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import Alert from '@mui/material/Alert';
 import Script from "next/script";
 import getwayService from "../../../services/gatewayService"
 import { ToastContainer, toast } from "react-toastify";
@@ -91,6 +89,7 @@ function a11yProps(index: number) {
         "aria-controls": `simple-tabpanel-${index}`,
     };
 }
+
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
     ...theme.typography.body2,
@@ -107,6 +106,7 @@ export interface FormValues {
     sort: String;
     invoiceId: String;
 }
+
 function usePagination(data: any, itemsPerPage: any) {
     const [currentPage, setCurrentPage] = useState(1);
     const maxPage = Math.ceil(data.length / itemsPerPage);
@@ -221,7 +221,6 @@ export default function UserInvoices() {
             },
         })
             .then((res) => {
-                console.log(res?.data);
                 setgetInvoices(res?.data);
                 setInvoice(res?.data);
                 setsearchdata(res?.data);
@@ -302,27 +301,21 @@ export default function UserInvoices() {
     const onSubmit: SubmitHandler<FormValues> = async (data: any) => {
         let sdate = moment(startDate).format("DD/MM/YYYY");
         let edate = moment(endDate).format("DD/MM/YYYY");
-
         const reqData = {
             status: status,
             startDate: sdate === "Invalid date" ? "" : sdate,
             endDate: edate === "Invalid date" ? "" : edate,
             order: sort,
             amount: data.total.replace("$", ""),
-            invoiceId: invoiceId,
+            invoiceId: data.invoiceId,
         };
-
         await axios({
             method: "POST",
             url: `${api_url}/getInvoicebyUser/${custid}`,
             data: reqData,
-            headers: {
-                "content-type": "multipart/form-data",
-            },
         })
             .then((res) => {
-                console.log(res);
-                // setgetInvoices(res?.data);
+                setgetInvoices(res?.data);
             })
             .catch((err) => { });
     };
@@ -579,64 +572,8 @@ export default function UserInvoices() {
         }
     }
 
-
-    //handle delete
-    const handledelete = async () => {
-        let reqData = {
-            userId: "2",
-        };
-        await axios({
-            method: "DELETE",
-            url: `${api_url}/deleteInvoice/${id}`,
-            data: reqData,
-            headers: {
-                "content-type": "multipart/form-data",
-            },
-        })
-            .then((res) => {
-                Invoices(custid);
-                toast.success("Deleted Successfully !");
-                setTimeout(() => {
-                    handleClose();
-                }, 1000);
-            })
-            .catch((err) => { });
-    };
-
     const handleCloses = () => {
         setDollerOpen(false);
-    };
-    const handleClose = () => setPop(false);
-    const handleOpen = (id: any) => {
-        setPop(true);
-        setId(id);
-    };
-
-    const handleCancel = () => {
-        handleClose();
-    };
-
-    const handleEmailClose = () => setShare(false);
-    // send email func
-    const handleSend = async () => {
-        await axios({
-            method: "GET",
-            url: `${api_url}/sendInvoiceEmail/${invoiceId}`,
-            headers: {
-                "content-type": "multipart/form-data",
-            },
-        })
-            .then((res) => {
-                toast.success("Send Invoice Mail Successfully !");
-
-                setShare(false);
-            })
-            .catch((err) => { });
-    };
-
-    const handleShare = async (item: any) => {
-        setInvoiceId(item?.id);
-        setShare(true);
     };
 
     return (
@@ -736,9 +673,7 @@ export default function UserInvoices() {
                                             {(popupState: any) => (
                                                 <Box>
                                                     <MenuItem {...bindTrigger(popupState)}>
-                                                        <div
-                                                        // onClick={() => handleFilter()}
-                                                        >
+                                                        <div>
                                                             <span>
                                                                 <BiFilterAlt />
                                                             </span>
@@ -923,6 +858,7 @@ export default function UserInvoices() {
                                                 type="text"
                                                 name="name"
                                                 placeholder="Search"
+                                                value={searchquery}
                                             />
                                         </FormControl>
                                     </Stack>
@@ -980,12 +916,10 @@ export default function UserInvoices() {
                                                     </TableCell>
                                                     <TableCell align="left" className="action-td">
                                                         <div className="btn">
-
                                                             <Button className="idiv" >
                                                                 <Link
                                                                     href={`/user/invoices/viewinvoice/${item.invid}`}>
                                                                     <Image
-                                                                        onClick={() => handleClickOpen(item)}
                                                                         src="/view.png"
                                                                         alt="Picture of the author"
                                                                         width={35}
@@ -1043,7 +977,7 @@ export default function UserInvoices() {
                                     direction="row"
                                 >
                                     <Pagination
-                                        //count={count}
+                                        count={count}
                                         page={page}
                                         color="primary"
                                         onChange={handlePageChange}
@@ -1064,71 +998,6 @@ export default function UserInvoices() {
                                 </Stack>
                             </TableContainer>
                         </Card>
-
-                        <Modal
-                            open={share}
-                            onClose={handleEmailClose}
-                            aria-labelledby="modal-modal-title"
-                            aria-describedby="modal-modal-description"
-                        >
-                            <Box sx={style} className="ISBOX popup send">
-                                <div className="Isend">
-                                    <div>
-                                        <h3 className="ehead">Send Document</h3>
-                                    </div>
-                                    <div className="Isend">
-                                        <h3 className="eshead">
-                                            How would you like to deliver this document to the
-                                            customer?
-                                        </h3>
-                                    </div>
-                                </div>
-                                <div className="sendEmailBox">
-                                    <div>
-                                        <Box>
-                                            <BsTelegram
-                                                onClick={handleSend}
-                                                className="telegram"
-                                            ></BsTelegram>
-                                        </Box>
-                                    </div>
-                                    <div>
-                                        <h3>Email</h3>
-                                    </div>
-                                </div>
-                            </Box>
-                        </Modal>
-                        <Modal
-                            open={pop}
-                            onClose={handleClose}
-                            aria-labelledby="modal-modal-title"
-                            aria-describedby="modal-modal-description"
-                        >
-                            <Box sx={style} className="popup">
-                                <Typography id="modal-modal-title" variant="h6" component="h2">
-                                    Delete Invoice
-                                </Typography>
-                                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                                    Are you sure want to delete Invoice from the records.
-                                    <div className="kk">
-                                        <Button
-                                            className="popup"
-                                            onClick={handledelete}
-                                            variant="text"
-                                        >
-                                            ok
-                                        </Button>
-                                        <Button
-                                            onClick={handleCancel}
-                                            className="ok"
-                                            variant="text"
-                                        >
-                                            cancel
-                                        </Button>
-                                    </div>
-                                </Typography>
-                            </Box>
-                        </Modal>
                         <div>
                             <BootstrapDialog
                                 onClose={handleCloses}
