@@ -436,7 +436,7 @@ export default function EditActivity() {
                             placeholder="Activity Amount ..."
                             fullWidth
                             size="small"
-                            startAdornment={<InputAdornment position="center">$</InputAdornment>}
+                            startAdornment={<InputAdornment position="end">$</InputAdornment>}
                             {...register("price", {
                               required: true,
                               pattern: /^[0-9+-]+$/,
