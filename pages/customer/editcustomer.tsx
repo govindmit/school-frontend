@@ -199,6 +199,7 @@ export default function EditCustomer({
       setValue("email1", res.data[0].email1);
       setValue("email2", res.data[0].email2);
       setValue("number", res.data[0].phone1);
+      setValue("alternatenumber", res.data[0].phone2 === 0 ? "" : res.data[0].phone2);
       setValue("contactName", res.data[0].contactName);
       setValue("printUs", res.data[0].printus);
       setValue("pregeneratedid", res.data[0].generatedId);
@@ -214,6 +215,7 @@ export default function EditCustomer({
       setValue("city", custAdd?.city);
       setValue("state", custAdd?.state);
       setValue("postalcode", custAdd?.postalcode);
+      setValue("attentionto", res.data[0]?.attentionTo);
 
     } catch (error) {
       console.log("error", error);

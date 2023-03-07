@@ -65,8 +65,11 @@ export default function ViewCustomer() {
   const [editid, seteditid] = useState<any>(0);
   const [creditball, setcreditball] = React.useState(0);
   const [totalinv, settotalinv] = React.useState(2);
+  const [totalcrdt, settotalcrdt] = React.useState(2);
   const [btnahow, setbtnahow] = React.useState(false);
+  const [btnacrdthow, setbtnacrdthow] = React.useState(false);
   const [useraddr, setuseraddr] = React.useState<any>([]);
+  const [creditNotes, setcreditNotes] = React.useState<any>([]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -128,8 +131,24 @@ export default function ViewCustomer() {
         },
       });
       const json = await response.json();
-      console.log(json);
       setcreditball(json.creditBal);
+    } catch (error: any) {
+      console.log("error", error);
+    }
+  };
+
+  //get credit notes
+  const fetchCreditNotes = async () => {
+    const apiurl = `${api_url}/creditballanceByUser/${customerId}`;
+    try {
+      const response = await fetch(apiurl, {
+        method: "GET",
+        headers: {
+          Authorization: auth_token,
+        },
+      });
+      const json = await response.json();
+      setcreditNotes(json.data);
     } catch (error: any) {
       console.log("error", error);
     }
@@ -140,6 +159,7 @@ export default function ViewCustomer() {
     fetchBallance();
     getUserCloseInvoice();
     getUserInvoice();
+    fetchCreditNotes();
   }, []);
 
   //edit customer
@@ -164,6 +184,19 @@ export default function ViewCustomer() {
     settotalinv(2);
     setbtnahow(false);
   }
+
+  //habdle crdt show
+  function handlecrdtView() {
+    settotalcrdt(creditNotes.length);
+    setbtnacrdthow(true);
+  }
+
+  //handle view less
+  function handlecrdtViewLess() {
+    settotalcrdt(2);
+    setbtnacrdthow(false);
+  }
+
 
   return (
     <>
@@ -411,7 +444,7 @@ export default function ViewCustomer() {
                               </TableRow>
                             </TableHead>
                             {closeinvoice.length > 0 ? (
-                              closeinvoice.map((item: any) => (
+                              closeinvoice.slice(0, totalinv).map((item: any) => (
                                 <TableBody>
                                   <TableRow hover tabIndex={-1}>
                                     <TableCell align="left">
@@ -460,9 +493,11 @@ export default function ViewCustomer() {
                           </Typography>
                         </Stack>
                         <Stack>
-                          <Typography style={{ color: "#1A70C5" }}>
-                            VIEW ALL
-                          </Typography>
+                          {btnacrdthow === false ? (<Typography style={{ color: "#1A70C5", cursor: "pointer" }} onClick={handlecrdtView}>
+                            <b>VIEW ALL</b>
+                          </Typography>) : (<Typography style={{ color: "#1A70C5", cursor: "pointer" }} onClick={handlecrdtViewLess}>
+                            <b>VIEW LESS</b>
+                          </Typography>)}
                         </Stack>
                       </Stack>
                       <Table style={{ marginTop: "20px" }}>
@@ -486,13 +521,15 @@ export default function ViewCustomer() {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          <TableRow hover tabIndex={-1}>
-                            <TableCell align="left">HII</TableCell>
-                            <TableCell align="left">HII</TableCell>
-                            <TableCell align="left">HII</TableCell>
-                            <TableCell align="left">HII</TableCell>
-                            <TableCell align="left">HII</TableCell>
-                          </TableRow>
+                          {creditNotes.slice(0, totalcrdt).map((item: any, key: any) => {
+                            return (<TableRow hover tabIndex={-1}>
+                              <TableCell align="left">INV000-{item?.id}</TableCell>
+                              <TableCell align="left">{moment(item?.createdAt).format("DD/MM/YYYY")}</TableCell>
+                              <TableCell align="left"></TableCell>
+                              <TableCell align="left">{item?.amount}</TableCell>
+                              <TableCell align="left">{item?.amount}</TableCell>
+                            </TableRow>)
+                          })}
                         </TableBody>
                       </Table>
                     </CardContent>

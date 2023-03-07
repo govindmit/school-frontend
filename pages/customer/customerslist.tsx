@@ -166,16 +166,16 @@ export default function CustomerList() {
         },
       });
       const res = await response.json();
-      setUsers(res.data.filter((dt: any) => dt.customerId !== null));
-      settabFilterData(res.data.filter((dt: any) => dt.customerId !== null))
-      setsearchdata(res.data.filter((dt: any) => dt.customerId !== null));
-      setAll(res.data.filter((dt: any) => dt.customerId !== null).length);
-      setparentId(res.data.filter((dt: any) => dt.GeneratedParentId !== null));
+      setUsers(res.data.filter((dt: any) => dt.customerId !== null && dt.roleId === 2));
+      settabFilterData(res.data.filter((dt: any) => dt.customerId !== null && dt.roleId === 2))
+      setsearchdata(res.data.filter((dt: any) => dt.customerId !== null && dt.roleId === 2));
+      setAll(res.data.filter((dt: any) => dt.customerId !== null && dt.roleId === 2).length);
+      setparentId(res.data.filter((dt: any) => dt.GeneratedParentId !== null && dt.roleId === 2));
       const activeUser = res.data.filter(
-        (dt: any) => dt.status === 1 && dt.customerId !== null
+        (dt: any) => dt.status === 1 && dt.customerId !== null && dt.roleId === 2
       ).length;
       const inactiveUser = res.data.filter(
-        (dt: any) => dt.status === 0 && dt.customerId !== null
+        (dt: any) => dt.status === 0 && dt.customerId !== null && dt.roleId === 2
       ).length;
       setactive(activeUser);
       setinActive(inactiveUser);
@@ -224,7 +224,7 @@ export default function CustomerList() {
     })
       .then((res) => {
         if (res.status === 200) {
-          //setUsers(res.data.data.filter((dt: any) => dt.customerId !== null));
+          setUsers(res.data.data.filter((dt: any) => dt.customerId !== null && dt.roleId === 2));
         }
       })
       .catch((error) => {
