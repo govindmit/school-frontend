@@ -1,7 +1,8 @@
 // var request = require('request');
 // import request from 'request'
+var qs = require('qs');
 import axios  from 'axios';
-
+import {v4 as uuidv4} from 'uuid'
 // import { getApiVersion, getBaseUrl, getMerchantId, getTestMerchantUrl, setAuthentication } from '../util/commonUtils';
 // var {AMEX_TOKEN} = require('../helper/config');
 import {IS_CERT_AUTH_ENABLED,AMEX_TOKEN,BASEURL,API_VERSION,MERCHANTID,DB_BASE_URL} from '../helper/config'
@@ -113,66 +114,76 @@ class getwayService {
 // cyber source secure
 redirectCyberSourcePayment = async()=>{
   try{
-    const currentDateTime = new Date().toISOString()
-    const params : any ={
-      access_key:"cfc1af4483773756a54a990e585ce7c5",
-      profile_id:"70647EEB-EDE3-4859-9DD9-6E4605C9FABE",
-      req_profile_id:"70647EEB-EDE3-4859-9DD9-6E4605C9FABE",
-      ots_profileid:"70647EEB-EDE3-4859-9DD9-6E4605C9FABE",
-      merchant_id:"cbq_qis_qar",
-      transaction_uuid:"2f72a032-8e21-447f-bd07-0ed5fb1970e1",
-      signed_field_names:"access_key,profile_id,transaction_uuid,signed_field_names,unsigned_field_names,signed_date_time,locale,transaction_type,reference_number,amount,currency",
-      unsigned_field_names:"",
-      signed_date_time:currentDateTime,
-      locale:"en",
-      transaction_type:"sale,create_payment_token",
-      reference_number:"SO5012",
-      amount:"40",
-      currency:"QAR"
+    const currentDateTime = new Date().toISOString().split('.')[0]+"Z"
+    const uniqId =  uuidv4()
+    const refrensh__number = commonUtils.keyGen(4) ;
+    console.log("uniq id ",commonUtils.keyGen(13));
+    // console.log("uuid => ", uuidv4());
+    // console.log("current date => ",currentDateTime);
+//     const params : any ={
+//       access_key:"cfc1af4483773756a54a990e585ce7c5",
+//       profile_id:"70647EEB-EDE3-4859-9DD9-6E4605C9FABE",
+//       req_profile_id:"70647EEB-EDE3-4859-9DD9-6E4605C9FABE",
+//       ots_profileid:"70647EEB-EDE3-4859-9DD9-6E4605C9FABE",
+//       merchant_id:"cbq_qis_qar",
+//       transaction_uuid:"2f72a032-8e21-447f-bd07-0ed5fb1970e1",
+//       signed_field_names:"access_key,profile_id,transaction_uuid,signed_field_names,unsigned_field_names,signed_date_time,locale,transaction_type,reference_number,amount,currency",
+//       unsigned_field_names:"",
+//       signed_date_time:currentDateTime,
+//       locale:"en",
+//       transaction_type:"sale,create_payment_token",
+//       reference_number:"SO5012",
+//       amount:"40",
+//       currency:"QAR"
   
-}
-var data = new FormData();
-data.append('access_key', 'cfc1af4483773756a54a990e585ce7c5');
-data.append('profile_id', '70647EEB-EDE3-4859-9DD9-6E4605C9FABE');
-data.append('req_profile_id', '70647EEB-EDE3-4859-9DD9-6E4605C9FABE');
-data.append('ots_profileid', '70647EEB-EDE3-4859-9DD9-6E4605C9FABE');
-data.append('merchant_id', 'cbq_qis_qar');
-data.append('transaction_uuid', '2f72a032-8e21-447f-bd07-0ed5fb1970e1');
-data.append('signed_field_names', 'access_key,profile_id,transaction_uuid,signed_field_names,unsigned_field_names,signed_date_time,locale,transaction_type,reference_number,amount,currency');
-data.append('transaction_type', 'sale,create_payment_token');
-data.append('unsigned_field_names', '');
-data.append('signed_date_time', currentDateTime);
-data.append('locale', 'en');
-data.append('reference_number', 'SO5012');
-data.append('amount', '40');
-data.append('currency', 'QAR');
+// }
+let data :any = {
+  'access_key': 'cfc1af4483773756a54a990e585ce7c5',
+  'profile_id': '70647EEB-EDE3-4859-9DD9-6E4605C9FABE',
+  'req_profile_id': '70647EEB-EDE3-4859-9DD9-6E4605C9FABE',
+  'ots_profileid': '70647EEB-EDE3-4859-9DD9-6E4605C9FABE',
+  'merchant_id': 'cbq_qis_qar',
+  // 'transaction_uuid': ,
+  'transaction_uuid': "6401e70",
+  'signed_field_names': 'access_key,profile_id,transaction_uuid,signed_field_names,unsigned_field_names,signed_date_time,locale,transaction_type,reference_number,amount,currency',
+  'unsigned_field_names': '',
+  'signed_date_time': currentDateTime,
+  'locale': 'en',
+  'transaction_type': 'sale,create_payment_token',
+  // 'reference_number': refrensh__number,
+  'reference_number':"1429",
+  'amount': '300',
+  'currency': 'QAR',
+  'submit': 'Submit'
+};
 
 
 
-let signature =  cyberSourceSecureConfig.sign(params);
-data.append('signature',signature);
-    // params['signature'] = signature
- 
-  // var configdata = JSON.stringify(params);
+let signature =  await cyberSourceSecureConfig.sign(data);
+console.log("signature =>",signature);
+data['signature'] = signature;
+
+const configData = qs.stringify(data)
 
 var config = {
   method: 'post',
   url: 'https://testsecureacceptance.cybersource.com/pay',
   headers: { 
-    'Content-Type': 'application/json',
-    'Accept':'*/*',
-    'Cookie': '__cfruid=227c111277165e4848bf015230ce8aeade2f6065-1677732597',
+    'Content-Type': 'application/x-www-form-urlencoded', 
   },
-  data : data
+  data : configData,
+  withCredentials: false 
 };
 
-axios(config)
+await axios(config)
 .then(function (response) {
-  console.log(JSON.stringify(response.data));
+  console.log(response.data);
+  return response.data
 })
 .catch(function (error) {
   console.log(error);
 });
+
 
 
   }catch(error:any){
