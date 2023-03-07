@@ -151,7 +151,7 @@ export default function Guardians() {
   const handleThanksClose = () => setOpenThank(false);
 
   const router = useRouter();
-  const activityid  = router?.query?.activityId;
+  const activityid = router?.query?.activityId;
 
   var Checkout: any;
   let creditBalance: any;
@@ -831,18 +831,18 @@ export default function Guardians() {
             </Card>
           </div>
           <div>
-      <Modal
-        open={openThank}
-        // onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <h2 style={{textAlign:"center",color:"orangered",position:"relative",top:"30px"}}>Thank You for </h2> 
-          <br />
-          <h2 style={{textAlign:"center",color:"orangered",position:"relative",bottom:"30px"}}>Payment</h2>
-        </Box>
-      </Modal>
+            <Modal
+              open={openThank}
+              // onClose={handleClose}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box sx={style}>
+                <h2 style={{ textAlign: "center", color: "orangered", position: "relative", top: "30px" }}>Thank You for </h2>
+                <br />
+                <h2 style={{ textAlign: "center", color: "orangered", position: "relative", bottom: "30px" }}>Payment</h2>
+              </Box>
+            </Modal>
           </div>
           <MainFooter />
         </Box>

@@ -151,7 +151,7 @@ export default function ViewCustomer() {
   const [customerId, setCustomerId] = React.useState<any>([]);
   const [open, setOpen] = React.useState(false);
   const [purchasedActivity, setPurchasedActivity] = React.useState<any>([]);
-  const [dueAmount,setDueAmount]=React.useState([]);
+  const [dueAmount, setDueAmount] = React.useState([]);
 
   const router = useRouter();
 
@@ -233,9 +233,9 @@ export default function ViewCustomer() {
     });
     const res = await response.json();
     setGetinvoice(res);
-    
+
   };
-  
+
   const {
     register,
     handleSubmit,
@@ -322,7 +322,7 @@ export default function ViewCustomer() {
   const handleCreditNotesList = () => {
     router.push("/user/creditinvoices/creditinvoicelist");
   }
-  
+
   const handleActivityList = () => {
     router.push("/user/salesinvoices/salesinvoicelist");
   }
@@ -334,8 +334,8 @@ export default function ViewCustomer() {
   }
 
 
-let invoiceDue=invoiceData && invoiceData.reduce(
-    (sum:any, item:any) => sum +  item?.amount,
+  let invoiceDue = invoiceData && invoiceData.reduce(
+    (sum: any, item: any) => sum + item?.amount,
     0
   )
 
@@ -469,7 +469,7 @@ let invoiceDue=invoiceData && invoiceData.reduce(
                         Created :{" "}
                         {userDet?.createdAt === null
                           ? ""
-                          : moment(userDet?.createdAt,"YYYY-MM-DD").format("MMM DD, YYYY")}
+                          : moment(userDet?.createdAt, "YYYY-MM-DD").format("MMM DD, YYYY")}
                       </Typography>
                     </Stack>
                   </CardContent>
@@ -537,14 +537,14 @@ let invoiceDue=invoiceData && invoiceData.reduce(
                           {btnahow === false ? (
                             <Typography
                               style={{ color: "#1A70C5", cursor: "pointer" }}
-                               onClick={handleInvoiceListView}
+                              onClick={handleInvoiceListView}
                             >
                               <b>VIEW ALL</b>
                             </Typography>
                           ) : (
                             <Typography
                               style={{ color: "#1A70C5", cursor: "pointer" }}
-                              // onClick={handleViewLess}
+                            // onClick={handleViewLess}
                             >
                               <b>VIEW LESS</b>
                             </Typography>
@@ -576,8 +576,8 @@ let invoiceDue=invoiceData && invoiceData.reduce(
                             {invoiceData?.length > 0 ? (
                               invoiceData.slice(0, totalinv)
                                 .map((item: any) => (
-                                  item.status === "pending" ? 
-                                  <TableBody>
+                                  item.status === "pending" ?
+                                    <TableBody>
                                       <TableRow hover tabIndex={-1}>
                                         <TableCell align="left">
                                           {item.invoiceId}
@@ -596,7 +596,7 @@ let invoiceDue=invoiceData && invoiceData.reduce(
                                         </TableCell>
                                       </TableRow>
                                     </TableBody>
-                                  :""
+                                    : ""
                                 ))
                             ) : (
                               <h3>No record found</h3>
@@ -629,12 +629,12 @@ let invoiceDue=invoiceData && invoiceData.reduce(
                           </Typography>
                         </Stack>
                         <Stack>
-                        <Typography
-                              style={{ color: "#1A70C5", cursor: "pointer" }}
-                               onClick={handleCreditNotesList}
-                            >
-                              <b>VIEW ALL</b>
-                            </Typography>
+                          <Typography
+                            style={{ color: "#1A70C5", cursor: "pointer" }}
+                            onClick={handleCreditNotesList}
+                          >
+                            <b>VIEW ALL</b>
+                          </Typography>
                         </Stack>
                       </Stack>
                       <Table style={{ marginTop: "20px" }}>
@@ -673,10 +673,10 @@ let invoiceDue=invoiceData && invoiceData.reduce(
                                   {item?.status === 1
                                     ? "APPROVED"
                                     : item?.status === 2
-                                    ? "UNAPRROVED"
-                                    : item?.status === 3
-                                    ? "REJECTED"
-                                    : item?.statuS}
+                                      ? "UNAPRROVED"
+                                      : item?.status === 3
+                                        ? "REJECTED"
+                                        : item?.statuS}
                                 </TableCell>
                                 <TableCell align="left">
                                   $ {item?.amount}
@@ -716,12 +716,12 @@ let invoiceDue=invoiceData && invoiceData.reduce(
                           </Typography>
                         </Stack>
                         <Stack>
-                        <Typography
-                              style={{ color: "#1A70C5", cursor: "pointer" }}
-                               onClick={handleActivityList}
-                            >
-                              <b>VIEW ALL</b>
-                            </Typography>
+                          <Typography
+                            style={{ color: "#1A70C5", cursor: "pointer" }}
+                            onClick={handleActivityList}
+                          >
+                            <b>VIEW ALL</b>
+                          </Typography>
                         </Stack>
                       </Stack>
                       <Table style={{ marginTop: "20px" }}>
@@ -760,10 +760,10 @@ let invoiceDue=invoiceData && invoiceData.reduce(
                                   $ {item?.activity_price}
                                 </TableCell>
                               </TableRow>
-                           ))
-                           ) : (
-                             <h3>No record found</h3>
-                           )}
+                            ))
+                          ) : (
+                            <h3>No record found</h3>
+                          )}
                         </TableBody>
                       </Table>
                     </CardContent>
@@ -844,7 +844,7 @@ let invoiceDue=invoiceData && invoiceData.reduce(
                               validate: (value: any) => {
                                 return !!value.trim();
                               },
-                              pattern:/^(0|[1-9]\d*)(\.\d+)?$/,
+                              pattern: /^(0|[1-9]\d*)(\.\d+)?$/,
                               minLength: 10,
                               maxLength: 10,
                             })}
@@ -897,7 +897,7 @@ let invoiceDue=invoiceData && invoiceData.reduce(
                             placeholder="Address2..."
                             fullWidth
                             size="small"
-                          {...register("address2")}
+                            {...register("address2")}
                           />
                         </Stack>
                       </Grid>
@@ -915,7 +915,7 @@ let invoiceDue=invoiceData && invoiceData.reduce(
                             placeholder="City..."
                             fullWidth
                             size="small"
-                          {...register("city")}
+                            {...register("city")}
 
                           />
                         </Stack>
@@ -930,7 +930,7 @@ let invoiceDue=invoiceData && invoiceData.reduce(
                             placeholder="State..."
                             fullWidth
                             size="small"
-                          {...register("state")}
+                            {...register("state")}
 
                           />
                         </Stack>
@@ -947,7 +947,7 @@ let invoiceDue=invoiceData && invoiceData.reduce(
                             placeholder="Postal Code..."
                             fullWidth
                             size="small"
-                          {...register("postalcode")}
+                            {...register("postalcode")}
                           />
                         </Stack>
                       </Grid>
