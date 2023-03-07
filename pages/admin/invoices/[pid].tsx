@@ -244,7 +244,6 @@ export default function Guardians() {
     }
   };
 
-
   const handleCheckBoxClick = async (e: any) => {
     console.log("event =>", e.target.checked);
     setIsChecked(e.target.checked);
@@ -267,6 +266,7 @@ export default function Guardians() {
   const handleCloses = () => {
     setDollerOpen(false);
   };
+
   // const [open, setOpen] = useState(false);
   const closePopper = () => setOpen(false);
 
@@ -597,6 +597,7 @@ export default function Guardians() {
     }
     return key;
   };
+  
   const insertRemainingNotesAmount = async (reqData: any) => {
     //  const reqData = {
     //   customerId: customerId,

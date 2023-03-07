@@ -110,6 +110,13 @@ type FormValues = {
   parentId: number;
   agegroup: number;
   pregeneratedid: string;
+  address1: string;
+  address2: string;
+  city: string;
+  state: string;
+  postalcode: number;
+  attentionto: number;
+  alternatenumber: number;
 };
 
 export default function EditCustomer({
@@ -132,6 +139,7 @@ export default function EditCustomer({
   const [status, setstatus] = React.useState<any>("");
   const [agegrp, setagegrp] = React.useState<any>("");
   const [custType, setcustType] = React.useState<any>("");
+  const [custAdd, setcustAdd] = React.useState<any>("");
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setselValue(newValue);
   };
@@ -198,11 +206,19 @@ export default function EditCustomer({
       setstatus(res.data[0].status);
       setcustType(res.data[0].typeId);
       setagegrp(res.data[0].agegroup);
+      setValue("pregeneratedid", res.data[0].generatedId);
+      const addr = JSON.parse(res.data[0]?.address);
+      setcustAdd(addr);
+      setValue("address1", custAdd?.add1);
+      setValue("address2", custAdd?.add2);
+      setValue("city", custAdd?.city);
+      setValue("state", custAdd?.state);
+      setValue("postalcode", custAdd?.postalcode);
+
     } catch (error) {
       console.log("error", error);
     }
   };
-
   //get parent
   const getParentDet = async () => {
     try {
@@ -230,6 +246,13 @@ export default function EditCustomer({
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setshowspinner(true);
     setBtnDisabled(true);
+    const address = {
+      add1: data.address1,
+      add2: data.address2,
+      city: data.city,
+      state: data.state,
+      postalcode: data.postalcode,
+    };
     const reqData = {
       name: data.name,
       email1: data.email1,
@@ -243,6 +266,9 @@ export default function EditCustomer({
       agegroup: data.agegroup,
       pregeneratedid: data.pregeneratedid,
       updatedBy: 1,
+      attentionto: data.attentionto,
+      phone2: data.alternatenumber,
+      useraddress: address,
     };
     await axios({
       method: "PUT",
@@ -453,6 +479,7 @@ export default function EditCustomer({
                           placeholder="Attention To..."
                           fullWidth
                           size="small"
+                          {...register("attentionto")}
                         />
                       </Stack>
                     </Grid>
@@ -465,6 +492,7 @@ export default function EditCustomer({
                           placeholder="Phone..."
                           fullWidth
                           size="small"
+                          {...register("alternatenumber")}
                         />
                       </Stack>
                     </Grid>
@@ -481,6 +509,7 @@ export default function EditCustomer({
                           placeholder="Address1..."
                           fullWidth
                           size="small"
+                          {...register("address1")}
                         />
                       </Stack>
                     </Grid>
@@ -493,6 +522,7 @@ export default function EditCustomer({
                           placeholder="Address2..."
                           fullWidth
                           size="small"
+                          {...register("address2")}
                         />
                       </Stack>
                     </Grid>
@@ -509,6 +539,7 @@ export default function EditCustomer({
                           placeholder="City..."
                           fullWidth
                           size="small"
+                          {...register("city")}
                         />
                       </Stack>
                     </Grid>
@@ -521,6 +552,7 @@ export default function EditCustomer({
                           placeholder="State..."
                           fullWidth
                           size="small"
+                          {...register("state")}
                         />
                       </Stack>
                     </Grid>
@@ -533,41 +565,8 @@ export default function EditCustomer({
                           placeholder="Postal Code..."
                           fullWidth
                           size="small"
+                          {...register("postalcode")}
                         />
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </Stack>
-                <Stack style={{ marginTop: "15px" }}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={12}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="name">Age Group</InputLabel>
-                        <FormControl fullWidth>
-                          {status !== "" ? (
-                            <Select
-                              labelId="demo-simple-select-label"
-                              id="demo-simple-select"
-                              defaultValue={agegrp}
-                              size="small"
-                              {...register("agegroup")}
-                            >
-                              <MenuItem value={1}>FS1</MenuItem>
-                              <MenuItem value={2}>FS2</MenuItem>
-                              <MenuItem value={3}>FS3</MenuItem>
-                              <MenuItem value={4}>FS4</MenuItem>
-                              <MenuItem value={5}>FS5</MenuItem>
-                              <MenuItem value={6}>FS6</MenuItem>
-                              <MenuItem value={7}>FS7</MenuItem>
-                              <MenuItem value={8}>FS8</MenuItem>
-                              <MenuItem value={9}>FS9</MenuItem>
-                              <MenuItem value={10}>FS10</MenuItem>
-                              <MenuItem value={11}>FS11</MenuItem>
-                              <MenuItem value={12}>FS12</MenuItem>
-                              <MenuItem value={13}>FS13</MenuItem>
-                            </Select>) : ("loadinf...")
-                          }
-                        </FormControl>
                       </Stack>
                     </Grid>
                   </Grid>
@@ -669,20 +668,39 @@ export default function EditCustomer({
                     </Grid>
                   </Grid>
                 </Stack>
-              </Grid>
-              <Grid item xs={12} md={12}>
-                <Stack spacing={1}>
-                  <InputLabel htmlFor="name">
-                    Account
-                  </InputLabel>
-                  <OutlinedInput
-                    type="text"
-                    id="name"
-                    placeholder="# Generate If blank"
-                    fullWidth
-                    size="small"
-                    {...register("pregeneratedid")}
-                  />
+                <Stack style={{ marginTop: "15px" }}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} md={12}>
+                      <Stack spacing={1}>
+                        <InputLabel htmlFor="name">Age Group</InputLabel>
+                        <FormControl fullWidth>
+                          {status !== "" ? (
+                            <Select
+                              labelId="demo-simple-select-label"
+                              id="demo-simple-select"
+                              defaultValue={agegrp}
+                              size="small"
+                              {...register("agegroup")}
+                            >
+                              <MenuItem value={1}>FS1</MenuItem>
+                              <MenuItem value={2}>FS2</MenuItem>
+                              <MenuItem value={3}>FS3</MenuItem>
+                              <MenuItem value={4}>FS4</MenuItem>
+                              <MenuItem value={5}>FS5</MenuItem>
+                              <MenuItem value={6}>FS6</MenuItem>
+                              <MenuItem value={7}>FS7</MenuItem>
+                              <MenuItem value={8}>FS8</MenuItem>
+                              <MenuItem value={9}>FS9</MenuItem>
+                              <MenuItem value={10}>FS10</MenuItem>
+                              <MenuItem value={11}>FS11</MenuItem>
+                              <MenuItem value={12}>FS12</MenuItem>
+                              <MenuItem value={13}>FS13</MenuItem>
+                            </Select>) : ("loadinf...")
+                          }
+                        </FormControl>
+                      </Stack>
+                    </Grid>
+                  </Grid>
                 </Stack>
               </Grid>
             </TabPanel>

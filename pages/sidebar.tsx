@@ -187,6 +187,12 @@ export default function MiniDrawer() {
   let setProfileBgColor = path.includes("userprofile") ? mngbackground : "";
   let setProfileColor = path.includes("userprofile") ? textcolor : "";
 
+  ///////////////////////////customer////////////////////////////
+
+  let setActivitiesBgColor = path.includes("activities") ? mngbackground : "";
+  let setActivitiesColor = path.includes("activities") ? textcolor : "";
+
+
   return (
     <>
       <Head>
@@ -282,7 +288,7 @@ export default function MiniDrawer() {
         </AppBar>
         <Drawer variant="permanent" open={open}>
           <h1>Header</h1>
-          <List>
+          <List style={{ padding: "0 7px" }}>
             {/* //////////////////////Customer Management////////////////////////// */}
 
             {userdet?.roleId === 2 ? (
@@ -323,7 +329,7 @@ export default function MiniDrawer() {
                 className="sidebar-link"
                 disablePadding
                 sx={{ display: "block" }}
-                onClick={() => router.push("/user/invoices")}
+                onClick={() => router.push("/user/invoices/invoiceslist")}
               >
                 <ListItemButton
                   sx={{
@@ -431,8 +437,8 @@ export default function MiniDrawer() {
                     minHeight: 48,
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
-                    background: setActivityBgColor,
-                    color: setActivityColor,
+                    background: setActivitiesBgColor,
+                    color:setActivitiesColor,
                   }}
                 >
                   <ListItemIcon
@@ -649,8 +655,6 @@ export default function MiniDrawer() {
             ) : (
               ""
             )}
-
-           
 
             {checkSalesInvoice === true || userdet?.roleId === 1 ? (
               <ListItem

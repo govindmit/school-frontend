@@ -160,13 +160,12 @@ export default function Guardians() {
                   <div className="date" style={{ display: "flex" }}>
                     <div className="sdiv">
                       <h4>
-                        <span>startDate :</span> {activity[0]?.startDate}
+                        <span>startDate : </span>{moment(activity[0]?.startDate, "YYYY.MM.DD").format("DD-MM-YYYY")}
                       </h4>
                     </div>
                     <div className="sdiv">
-                      <h4>
-                        <span>endDate : </span>
-                        {activity[0]?.endDate}
+                      - &nbsp;<h4>
+                        <span>endDate : </span>{moment(activity[0]?.endDate, "YYYY.MM.DD").format("DD-MM-YYYY")}
                       </h4>
                     </div>
                   </div>

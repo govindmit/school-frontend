@@ -482,7 +482,15 @@ export default function AddNewUser() {
                   <Card sx={{ minWidth: 275 }}>
                     <CardContent>
                       <Typography>
-                        <b>Manage Permillage for this user</b>
+                        <b
+                          style={{
+                            fontSize: "20px",
+                            marginBottom: "15px",
+                            display: "inline-block",
+                          }}
+                        >
+                          Manage Permillage for this user
+                        </b>
                       </Typography>
                       <Box sx={{ width: "100%" }} style={{ marginTop: "10px" }}>
                         <Stack
@@ -492,10 +500,13 @@ export default function AddNewUser() {
                           style={{
                             backgroundColor: "#F0F4FF",
                             padding: "10px",
+                            borderRadius: "5px",
                           }}
                         >
                           <Stack>
-                            <Stack spacing={3}>DASHBOARD</Stack>
+                            <Stack spacing={3} className="customer-title">
+                              DASHBOARD
+                            </Stack>
                             <span style={{ color: "#333333" }}>
                               {onDashboard ? (
                                 <span style={{ color: "#1976d2" }}>ON</span>
@@ -589,10 +600,13 @@ export default function AddNewUser() {
                             backgroundColor: "#F0F4FF",
                             padding: "10px",
                             marginTop: "15px",
+                            borderRadius: "5px",
                           }}
                         >
                           <Stack>
-                            <Stack spacing={3}>INVOICE</Stack>
+                            <Stack spacing={3} className="customer-title">
+                              INVOICE
+                            </Stack>
                             <span style={{ color: "#333333" }}>
                               {onInvoice ? (
                                 <span style={{ color: "#1976d2" }}>ON</span>
@@ -686,10 +700,13 @@ export default function AddNewUser() {
                             backgroundColor: "#F0F4FF",
                             padding: "10px",
                             marginTop: "15px",
+                            borderRadius: "5px",
                           }}
                         >
                           <Stack>
-                            <Stack spacing={3}>SALES INVOICE</Stack>
+                            <Stack spacing={3} className="customer-title">
+                              SALES INVOICE
+                            </Stack>
                             <span style={{ color: "#333333" }}>
                               {onSalesInvoice ? (
                                 <span style={{ color: "#1976d2" }}>ON</span>
@@ -784,10 +801,13 @@ export default function AddNewUser() {
                             backgroundColor: "#F0F4FF",
                             padding: "10px",
                             marginTop: "15px",
+                            borderRadius: "5px",
                           }}
                         >
                           <Stack>
-                            <Stack spacing={3}>ACTIVITY</Stack>
+                            <Stack spacing={3} className="customer-title">
+                              ACTIVITY
+                            </Stack>
                             <span style={{ color: "#333333" }}>
                               {onActivity ? (
                                 <span style={{ color: "#1976d2" }}>ON</span>
@@ -881,10 +901,13 @@ export default function AddNewUser() {
                             backgroundColor: "#F0F4FF",
                             padding: "10px",
                             marginTop: "15px",
+                            borderRadius: "5px",
                           }}
                         >
                           <Stack>
-                            <Stack spacing={3}>CUSTOMER</Stack>
+                            <Stack spacing={3} className="customer-title">
+                              CUSTOMER
+                            </Stack>
                             <span style={{ color: "#333333" }}>
                               {onCustomer ? (
                                 <span style={{ color: "#1976d2" }}>ON</span>
@@ -977,10 +1000,13 @@ export default function AddNewUser() {
                             backgroundColor: "#F0F4FF",
                             padding: "10px",
                             marginTop: "15px",
+                            borderRadius: "5px",
                           }}
                         >
                           <Stack>
-                            <Stack spacing={3}>COMPOSER</Stack>
+                            <Stack spacing={3} className="customer-title">
+                              COMPOSER
+                            </Stack>
                             <span style={{ color: "#333333" }}>
                               {onComposer ? (
                                 <span style={{ color: "#1976d2" }}>ON</span>
@@ -1073,10 +1099,13 @@ export default function AddNewUser() {
                             backgroundColor: "#F0F4FF",
                             padding: "10px",
                             marginTop: "15px",
+                            borderRadius: "5px",
                           }}
                         >
                           <Stack>
-                            <Stack spacing={3}>CREDIT NOTE</Stack>
+                            <Stack spacing={3} className="customer-title">
+                              CREDIT NOTE
+                            </Stack>
                             <span style={{ color: "#333333" }}>
                               {onCreditNote ? (
                                 <span style={{ color: "#1976d2" }}>ON</span>
@@ -1169,10 +1198,13 @@ export default function AddNewUser() {
                             backgroundColor: "#F0F4FF",
                             padding: "10px",
                             marginTop: "15px",
+                            borderRadius: "5px",
                           }}
                         >
                           <Stack>
-                            <Stack spacing={3}>USER MANAGEMENT</Stack>
+                            <Stack spacing={3} className="customer-title">
+                              USER MANAGEMENT
+                            </Stack>
                             <span style={{ color: "#333333" }}>
                               {onUserManagement ? (
                                 <span style={{ color: "#1976d2" }}>ON</span>
