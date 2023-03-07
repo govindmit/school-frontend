@@ -33,12 +33,12 @@ import { useEffect, useMemo, useState } from "react";
 import { BiShow } from "react-icons/bi";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBin5Fill } from "react-icons/ri";
-import MiniDrawer from "../sidebar";
+import MiniDrawer from "../../sidebar";
 import axios from "axios";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
-import { api_url, base_url, auth_token } from "../api/hello";
+import { api_url, base_url, auth_token } from "../../api/hello";
 import moment from "moment";
 import Image from "next/image";
 import PopupState, {
@@ -57,15 +57,15 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Alert from '@mui/material/Alert';
 import Script from "next/script";
-import getwayService from "../../services/gatewayService"
+import getwayService from "../../../services/gatewayService"
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useForm, SubmitHandler } from "react-hook-form";
 import Paper from "@mui/material/Paper";
 import { useRouter } from "next/router";
-import commmonfunctions from "../../commonFunctions/commmonfunctions";
-import MainFooter from "../commoncmp/mainfooter";
-import PDFService from '../../commonFunctions/invoicepdf';
+import commmonfunctions from "../../../commonFunctions/commmonfunctions";
+import MainFooter from "../../commoncmp/mainfooter";
+import PDFService from '../../../commonFunctions/invoicepdf';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
