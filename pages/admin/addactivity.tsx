@@ -183,8 +183,8 @@ export default function AddNewActivity() {
       setDateError(true);
       setEndDateError(true);
     } else {
-       const sDate = moment(startDate1).format('YYYY.MM.DD');
-        const eDate = moment(endDate1).format('YYYY.MM.DD');
+      const sDate = moment(startDate1).format('YYYY.MM.DD');
+      const eDate = moment(endDate1).format('YYYY.MM.DD');
       // const sDate = moment(startDate1).format("DD/MM/YYYY");
       // const eDate = moment(endDate1).format("DD/MM/YYYY");
       if (type1 === "") {
@@ -216,13 +216,13 @@ export default function AddNewActivity() {
         .then((data) => {
           if (data.status === 201) {
             toast.success("Activity Added Successfully !");
-      setshowspinner(false);
+            setshowspinner(false);
             router.push("/admin/activitylist");
           }
         })
         .catch((err) => {
           router.push("/admin/activitylist");
-      setshowspinner(false);
+          setshowspinner(false);
 
           toast.error(err?.response?.data?.message);
         });
@@ -291,7 +291,7 @@ export default function AddNewActivity() {
                   href="/admin/activitylist"
                   style={{ color: "#1A70C5", textDecoration: "none" }}
                 >
-                <Button variant="contained" startIcon={<ArrowBackIcon />}> Back To List</Button>
+                  <Button variant="contained" startIcon={<ArrowBackIcon />}> Back To List</Button>
                 </Link>
               </div>
             </Stack>
@@ -410,9 +410,9 @@ export default function AddNewActivity() {
                             onChange={(date: any) => setStartDate1(date)}
                           />
                           {errors?.name1?.message !== undefined ||
-                          errors?.type1?.message !== undefined ||
-                          errors?.status1?.message !== undefined ||
-                          dateError === true ? (
+                            errors?.type1?.message !== undefined ||
+                            errors?.status1?.message !== undefined ||
+                            dateError === true ? (
                             <span style={style}>
                               {startDate1 === null
                                 ? "Start Date is Required *"
@@ -441,9 +441,9 @@ export default function AddNewActivity() {
                             onChange={(date: any) => setEndDate1(date)}
                           />
                           {errors?.name1?.message !== undefined ||
-                          errors?.type1?.message !== undefined ||
-                          errors?.status1?.message !== undefined ||
-                          endDateError === true ? (
+                            errors?.type1?.message !== undefined ||
+                            errors?.status1?.message !== undefined ||
+                            endDateError === true ? (
                             <span style={style}>
                               {endDate1 === null
                                 ? "End Date is Required *"
@@ -537,18 +537,18 @@ export default function AddNewActivity() {
                   >
                     <b>Save</b>
                     <span style={{ fontSize: "2px", paddingLeft: "10px" }}>
-                            {spinner === true ? (
-                              <CircularProgress color="inherit" />
-                            ) : (
-                              ""
-                            )}
-                          </span>
+                      {spinner === true ? (
+                        <CircularProgress color="inherit" />
+                      ) : (
+                        ""
+                      )}
+                    </span>
                   </Button>
                 </Grid>
               </form>
             </Card>
           </div>
-          <MainFooter/>
+          <MainFooter />
           <ToastContainer />
         </Box>
       </Box>
