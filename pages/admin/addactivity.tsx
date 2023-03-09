@@ -45,7 +45,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from "moment";
 import dynamic from "next/dynamic";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import MainFooter from "../commoncmp/mainfooter";
 
 const QuillNoSSRWrapper = dynamic(import("react-quill"), {
@@ -183,10 +183,8 @@ export default function AddNewActivity() {
       setDateError(true);
       setEndDateError(true);
     } else {
-      const sDate = moment(startDate1).format('YYYY.MM.DD');
-      const eDate = moment(endDate1).format('YYYY.MM.DD');
-      // const sDate = moment(startDate1).format("DD/MM/YYYY");
-      // const eDate = moment(endDate1).format("DD/MM/YYYY");
+      const sDate = moment(startDate1).format("YYYY.MM.DD");
+      const eDate = moment(endDate1).format("YYYY.MM.DD");
       if (type1 === "") {
         setTypeError("Type field is required!");
       } else {
@@ -203,7 +201,6 @@ export default function AddNewActivity() {
         shortDescription: content,
         description: descontent,
       };
-
       await axios({
         method: "POST",
         url: `${api_url}/addactivity`,
@@ -217,7 +214,9 @@ export default function AddNewActivity() {
           if (data.status === 201) {
             toast.success("Activity Added Successfully !");
             setshowspinner(false);
-            router.push("/admin/activitylist");
+            setTimeout(() => {
+              router.push("/admin/activitylist");
+            }, 1000);
           }
         })
         .catch((err) => {
@@ -291,7 +290,10 @@ export default function AddNewActivity() {
                   href="/admin/activitylist"
                   style={{ color: "#1A70C5", textDecoration: "none" }}
                 >
-                  <Button variant="contained" startIcon={<ArrowBackIcon />}> Back To List</Button>
+                  <Button variant="contained" startIcon={<ArrowBackIcon />}>
+                    {" "}
+                    Back To List
+                  </Button>
                 </Link>
               </div>
             </Stack>
@@ -471,7 +473,11 @@ export default function AddNewActivity() {
                               placeholder="Amount ..."
                               fullWidth
                               size="small"
-                              startAdornment={<InputAdornment position="end">$</InputAdornment>}
+                              startAdornment={
+                                <InputAdornment position="end">
+                                  $
+                                </InputAdornment>
+                              }
                               {...register("price1", {
                                 required: true,
                                 pattern: /^[0-9+-]+$/,
@@ -549,9 +555,9 @@ export default function AddNewActivity() {
             </Card>
           </div>
           <MainFooter />
-          <ToastContainer />
         </Box>
       </Box>
+      <ToastContainer />
     </>
   );
 }

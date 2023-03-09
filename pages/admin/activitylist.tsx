@@ -44,6 +44,7 @@ import { useRouter } from "next/router";
 import ConfirmBox from "../commoncmp/confirmbox";
 import commmonfunctions from "../../commonFunctions/commmonfunctions";
 import MainFooter from "../commoncmp/mainfooter";
+import Loader from "../commoncmp/myload";
 
 function a11yProps(index: number) {
   return {
@@ -110,6 +111,7 @@ export default function ActivityList() {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const [activeTab, setActiveTab] = useState("");
+  const [myload, setmyload] = useState(false);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -147,6 +149,7 @@ export default function ActivityList() {
   const url = `${api_url}/getActivity`;
   const fetchData = async () => {
     try {
+      setmyload(true);
       const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -159,8 +162,10 @@ export default function ActivityList() {
       setFullactivites(json.data);
       setsearchdata(json.data);
       setAll(json.data.length);
+      setmyload(false);
     } catch (error: any) {
       console.log("error", error);
+      setmyload(false);
     }
   };
 
@@ -467,6 +472,7 @@ export default function ActivityList() {
                   ACTIVITY
                 </Typography>
               </Stack>
+
               {(custpermit && custpermit.canAdd === true) || roleid === 1 ? (
                     <Link href="/admin/addactivity" 
                     style={{ color: "#1A70C5", textDecoration: "none" }}
@@ -486,6 +492,7 @@ export default function ActivityList() {
               )}
             </Stack>
             {/*bread cump */}
+            {myload ? <Loader /> :
             <Card
               style={{ margin: "10px", padding: "15px" }}
               className="box-shadow"
@@ -894,6 +901,7 @@ export default function ActivityList() {
                 </Stack>
               </TableContainer>
             </Card>
+}
           </div>
           <MainFooter/>
         </Box>

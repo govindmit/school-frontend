@@ -151,7 +151,7 @@ export default function ActivityList() {
   const [activityId, setActivityId] = React.useState<any>("");
   const [paymentPayMethod, setPaymentPayMethod] = React.useState<any>("");
   const [orderId, setorderId] = React.useState("");
-  const [myload, setmyload] = useState(false)
+  const [myload, setmyload] = useState(false);
 
   const [openThank, setOpenThank] = React.useState(false);
   const handleThanksOpen = () => setOpenThank(true);
@@ -805,11 +805,11 @@ export default function ActivityList() {
                               <span style={{ display: "flex" }}>
                                 <span style={{ position: "absolute" }}>
                                   <h4 className="h4heading">Start Date</h4>
-                                  <p className="actpara paradate"> {moment(startDate).format("MMM DD, YYYY")}</p>
+                                  <p className="actpara paradate"> {moment(startDate,"YYYY.MM.DD").format("MMM DD, YYYY")}</p>
                                 </span>
                                 <span>
                                   <h4 className="h4heading headingmargin">End Date</h4>
-                                  <p className="actpara headingmargin paradate1">{moment(endDate).format("MMM DD, YYYY")}</p>
+                                  <p className="actpara headingmargin paradate1">{moment(endDate,"YYYY.MM.DD").format("MMM DD, YYYY")}</p>
                                 </span>
                               </span>
                               <h4 className="h4heading">Amount</h4>
