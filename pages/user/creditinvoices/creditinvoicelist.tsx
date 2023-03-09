@@ -73,6 +73,7 @@ export default function UserInvoices() {
         setValue(newValue);
     };
     const router = useRouter();
+    let logintoken: any;
 
     // verify user login and previlegs
     useEffect(() => {
@@ -85,6 +86,16 @@ export default function UserInvoices() {
             if (res && res?.id) {
                 setcustid(res?.id);
                 GetCreditReqByUser(res.id);
+            }
+        });
+        logintoken = localStorage.getItem("QIS_loginToken");
+        if (logintoken === undefined || logintoken === null) {
+            router.push("/");
+        }
+        commmonfunctions.GivenPermition().then((res) => {
+            if (res.roleId === 2) {
+            } else {
+                router.push("/");
             }
         });
     }, []);

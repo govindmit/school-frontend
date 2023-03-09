@@ -180,22 +180,19 @@ export default function ActivityList() {
   let logintoken: any;
   const router = useRouter();
   React.useEffect(() => {
+    commmonfunctions.VerifyLoginUser().then(res => {
+      if (res.exp * 1000 < Date.now()) {
+        localStorage.removeItem('QIS_loginToken');
+      }
+    });
     logintoken = localStorage.getItem("QIS_loginToken");
     if (logintoken === undefined || logintoken === null) {
       router.push("/");
     }
-
     commmonfunctions.GivenPermition().then((res) => {
-      if (res.roleId == 1) {
-        //router.push("/userprofile");
-      } else if (res.roleId > 1) {
-        // commmonfunctions.ManageActivity().then((res) => {
-        //   if (!res) {
-        // router.push("/userprofile");
-        //   } else {
-        //     console.log('@@@@@@@@@@',res);
-        //   }
-        // });
+      if (res.roleId === 2) {
+      } else {
+        router.push("/");
       }
     });
   }, []);

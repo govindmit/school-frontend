@@ -297,7 +297,6 @@ export default function Guardians() {
       .then((res) => {
         setUser(res?.data.data);
         setInvoice(res?.data.data);
-
         setsearchdata(res?.data.data);
       })
       .catch((err) => { });
@@ -597,7 +596,7 @@ export default function Guardians() {
     }
     return key;
   };
-  
+
   const insertRemainingNotesAmount = async (reqData: any) => {
     //  const reqData = {
     //   customerId: customerId,
@@ -632,7 +631,6 @@ export default function Guardians() {
   const handleAll = () => {
     setDisable(false);
     setPaidDisable(false);
-
     getUser();
   };
   const handlePaid = () => {

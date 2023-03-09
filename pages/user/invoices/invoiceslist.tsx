@@ -198,15 +198,23 @@ export default function UserInvoices() {
 
     // verify user login and previlegs
     useEffect(() => {
+        let login_token: any;
         commmonfunctions.VerifyLoginUser().then(res => {
             if (res.exp * 1000 < Date.now()) {
                 localStorage.removeItem('QIS_loginToken');
-                localStorage.removeItem('QIS_User');
-                router.push("/");
             }
             if (res && res?.id) {
                 setcustid(res.id);
                 Invoices(res.id);
+            }
+        });
+        login_token = localStorage.getItem("QIS_loginToken");
+        if (login_token === undefined || login_token === null) {
+            router.push("/");
+        }
+        commmonfunctions.GivenPermition().then(res => {
+            if (res.roleId !== 2) {
+                router.push("/");
             }
         });
     }, []);

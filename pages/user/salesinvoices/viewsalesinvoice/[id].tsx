@@ -23,6 +23,7 @@ import moment from "moment";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import RequestFormCmp from "../requestFormCmp";
 import { ToastContainer } from "react-toastify";
+import commmonfunctions from "../../../../commonFunctions/commmonfunctions";
 
 
 export default function ViewCreditNotes(props: any) {
@@ -34,10 +35,21 @@ export default function ViewCreditNotes(props: any) {
     // verify user login and previlegs
     let logintoken: any;
     useEffect(() => {
+        commmonfunctions.VerifyLoginUser().then(res => {
+            if (res.exp * 1000 < Date.now()) {
+                localStorage.removeItem('QIS_loginToken');
+            }
+        });
         logintoken = localStorage.getItem("QIS_loginToken");
         if (logintoken === undefined || logintoken === null) {
             router.push("/");
         }
+        commmonfunctions.GivenPermition().then((res) => {
+            if (res.roleId === 2) {
+            } else {
+                router.push("/");
+            }
+        });
         fetchData();
     }, []);
 

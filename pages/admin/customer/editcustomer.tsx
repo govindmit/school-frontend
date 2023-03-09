@@ -23,14 +23,13 @@ import {
   Stack,
 } from "@mui/material";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { api_url, auth_token } from "../api/hello";
-import AddCustomerCmp from "../commoncmp/addCustomerCmp";
+import { api_url, auth_token } from "../../api/hello";
+import AddCustomerCmp from "../../commoncmp/addCustomerCmp";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import CloseIcon from "@mui/icons-material/Close";
 import styled from "@emotion/styled";
-import commmonfunctions from "../../commonFunctions/commmonfunctions";
 const style = {
   color: "red",
   fontSize: "12px",
@@ -109,35 +108,40 @@ type FormValues = {
   contactName: string;
   printUs: string;
   parentId: number;
-  userRole: String;
   agegroup: number;
-  attentionto: number;
-  alternatenumber: number;
+  pregeneratedid: string;
   address1: string;
   address2: string;
   city: string;
   state: string;
   postalcode: number;
+  attentionto: number;
+  alternatenumber: number;
 };
 
-export default function AddCustomer({
+export default function EditCustomer({
+  id,
   open,
-  closeDialog,
+  closeDialogedit,
 }: {
+  id: any;
   open: any;
-  closeDialog: any;
+  closeDialogedit: any;
 }) {
-  const [value, setValue] = React.useState(0);
+  const [selvalue, setselValue] = React.useState(0);
   const [spinner, setshowspinner] = React.useState(false);
-  const [btnDisabled, setBtnDisabled] = React.useState(false);
   const [opens, setOpen] = React.useState(open);
-  const [custtype, setcusttype] = React.useState<any>([]);
-  const [parentId, setparentId] = React.useState<any>(0);
   const [parentid, setparentid] = React.useState(0);
   const [parentname, setparentname] = React.useState<any>("");
-  const [cretadeBy, setcretadeBy] = React.useState(0);
+  const [custtype, setcusttype] = React.useState<any>([]);
+  const [btnDisabled, setBtnDisabled] = React.useState(false);
+  const [checked, setChecked] = React.useState(false);
+  const [status, setstatus] = React.useState<any>("");
+  const [agegrp, setagegrp] = React.useState<any>("");
+  const [custType, setcustType] = React.useState<any>("");
+  const [custAdd, setcustAdd] = React.useState<any>("");
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
+    setselValue(newValue);
   };
   const [Check, setCheck] = React.useState(false);
   if (Check === true) {
@@ -150,12 +154,20 @@ export default function AddCustomer({
     };
   }
 
+  if (parentid > 0) {
+    var hideshowstyle = {
+      display: "block",
+    };
+  }
+
   React.useEffect(() => {
     getType();
-    commmonfunctions.VerifyLoginUser().then(res => {
-      setcretadeBy(res.id);
-    });
-  }, []);
+    getUserDet();
+    getParentDet();
+    if (parentid > 0) {
+      setChecked(true);
+    }
+  }, [status]);
 
   //get type
   const getType = async () => {
@@ -173,13 +185,66 @@ export default function AddCustomer({
       console.log("error", error);
     }
   };
+  //get user details
+  const getUserDet = async () => {
+    try {
+      const response = await fetch(`${api_url}/getuserdetails/${id}`, {
+        method: "GET",
+        headers: {
+          Authorization: auth_token,
+        },
+      });
+      const res = await response.json();
+      setValue("name", res.data[0].name);
+      setValue("email1", res.data[0].email1);
+      setValue("email2", res.data[0].email2);
+      setValue("number", res.data[0].phone1);
+      setValue("alternatenumber", res.data[0].phone2 === 0 ? "" : res.data[0].phone2);
+      setValue("contactName", res.data[0].contactName);
+      setValue("printUs", res.data[0].printus);
+      setValue("pregeneratedid", res.data[0].generatedId);
+      setparentid(res.data[0].parentId);
+      setstatus(res.data[0].status);
+      setcustType(res.data[0].typeId);
+      setagegrp(res.data[0].agegroup);
+      setValue("pregeneratedid", res.data[0].generatedId);
+      const addr = JSON.parse(res.data[0]?.address);
+      setcustAdd(addr);
+      setValue("address1", custAdd?.add1);
+      setValue("address2", custAdd?.add2);
+      setValue("city", custAdd?.city);
+      setValue("state", custAdd?.state);
+      setValue("postalcode", custAdd?.postalcode);
+      setValue("attentionto", res.data[0]?.attentionTo);
+
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+  //get parent
+  const getParentDet = async () => {
+    try {
+      const response = await fetch(`${api_url}/getuserbypid/${parentid}`, {
+        method: "GET",
+        headers: {
+          Authorization: auth_token,
+        },
+      });
+      const res = await response.json();
+      setparentname(res.data[0].name);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<FormValues>();
 
+  // submit data
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setshowspinner(true);
     setBtnDisabled(true);
@@ -194,72 +259,69 @@ export default function AddCustomer({
       name: data.name,
       email1: data.email1,
       email2: data.email2,
-      typeId: data.customertype,
       phone1: data.number,
       contactName: data.contactName,
       printUs: data.printUs,
-      status: data.status,
+      status: data.status == 1 ? "1" : data.status == 0 ? "0" : "",
+      typeId: data.customertype,
+      parentId: parentid,
       agegroup: data.agegroup,
+      pregeneratedid: data.pregeneratedid,
+      updatedBy: 1,
       attentionto: data.attentionto,
       phone2: data.alternatenumber,
       useraddress: address,
-      roleId: 2,
-      parentId: parentId,
-      userRole: "customer",
-      createdby: cretadeBy
     };
     await axios({
-      method: "POST",
-      url: `${api_url}/addUser`,
+      method: "PUT",
+      url: `${api_url}/edituser/${id}`,
       data: reqData,
       headers: {
         Authorization: auth_token,
       },
     })
-      .then((data: any) => {
-        if (data) {
+      .then((data) => {
+        if (data.status === 200) {
           setshowspinner(false);
           setBtnDisabled(false);
-          toast.success("Customer Added Successfully !");
-          closeDialog(false);
+          toast.success("Customer Updated Successfully !");
           setTimeout(() => {
             setOpen(false);
           }, 2000);
+          closeDialogedit(data.status);
         }
       })
       .catch((error) => {
-        toast.error("Email Already Registered !");
+        toast.error("Email Allready Registred !");
         setshowspinner(false);
         setBtnDisabled(false);
       });
   };
 
   const closeDialogs = () => {
-    closeDialog(false);
+    closeDialogedit(false);
     setOpen(false);
   };
 
   const Getdata = (item: any) => {
-    if (item) {
-      setparentId(item.id);
-    }
+    setparentid(item && item.id);
   };
 
   return (
     <BootstrapDialog
-      onClose={closeDialog}
+      onClose={closeDialogs}
       aria-labelledby="customized-dialog-title"
       open={opens}
     >
       <BootstrapDialogTitle id="customized-dialog-title" onClose={closeDialogs}>
-        New Customer
+        Edit Customer
       </BootstrapDialogTitle>
       <DialogContent dividers>
         <Box sx={{ width: "100%" }}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
               <Tabs
-                value={value}
+                value={selvalue}
                 onChange={handleChange}
                 aria-label="basic tabs example"
               >
@@ -268,7 +330,7 @@ export default function AddCustomer({
                 <Tab label="Options" {...a11yProps(2)} />
               </Tabs>
             </Box>
-            <TabPanel value={value} index={0}>
+            <TabPanel value={selvalue} index={0}>
               <Grid>
                 <Stack>
                   <Grid container spacing={2}>
@@ -292,13 +354,19 @@ export default function AddCustomer({
                           <span style={style}>Field is Required *</span>
                         )}
                         {errors.name?.type === "validate" && (
-                          <span style={style}>Name can't be blank *</span>
+                          <span style={style}>Field can't be blank *</span>
                         )}
                       </Stack>
+                      <FormGroup>
+                        <FormControlLabel
+                          control={<Checkbox defaultChecked />}
+                          label="This is an individual"
+                        />
+                      </FormGroup>
                     </Grid>
                   </Grid>
                 </Stack>
-                <Stack style={{ marginTop: "15px" }}>
+                <Stack style={{ marginTop: "8px" }}>
                   <Grid container spacing={2}>
                     <Grid item xs={12} md={6}>
                       <Stack spacing={1}>
@@ -313,7 +381,7 @@ export default function AddCustomer({
                           size="small"
                           {...register("number", {
                             required: true,
-                            pattern: /^[0-9+-]+$/,
+                            pattern: /^[6-9]\d{9}$/,
                             minLength: 10,
                             maxLength: 10,
                           })}
@@ -346,18 +414,12 @@ export default function AddCustomer({
                           {...register("email1", {
                             required: true,
                             pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                            validate: (value) => { return !!value.trim() }
                           })}
                         />
                         {errors.email1?.type === "required" && (
                           <span style={style}>Field is Required *</span>
                         )}
                         {errors.email1?.type === "pattern" && (
-                          <span style={style}>
-                            Please enter a valid email address *
-                          </span>
-                        )}
-                        {errors.email1?.type === "validate" && (
                           <span style={style}>
                             Please enter a valid email address *
                           </span>
@@ -372,16 +434,20 @@ export default function AddCustomer({
                       <Stack spacing={1}>
                         <InputLabel htmlFor="name">Status</InputLabel>
                         <FormControl fullWidth>
-                          <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            defaultValue={1}
-                            size="small"
-                            {...register("status")}
-                          >
-                            <MenuItem value={1}>Active</MenuItem>
-                            <MenuItem value={0}>InActive</MenuItem>
-                          </Select>
+                          {status !== "" ? (
+                            <Select
+                              labelId="demo-simple-select-label"
+                              id="demo-simple-select"
+                              size="small"
+                              {...register("status")}
+                              defaultValue={status}
+                            >
+                              <MenuItem value={1}>Active</MenuItem>
+                              <MenuItem value={0}>InActive</MenuItem>
+                            </Select>
+                          ) : (
+                            "loading......"
+                          )}
                         </FormControl>
                       </Stack>
                     </Grid>
@@ -402,7 +468,7 @@ export default function AddCustomer({
                 </Stack>
               </Grid>
             </TabPanel>
-            <TabPanel value={value} index={1}>
+            <TabPanel value={selvalue} index={1}>
               <Grid>
                 <Stack style={{ marginTop: "20px" }}>
                   <Grid container spacing={2}>
@@ -481,7 +547,7 @@ export default function AddCustomer({
                     </Grid>
                     <Grid item xs={12} md={4}>
                       <Stack spacing={1}>
-                        <InputLabel htmlFor="name">State/Province</InputLabel>
+                        <InputLabel htmlFor="name">State</InputLabel>
                         <OutlinedInput
                           type="text"
                           id="name"
@@ -509,7 +575,7 @@ export default function AddCustomer({
                 </Stack>
               </Grid>
             </TabPanel>
-            <TabPanel value={value} index={2}>
+            <TabPanel value={selvalue} index={2}>
               <Grid>
                 <Stack>
                   <Grid container spacing={2}>
@@ -521,7 +587,7 @@ export default function AddCustomer({
                             labelId="demo-simple-select-label"
                             id="demo-simple-select"
                             size="small"
-                            defaultValue={0}
+                            defaultValue={custType}
                             {...register("customertype")}
                           >
                             <MenuItem value={0}>Individual</MenuItem>
@@ -547,6 +613,7 @@ export default function AddCustomer({
                           control={
                             <Checkbox
                               onChange={(e) => setCheck(e.target.checked)}
+                              defaultChecked={checked}
                             />
                           }
                           label="Belongs to a parent customer"
@@ -554,7 +621,11 @@ export default function AddCustomer({
                       </FormGroup>
                       <Stack spacing={1} style={hideshowstyle}>
                         <InputLabel htmlFor="name"></InputLabel>
-                        <AddCustomerCmp Data={Getdata} PId={parentid} pname={parentname} />
+                        <AddCustomerCmp
+                          Data={Getdata}
+                          PId={parentid}
+                          pname={parentname}
+                        />
                       </Stack>
                     </Grid>
                   </Grid>
@@ -572,13 +643,10 @@ export default function AddCustomer({
                           placeholder="Contact Name..."
                           fullWidth
                           size="small"
-                          {...register("contactName", { required: true, validate: (value) => { return !!value.trim() } })}
+                          {...register("contactName", { required: true })}
                         />
-                        {errors.contactName?.type === "required" && (
+                        {errors.contactName && (
                           <span style={style}>Field is Required *</span>
-                        )}
-                        {errors.contactName?.type === "validate" && (
-                          <span style={style}>Field can't be blank *</span>
                         )}
                       </Stack>
                     </Grid>
@@ -593,13 +661,10 @@ export default function AddCustomer({
                           placeholder="Print Us..."
                           fullWidth
                           size="small"
-                          {...register("printUs", { required: true, validate: (value) => { return !!value.trim() } })}
+                          {...register("printUs", { required: true })}
                         />
-                        {errors.printUs?.type === "required" && (
+                        {errors.printUs && (
                           <span style={style}>Field is Required *</span>
-                        )}
-                        {errors.printUs?.type === "validate" && (
-                          <span style={style}>Field can't be blank *</span>
                         )}
                       </Stack>
                     </Grid>
@@ -611,27 +676,29 @@ export default function AddCustomer({
                       <Stack spacing={1}>
                         <InputLabel htmlFor="name">Age Group</InputLabel>
                         <FormControl fullWidth>
-                          <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            defaultValue={1}
-                            size="small"
-                            {...register("agegroup")}
-                          >
-                            <MenuItem value={1}>FS1</MenuItem>
-                            <MenuItem value={2}>FS2</MenuItem>
-                            <MenuItem value={3}>FS3</MenuItem>
-                            <MenuItem value={4}>FS4</MenuItem>
-                            <MenuItem value={5}>FS5</MenuItem>
-                            <MenuItem value={6}>FS6</MenuItem>
-                            <MenuItem value={7}>FS7</MenuItem>
-                            <MenuItem value={8}>FS8</MenuItem>
-                            <MenuItem value={9}>FS9</MenuItem>
-                            <MenuItem value={10}>FS10</MenuItem>
-                            <MenuItem value={11}>FS11</MenuItem>
-                            <MenuItem value={12}>FS12</MenuItem>
-                            <MenuItem value={13}>FS13</MenuItem>
-                          </Select>
+                          {status !== "" ? (
+                            <Select
+                              labelId="demo-simple-select-label"
+                              id="demo-simple-select"
+                              defaultValue={agegrp}
+                              size="small"
+                              {...register("agegroup")}
+                            >
+                              <MenuItem value={1}>FS1</MenuItem>
+                              <MenuItem value={2}>FS2</MenuItem>
+                              <MenuItem value={3}>FS3</MenuItem>
+                              <MenuItem value={4}>FS4</MenuItem>
+                              <MenuItem value={5}>FS5</MenuItem>
+                              <MenuItem value={6}>FS6</MenuItem>
+                              <MenuItem value={7}>FS7</MenuItem>
+                              <MenuItem value={8}>FS8</MenuItem>
+                              <MenuItem value={9}>FS9</MenuItem>
+                              <MenuItem value={10}>FS10</MenuItem>
+                              <MenuItem value={11}>FS11</MenuItem>
+                              <MenuItem value={12}>FS12</MenuItem>
+                              <MenuItem value={13}>FS13</MenuItem>
+                            </Select>) : ("loadinf...")
+                          }
                         </FormControl>
                       </Stack>
                     </Grid>
@@ -648,7 +715,7 @@ export default function AddCustomer({
                 autoFocus
                 disabled={btnDisabled}
               >
-                <b>Create</b>
+                <b>Update</b>
                 <span style={{ fontSize: "2px", paddingLeft: "10px" }}>
                   {spinner === true ? <CircularProgress color="inherit" /> : ""}
                 </span>

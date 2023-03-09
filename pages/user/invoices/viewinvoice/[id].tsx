@@ -23,6 +23,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import moment from "moment";
 import getwayService from "../../../../services/gatewayService"
 import Loader from "../../../commoncmp/myload";
+import commmonfunctions from "../../../../commonFunctions/commmonfunctions";
 
 export interface DialogTitleProps {
     id: string;
@@ -100,6 +101,22 @@ export default function Guardians() {
     const [myload, setmyload] = useState(false)
 
     useEffect(() => {
+        let logintoken: any;
+        commmonfunctions.VerifyLoginUser().then(res => {
+            if (res.exp * 1000 < Date.now()) {
+                localStorage.removeItem('QIS_loginToken');
+            }
+        });
+        logintoken = localStorage.getItem("QIS_loginToken");
+        if (logintoken === undefined || logintoken === null) {
+            router.push("/");
+        }
+        commmonfunctions.GivenPermition().then((res) => {
+            if (res.roleId === 2) {
+            } else {
+                router.push("/");
+            }
+        });
         invoiceDataById();
         getItem();
     }, []);

@@ -21,16 +21,16 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import MiniDrawer from "../../sidebar";
+import MiniDrawer from "../../../sidebar";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import styled from "@emotion/styled";
-import UserService from '../../../commonFunctions/servives'
+import UserService from '../../../../commonFunctions/servives'
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
-import { api_url, auth_token } from "../../api/hello";
+import { api_url, auth_token } from "../../../api/hello";
 import { useRouter } from "next/router";
-import MainFooter from "../../commoncmp/mainfooter";
+import MainFooter from "../../../commoncmp/mainfooter";
 const Item = styled(Paper)(({ theme }) => ({
     p: 10,
 }));
@@ -292,7 +292,7 @@ export default function EditUser(props: any) {
                     setshowspinner(false);
                     setBtnDisabled(false);
                     setTimeout(() => {
-                        router.push("/usermanagement/users");
+                        router.push("/admin/usermanagement/users");
                     }, 2000);
                 }
             })
@@ -321,7 +321,7 @@ export default function EditUser(props: any) {
                                         <Link
                                             key="1"
                                             color="inherit"
-                                            href="/usermanagement/users"
+                                            href="/admin/usermanagement/users"
                                             style={{ color: "#1A70C5", textDecoration: "none" }}
                                         >
                                             Home
