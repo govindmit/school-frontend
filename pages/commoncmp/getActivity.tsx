@@ -1,10 +1,7 @@
 import { Autocomplete, Button, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
-
 import { api_url, auth_token } from "../api/hello";
-import AddNewParent from "../customer/addNewParent";
-
-export default function AddActivity({ Data, PId, pname }:  any) {
+export default function AddActivity({ Data, PId, pname }: any) {
   const [users, setUsers] = useState<any>([]);
   const [opens, setOpens] = React.useState(false);
   const [inputValue, setInputValue] = useState("");
@@ -29,23 +26,15 @@ export default function AddActivity({ Data, PId, pname }:  any) {
       console.log("error", error);
     }
   };
-  const option: { id: number; title: string ; price:number}[] = [];
+  const option: { id: number; title: string; price: number }[] = [];
   users &&
     users.map((data: any, key: any) => {
       return option.push({
         id: data.id,
         title: data.name,
-        price:data.price
+        price: data.price
       });
     });
-  const handleClickOpen = () => {
-    setOpens(true);
-  };
-  const closePoP = (item: any) => {
-    setOpens(false);
-    getUser();
-  };
-
   return (
     <>
       <Autocomplete
@@ -53,7 +42,7 @@ export default function AddActivity({ Data, PId, pname }:  any) {
         value={value}
         inputValue={inputValue}
         onChange={(event, newValue) => {
-          
+
           setValue(newValue);
           Data(newValue);
         }}
@@ -69,13 +58,13 @@ export default function AddActivity({ Data, PId, pname }:  any) {
             variant="outlined"
             placeholder="Search or Select Service"
 
-           
+
           />
         )}
         noOptionsText={
-              <span style={{color:"red"}}>
-                The service doesn't exist with this name. 
-              </span>
+          <span style={{ color: "red" }}>
+            The service doesn't exist with this name.
+          </span>
         }
       />
     </>

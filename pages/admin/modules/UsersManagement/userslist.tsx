@@ -23,19 +23,19 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import MiniDrawer from "../../sidebar";
-import { api_url, auth_token } from "../../api/hello";
+import MiniDrawer from "../../../sidebar";
+import { api_url, auth_token } from "../../../api/hello";
 import { BiShow } from "react-icons/bi";
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBin5Fill } from "react-icons/ri";
-import ConfirmBox from "../../commoncmp/confirmbox";
+import ConfirmBox from "../../../commoncmp/confirmbox";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
-import commmonfunctions from "../../../commonFunctions/commmonfunctions";
-import MainFooter from "../../commoncmp/mainfooter";
+import commmonfunctions from "../../../../commonFunctions/commmonfunctions";
+import MainFooter from "../../../commoncmp/mainfooter";
 
 function a11yProps(index: number) {
     return {
@@ -73,11 +73,12 @@ export default function UsersList() {
     const [searchdata, setsearchdata] = useState([]);
     const [deleteConfirmBoxOpen, setdeleteConfirmBoxOpen] = React.useState(false);
     const [value, setValue] = React.useState(0);
-
+    const router = useRouter();
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
 
+    let logintoken: any;
     useEffect(() => {
         // verify user login and previlegs
         logintoken = localStorage.getItem("QIS_loginToken");
@@ -91,16 +92,6 @@ export default function UsersList() {
             }
         })
         getUser();
-    }, []);
-
-    // verify user login
-    let logintoken: any;
-    const router = useRouter();
-    React.useEffect(() => {
-        logintoken = localStorage.getItem("QIS_loginToken");
-        if (logintoken === undefined || logintoken === null) {
-            router.push("/");
-        }
     }, []);
 
     //get customers(users) list
@@ -233,7 +224,7 @@ export default function UsersList() {
                                 variant="contained"
                                 size="small"
                                 sx={{ width: 150 }}
-                                onClick={() => router.push("/usermanagement/addnewuser")}
+                                onClick={() => router.push("/admin/usermanagement/addnewuser")}
                             >
                                 <b>New User</b>
                             </Button>
@@ -353,7 +344,7 @@ export default function UsersList() {
                                                             >
                                                                 <IconButton className="action-view">
                                                                     <Link
-                                                                        href={`/usermanagement/viewuser/${dataitem.id}`}
+                                                                        href={`/admin/usermanagement/viewuser/${dataitem.id}`}
                                                                         style={{
                                                                             color: "#26CEB3",
                                                                         }}
@@ -366,7 +357,7 @@ export default function UsersList() {
 
                                                                 >
                                                                     <Link
-                                                                        href={`/usermanagement/edituser/${dataitem.id}`}
+                                                                        href={`/admin/usermanagement/edituser/${dataitem.id}`}
                                                                         style={{
                                                                             color: "#26CEB3",
                                                                         }}

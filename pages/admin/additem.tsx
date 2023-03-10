@@ -31,7 +31,7 @@ import Typography from "@mui/material/Typography";
 import { Button, OutlinedInput } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import ETable from "../table";
-import AddNewCustomer from "../customer/addNewCustomer";
+import AddNewCustomer from "./customer/addNewCustomer";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -279,7 +279,7 @@ export default function AddItem({
           closeD(res);
         }, 2000);
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
   const getItem = async () => {
     await axios({
@@ -293,7 +293,7 @@ export default function AddItem({
       .then((res) => {
         setItem(res?.data.data);
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
 
   return (

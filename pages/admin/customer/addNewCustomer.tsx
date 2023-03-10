@@ -23,14 +23,14 @@ import {
   Stack,
 } from "@mui/material";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { api_url, auth_token } from "../api/hello";
-import AddCustomerCmp from "../commoncmp/addCustomerCmp";
+import { api_url, auth_token } from "../../api/hello";
+import AddCustomerCmp from "../../commoncmp/addCustomerCmp";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useRouter } from "next/router";
 import CloseIcon from "@mui/icons-material/Close";
 import styled from "@emotion/styled";
+import commmonfunctions from "../../../commonFunctions/commmonfunctions";
 const style = {
   color: "red",
   fontSize: "12px",
@@ -75,7 +75,6 @@ interface TabPanelProps {
 
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
-
   return (
     <div
       role="tabpanel"
@@ -110,6 +109,15 @@ type FormValues = {
   contactName: string;
   printUs: string;
   parentId: number;
+  userRole: String;
+  agegroup: number;
+  attentionto: number;
+  alternatenumber: number;
+  address1: string;
+  address2: string;
+  city: string;
+  state: string;
+  postalcode: number;
 };
 
 export default function AddCustomer({
@@ -119,12 +127,15 @@ export default function AddCustomer({
   open: any;
   closeDialog: any;
 }) {
-  const [value, setValue] = React.useState<any>(0);
+  const [value, setValue] = React.useState(0);
+  const [spinner, setshowspinner] = React.useState(false);
+  const [btnDisabled, setBtnDisabled] = React.useState(false);
+  const [opens, setOpen] = React.useState(open);
+  const [custtype, setcusttype] = React.useState<any>([]);
+  const [parentId, setparentId] = React.useState<any>(0);
   const [parentid, setparentid] = React.useState(0);
   const [parentname, setparentname] = React.useState<any>("");
-  const [spinner, setshowspinner] = React.useState(false);
-  const [custtype, setcusttype] = React.useState<any>([]);
-  const [btnDisabled, setBtnDisabled] = React.useState(false);
+  const [cretadeBy, setcretadeBy] = React.useState(0);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -141,6 +152,9 @@ export default function AddCustomer({
 
   React.useEffect(() => {
     getType();
+    commmonfunctions.VerifyLoginUser().then(res => {
+      setcretadeBy(res.id);
+    });
   }, []);
 
   //get type
@@ -163,13 +177,19 @@ export default function AddCustomer({
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm<FormValues>();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setshowspinner(true);
     setBtnDisabled(true);
+    const address = {
+      add1: data.address1,
+      add2: data.address2,
+      city: data.city,
+      state: data.state,
+      postalcode: data.postalcode,
+    };
     const reqData = {
       name: data.name,
       email1: data.email1,
@@ -178,10 +198,16 @@ export default function AddCustomer({
       phone1: data.number,
       contactName: data.contactName,
       printUs: data.printUs,
+      status: data.status,
+      agegroup: data.agegroup,
+      attentionto: data.attentionto,
+      phone2: data.alternatenumber,
+      useraddress: address,
       roleId: 2,
-      parentId: value.id,
+      parentId: parentId,
+      userRole: "customer",
+      createdby: cretadeBy
     };
-    console.log(reqData);
     await axios({
       method: "POST",
       url: `${api_url}/addUser`,
@@ -190,30 +216,42 @@ export default function AddCustomer({
         Authorization: auth_token,
       },
     })
-      .then((data) => {
-        if (data.status === 201) {
+      .then((data: any) => {
+        if (data) {
           setshowspinner(false);
           setBtnDisabled(false);
           toast.success("Customer Added Successfully !");
-          reset();
+          closeDialog(false);
+          setTimeout(() => {
+            setOpen(false);
+          }, 2000);
         }
       })
       .catch((error) => {
-        toast.error("Email Allready Registred !");
+        toast.error("Email Already Registered !");
         setshowspinner(false);
         setBtnDisabled(false);
       });
   };
-  const Getdata = (item: any) => {
-    setparentid(item.id);
+
+  const closeDialogs = () => {
+    closeDialog(false);
+    setOpen(false);
   };
+
+  const Getdata = (item: any) => {
+    if (item) {
+      setparentId(item.id);
+    }
+  };
+
   return (
     <BootstrapDialog
       onClose={closeDialog}
       aria-labelledby="customized-dialog-title"
-      open={open}
+      open={opens}
     >
-      <BootstrapDialogTitle id="customized-dialog-title" onClose={closeDialog}>
+      <BootstrapDialogTitle id="customized-dialog-title" onClose={closeDialogs}>
         New Customer
       </BootstrapDialogTitle>
       <DialogContent dividers>
@@ -247,22 +285,20 @@ export default function AddCustomer({
                           size="small"
                           {...register("name", {
                             required: true,
+                            validate: (value) => { return !!value.trim() }
                           })}
                         />
-                        {errors.name && (
-                          <span style={style}>Field is Required **</span>
+                        {errors.name?.type === "required" && (
+                          <span style={style}>Field is Required *</span>
+                        )}
+                        {errors.name?.type === "validate" && (
+                          <span style={style}>Name can't be blank *</span>
                         )}
                       </Stack>
-                      <FormGroup>
-                        <FormControlLabel
-                          control={<Checkbox defaultChecked />}
-                          label="This is an individual"
-                        />
-                      </FormGroup>
                     </Grid>
                   </Grid>
                 </Stack>
-                <Stack style={{ marginTop: "8px" }}>
+                <Stack style={{ marginTop: "15px" }}>
                   <Grid container spacing={2}>
                     <Grid item xs={12} md={6}>
                       <Stack spacing={1}>
@@ -277,10 +313,22 @@ export default function AddCustomer({
                           size="small"
                           {...register("number", {
                             required: true,
+                            pattern: /^[0-9+-]+$/,
+                            minLength: 10,
+                            maxLength: 10,
                           })}
                         />
-                        {errors.number && (
-                          <span style={style}>Field is Required **</span>
+                        {errors.number?.type === "required" && (
+                          <span style={style}>Field is Required *</span>
+                        )}
+                        {errors.number?.type === "pattern" && (
+                          <span style={style}>Enter Valid Number *</span>
+                        )}
+                        {errors.number?.type === "minLength" && (
+                          <span style={style}>Enter Valid Number *</span>
+                        )}
+                        {errors.number?.type === "maxLength" && (
+                          <span style={style}>Enter Valid Number *</span>
                         )}
                       </Stack>
                     </Grid>
@@ -297,10 +345,22 @@ export default function AddCustomer({
                           size="small"
                           {...register("email1", {
                             required: true,
+                            pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                            validate: (value) => { return !!value.trim() }
                           })}
                         />
-                        {errors.email1 && (
-                          <span style={style}>Field is Required **</span>
+                        {errors.email1?.type === "required" && (
+                          <span style={style}>Field is Required *</span>
+                        )}
+                        {errors.email1?.type === "pattern" && (
+                          <span style={style}>
+                            Please enter a valid email address *
+                          </span>
+                        )}
+                        {errors.email1?.type === "validate" && (
+                          <span style={style}>
+                            Please enter a valid email address *
+                          </span>
                         )}
                       </Stack>
                     </Grid>
@@ -352,9 +412,10 @@ export default function AddCustomer({
                         <OutlinedInput
                           type="text"
                           id="name"
-                          placeholder="Phone1..."
+                          placeholder="Attention To..."
                           fullWidth
                           size="small"
+                          {...register("attentionto")}
                         />
                       </Stack>
                     </Grid>
@@ -364,9 +425,10 @@ export default function AddCustomer({
                         <OutlinedInput
                           type="text"
                           id="name"
-                          placeholder="Print Us..."
+                          placeholder="Phone..."
                           fullWidth
                           size="small"
+                          {...register("alternatenumber")}
                         />
                       </Stack>
                     </Grid>
@@ -380,9 +442,10 @@ export default function AddCustomer({
                         <OutlinedInput
                           type="text"
                           id="name"
-                          placeholder="Phone1..."
+                          placeholder="Address1..."
                           fullWidth
                           size="small"
+                          {...register("address1")}
                         />
                       </Stack>
                     </Grid>
@@ -392,9 +455,10 @@ export default function AddCustomer({
                         <OutlinedInput
                           type="text"
                           id="name"
-                          placeholder="Print Us..."
+                          placeholder="Address2..."
                           fullWidth
                           size="small"
+                          {...register("address2")}
                         />
                       </Stack>
                     </Grid>
@@ -402,27 +466,42 @@ export default function AddCustomer({
                 </Stack>
                 <Stack style={{ marginTop: "20px" }}>
                   <Grid container spacing={2}>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} md={4}>
                       <Stack spacing={1}>
                         <InputLabel htmlFor="name">City</InputLabel>
                         <OutlinedInput
                           type="text"
                           id="name"
-                          placeholder="Phone1..."
+                          placeholder="City..."
                           fullWidth
                           size="small"
+                          {...register("city")}
                         />
                       </Stack>
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} md={4}>
                       <Stack spacing={1}>
-                        <InputLabel htmlFor="name">State</InputLabel>
+                        <InputLabel htmlFor="name">State/Province</InputLabel>
                         <OutlinedInput
                           type="text"
                           id="name"
-                          placeholder="Print Us..."
+                          placeholder="State..."
                           fullWidth
                           size="small"
+                          {...register("state")}
+                        />
+                      </Stack>
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                      <Stack spacing={1}>
+                        <InputLabel htmlFor="name">Zip/Postal Code</InputLabel>
+                        <OutlinedInput
+                          type="text"
+                          id="name"
+                          placeholder="Postal Code..."
+                          fullWidth
+                          size="small"
+                          {...register("postalcode")}
                         />
                       </Stack>
                     </Grid>
@@ -493,10 +572,13 @@ export default function AddCustomer({
                           placeholder="Contact Name..."
                           fullWidth
                           size="small"
-                          {...register("contactName", { required: true })}
+                          {...register("contactName", { required: true, validate: (value) => { return !!value.trim() } })}
                         />
-                        {errors.contactName && (
-                          <span style={style}>Field is Required **</span>
+                        {errors.contactName?.type === "required" && (
+                          <span style={style}>Field is Required *</span>
+                        )}
+                        {errors.contactName?.type === "validate" && (
+                          <span style={style}>Field can't be blank *</span>
                         )}
                       </Stack>
                     </Grid>
@@ -511,11 +593,46 @@ export default function AddCustomer({
                           placeholder="Print Us..."
                           fullWidth
                           size="small"
-                          {...register("printUs", { required: true })}
+                          {...register("printUs", { required: true, validate: (value) => { return !!value.trim() } })}
                         />
-                        {errors.printUs && (
-                          <span style={style}>Field is Required **</span>
+                        {errors.printUs?.type === "required" && (
+                          <span style={style}>Field is Required *</span>
                         )}
+                        {errors.printUs?.type === "validate" && (
+                          <span style={style}>Field can't be blank *</span>
+                        )}
+                      </Stack>
+                    </Grid>
+                  </Grid>
+                </Stack>
+                <Stack style={{ marginTop: "15px" }}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} md={12}>
+                      <Stack spacing={1}>
+                        <InputLabel htmlFor="name">Age Group</InputLabel>
+                        <FormControl fullWidth>
+                          <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            defaultValue={1}
+                            size="small"
+                            {...register("agegroup")}
+                          >
+                            <MenuItem value={1}>FS1</MenuItem>
+                            <MenuItem value={2}>FS2</MenuItem>
+                            <MenuItem value={3}>FS3</MenuItem>
+                            <MenuItem value={4}>FS4</MenuItem>
+                            <MenuItem value={5}>FS5</MenuItem>
+                            <MenuItem value={6}>FS6</MenuItem>
+                            <MenuItem value={7}>FS7</MenuItem>
+                            <MenuItem value={8}>FS8</MenuItem>
+                            <MenuItem value={9}>FS9</MenuItem>
+                            <MenuItem value={10}>FS10</MenuItem>
+                            <MenuItem value={11}>FS11</MenuItem>
+                            <MenuItem value={12}>FS12</MenuItem>
+                            <MenuItem value={13}>FS13</MenuItem>
+                          </Select>
+                        </FormControl>
                       </Stack>
                     </Grid>
                   </Grid>

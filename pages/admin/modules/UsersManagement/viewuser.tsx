@@ -14,10 +14,10 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import MiniDrawer from "../../sidebar";
+import MiniDrawer from "../../../sidebar";
 import styled from "@emotion/styled";
-import UserService from "../../../commonFunctions/servives";
-import MainFooter from "../../commoncmp/mainfooter";
+import UserService from "../../../../commonFunctions/servives";
+import MainFooter from "../../../commoncmp/mainfooter";
 import moment from "moment";
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -194,7 +194,7 @@ export default function ViewUser(props: any) {
                                         <Link
                                             key="1"
                                             color="inherit"
-                                            href="/usermanagement/users"
+                                            href="/admin/usermanagement/users"
                                             style={{ color: "#1A70C5", textDecoration: "none" }}
                                         >
                                             Home

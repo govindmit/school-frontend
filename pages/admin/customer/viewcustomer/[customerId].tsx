@@ -17,14 +17,14 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import MiniDrawer from "../../sidebar";
+import MiniDrawer from "../../../sidebar";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
-import { api_url, auth_token } from "../../api/hello";
+import { api_url, auth_token } from "../../../api/hello";
 import EditCustomer from "../editcustomer";
-import MainFooter from "../../commoncmp/mainfooter";
-import moment from "moment";
+import MainFooter from "../../../commoncmp/mainfooter";
+import moment from "moment";     
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -70,13 +70,19 @@ export default function ViewCustomer() {
   const [btnacrdthow, setbtnacrdthow] = React.useState(false);
   const [useraddr, setuseraddr] = React.useState<any>([]);
   const [creditNotes, setcreditNotes] = React.useState<any>([]);
-
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
-
   const router = useRouter();
   const { customerId } = router.query;
+
+  useEffect(() => {
+    getUserDet();
+    fetchBallance();
+    getUserCloseInvoice();
+    getUserInvoice();
+    fetchCreditNotes();
+  }, []);
 
   const getUserDet = async () => {
     try {
@@ -153,14 +159,6 @@ export default function ViewCustomer() {
       console.log("error", error);
     }
   };
-
-  useEffect(() => {
-    getUserDet();
-    fetchBallance();
-    getUserCloseInvoice();
-    getUserInvoice();
-    fetchCreditNotes();
-  }, []);
 
   //edit customer
   function handleEditCustomerOpen(id: any) {
