@@ -37,6 +37,8 @@ import styled from "@emotion/styled";
 import Script from "next/script";
 import getwayService from "../../../services/gatewayService"
 import cyberSourceSecureConfig from '../../../helper/cyberSourceSecureConfig'
+import commmonfunctions from "../../../commonFunctions/commmonfunctions";
+import { AddLogs } from "../../../helper/activityLogs";
 
 const style = {
   color: "red",
@@ -146,6 +148,7 @@ export default function AddSalesOrder({
   const [activityError, setActivityError] = React.useState<any>("");
   const [paymentPayMethod, setPaymentPayMethod] = React.useState<any>("");
   const [Check, setCheck] = React.useState(false);
+  const [userUniqueId, setUserUniqId] = React.useState<any>();
 
   let datee = Date();
   const todayDate = moment(datee).format("DD/MM/YYYY");
@@ -158,6 +161,13 @@ export default function AddSalesOrder({
   var Checkout: any;
   let creditBalance: any;
   const currentDateTime = new Date().toISOString().split('.')[0]+"Z";
+
+  React.useEffect(() => {
+    commmonfunctions.VerifyLoginUser().then(res => {
+      setUserUniqId(res?.id)
+    });
+  }, []);
+
 
   const handlePaymentName = async (data: any) => {
     const Checkout: any = (window as any).Checkout;
@@ -240,6 +250,7 @@ export default function AddSalesOrder({
     })
       .then((data: any) => {
         if (data) {
+          AddLogs(userUniqueId,`Payment debit by id - (${(reqData?.customerId)})`);
           console.log("@@@@@@@@");
         }
       })
@@ -325,6 +336,7 @@ export default function AddSalesOrder({
               transactionSave(reqData1);
               setshowspinner(false);
               setBtnDisabled(false);
+              AddLogs(userUniqueId,`Sales order created id - (${(data?.data?.data?.insertId)})`);
               toast.success("Sales Order Create Successfully !");
               closeDialog(false);
               setTimeout(() => {
@@ -360,7 +372,6 @@ export default function AddSalesOrder({
         })
           .then(async (data: any) => {
             if (data) {
-              console.log('############',data);
               // insertRemainingNotesAmount();
               if (data?.status === 200) {
                 setorderId(data.data.sageIntacctorderID);
@@ -382,6 +393,7 @@ export default function AddSalesOrder({
               transactionSave(reqData1);
               setshowspinner(false);
               setBtnDisabled(false);
+              AddLogs(userUniqueId,`Sales order created id - (${(data?.data?.data?.insertId)})`);
               toast.success("Sales Order Create Successfully !");
               closeDialog(false);
               setTimeout(() => {
@@ -512,6 +524,7 @@ export default function AddSalesOrder({
         Authorization: auth_token,
       },
     }).then((result: any) => {
+      AddLogs(userUniqueId,`transaction created id - (${(data?.idForPayment)})`);
       console.log("transaction ");
     }).catch((error: any) => {
       console.log("error =>", error);
@@ -689,8 +702,8 @@ export default function AddSalesOrder({
                             >
                               <MenuItem value={"Cash"}>Cash</MenuItem>
                               <MenuItem value={"Amex"}>Amex</MenuItem>
-                              <MenuItem value={"QPay"}>QPay</MenuItem>
-                              <MenuItem value={"CBQ"}>CBQ</MenuItem>
+                              <MenuItem value={"QPay"}>QPay Debit-Card</MenuItem>
+                              <MenuItem value={"CBQ"}>CBQ Credit-Card</MenuItem>
                             </Select>
                           </FormControl>
                         </Stack>

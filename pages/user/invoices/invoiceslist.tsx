@@ -56,6 +56,7 @@ import commmonfunctions from "../../../commonFunctions/commmonfunctions";
 import { api_url, auth_token } from "../../api/api";
 import MainFooter from "../../commoncmp/mainfooter";
 import PDFService from "../../../commonFunctions/invoicepdf"
+import { AddLogs } from "../../../helper/activityLogs";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     "& .MuiDialogContent-root": {
@@ -176,6 +177,7 @@ export default function UserInvoices() {
     const [showSuccess, setShowSuccess] = useState(false);
     const [customerID, setCustomerId] = useState(null);
     const [isChecked, setIsChecked] = useState(false);
+const [userUniqueId, setUserUniqId] = React.useState<any>();
     const [customerCreditNoteRemaingAmount, setCustomerCreditNoteRemaingAmount] = useState(0);
     var Checkout: any
     const handleChanges = (event: React.SyntheticEvent, newValue: number) => {
@@ -200,6 +202,7 @@ export default function UserInvoices() {
     useEffect(() => {
         let login_token: any;
         commmonfunctions.VerifyLoginUser().then(res => {
+      setUserUniqId(res?.id)
             if (res.exp * 1000 < Date.now()) {
                 localStorage.removeItem('QIS_loginToken');
             }
@@ -547,6 +550,7 @@ export default function UserInvoices() {
         })
             .then((data: any) => {
                 if (data) {
+                AddLogs(userUniqueId,`Debit amount id - (${(reqData?.customerId)})`);
                     console.log("@@@@@@@@");
                 }
             })
@@ -569,6 +573,7 @@ export default function UserInvoices() {
             })
                 .then((res) => {
                     setNote("");
+                    AddLogs(userUniqueId,`Payment created id - (${(invoiceId)})`);
                     toast.success("Payment Successfully !");
                     setTimeout(() => {
                         handleCloses();

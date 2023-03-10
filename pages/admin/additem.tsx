@@ -32,6 +32,8 @@ import { Button, OutlinedInput } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import ETable from "../table";
 import AddNewCustomer from "./customer/addNewCustomer";
+import commmonfunctions from "../../commonFunctions/commmonfunctions";
+import { AddLogs } from "../../helper/activityLogs";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -204,6 +206,7 @@ export default function AddItem({
   const [item, setItem] = useState<FormValues | any>([]);
   const [product, setProduct] = useState<FormValues | any>([]);
   const [selected, setSelected] = useState<readonly string[]>([]);
+  const [userUniqueId, setUserUniqId] = useState<any>();
 
   const {
     register,
@@ -217,6 +220,13 @@ export default function AddItem({
     fontSize: "12px",
     fontWeight: "bold",
   };
+
+  useEffect(() => {
+    commmonfunctions.VerifyLoginUser().then(res => {
+      setUserUniqId(res?.id)
+    });
+  }, []);
+
 
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
   const BootstrapButton = styled(Button)({
@@ -272,6 +282,7 @@ export default function AddItem({
       },
     })
       .then((res) => {
+        AddLogs(userUniqueId,`Item Added  id - (${(res?.data?.data?.insertId)})`);
         getItem();
         reset();
         toast.success("Item Added Successfully !");

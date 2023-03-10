@@ -97,6 +97,9 @@ export default function CreditNotesList() {
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
+
+
+    
     useEffect(() => {
         fetchData();
         getUser();

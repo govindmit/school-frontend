@@ -19,6 +19,8 @@ import { api_url, auth_token } from "../../api/api";
 import styled from "@emotion/styled";
 import { GridCloseIcon } from "@mui/x-data-grid";
 import { useForm, SubmitHandler } from "react-hook-form";
+import commmonfunctions from "../../../commonFunctions/commmonfunctions";
+import { AddLogs } from "../../../helper/activityLogs";
 
 const style = {
   color: "red",
@@ -70,6 +72,8 @@ export default function EditType({
   const [opens, setOpen] = React.useState(open);
   const [spinner, setshowspinner] = React.useState(false);
   const [btnDisabled, setBtnDisabled] = React.useState(false);
+const [userUniqueId, setUserUniqId] = React.useState<any>();
+
   const {
     register,
     handleSubmit,
@@ -81,6 +85,16 @@ export default function EditType({
   useEffect(() => {
     getTypeDet();
   }, []);
+
+  useEffect(() => {
+    commmonfunctions.VerifyLoginUser().then(res => {
+      setUserUniqId(res?.id)
+    });
+  }, []);
+
+
+
+
 
   //get customers type det
   const getTypeDet = async () => {
@@ -115,6 +129,7 @@ export default function EditType({
     })
       .then((data) => {
         if (data) {
+          AddLogs(userUniqueId,`Edit Customer Type id - (${(id)})`);
           toast.success("Customer Type Updated Successfully !");
           reset();
           setshowspinner(false);

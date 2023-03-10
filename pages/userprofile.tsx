@@ -24,6 +24,7 @@ import MainFooter from "./commoncmp/mainfooter";
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
 import { api_url, auth_token } from "./api/api";
+import { AddLogs } from "../helper/activityLogs";
 
 
 type FormValues = {
@@ -44,6 +45,7 @@ export default function ViewCustomer() {
     const [editformOpen, seteditformOpen] = React.useState(false);
     const [spinner, setshowspinner] = React.useState(false);
     const [btnDisabled, setBtnDisabled] = React.useState(false);
+    const [userUniqueId, setUserUniqId] = React.useState<any>();
 
     const {
         register,
@@ -59,6 +61,10 @@ export default function ViewCustomer() {
         if (logintoken === undefined || logintoken === null) {
             router.push("/");
         }
+        commmonfunctions.VerifyLoginUser().then(res => {
+            setUserUniqId(res?.id)
+          });
+
         if (logintoken) {
             commmonfunctions.GetuserDet(logintoken).then(response => {
                 setUserDet(response);
@@ -97,6 +103,7 @@ export default function ViewCustomer() {
         })
             .then((data: any) => {
                 if (data) {
+                    AddLogs(userUniqueId,`User updated id - (${(userDet?.id)})`);
                     toast.success("User updated successfully!");
                     setshowspinner(false);
                     setBtnDisabled(false);

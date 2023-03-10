@@ -284,7 +284,7 @@ export default function SalesOrderList() {
     })
       .then((data) => {
         toast.success("Sales Record delete Successfully !");
-        AddLogs(userUniqueId,`delete sales order id - (${(deleteData.id)})`);
+        AddLogs(userUniqueId,`Delete sales order id - (${(deleteData.id)})`);
         handleClose();
         fetchData();
       })

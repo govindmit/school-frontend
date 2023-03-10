@@ -36,6 +36,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
 import commmonfunctions from "../../../../commonFunctions/commmonfunctions";
 import MainFooter from "../../../commoncmp/mainfooter";
+import { AddLogs } from "../../../../helper/activityLogs";
 
 function a11yProps(index: number) {
     return {
@@ -71,6 +72,7 @@ export default function UsersList() {
     const [All, setAll] = useState(0);
     const [searchquery, setsearchquery] = useState("");
     const [searchdata, setsearchdata] = useState([]);
+const [userUniqueId, setUserUniqId] = React.useState<any>();
     const [deleteConfirmBoxOpen, setdeleteConfirmBoxOpen] = React.useState(false);
     const [value, setValue] = React.useState(0);
     const router = useRouter();
@@ -80,11 +82,16 @@ export default function UsersList() {
 
     let logintoken: any;
     useEffect(() => {
-        // verify user login and previlegs
+        // verify user login and previlege
         logintoken = localStorage.getItem("QIS_loginToken");
         if (logintoken === undefined || logintoken === null) {
             router.push("/");
         }
+
+        commmonfunctions.VerifyLoginUser().then(res => {
+            setUserUniqId(res?.id)
+          });
+
         commmonfunctions.GivenPermition().then(res => {
             if (res.roleId === 1) {
             } else {
@@ -164,6 +171,7 @@ export default function UsersList() {
             },
         })
             .then((data) => {
+                AddLogs(userUniqueId,`User Deleted id - (${(deleteData.id)})`);
                 toast.success("User Deleted Successfully !");
                 setdeleteConfirmBoxOpen(false);
                 getUser();

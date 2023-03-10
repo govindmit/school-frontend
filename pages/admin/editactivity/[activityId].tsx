@@ -48,6 +48,8 @@ import dynamic from "next/dynamic";
 import MainFooter from "../../commoncmp/mainfooter";
 
 import React, { useEffect, useState } from "react";
+import commmonfunctions from "../../../commonFunctions/commmonfunctions";
+import { AddLogs } from "../../../helper/activityLogs";
 const QuillNoSSRWrapper = dynamic(import("react-quill"), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -163,6 +165,7 @@ export default function EditActivity() {
   const [content, setContent] = useState("");
   const [activityName, setActivityName] = useState("");
   const [activityPrice, setActivityPrice] = useState<any>("");
+  const [userUniqueId, setUserUniqId] = React.useState<any>();
 
   const [descontent, setDesContent] = useState("");
   const {
@@ -174,6 +177,15 @@ export default function EditActivity() {
   } = useForm<FormValues>();
   const router = useRouter();
   const { activityId } = router.query;
+
+  useEffect(() => {
+    commmonfunctions.VerifyLoginUser().then(res => {
+      setUserUniqId(res?.id)
+    });
+  }, []);
+
+
+
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
 
@@ -212,6 +224,7 @@ export default function EditActivity() {
       .then((data) => {
         //   setshowspinner(false);
         //   setBtnDisabled(false);
+        AddLogs(userUniqueId,`Activity Updated id - (${(activityId)})`);
         toast.success("Activity Updated Successfully !");
         setTimeout(() => {
           router.push("/admin/activitylist");

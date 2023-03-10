@@ -18,6 +18,8 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import CloseIcon from "@mui/icons-material/Close";
 import { api_url, auth_token } from "../../api/api";
+import commmonfunctions from "../../../commonFunctions/commmonfunctions";
+import { AddLogs } from "../../../helper/activityLogs";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
@@ -77,6 +79,8 @@ export default function RequestFormCmp({
         formState: { errors },
     } = useForm<FormValues>();
 
+    const [userUniqueId, setUserUniqId] = React.useState<any>();
+
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
         const reqData = {
             userId: reqDet?.userId
@@ -96,6 +100,7 @@ export default function RequestFormCmp({
         })
             .then((res) => {
                 if (res) {
+                    AddLogs(userUniqueId,`Credit Request Created id - (${(reqDet?.userId)})`);
                     toast.success("Credit Request Created Successful !");
                     reset();
                     closeDialogs();
@@ -106,6 +111,13 @@ export default function RequestFormCmp({
                 console.log("error", error);
             });
     };
+    
+    React.useEffect(() => {
+        commmonfunctions.VerifyLoginUser().then(res => {
+          setUserUniqId(res?.id)
+        });
+      }, []);
+    
 
     const closeDialogs = () => {
         closeDialog(false);

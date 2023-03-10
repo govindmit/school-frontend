@@ -517,7 +517,7 @@ export default function MiniDrawer() {
                 className="sidebar-link"
                 disablePadding
                 sx={{ display: "block" }}
-                onClick={() => router.push("/customer/customerslist")}
+                onClick={() => router.push("/admin/customer/customerslist")}
               >
                 <ListItemButton
                   onClick={handleClick}

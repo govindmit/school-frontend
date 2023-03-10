@@ -47,6 +47,8 @@ import moment from "moment";
 import dynamic from "next/dynamic";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import MainFooter from "../commoncmp/mainfooter";
+import commmonfunctions from "../../commonFunctions/commmonfunctions";
+import { AddLogs } from "../../helper/activityLogs";
 
 const QuillNoSSRWrapper = dynamic(import("react-quill"), {
   ssr: false,
@@ -170,6 +172,8 @@ export default function AddNewActivity() {
   const [endDate1, setEndDate1] = useState(null);
   const [content, setContent] = useState("");
   const [descontent, setDesContent] = useState("");
+const [userUniqueId, setUserUniqId] = React.useState<any>();
+
 
   const {
     register,
@@ -177,6 +181,13 @@ export default function AddNewActivity() {
     formState: { errors },
   } = useForm<FormValues>();
   const router = useRouter();
+
+  useEffect(() => {
+    commmonfunctions.VerifyLoginUser().then(res => {
+      setUserUniqId(res?.id)
+    });
+  }, []);
+
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     if (startDate1 === null || endDate1 === null) {
@@ -212,6 +223,7 @@ export default function AddNewActivity() {
       })
         .then((data) => {
           if (data.status === 201) {
+            AddLogs(userUniqueId,`Activity Added id - (${(data?.data?.data?.insertId)})`);
             toast.success("Activity Added Successfully !");
             setshowspinner(false);
             setTimeout(() => {

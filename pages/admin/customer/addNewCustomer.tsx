@@ -31,6 +31,7 @@ import "react-toastify/dist/ReactToastify.css";
 import CloseIcon from "@mui/icons-material/Close";
 import styled from "@emotion/styled";
 import commmonfunctions from "../../../commonFunctions/commmonfunctions";
+import { AddLogs } from "../../../helper/activityLogs";
 const style = {
   color: "red",
   fontSize: "12px",
@@ -218,9 +219,9 @@ export default function AddCustomer({
     })
       .then((data: any) => {
         if (data) {
-          console.log('##########',data.data);
           setshowspinner(false);
           setBtnDisabled(false);
+          AddLogs(cretadeBy,`Customer Added by id - (${(data?.data?.data?.insertId)})`);
           toast.success("Customer Added Successfully !");
           closeDialog(false);
           setTimeout(() => {

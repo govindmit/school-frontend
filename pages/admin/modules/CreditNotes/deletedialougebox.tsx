@@ -10,6 +10,8 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
 import { api_url, auth_token } from "../../../api/api";
 import { ToastContainer, toast } from "react-toastify";
+import commmonfunctions from "../../../../commonFunctions/commmonfunctions";
+import { AddLogs } from "../../../../helper/activityLogs";
 const style = {
   color: "red",
   fontSize: "12px",
@@ -31,12 +33,23 @@ export default function DeleteFormDialog({
   closeDialog: any;
 }) {
   const [opens, setOpen] = React.useState(open);
+const [userUniqueId, setUserUniqId] = React.useState<any>();
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm<FormValues>();
+
+
+React.useEffect(() => {
+  commmonfunctions.VerifyLoginUser().then(res => {
+    setUserUniqId(res?.id)
+  });
+}, []);
+
+
+
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     const reqData = {
       message: data.message,
@@ -53,6 +66,7 @@ export default function DeleteFormDialog({
     })
       .then((data) => {
         if (data) {
+          AddLogs(userUniqueId,`Edit Credit Notes id - (${(id)})`);
           toast.success("Credit Notes Updated Successfully !");
           reset();
           closeDialogs();
@@ -66,6 +80,7 @@ export default function DeleteFormDialog({
     closeDialog(false);
     setOpen(false);
   };
+
   return (
     <>
       <Dialog open={open} onClose={closeDialog} className="delete-popup">

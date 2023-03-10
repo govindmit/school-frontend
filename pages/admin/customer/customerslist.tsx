@@ -47,6 +47,7 @@ import { CSVDownload } from "react-csv";
 import Loader from "../../commoncmp/myload";
 import commmonfunctions from "../../../commonFunctions/commmonfunctions";
 import MainFooter from "../../commoncmp/mainfooter";
+import { AddLogs } from "../../../helper/activityLogs";
 
 function a11yProps(index: number) {
   return {
@@ -111,6 +112,7 @@ export default function CustomerList() {
   const [checked, setChecked] = React.useState(false);
   const [OpenCSV, setOpenCSV] = React.useState(false);
   const [custpermit, setcustpermit] = useState<any>([]);
+const [userUniqueId, setUserUniqId] = React.useState<any>();
   const [roleid, setroleid] = useState(0);
   const { register, handleSubmit } = useForm<FormValues>();
   const router = useRouter();
@@ -128,6 +130,7 @@ export default function CustomerList() {
   let logintoken: any;
   React.useEffect(() => {
     commmonfunctions.VerifyLoginUser().then(res => {
+      setUserUniqId(res?.id)
       if (res.exp * 1000 < Date.now()) {
         localStorage.removeItem('QIS_loginToken');
         localStorage.removeItem('QIS_User');
@@ -303,6 +306,7 @@ export default function CustomerList() {
       },
     })
       .then((data) => {
+        AddLogs(userUniqueId,`Delete User id - (${(deleteData.id)})`);
         toast.success("User Deleted Successfully !");
         setdeleteConfirmBoxOpen(false);
         getUser();

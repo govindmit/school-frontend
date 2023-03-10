@@ -41,6 +41,7 @@ import getwayService from "../../../services/gatewayService";
 import commmonfunctions from "../../../commonFunctions/commmonfunctions";
 import { useForm, SubmitHandler } from "react-hook-form";
 import Box from "@mui/material/Box";
+import { AddLogs } from "../../../helper/activityLogs";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -145,6 +146,7 @@ export default function Guardians() {
   const [activityId, setActivityId] = React.useState<any>("");
   const [paymentPayMethod, setPaymentPayMethod] = React.useState<any>("");
   const [orderId, setorderId] = React.useState("");
+  const [userUniqueId, setUserUniqId] = React.useState<any>();
 
   const [openThank, setOpenThank] = React.useState(false);
   const handleThanksOpen = () => setOpenThank(true);
@@ -159,6 +161,7 @@ export default function Guardians() {
 
   React.useEffect(() => {
     commmonfunctions.VerifyLoginUser().then(res => {
+      setUserUniqId(res?.id)
       if (res.exp * 1000 < Date.now()) {
         localStorage.removeItem('QIS_loginToken');
       }
@@ -259,6 +262,7 @@ export default function Guardians() {
     })
       .then((data: any) => {
         if (data) {
+          AddLogs(userUniqueId,`Transaction id - (${(userDetail?.id)})`);
           console.log("@@@@@@@@");
         }
       })
@@ -348,6 +352,7 @@ export default function Guardians() {
               transactionSave(reqData1);
               setshowspinner(false);
               setBtnDisabled(false);
+              AddLogs(userUniqueId,`Activity purchase id - (${(data?.data?.data?.insertId)})`);
               toast.success("Activity purchase Successfully !");
               setOpen(false);
               handleThanksOpen();
@@ -406,6 +411,7 @@ export default function Guardians() {
               transactionSave(reqData1);
               setshowspinner(false);
               setBtnDisabled(false);
+              AddLogs(userUniqueId,`Activity purchase id - (${(data?.data?.data?.insertId)})`);
               toast.success("Activity purchase Successfully !");
               handleClose();
               handleThanksOpen();

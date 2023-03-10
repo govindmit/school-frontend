@@ -45,6 +45,7 @@ import ConfirmBox from "../commoncmp/confirmbox";
 import commmonfunctions from "../../commonFunctions/commmonfunctions";
 import MainFooter from "../commoncmp/mainfooter";
 import Loader from "../commoncmp/myload";
+import { AddLogs } from "../../helper/activityLogs";
 
 function a11yProps(index: number) {
   return {
@@ -112,6 +113,7 @@ export default function ActivityList() {
   const handleOpen = () => setOpen(true);
   const [activeTab, setActiveTab] = useState("");
   const [myload, setmyload] = useState(false);
+  const [userUniqueId, setUserUniqId] = React.useState<any>();
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -142,6 +144,10 @@ export default function ActivityList() {
   }, []);
 
   useEffect(() => {
+    commmonfunctions.VerifyLoginUser().then(res => {
+      setUserUniqId(res?.id)
+    });
+
     fetchData();
   }, []);
 
@@ -325,6 +331,7 @@ export default function ActivityList() {
       },
     })
       .then((data) => {
+        AddLogs(userUniqueId,`Delete Activity id - (${(deleteData?.id)})`);
         toast.success("Activity Deleted Successfully !");
         handleClose();
         fetchData();

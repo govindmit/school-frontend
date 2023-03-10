@@ -19,6 +19,8 @@ import styled from "@emotion/styled";
 import { GridCloseIcon } from "@mui/x-data-grid";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { api_url, auth_token } from "../../../api/api";
+import { AddLogs } from "../../../../helper/activityLogs";
+import commmonfunctions from "../../../../commonFunctions/commmonfunctions";
 
 const style = {
     color: "red",
@@ -68,6 +70,8 @@ export default function AddRole({
     const [opens, setOpen] = React.useState(open);
     const [spinner, setshowspinner] = React.useState(false);
     const [btnDisabled, setBtnDisabled] = React.useState(false);
+const [userUniqueId, setUserUniqId] = React.useState<any>();
+
     const {
         register,
         handleSubmit,
@@ -75,6 +79,12 @@ export default function AddRole({
         formState: { errors },
     } = useForm<FormValues>();
 
+    useEffect(() => {
+        commmonfunctions.VerifyLoginUser().then(res => {
+          setUserUniqId(res?.id)
+        });
+      }, []);
+    
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
         setshowspinner(true);
@@ -92,6 +102,7 @@ export default function AddRole({
         })
             .then((data) => {
                 if (data) {
+                    AddLogs(userUniqueId,`Role Created id - (${(data?.data?.data?.insertId)})`);
                     toast.success("Role Created Successfully !");
                     reset();
                     setshowspinner(false);
