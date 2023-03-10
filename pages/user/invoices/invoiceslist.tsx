@@ -56,6 +56,7 @@ import commmonfunctions from "../../../commonFunctions/commmonfunctions";
 import { api_url, auth_token } from "../../api/hello";
 import MainFooter from "../../commoncmp/mainfooter";
 import PDFService from "../../../commonFunctions/invoicepdf"
+import RequestFormCmp from "../salesinvoices/requestFormCmp";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     "& .MuiDialogContent-root": {
@@ -187,7 +188,8 @@ export default function UserInvoices() {
     const [id, setId] = useState();
     const [dollerOpen, setDollerOpen] = useState(false);
     const [recievedPay, setRecieved] = useState<FormValues | any>([]);
-
+    const [CreditReqFormOpen, setCreditReqFormOpen] = useState(false);
+    const [reqDet, setreqDet] = useState<any>([]);
 
     const {
         register,
@@ -253,7 +255,6 @@ export default function UserInvoices() {
     //tab functionality
     const pending = Invoicedata?.filter((a: any) => a.status == "pending");
     const paid = Invoicedata?.filter((a: any) => a.status == "paid");
-    const draft = Invoicedata?.filter((a: any) => a.status == "draft");
     const handleAll = () => {
         Invoices(custid);
     };
@@ -265,11 +266,6 @@ export default function UserInvoices() {
         const pendings = Invoicedata.filter((a: any) => a.status == "pending");
         setgetInvoices(pendings);
     };
-    const handleDraft = () => {
-        const drafts = Invoicedata.filter((a: any) => a.status == "draft");
-        setgetInvoices(drafts);
-    };
-
 
     // searching functionality
     const searchItems = (e: any) => {
@@ -336,6 +332,17 @@ export default function UserInvoices() {
         setStartDate(null);
         setEndDate(null);
         setInvoiceId("");
+        Invoices(custid);
+    };
+
+    //Credit Request
+    const handleReqkOpen = (item: any) => {
+        setreqDet(item);
+        setCreditReqFormOpen(true);
+    };
+
+    const closePoP = (data: any) => {
+        setCreditReqFormOpen(false);
         Invoices(custid);
     };
 
@@ -583,7 +590,14 @@ export default function UserInvoices() {
     const handleCloses = () => {
         setDollerOpen(false);
     };
-
+    const reqDetails = {
+        userId: reqDet && reqDet?.customerId,
+        invoiceId: reqDet && reqDet?.invid,
+        activityId: reqDet && reqDet?.itemId,
+        status: 0,
+        amount: reqDet && reqDet?.amount,
+        createdBy: reqDet && reqDet?.customerId
+    }
     return (
         <>
             <Script src="https://amexmena.gateway.mastercard.com/static/checkout/checkout.min.js"
@@ -664,11 +678,6 @@ export default function UserInvoices() {
                                                 label={`Un Paid  (${pending.length})`}
                                                 {...a11yProps(2)}
                                                 onClick={handlePending}
-                                            />
-                                            <Tab
-                                                label={`Draft (${draft.length})`}
-                                                {...a11yProps(3)}
-                                                onClick={handleDraft}
                                             />
                                         </Tabs>
                                     </Box>
@@ -879,9 +888,10 @@ export default function UserInvoices() {
                                             </TableCell>
                                             <TableCell>INVOICE</TableCell>
                                             <TableCell>DATE</TableCell>
-                                            <TableCell>EXPECTED PAYMENT DATE</TableCell>
-                                            <TableCell>STATUS</TableCell>
-                                            <TableCell>BALANCE</TableCell>
+                                            <TableCell width={300}>EXPECTED PAYMENT DATE</TableCell>
+                                            <TableCell width={230}>STATUS</TableCell>
+                                            <TableCell width={230}>BALANCE</TableCell>
+                                            <TableCell>CREDIT REQUEST</TableCell>
                                             <TableCell className="action-th">ACTION</TableCell>
                                         </TableRow>
                                     </TableHead>
@@ -902,7 +912,7 @@ export default function UserInvoices() {
                                                         <Link
                                                             href={`/user/invoices/viewinvoice/${item.invid}`}>
                                                             <TableCell align="left">
-                                                                {item.invoiceId}
+                                                                INV-000{item.invid}
                                                             </TableCell>
                                                         </Link>
                                                     </TableCell>
@@ -922,6 +932,17 @@ export default function UserInvoices() {
                                                     <TableCell align="left">
                                                         <b>${item.amount}.00</b>
                                                     </TableCell>
+                                                    <TableCell>{item.status !== "draft" ? (
+                                                        <div>
+                                                            {item?.amount !== 0 ? (<div className="btn">
+                                                                {item.isRequested === 1 ? (<Button size="small" variant="outlined" style={{ backgroundColor: "#D1D2D2", color: "whitesmoke" }} disabled sx={{ width: 135 }} ><b>Requested</b></Button>) : (<Button size="small" variant="outlined" onClick={() => handleReqkOpen(item)} ><b>Credit Request</b></Button>)}
+                                                            </div>) : (<div className="btn">
+                                                                {(<Button size="small" variant="outlined" sx={{ width: 135 }} disabled style={{ backgroundColor: "#D1D2D2", color: "whitesmoke" }}><b>Credit Request</b></Button>)}
+                                                            </div>)}
+                                                        </div>
+                                                    ) : (
+                                                        ""
+                                                    )}</TableCell>
                                                     <TableCell align="left" className="action-td">
                                                         <div className="btn">
                                                             <Button className="idiv" >
@@ -936,35 +957,27 @@ export default function UserInvoices() {
                                                                 </Link>
                                                             </Button>
                                                             &nbsp;
-                                                            {item.status === "paid" ? (
-                                                                <Button className="idiv">
+                                                            <Button className="idiv">
+                                                                <Image
+                                                                    onClick={() => generateSimplePDF(item)}
+                                                                    src="/download.svg"
+                                                                    alt="Picture of the author"
+                                                                    width={35}
+                                                                    height={35}
+                                                                />
+                                                            </Button>
+                                                            &nbsp;
+                                                            <Button className="idiv" >
+                                                                <div className="idiv">
                                                                     <Image
-                                                                        onClick={() => generateSimplePDF(item)}
-                                                                        src="/download.svg"
+                                                                        onClick={() => handleClickOpen(item)}
+                                                                        src="/doller.svg"
                                                                         alt="Picture of the author"
                                                                         width={35}
                                                                         height={35}
                                                                     />
-                                                                </Button>
-                                                            ) : (
-                                                                ""
-                                                            )}
-                                                            &nbsp;
-                                                            {item.status !== "draft" ? (
-                                                                <Button className="idiv" >
-                                                                    <div className="idiv">
-                                                                        <Image
-                                                                            onClick={() => handleClickOpen(item)}
-                                                                            src="/doller.svg"
-                                                                            alt="Picture of the author"
-                                                                            width={35}
-                                                                            height={35}
-                                                                        />
-                                                                    </div>
-                                                                </Button>
-                                                            ) : (
-                                                                ""
-                                                            )}
+                                                                </div>
+                                                            </Button>
                                                         </div>
                                                     </TableCell>
                                                 </TableRow>
@@ -1149,6 +1162,13 @@ export default function UserInvoices() {
                     <MainFooter />
                 </Box>
             </Box>
+            {
+                CreditReqFormOpen ? (
+                    <RequestFormCmp open={RequestFormCmp} reqDet={reqDetails} closeDialog={closePoP} />
+                ) : (
+                    ""
+                )
+            }
         </>
     );
 }

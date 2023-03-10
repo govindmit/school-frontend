@@ -300,9 +300,9 @@ export default function UserInvoices() {
                                                     </TableCell>
                                                     <TableCell align="left" className="action-td">
                                                         {item?.amount !== 0 ? (<div className="btn">
-                                                            {item.isRequested === 1 ? (<Button size="small" variant="outlined" style={{ backgroundColor: "#D1D2D2", color: "whitesmoke" }} disabled sx={{ width: 135 }} ><b>Requested</b></Button>) : (<Button size="small" variant="outlined" onClick={() => handleClickOpen(item)} ><b>Create Request</b></Button>)}
+                                                            {item.isRequested === 1 ? (<Button size="small" variant="outlined" style={{ backgroundColor: "#D1D2D2", color: "whitesmoke" }} disabled sx={{ width: 135 }} ><b>Requested</b></Button>) : (<Button size="small" variant="outlined" onClick={() => handleClickOpen(item)} ><b>Credit Request</b></Button>)}
                                                         </div>) : (<div className="btn">
-                                                            {(<Button size="small" variant="outlined" disabled style={{ backgroundColor: "#D1D2D2", color: "whitesmoke" }}><b>Create Request</b></Button>)}
+                                                            {(<Button size="small" variant="outlined" disabled style={{ backgroundColor: "#D1D2D2", color: "whitesmoke" }}><b>Credit Request</b></Button>)}
                                                         </div>)}
 
                                                     </TableCell>

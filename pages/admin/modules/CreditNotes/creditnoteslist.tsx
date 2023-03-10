@@ -592,6 +592,9 @@ export default function CreditNotesList() {
                                                 <Typography width={150}>INVOICE ID</Typography>
                                             </TableCell>
                                             <TableCell>
+                                                <Typography width={150}>Is RELATED</Typography>
+                                            </TableCell>
+                                            <TableCell>
                                                 <Typography>ACTION</Typography>
                                             </TableCell>
                                         </TableRow>
@@ -617,6 +620,7 @@ export default function CreditNotesList() {
                                                             (<span style={{ color: "#02C509", fontWeight: "bold" }}>Approved</span>) : item?.status === 2 ? (<span style={{ color: "#FF4026", fontWeight: "bold" }}>Reject</span>) : item?.status === 3 ? (<span style={{ color: "#FF4026", fontWeight: "bold" }}>Deleted</span>) : item?.status === 4 ? (<span style={{ color: "#FF4026", fontWeight: "bold" }}>Appr By Admin</span>) : ""}</TableCell>
                                                         <TableCell align="left">${item.amount}</TableCell>
                                                         <TableCell align="left">INV-{item.id}</TableCell>
+                                                        <TableCell align="left"> {item?.invoiceId > 0 ? (<span style={{ color: "#3366ff" }}><b>Invoice Related</b></span>) : item?.salesOrderId > 0 ? (<span style={{ color: "#006600" }}><b>Activity Related</b></span>) : ""}</TableCell>
                                                         <TableCell align="left">
                                                             <Stack
                                                                 direction="row"
