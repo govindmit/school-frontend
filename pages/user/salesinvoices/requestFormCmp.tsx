@@ -80,7 +80,8 @@ export default function RequestFormCmp({
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
         const reqData = {
             userId: reqDet?.userId
-            , salesOrderId: reqDet?.id,
+            , salesOrderId: reqDet?.id === undefined ? 0 : reqDet?.id,
+            invoiceId: reqDet?.invoiceId === undefined ? 0 : reqDet?.invoiceId,
             activityId: reqDet?.activityId
             , status: 0, amount: reqDet?.amount
             , message: data.message,
@@ -129,7 +130,7 @@ export default function RequestFormCmp({
                             <Stack style={{ marginTop: "8px" }}>
                                 <Grid container spacing={2}>
                                     <Stack spacing={1} paddingLeft={"20px"}>
-                                        <Typography variant="h5" style={{ color: "#26CEB3" }}>INV-000{reqDet?.id}</Typography>
+                                        <Typography variant="h5" style={{ color: "#26CEB3" }}>INV-000{reqDet?.id || reqDet?.invoiceId}</Typography>
                                     </Stack>
                                 </Grid>
                             </Stack>

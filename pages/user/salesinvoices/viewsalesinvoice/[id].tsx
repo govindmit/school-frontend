@@ -138,10 +138,10 @@ export default function ViewCreditNotes(props: any) {
                                                 onClick={() => handleClickOpen()}
                                             ><b>Requested</b></Button>) : (<Button size="small" variant="contained"
                                                 onClick={() => handleClickOpen()}
-                                            ><b>Create Request</b></Button>)}
+                                            ><b>Credit Request</b></Button>)}
 
                                         </div>) : (<Button disabled size="small" variant="contained"
-                                        ><b>Create Request</b></Button>)}
+                                        ><b>Credit Request</b></Button>)}
                                     </div>
                                 </div>
                             </Stack>

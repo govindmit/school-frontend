@@ -1254,7 +1254,6 @@ export default function Guardians() {
                 </Stack>
               </TableContainer>
             </Card>
-
             <Modal
               open={share}
               onClose={handleEmailClose}
