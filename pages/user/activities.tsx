@@ -20,7 +20,7 @@ import Box from "@mui/material/Box";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import MiniDrawer from "../sidebar";
-import { api_url, auth_token, base_url } from "../api/hello";
+import { api_url, auth_token, base_url } from "../api/api";
 import jwt_decode from "jwt-decode";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
@@ -39,6 +39,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import getwayService from "../../services/gatewayService";
 import Loader from "../commoncmp/myload";
 import Modal from '@mui/material/Modal';
+import { AddLogs } from "../../helper/activityLogs";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -151,7 +152,8 @@ export default function ActivityList() {
   const [activityId, setActivityId] = React.useState<any>("");
   const [paymentPayMethod, setPaymentPayMethod] = React.useState<any>("");
   const [orderId, setorderId] = React.useState("");
-  const [myload, setmyload] = useState(false)
+  const [myload, setmyload] = useState(false);
+  const [userUniqueId, setUserUniqId] = React.useState<any>();
 
   const [openThank, setOpenThank] = React.useState(false);
   const handleThanksOpen = () => setOpenThank(true);
@@ -212,6 +214,10 @@ export default function ActivityList() {
   };
 
   useEffect(() => {
+    commmonfunctions.VerifyLoginUser().then(res => {
+      setUserUniqId(res?.id)
+    });
+
     fetchData();
     manageActivity();
   }, []);
@@ -277,6 +283,7 @@ export default function ActivityList() {
     })
       .then((data: any) => {
         if (data) {
+          AddLogs(userUniqueId,`Amount debit id - (${(userDetail?.id)})`);
           console.log("@@@@@@@@");
         }
       })
@@ -358,13 +365,14 @@ export default function ActivityList() {
                 transactionId: `case-${unique} `,
                 amexorderId: data?.data?.sageIntacctorderID,
                 paymentMethod:
-                  paymentPayMethod === "" ? "Cash" : paymentPayMethod,
+                paymentPayMethod === "" ? "Cash" : paymentPayMethod,
                 idForPayment: data?.data?.sageIntacctorderID,
                 creditNotesId: creditNoteId,
               };
               transactionSave(reqData1);
               setshowspinner(false);
               setBtnDisabled(false);
+              AddLogs(userUniqueId,`Activity purchase id - (${(data?.data?.data?.insertId)})`);
               toast.success("Activity purchase Successfully !");
               setOpen(false);
               handleThanksOpen();
@@ -420,6 +428,7 @@ export default function ActivityList() {
               transactionSave(reqData1);
               setshowspinner(false);
               setBtnDisabled(false);
+              AddLogs(userUniqueId,`Activity purchase id - (${(data?.data?.data?.insertId)})`);
               toast.success("Activity purchase Successfully !");
               setOpen(false);
               handleThanksOpen();
@@ -538,6 +547,7 @@ export default function ActivityList() {
         Authorization: auth_token,
       },
     }).then((result: any) => {
+      AddLogs(userUniqueId,`Transaction id - (${(data?.idForPayment)})`);
       console.log("transaction ");
     }).catch((error: any) => {
       console.log("error =>", error);
@@ -802,11 +812,11 @@ export default function ActivityList() {
                               <span style={{ display: "flex" }}>
                                 <span style={{ position: "absolute" }}>
                                   <h4 className="h4heading">Start Date</h4>
-                                  <p className="actpara paradate"> {moment(startDate).format("MMM DD, YYYY")}</p>
+                                  <p className="actpara paradate"> {moment(startDate,"YYYY.MM.DD").format("MMM DD, YYYY")}</p>
                                 </span>
                                 <span>
                                   <h4 className="h4heading headingmargin">End Date</h4>
-                                  <p className="actpara headingmargin paradate1">{moment(endDate).format("MMM DD, YYYY")}</p>
+                                  <p className="actpara headingmargin paradate1">{moment(endDate,"YYYY.MM.DD").format("MMM DD, YYYY")}</p>
                                 </span>
                               </span>
                               <h4 className="h4heading">Amount</h4>

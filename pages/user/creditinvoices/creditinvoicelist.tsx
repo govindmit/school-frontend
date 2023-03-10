@@ -31,7 +31,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
 import commmonfunctions from "../../../commonFunctions/commmonfunctions";
-import { api_url, auth_token } from "../../api/hello";
+import { api_url, auth_token } from "../../api/api";
 import MainFooter from "../../commoncmp/mainfooter";
 
 function a11yProps(index: number) {

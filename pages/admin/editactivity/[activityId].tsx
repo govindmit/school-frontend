@@ -38,7 +38,7 @@ import {
 import "react-quill/dist/quill.snow.css";
 
 import { useRouter } from "next/router";
-import { api_url, auth_token } from "../../api/hello";
+import { api_url, auth_token } from "../../api/api";
 import "react-toastify/dist/ReactToastify.css";
 import { GridCloseIcon } from "@mui/x-data-grid";
 import DatePicker from "react-datepicker";
@@ -48,6 +48,8 @@ import dynamic from "next/dynamic";
 import MainFooter from "../../commoncmp/mainfooter";
 
 import React, { useEffect, useState } from "react";
+import commmonfunctions from "../../../commonFunctions/commmonfunctions";
+import { AddLogs } from "../../../helper/activityLogs";
 const QuillNoSSRWrapper = dynamic(import("react-quill"), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -163,6 +165,7 @@ export default function EditActivity() {
   const [content, setContent] = useState("");
   const [activityName, setActivityName] = useState("");
   const [activityPrice, setActivityPrice] = useState<any>("");
+  const [userUniqueId, setUserUniqId] = React.useState<any>();
 
   const [descontent, setDesContent] = useState("");
   const {
@@ -174,9 +177,18 @@ export default function EditActivity() {
   } = useForm<FormValues>();
   const router = useRouter();
   const { activityId } = router.query;
-  
+
+  useEffect(() => {
+    commmonfunctions.VerifyLoginUser().then(res => {
+      setUserUniqId(res?.id)
+    });
+  }, []);
+
+
+
+
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    
+
     var sDate = "";
     var eDate = "";
     if (startDate) {
@@ -187,18 +199,18 @@ export default function EditActivity() {
       eDate = moment(endDate).format('YYYY.MM.DD');
       // eDate = moment(endDate).format("DD/MM/YYYY");
     }
-   
+
     const reqData = {
       name: data.name,
       type: type,
       startdate: sDate ? sDate : Activity[0]?.startDate,
       enddate: eDate ? eDate : Activity[0]?.endDate,
       status: status,
-      price: type === "Free"? 0 : data.price,
+      price: type === "Free" ? 0 : data.price,
       shortDescription: content,
       description: descontent,
     };
-   
+
     const end_point = "addactivity";
     await axios({
       method: "PUT",
@@ -212,6 +224,7 @@ export default function EditActivity() {
       .then((data) => {
         //   setshowspinner(false);
         //   setBtnDisabled(false);
+        AddLogs(userUniqueId,`Activity Updated id - (${(activityId)})`);
         toast.success("Activity Updated Successfully !");
         setTimeout(() => {
           router.push("/admin/activitylist");
@@ -237,7 +250,7 @@ export default function EditActivity() {
       const res = await response.json();
       const startDates = moment(res.data[0].startDate).format("DD/MM/YYYY");
       console.log(res, "responce");
-       setValue("name", res.data[0]?.name);
+      setValue("name", res.data[0]?.name);
       setValue("price", res.data[0]?.price);
       setType(res.data[0]?.type);
       setStatus(res.data[0]?.status);
@@ -257,7 +270,7 @@ export default function EditActivity() {
     fontSize: "12px",
     fontWeight: "bold",
   };
-  
+
   useEffect(() => {
     getActivityDetail();
   }, []);
@@ -331,11 +344,11 @@ export default function EditActivity() {
                             onChange={(e) => setActivityName(e.target.value)}
                           />
                           {errors.name?.type === "required" && (
-                              <span style={style}>
-                               {activityName === ""? "Activity name is Required":""}
-                              </span>
-                            )}
-                           </Stack>
+                            <span style={style}>
+                              {activityName === "" ? "Activity name is Required" : ""}
+                            </span>
+                          )}
+                        </Stack>
                       </Grid>
                     </Grid>
                   </Stack>
@@ -351,13 +364,13 @@ export default function EditActivity() {
                             onChange={(e) => setType(e.target.value)}
                             labelId="demo-select-small"
                             label="Status"
-                            // {...register("type", {
-                            //   onChange: (event) => {
-                            //     setType(event.target.value);
-                            //   },
-                            //   required: true,
-                            // })}
-                            // {...register("sort")}
+                          // {...register("type", {
+                          //   onChange: (event) => {
+                          //     setType(event.target.value);
+                          //   },
+                          //   required: true,
+                          // })}
+                          // {...register("sort")}
                           >
                             {/* <MenuItem value={sort}>
                                     <em>None</em>
@@ -378,7 +391,7 @@ export default function EditActivity() {
                             id="demo-select-small"
                             label="Status"
 
-                            // {...register("sort")}
+                          // {...register("sort")}
                           >
                             {/* <MenuItem value={sort}>
                                     <em>None</em>
@@ -423,41 +436,41 @@ export default function EditActivity() {
                     </Grid>
                   </Stack>
                   {(type && type === "Paid") || type === "" ? (
-                  <Stack style={{ marginTop: "20px" }}>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} md={6}>
-                        <Stack spacing={1}>
-                          <InputLabel htmlFor="name">
-                            Amount<span className="err_str">*</span>
-                          </InputLabel>
-                          <OutlinedInput
-                            type="text"
-                            id="price"
-                            placeholder="Activity Amount ..."
-                            fullWidth
-                            size="small"
-                            startAdornment={<InputAdornment position="end">$</InputAdornment>}
-                            {...register("price", {
-                              required: true,
-                              pattern: /^[0-9+-]+$/,
-                            })}
-                            onChange={(e) => setActivityPrice(e.target.value)}
-                          />
-                          {errors.price?.type === "required" && (
+                    <Stack style={{ marginTop: "20px" }}>
+                      <Grid container spacing={2}>
+                        <Grid item xs={12} md={6}>
+                          <Stack spacing={1}>
+                            <InputLabel htmlFor="name">
+                              Amount<span className="err_str">*</span>
+                            </InputLabel>
+                            <OutlinedInput
+                              type="text"
+                              id="price"
+                              placeholder="Activity Amount ..."
+                              fullWidth
+                              size="small"
+                              startAdornment={<InputAdornment position="end">$</InputAdornment>}
+                              {...register("price", {
+                                required: true,
+                                pattern: /^[0-9+-]+$/,
+                              })}
+                              onChange={(e) => setActivityPrice(e.target.value)}
+                            />
+                            {errors.price?.type === "required" && (
                               <span style={style}>
-                               {activityPrice === ""? "Amount is Required":""}
+                                {activityPrice === "" ? "Amount is Required" : ""}
                               </span>
                             )}
                             {errors.price?.type === "pattern" && (
                               <span style={style}>Enter Valid Amount *</span>
                             )}
-                        </Stack>
+                          </Stack>
+                        </Grid>
                       </Grid>
-                    </Grid>
-                  </Stack>
-                     ) : (
-                      ""
-                    )}
+                    </Stack>
+                  ) : (
+                    ""
+                  )}
                   <Stack style={{ marginTop: "20px" }}>
                     <Grid container spacing={2}>
                       <Grid item xs={12} md={6}>
@@ -514,7 +527,7 @@ export default function EditActivity() {
                       size="small"
                       sx={{ width: 150, marginTop: 5 }}
                       autoFocus
-                      // disabled={btnDisabled}
+                    // disabled={btnDisabled}
                     >
                       <b>Cancel</b>
                     </Button>
@@ -523,7 +536,7 @@ export default function EditActivity() {
               </form>
             </Card>
           </div>
-          <MainFooter/>
+          <MainFooter />
           <ToastContainer />
         </Box>
       </Box>

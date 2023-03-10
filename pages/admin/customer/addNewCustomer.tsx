@@ -23,7 +23,7 @@ import {
   Stack,
 } from "@mui/material";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { api_url, auth_token } from "../../api/hello";
+import { api_url, auth_token } from "../../api/api";
 import AddCustomerCmp from "../../commoncmp/addCustomerCmp";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
@@ -31,6 +31,7 @@ import "react-toastify/dist/ReactToastify.css";
 import CloseIcon from "@mui/icons-material/Close";
 import styled from "@emotion/styled";
 import commmonfunctions from "../../../commonFunctions/commmonfunctions";
+import { AddLogs } from "../../../helper/activityLogs";
 const style = {
   color: "red",
   fontSize: "12px",
@@ -220,6 +221,7 @@ export default function AddCustomer({
         if (data) {
           setshowspinner(false);
           setBtnDisabled(false);
+          AddLogs(cretadeBy,`Customer Added by id - (${(data?.data?.data?.insertId)})`);
           toast.success("Customer Added Successfully !");
           closeDialog(false);
           setTimeout(() => {

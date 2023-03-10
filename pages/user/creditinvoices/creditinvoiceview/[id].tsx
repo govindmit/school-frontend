@@ -15,7 +15,7 @@ import {
 import Link from "next/link";
 import React, { useEffect } from "react";
 import MiniDrawer from "../../../sidebar";
-import { api_url, auth_token } from "../../../api/hello";
+import { api_url, auth_token } from "../../../api/api";
 import { useRouter } from "next/router";
 import MainFooter from "../../../commoncmp/mainfooter";
 import moment from "moment";

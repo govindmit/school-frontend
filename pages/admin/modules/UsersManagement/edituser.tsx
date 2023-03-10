@@ -28,9 +28,11 @@ import styled from "@emotion/styled";
 import UserService from '../../../../commonFunctions/servives'
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
-import { api_url, auth_token } from "../../../api/hello";
+import { api_url, auth_token } from "../../../api/api";
 import { useRouter } from "next/router";
 import MainFooter from "../../../commoncmp/mainfooter";
+import { AddLogs } from "../../../../helper/activityLogs";
+import commmonfunctions from "../../../../commonFunctions/commmonfunctions";
 const Item = styled(Paper)(({ theme }) => ({
     p: 10,
 }));
@@ -53,6 +55,7 @@ export default function EditUser(props: any) {
     const [spinner, setshowspinner] = React.useState(false);
     const [btnDisabled, setBtnDisabled] = React.useState(false);
     const [roles, setroles] = React.useState<any>([])
+const [userUniqueId, setUserUniqId] = React.useState<any>();
     const [rolestatus, setrolestatus] = React.useState<any>("");
     let permitions: { Dashboard?: any; Invoices?: any; SalesInvoices?: any; Activites?: any; Customers?: any; Cumposers?: any; CreditNote?: any; UserManagement?: any; }[] = [];
     const [onDashboard, setonDashboard] = React.useState(false);
@@ -160,6 +163,9 @@ export default function EditUser(props: any) {
     console.log(permitions);
 
     useEffect(() => {
+        commmonfunctions.VerifyLoginUser().then(res => {
+            setUserUniqId(res?.id)
+          });
         //get roles
         UserService.GetRoles().then(response => setroles(response));
         //get user det
@@ -288,6 +294,7 @@ export default function EditUser(props: any) {
         })
             .then((data: any) => {
                 if (data) {
+                    AddLogs(userUniqueId,`User updated id - (${(props.id)})`);
                     toast.success("User updated successfully!");
                     setshowspinner(false);
                     setBtnDisabled(false);

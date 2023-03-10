@@ -30,7 +30,7 @@ import {
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import MiniDrawer from "../../sidebar";
-import { api_url, auth_token } from "../../api/hello";
+import { api_url, auth_token } from "../../api/api";
 import { BiFilterAlt, BiShow } from "react-icons/bi";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
@@ -48,6 +48,7 @@ import { CSVDownload } from "react-csv";
 import Loader from "../../commoncmp/myload";
 import commmonfunctions from "../../../commonFunctions/commmonfunctions";
 import MainFooter from "../../commoncmp/mainfooter";
+import { AddLogs } from "../../../helper/activityLogs";
 import Image from "next/image";
 import { BsTelegram } from "react-icons/bs";
 
@@ -127,6 +128,7 @@ export default function CustomerList() {
   const [checked, setChecked] = React.useState(false);
   const [OpenCSV, setOpenCSV] = React.useState(false);
   const [custpermit, setcustpermit] = useState<any>([]);
+const [userUniqueId, setUserUniqId] = React.useState<any>();
   const [roleid, setroleid] = useState(0);
   const [share, setShare] = useState(false);
   const { register, handleSubmit } = useForm<FormValues>();
@@ -145,6 +147,7 @@ export default function CustomerList() {
   let logintoken: any;
   React.useEffect(() => {
     commmonfunctions.VerifyLoginUser().then(res => {
+      setUserUniqId(res?.id)
       if (res.exp * 1000 < Date.now()) {
         localStorage.removeItem('QIS_loginToken');
         localStorage.removeItem('QIS_User');
@@ -320,6 +323,7 @@ export default function CustomerList() {
       },
     })
       .then((data) => {
+        AddLogs(userUniqueId,`Delete User id - (${(deleteData.id)})`);
         toast.success("User Deleted Successfully !");
         setdeleteConfirmBoxOpen(false);
         getUser();

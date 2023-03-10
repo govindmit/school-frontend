@@ -24,7 +24,7 @@ import MiniDrawer from "../sidebar";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
-import { api_url, auth_token } from "../api/hello";
+import { api_url, auth_token } from "../api/api";
 import MainFooter from "../commoncmp/mainfooter";
 import moment from "moment";
 import axios from "axios";
@@ -39,6 +39,7 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { useForm, SubmitHandler } from "react-hook-form";
 import commmonfunctions from "../../commonFunctions/commmonfunctions";
+import { AddLogs } from "../../helper/activityLogs";
 
 const style = {
   color: "red",
@@ -153,6 +154,7 @@ export default function ViewCustomer() {
   const [open, setOpen] = React.useState(false);
   const [purchasedActivity, setPurchasedActivity] = React.useState<any>([]);
   const [dueAmount, setDueAmount] = React.useState([]);
+  const [userUniqueId, setUserUniqId] = React.useState<any>();
 
   const router = useRouter();
 
@@ -288,6 +290,7 @@ export default function ViewCustomer() {
         if (data.status === 200) {
           setshowspinner(false);
           setBtnDisabled(false);
+          AddLogs(userUniqueId,`Customer Detail Updated id - (${(customerId)})`);
           toast.success("Customer Detail Updated Successfully !");
           reset();
           setTimeout(() => {
@@ -322,6 +325,11 @@ export default function ViewCustomer() {
   };
 
   useEffect(() => {
+
+    commmonfunctions.VerifyLoginUser().then(res => {
+      setUserUniqId(res?.id)
+    });
+
     verifyLoginUser();
   }, [customerId]);
 

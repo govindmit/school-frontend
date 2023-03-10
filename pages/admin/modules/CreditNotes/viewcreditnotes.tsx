@@ -19,13 +19,14 @@ import Link from "next/link";
 import React, { useEffect } from "react";
 import MiniDrawer from "../../../sidebar";
 import DeleteFormDialog from "./deletedialougebox";
-import { api_url, auth_token } from "../../../api/hello";
+import { api_url, auth_token } from "../../../api/api";
 import { SubmitHandler, useForm } from "react-hook-form";
 import axios from "axios";
 import { toast } from "react-toastify";
 import ApproveCompForm from "./approvecmp";
 import { useRouter } from "next/router";
 import commmonfunctions from "../../../../commonFunctions/commmonfunctions";
+import { AddLogs } from "../../../../helper/activityLogs";
 const style = {
   color: "red",
   fontSize: "12px",
@@ -43,6 +44,7 @@ export default function ViewCreditNotes(props: any) {
   const [rejectOpen, setrejectOpen] = React.useState(false);
   const [approveOpen, setapproveOpen] = React.useState(false);
   const [roleid, setroleid] = React.useState(0);
+  const [userUniqueId, setUserUniqId] = React.useState<any>();
   const [creditball, setcreditball] = React.useState(0);
   const router = useRouter();
 
@@ -60,7 +62,12 @@ export default function ViewCreditNotes(props: any) {
       }
     })
   }, []);
+  
   useEffect(() => {
+    commmonfunctions.VerifyLoginUser().then(res => {
+      setUserUniqId(res?.id)
+    });
+
     fetchData();
   }, []);
 
@@ -123,6 +130,7 @@ export default function ViewCreditNotes(props: any) {
     })
       .then((data) => {
         if (data) {
+          AddLogs(userUniqueId,`Credit Notes Updated id - (${(props.id)})`);
           toast.success("Credit Notes Updated Successfully !");
           reset();
           setrejectOpen(false)

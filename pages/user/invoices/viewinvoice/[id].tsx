@@ -4,7 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
 import MiniDrawer from "../../../sidebar";
 import axios from "axios";
-import { api_url, auth_token } from "../../../api/hello";
+import { api_url, auth_token } from "../../../api/api";
 import Image from "next/image";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
@@ -24,6 +24,7 @@ import moment from "moment";
 import getwayService from "../../../../services/gatewayService"
 import Loader from "../../../commoncmp/myload";
 import commmonfunctions from "../../../../commonFunctions/commmonfunctions";
+import { AddLogs } from "../../../../helper/activityLogs";
 import RequestFormCmp from "../../salesinvoices/requestFormCmp";
 
 export interface DialogTitleProps {
@@ -101,11 +102,13 @@ export default function Guardians() {
     const [showSuccess, setShowSuccess] = useState(false);
     const [user, setUser] = useState<any>([]);
     const [myload, setmyload] = useState(false)
+    const [userUniqueId, setUserUniqId] = useState<any>();
     const [CreditReqFormOpen, setCreditReqFormOpen] = useState(false);
 
     useEffect(() => {
         let logintoken: any;
         commmonfunctions.VerifyLoginUser().then(res => {
+      setUserUniqId(res?.id)
             if (res.exp * 1000 < Date.now()) {
                 localStorage.removeItem('QIS_loginToken');
             }
@@ -401,6 +404,7 @@ export default function Guardians() {
                 .then((res) => {
                     getUser();
                     setNote("");
+                    AddLogs(userUniqueId,`Payment Created id - (${(invoiceId)})`);
                     toast.success("Payment Successfully !");
 
                     setTimeout(() => {
@@ -429,6 +433,7 @@ export default function Guardians() {
         })
             .then((data: any) => {
                 if (data) {
+                    AddLogs(userUniqueId,`Payment Created id - (${(reqData?.customerId)})`);
                     console.log("@@@@@@@@");
                 }
             })

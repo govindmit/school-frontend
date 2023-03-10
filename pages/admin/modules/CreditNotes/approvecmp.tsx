@@ -11,9 +11,11 @@ import {
 import axios from "axios";
 import * as React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { api_url, auth_token } from "../../../api/hello";
+import { api_url, auth_token } from "../../../api/api";
 import { ToastContainer, toast } from "react-toastify";
 import { useRouter } from "next/router";
+import commmonfunctions from "../../../../commonFunctions/commmonfunctions";
+import { AddLogs } from "../../../../helper/activityLogs";
 
 
 type FormValues = {
@@ -50,6 +52,16 @@ export default function ApproveCompForm({
     reset,
     formState: { errors },
   } = useForm<FormValues>();
+  
+  const [userUniqueId, setUserUniqId] = React.useState<any>();
+
+  React.useEffect(() => {
+    commmonfunctions.VerifyLoginUser().then(res => {
+      setUserUniqId(res?.id)
+    });
+  }, []);
+
+
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     const reqData = {
@@ -71,6 +83,7 @@ export default function ApproveCompForm({
     })
       .then((data) => {
         if (data) {
+          AddLogs(userUniqueId,`Edit Credit Notes id - (${(id)})`);
           toast.success("Credit Notes Updated Successfully !");
           reset();
           closeDialogs();

@@ -164,6 +164,14 @@ export default function MiniDrawer() {
   let setCreditBgColor = path.includes("creditnotes") ? mngbackground : "";
   let setCreditColor = path.includes("creditnotes") ? textcolor : "";
 
+  let setCreditReqBgColor = path.includes("creditrequest") ? mngbackground : "";
+  let setCreditReqColor = path.includes("creditrequest") ? textcolor : "";
+
+  
+  let setLogsBgColor = path.includes("activities_logs") ? mngbackground : "";
+  let setLogsColor = path.includes("activities_logs") ? textcolor : "";
+
+
   let setDashboardBgColor = path.includes("dashboard") ? mngbackground : "";
   let setDashboardColor = path.includes("dashboard") ? textcolor : "";
 
@@ -202,7 +210,7 @@ export default function MiniDrawer() {
   let userinvoicesBgColor = path.includes("user/invoices/") ? mngbackground : "";
   let userinvoicesColor = path.includes("user/invoices/") ? textcolor : "";
 
-
+  
   return (
     <>
       <Head>
@@ -469,7 +477,7 @@ export default function MiniDrawer() {
               ""
             )}
 
-            {/* ///////////////////////////////////// admin //////////////////////////////////// */}
+            {/* ///////////////////////////////////////////////////////////////////////// */}
 
             {checkdashboard === true || userdet?.roleId === 1 ? (
               <ListItem
@@ -541,7 +549,7 @@ export default function MiniDrawer() {
                 >
                   <ListItem
                     style={{ cursor: "pointer" }}
-                    onClick={() => router.push("/admin/customer/custType")}
+                    onClick={() => router.push("/customer/custType")}
                   >
                     <ListItemIcon
                       sx={{
@@ -594,7 +602,6 @@ export default function MiniDrawer() {
             ) : (
               ""
             )}
-
             {userdet?.roleId === 1 ? (
               <ListItem
                 className="sidebar-link"
@@ -630,7 +637,41 @@ export default function MiniDrawer() {
             ) : (
               ""
             )}
-
+   {userdet?.roleId === 1 ? (
+              <ListItem
+                className="sidebar-link"
+                disablePadding
+                sx={{ display: "block" }}
+                onClick={() =>
+                  router.push("/admin/creditrequest/list")
+                }
+              >
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: open ? "initial" : "center",
+                    px: 2.5,
+                    background: setCreditReqBgColor,
+                    color: setCreditReqColor,
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : "auto",
+                      justifyContent: "center",
+                    }}
+                  ></ListItemIcon>
+                  <CreditCardOutlinedIcon />
+                  <ListItemText
+                    primary="Credit Requests"
+                    sx={{ opacity: open ? 1 : 0 }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            ) : (
+              ""
+            )}
             {checkActivity === true || userdet?.roleId === 1 ? (
               <ListItem
                 className="sidebar-link"
@@ -704,7 +745,7 @@ export default function MiniDrawer() {
                 className="sidebar-link"
                 disablePadding
                 sx={{ display: "block" }}
-                onClick={() => router.push("/admin/usermanagement/users")}
+                onClick={() => router.push("/usermanagement/users")}
               >
                 <ListItemButton
                   sx={{
@@ -766,7 +807,41 @@ export default function MiniDrawer() {
             ) : (
               ""
             )}
-
+              {userdet?.roleId === 1 ? (
+              <ListItem
+                className="sidebar-link"
+                disablePadding
+                sx={{ display: "block" }}
+                onClick={() =>
+                  router.push("/admin/activities_logs/list")
+                }
+              >
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: open ? "initial" : "center",
+                    px: 2.5,
+                    background: setLogsBgColor,
+                    color: setLogsColor,
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : "auto",
+                      justifyContent: "center",
+                    }}
+                  ></ListItemIcon>
+                  <CreditCardOutlinedIcon />
+                  <ListItemText
+                    primary="Activities Logs"
+                    sx={{ opacity: open ? 1 : 0 }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            ) : (
+              ""
+            )}
             <ListItem
               className="sidebar-link"
               disablePadding
