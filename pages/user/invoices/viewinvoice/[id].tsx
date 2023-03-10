@@ -4,7 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
 import MiniDrawer from "../../../sidebar";
 import axios from "axios";
-import { api_url, auth_token } from "../../../api/hello";
+import { api_url, auth_token } from "../../../api/api";
 import Image from "next/image";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";

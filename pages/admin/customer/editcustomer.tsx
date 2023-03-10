@@ -23,7 +23,7 @@ import {
   Stack,
 } from "@mui/material";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { api_url, auth_token } from "../../api/hello";
+import { api_url, auth_token } from "../../api/api";
 import AddCustomerCmp from "../../commoncmp/addCustomerCmp";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";

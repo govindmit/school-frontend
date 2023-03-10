@@ -34,7 +34,7 @@ import { BiFilterAlt, BiShow } from "react-icons/bi";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBin5Fill, RiFileCopyLine } from "react-icons/ri";
 import MiniDrawer from "../../../sidebar";
-import { api_url, auth_token } from "../../../api/hello";
+import { api_url, auth_token } from "../../../api/api";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -47,6 +47,8 @@ import AddSalesOrder from "../add_new_sales_order";
 import MainFooter from "../../../commoncmp/mainfooter";
 import getwayService from "../../../../services/gatewayService"
 import Alert from '@mui/material/Alert';
+import { AddLogs } from "../../../../helper/activityLogs";
+
 function a11yProps(index: number) {
   return {
     id: `simple-tab-${index}`,
@@ -104,6 +106,8 @@ export default function SalesOrderList() {
   const [activeTab, setActiveTab] = useState("");
   const [newSalesOpen, setNewSalesOpen] = useState(false);
   const [showSuccess, setShowSuccess] = React.useState(false);
+  const [userUniqueId, setUserUniqId] = React.useState<any>();
+
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -112,7 +116,9 @@ export default function SalesOrderList() {
   let logintoken: any;
   const router = useRouter();
   React.useEffect(() => {
-
+    commmonfunctions.VerifyLoginUser().then(res => {
+      setUserUniqId(res?.id)
+    });
 
     if (!process.env.NEXT_PUBLIC_AMEX_SALES_ORDER_REDIRECT_URL) {
       logintoken = localStorage.getItem("QIS_loginToken");
@@ -278,6 +284,7 @@ export default function SalesOrderList() {
     })
       .then((data) => {
         toast.success("Sales Record delete Successfully !");
+        AddLogs(userUniqueId,`delete sales order id - (${(deleteData.id)})`);
         handleClose();
         fetchData();
       })

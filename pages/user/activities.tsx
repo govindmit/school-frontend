@@ -20,7 +20,7 @@ import Box from "@mui/material/Box";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import MiniDrawer from "../sidebar";
-import { api_url, auth_token, base_url } from "../api/hello";
+import { api_url, auth_token, base_url } from "../api/api";
 import jwt_decode from "jwt-decode";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";

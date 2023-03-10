@@ -21,7 +21,7 @@ import MiniDrawer from "../../../sidebar";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
-import { api_url, auth_token } from "../../../api/hello";
+import { api_url, auth_token } from "../../../api/api";
 import EditCustomer from "../editcustomer";
 import MainFooter from "../../../commoncmp/mainfooter";
 import moment from "moment";     

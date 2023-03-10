@@ -24,7 +24,7 @@ import {
   InputAdornment,
 } from "@mui/material";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { api_url, auth_token } from "../../api/hello";
+import { api_url, auth_token } from "../../api/api";
 import AddCustomer from "../../commoncmp/getCustomer";
 import AddActivity from "../../commoncmp/getActivity";
 import axios from "axios";
@@ -360,6 +360,7 @@ export default function AddSalesOrder({
         })
           .then(async (data: any) => {
             if (data) {
+              console.log('############',data);
               // insertRemainingNotesAmount();
               if (data?.status === 200) {
                 setorderId(data.data.sageIntacctorderID);

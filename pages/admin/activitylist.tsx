@@ -34,7 +34,7 @@ import { BiFilterAlt, BiShow } from "react-icons/bi";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBin5Fill, RiFileCopyLine } from "react-icons/ri";
 import MiniDrawer from "../sidebar";
-import { api_url, auth_token, base_url } from "../api/hello";
+import { api_url, auth_token, base_url } from "../api/api";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";

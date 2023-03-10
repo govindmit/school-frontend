@@ -17,7 +17,7 @@ import styled from "@emotion/styled";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import CloseIcon from "@mui/icons-material/Close";
-import { api_url, auth_token } from "../../api/hello";
+import { api_url, auth_token } from "../../api/api";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));

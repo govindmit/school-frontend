@@ -33,7 +33,7 @@ import { FiEdit } from "react-icons/fi";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { api_url, auth_token } from "../../api/hello";
+import { api_url, auth_token } from "../../api/api";
 import ConfirmBox from "../../commoncmp/confirmbox";
 import styled from "@emotion/styled";
 import { GridCloseIcon } from "@mui/x-data-grid";

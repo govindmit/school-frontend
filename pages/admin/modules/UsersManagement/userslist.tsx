@@ -24,7 +24,7 @@ import {
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import MiniDrawer from "../../../sidebar";
-import { api_url, auth_token } from "../../../api/hello";
+import { api_url, auth_token } from "../../../api/api";
 import { BiShow } from "react-icons/bi";
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";

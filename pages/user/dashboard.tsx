@@ -24,7 +24,7 @@ import MiniDrawer from "../sidebar";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
-import { api_url, auth_token } from "../api/hello";
+import { api_url, auth_token } from "../api/api";
 import MainFooter from "../commoncmp/mainfooter";
 import moment from "moment";
 import axios from "axios";

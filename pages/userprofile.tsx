@@ -23,7 +23,7 @@ import commmonfunctions from "../commonFunctions/commmonfunctions";
 import MainFooter from "./commoncmp/mainfooter";
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
-import { api_url, auth_token } from "./api/hello";
+import { api_url, auth_token } from "./api/api";
 
 
 type FormValues = {
