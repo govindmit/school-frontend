@@ -27,7 +27,7 @@ import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import { Button, OutlinedInput } from "@mui/material";
 import Paper from "@mui/material/Paper";
-import AddCustomer from "../../customer/addNewCustomer";
+import AddCustomer from "../customer/addNewCustomer";
 import AddItem from "../additem";
 import Link from "next/link";
 import { useRouter } from "next/router";

@@ -202,7 +202,7 @@ export default function MiniDrawer() {
   let userinvoicesBgColor = path.includes("user/invoices/") ? mngbackground : "";
   let userinvoicesColor = path.includes("user/invoices/") ? textcolor : "";
 
-  
+
   return (
     <>
       <Head>
@@ -469,7 +469,7 @@ export default function MiniDrawer() {
               ""
             )}
 
-            {/* ///////////////////////////////////////////////////////////////////////// */}
+            {/* ///////////////////////////////////// admin //////////////////////////////////// */}
 
             {checkdashboard === true || userdet?.roleId === 1 ? (
               <ListItem
@@ -509,7 +509,7 @@ export default function MiniDrawer() {
                 className="sidebar-link"
                 disablePadding
                 sx={{ display: "block" }}
-                onClick={() => router.push("/customer/customerslist")}
+                onClick={() => router.push("/admin/customer/customerslist")}
               >
                 <ListItemButton
                   onClick={handleClick}
@@ -541,7 +541,7 @@ export default function MiniDrawer() {
                 >
                   <ListItem
                     style={{ cursor: "pointer" }}
-                    onClick={() => router.push("/customer/custType")}
+                    onClick={() => router.push("/admin/customer/custType")}
                   >
                     <ListItemIcon
                       sx={{
@@ -704,7 +704,7 @@ export default function MiniDrawer() {
                 className="sidebar-link"
                 disablePadding
                 sx={{ display: "block" }}
-                onClick={() => router.push("/usermanagement/users")}
+                onClick={() => router.push("/admin/usermanagement/users")}
               >
                 <ListItemButton
                   sx={{

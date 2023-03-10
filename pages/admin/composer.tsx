@@ -46,6 +46,7 @@ import MainFooter from "../commoncmp/mainfooter";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "react-quill/dist/quill.snow.css";
+import commmonfunctions from "../../commonFunctions/commmonfunctions";
 
 const QuillNoSSRWrapper = dynamic(import("react-quill"), {
   ssr: false,
@@ -180,6 +181,28 @@ export default function Composer() {
   let allData: any = [];
 
   React.useEffect(() => {
+    const logintoken = localStorage.getItem("QIS_loginToken");
+    if (logintoken === undefined || logintoken === null) {
+      router.push("/");
+    }
+    commmonfunctions.VerifyLoginUser().then(res => {
+      if (res.exp * 1000 < Date.now()) {
+        localStorage.removeItem('QIS_loginToken');
+        localStorage.removeItem('QIS_User');
+        router.push("/");
+      }
+    });
+    commmonfunctions.GivenPermition().then(res => {
+      if (res.roleId == 1) {
+        //router.push("/userprofile");
+      } else if (res.roleId > 1) {
+        commmonfunctions.ManageComposers().then(res => {
+          if (!res) {
+            router.push("/userprofile");
+          }
+        })
+      }
+    });
     getType();
     getUser();
   }, []);
@@ -559,8 +582,8 @@ export default function Composer() {
                   {filteredArr?.length !== 0
                     ? ""
                     : anyFieldError && (
-                        <span style={style}>Please select any fields *</span>
-                      )}
+                      <span style={style}>Please select any fields *</span>
+                    )}
 
                   <Stack style={{ marginTop: "20px" }}>
                     <Grid container spacing={2}>
@@ -604,7 +627,7 @@ export default function Composer() {
                             onChange={setDesContent}
                           />
                           {(messageError && descontent === "") ||
-                          descontent === "<p><br></p>" ? (
+                            descontent === "<p><br></p>" ? (
                             <span style={style}>
                               {valids === false
                                 ? "Message field is Required **"

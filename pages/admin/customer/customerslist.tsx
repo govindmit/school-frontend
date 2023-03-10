@@ -28,8 +28,8 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import MiniDrawer from "../sidebar";
-import { api_url, auth_token } from "../api/hello";
+import MiniDrawer from "../../sidebar";
+import { api_url, auth_token } from "../../api/hello";
 import { BiFilterAlt, BiShow } from "react-icons/bi";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
@@ -37,16 +37,16 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBin5Fill } from "react-icons/ri";
-import ConfirmBox from "../commoncmp/confirmbox";
+import ConfirmBox from "../../commoncmp/confirmbox";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AddCustomer from "./addNewCustomer";
 import EditCustomer from "./editcustomer";
 import { useRouter } from "next/router";
 import { CSVDownload } from "react-csv";
-import Loader from "../commoncmp/myload";
-import commmonfunctions from "../../commonFunctions/commmonfunctions";
-import MainFooter from "../commoncmp/mainfooter";
+import Loader from "../../commoncmp/myload";
+import commmonfunctions from "../../../commonFunctions/commmonfunctions";
+import MainFooter from "../../commoncmp/mainfooter";
 
 function a11yProps(index: number) {
   return {
@@ -127,10 +127,6 @@ export default function CustomerList() {
   // verify user login and previlegs
   let logintoken: any;
   React.useEffect(() => {
-    logintoken = localStorage.getItem("QIS_loginToken");
-    if (logintoken === undefined || logintoken === null) {
-      router.push("/");
-    }
     commmonfunctions.VerifyLoginUser().then(res => {
       if (res.exp * 1000 < Date.now()) {
         localStorage.removeItem('QIS_loginToken');
@@ -138,11 +134,15 @@ export default function CustomerList() {
         router.push("/");
       }
     });
+    logintoken = localStorage.getItem("QIS_loginToken");
+    if (logintoken === undefined || logintoken === null) {
+      router.push("/");
+    }
     commmonfunctions.GivenPermition().then(res => {
       if (res.roleId == 1) {
         setroleid(res.roleId);
         //router.push("/userprofile");
-      } else if (res.roleId > 1) {
+      } else if (res.roleId > 1 && res.roleId !== 2) {
         commmonfunctions.ManageCustomers().then(res => {
           if (!res) {
             router.push("/userprofile");
@@ -150,6 +150,8 @@ export default function CustomerList() {
             setcustpermit(res);
           }
         })
+      } else {
+        router.push("/userprofile");
       }
     })
   }, []);
@@ -919,7 +921,7 @@ export default function CustomerList() {
                                   {custpermit && custpermit.canView === true || roleid === 1 ? (
                                     <IconButton className="action-view">
                                       <Link
-                                        href={`/customer/viewcustomer/${dataitem.id}`}
+                                        href={`/admin/customer/viewcustomer/${dataitem.id}`}
                                         style={{
                                           color: "#26CEB3",
                                         }}

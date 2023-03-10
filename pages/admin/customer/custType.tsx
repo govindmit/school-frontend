@@ -27,21 +27,21 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import MiniDrawer from "../sidebar";
+import MiniDrawer from "../../sidebar";
 import axios from "axios";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { api_url, auth_token } from "../api/hello";
-import ConfirmBox from "../commoncmp/confirmbox";
+import { api_url, auth_token } from "../../api/hello";
+import ConfirmBox from "../../commoncmp/confirmbox";
 import styled from "@emotion/styled";
 import { GridCloseIcon } from "@mui/x-data-grid";
 import { useForm, SubmitHandler } from "react-hook-form";
 import EditType from "./editType";
-import commmonfunctions from "../../commonFunctions/commmonfunctions";
+import commmonfunctions from "../../../commonFunctions/commmonfunctions";
 import { useRouter } from "next/router";
-import MainFooter from "../commoncmp/mainfooter";
+import MainFooter from "../../commoncmp/mainfooter";
 
 const style = {
   color: "red",

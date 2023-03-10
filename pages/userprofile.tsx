@@ -53,8 +53,9 @@ export default function ViewCustomer() {
     } = useForm<FormValues>();
 
 
+    let logintoken: any;
     useEffect(() => {
-        const logintoken = localStorage.getItem("QIS_loginToken");
+        logintoken = localStorage.getItem("QIS_loginToken");
         if (logintoken === undefined || logintoken === null) {
             router.push("/");
         }
@@ -98,7 +99,7 @@ export default function ViewCustomer() {
                 if (data) {
                     toast.success("User updated successfully!");
                     setshowspinner(false);
-                    setBtnDisabled(false)
+                    setBtnDisabled(false);
                 }
             })
             .catch((error) => {

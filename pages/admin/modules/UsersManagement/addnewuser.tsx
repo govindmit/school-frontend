@@ -21,17 +21,18 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import React from "react";
-import MiniDrawer from "../../sidebar";
+import MiniDrawer from "../../../sidebar";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import styled from "@emotion/styled";
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
-import { api_url, auth_token } from "../../api/hello";
-import UserService from "../../../commonFunctions/servives";
+import { api_url, auth_token } from "../../../api/hello";
+import UserService from "../../../../commonFunctions/servives";
 import { useRouter } from "next/router";
 import AddRole from "./addrole";
-import MainFooter from "../../commoncmp/mainfooter";
+import MainFooter from "../../../commoncmp/mainfooter";
+import commmonfunctions from "../../../../commonFunctions/commmonfunctions";
 const Item = styled(Paper)(({ theme }) => ({
   p: 10,
 }));
@@ -165,8 +166,20 @@ export default function AddNewUser() {
     });
   }
 
+  let logintoken: any;
   React.useEffect(() => {
     UserService.GetRoles().then((response) => setroles(response));
+    // verify user login and previlegs
+    logintoken = localStorage.getItem("QIS_loginToken");
+    if (logintoken === undefined || logintoken === null) {
+      router.push("/");
+    }
+    commmonfunctions.GivenPermition().then(res => {
+      if (res.roleId === 1) {
+      } else {
+        router.push("/userprofile");
+      }
+    })
   }, []);
 
   const {
@@ -211,7 +224,7 @@ export default function AddNewUser() {
           setshowspinner(false);
           setBtnDisabled(false);
           setTimeout(() => {
-            router.push("/usermanagement/users");
+            router.push("/admin/usermanagement/users");
           }, 1000);
         }
       })
@@ -261,7 +274,7 @@ export default function AddNewUser() {
                     <Link
                       key="1"
                       color="inherit"
-                      href="/usermanagement/users"
+                      href="/admin/usermanagement/users"
                       style={{ color: "#1A70C5", textDecoration: "none" }}
                     >
                       Home
@@ -460,7 +473,7 @@ export default function AddNewUser() {
                           </Button>{" "}
                           <Link
                             style={{ color: "red", textDecoration: "none" }}
-                            href="/usermanagement/users"
+                            href="/admin/usermanagement/users"
                           >
                             <Button
                               type="submit"

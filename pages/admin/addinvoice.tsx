@@ -31,7 +31,7 @@ import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import { Button, OutlinedInput } from "@mui/material";
 import Paper from "@mui/material/Paper";
-import AddCustomer from "../customer/addNewCustomer";
+import AddCustomer from "./customer/addNewCustomer";
 import AddItem from "./additem";
 import Link from "next/link";
 import DatePicker from "react-datepicker";
@@ -393,10 +393,11 @@ export default function Guardians() {
       .then((res) => {
         setItem(res?.data.data);
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
   console.log(Dateerror, "Dateerror");
   useEffect(() => {
+    // CheckSercurity();
     let cusId = localStorage.getItem("customerId");
     invoiceNo();
     // if (cusId) {
@@ -438,7 +439,7 @@ export default function Guardians() {
         setProduct(res?.data.data);
         handleCloses();
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
   var price = 0;
   for (let d of product) {
@@ -462,7 +463,7 @@ export default function Guardians() {
       .then((res) => {
         setUser(res?.data.data);
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
 
   const handleClickOpen = () => {
@@ -504,7 +505,7 @@ export default function Guardians() {
         setInvoiceNo(res?.data?.invoiceNo);
         // console.log(res, "response");
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
 
   const handleDraft = async () => {
@@ -776,12 +777,12 @@ export default function Guardians() {
                             )}
                           </Button>
                         }
-                        // {...register("Customername", {
-                        //   onChange: (event) => {
-                        //     setUserId(event);
-                        //   },
-                        //   required: true,
-                        // })}
+                      // {...register("Customername", {
+                      //   onChange: (event) => {
+                      //     setUserId(event);
+                      //   },
+                      //   required: true,
+                      // })}
                       />
                       <Typography style={style}>
                         <span>
