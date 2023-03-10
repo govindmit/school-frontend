@@ -171,6 +171,8 @@ export default function UserInvoices() {
         }
     };
 
+    console.log(getCreditReq);
+
     return (
         <>
             <Box sx={{ display: "flex" }}>
@@ -278,7 +280,8 @@ export default function UserInvoices() {
                                                 <Checkbox />
                                             </TableCell>
                                             <TableCell>ID</TableCell>
-                                            <TableCell>ACTIVITY</TableCell>
+                                            <TableCell>ACTIVITY / ITEM</TableCell>
+                                            <TableCell>Is RELATED</TableCell>
                                             <TableCell>STATUS</TableCell>
                                             <TableCell>AMOUNT</TableCell>
                                             <TableCell>INVOICE ID</TableCell>
@@ -303,8 +306,13 @@ export default function UserInvoices() {
                                                         </TableCell>
                                                     </TableCell>
                                                     <TableCell align="left">
-                                                        {item?.name
-                                                        }
+                                                        {item?.name !== null ? item?.name : item?.item_name !== null ? item?.item_name : ""}
+                                                    </TableCell>
+                                                    <TableCell align="left">
+                                                        <Typography
+                                                        >
+                                                            {item?.invoiceId > 0 ? (<span style={{ color: "#3366ff" }}><b>Invoice Related</b></span>) : item?.salesOrderId > 0 ? (<span style={{ color: "#006600" }}><b>Activity Related</b></span>) : ""}
+                                                        </Typography>
                                                     </TableCell>
                                                     <TableCell align="left">{item?.status === 0 ? (<span style={{ color: "#FF4026", fontWeight: "bold" }}>Pending</span>) : item?.status === 4 ?
                                                         (<span style={{ color: "#02C509", fontWeight: "bold" }}>Approved</span>) : item?.status === 2 ?

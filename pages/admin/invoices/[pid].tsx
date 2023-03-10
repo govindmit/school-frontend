@@ -1263,7 +1263,6 @@ const [userUniqueId, setUserUniqId] = useState<any>();
                 </Stack>
               </TableContainer>
             </Card>
-
             <Modal
               open={share}
               onClose={handleEmailClose}

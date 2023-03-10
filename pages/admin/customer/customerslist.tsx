@@ -25,6 +25,7 @@ import {
   Pagination,
   Tabs,
   Tab,
+  Modal,
 } from "@mui/material";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -48,6 +49,8 @@ import Loader from "../../commoncmp/myload";
 import commmonfunctions from "../../../commonFunctions/commmonfunctions";
 import MainFooter from "../../commoncmp/mainfooter";
 import { AddLogs } from "../../../helper/activityLogs";
+import Image from "next/image";
+import { BsTelegram } from "react-icons/bs";
 
 function a11yProps(index: number) {
   return {
@@ -88,8 +91,21 @@ type FormValues = {
   ParentId: string;
 };
 
+const style = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
+
 export default function CustomerList() {
   const [users, setUsers] = useState<any>([]);
+  const [UserId, setUserId] = useState(0);
   const [custtype, setcusttype] = useState<any>([]);
   const [tabFilterData, settabFilterData] = useState<any>([]);
   const [All, setAll] = useState(0);
@@ -114,6 +130,7 @@ export default function CustomerList() {
   const [custpermit, setcustpermit] = useState<any>([]);
 const [userUniqueId, setUserUniqId] = React.useState<any>();
   const [roleid, setroleid] = useState(0);
+  const [share, setShare] = useState(false);
   const { register, handleSubmit } = useForm<FormValues>();
   const router = useRouter();
 
@@ -348,6 +365,31 @@ const [userUniqueId, setUserUniqId] = React.useState<any>();
     setUsers(Inact);
   }
 
+  //send email functionality
+  function handleShare(id: any) {
+    setUserId(id);
+    setShare(true);
+  }
+  const handleEmailClose = () => setShare(false);
+  // send email func
+  const handleSend = async () => {
+    await axios({
+      method: "POST",
+      url: `${api_url}/sendUserEmail`,
+      headers: {
+        Authorization: auth_token,
+      },
+    })
+      .then((res) => {
+        toast.success(" Mail Send Successfully !");
+        setShare(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error(" Internal Server Error !");
+      });
+  };
+
   //check uncheck functionality
   const [userinfo, setUserInfo] = useState<any>({
     id: [],
@@ -376,7 +418,6 @@ const [userUniqueId, setUserUniqId] = React.useState<any>();
 
   // console.log(checked);
   // console.log(userinfo.id);
-
 
   // Export to CSV
   const [mydata, setmydata] = useState<any>("")
@@ -447,6 +488,7 @@ const [userUniqueId, setUserUniqId] = React.useState<any>();
     { label: "Customer Type ", key: "CustomerType" },
     { label: "status", key: "status" },
   ];
+
 
   return (
     <>
@@ -914,7 +956,7 @@ const [userUniqueId, setUserUniqId] = React.useState<any>();
                                 {dataitem.phone1}
                               </TableCell>
                               <TableCell align="left">
-                                {dataitem.phone2}
+                                {dataitem.phone2 === 0 ? "" : dataitem.phone2}
                               </TableCell>
                               <TableCell align="left">
                                 <Stack
@@ -942,6 +984,16 @@ const [userUniqueId, setUserUniqId] = React.useState<any>();
                                     <FiEdit />
                                   </IconButton>)
                                     : ""}
+                                  {custpermit && custpermit.canEdit === true || roleid === 1 ? (
+                                    <Button className="idiv">
+                                      <Image
+                                        onClick={() => handleShare(dataitem.id)}
+                                        src="/share.svg"
+                                        alt="Picture of the author"
+                                        width={35}
+                                        height={35}
+                                      />
+                                    </Button>) : ""}
                                   {custpermit && custpermit.canDelete === true || roleid === 1 ? (<IconButton
                                     className="action-delete"
                                     style={{ color: "#F95A37" }}
@@ -1014,6 +1066,39 @@ const [userUniqueId, setUserUniqId] = React.useState<any>();
         title={deleteData?.name}
         deleteFunction={deleteUser}
       />
+      <Modal
+        open={share}
+        onClose={handleEmailClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style} className="ISBOX popup send">
+          <div className="Isend">
+            <div>
+              <h3 className="ehead">Send Document</h3>
+            </div>
+            <div className="Isend">
+              <h3 className="eshead">
+                How would you like to deliver this document to the
+                customer?
+              </h3>
+            </div>
+          </div>
+          <div className="sendEmailBox">
+            <div>
+              <Box>
+                <BsTelegram
+                  onClick={handleSend}
+                  className="telegram"
+                ></BsTelegram>
+              </Box>
+            </div>
+            <div>
+              <h3>Email</h3>
+            </div>
+          </div>
+        </Box>
+      </Modal>
       <ToastContainer />
     </>
   );

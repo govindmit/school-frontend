@@ -25,6 +25,7 @@ import getwayService from "../../../../services/gatewayService"
 import Loader from "../../../commoncmp/myload";
 import commmonfunctions from "../../../../commonFunctions/commmonfunctions";
 import { AddLogs } from "../../../../helper/activityLogs";
+import RequestFormCmp from "../../salesinvoices/requestFormCmp";
 
 export interface DialogTitleProps {
     id: string;
@@ -82,6 +83,7 @@ export default function Guardians() {
     const [invoice, setInvoice] = useState<any>([]);
     const [item, setItem] = useState<any>([]);
     const [invDet, setinvDet] = useState<any>([]);
+    const [invDetails, setinvDetails] = useState<any>([]);
     const [product, setProduct] = useState<any>([]);
     const [dollerOpen, setDollerOpen] = useState(false);
     const [recievedPay, setRecieved] = useState<any>([]);
@@ -101,6 +103,7 @@ export default function Guardians() {
     const [user, setUser] = useState<any>([]);
     const [myload, setmyload] = useState(false)
     const [userUniqueId, setUserUniqId] = useState<any>();
+    const [CreditReqFormOpen, setCreditReqFormOpen] = useState(false);
 
     useEffect(() => {
         let logintoken: any;
@@ -176,6 +179,7 @@ export default function Guardians() {
                         .catch((err) => { });
                 }
                 setinvDet(res?.data.data);
+                setinvDetails(res?.data.data[0]);
                 setInvoiceNo(res?.data?.invoiceNo);
             })
             .catch((err) => { });
@@ -413,7 +417,6 @@ export default function Guardians() {
         }
     }
 
-
     const insertRemainingNotesAmount = async (reqData: any) => {
         // const reqData = {
         //     customerId: customerId,
@@ -439,7 +442,6 @@ export default function Guardians() {
             });
     };
 
-
     const getUser = async () => {
         await axios({
             method: "POST",
@@ -452,9 +454,30 @@ export default function Guardians() {
                 setUser(res?.data.data);
                 setInvoice(res?.data.data);
             })
-            .catch((err) => { });
+            .catch((err) => {
+                console.log(err);
+            });
     };
 
+
+    //Credit Request
+    const handleReqOpen = () => {
+        setCreditReqFormOpen(true);
+    };
+
+    const closePoP = (data: any) => {
+        setCreditReqFormOpen(false);
+        invoiceDataById();
+    };
+
+    const reqDet = {
+        userId: invDetails && invDetails?.customerId,
+        invoiceId: invDetails && invDetails?.id,
+        activityId: invDetails && invDetails?.itemId,
+        status: 0,
+        amount: invDetails && invDetails?.amount,
+        createdBy: invDetails && invDetails?.customerId
+    }
     return (
         <>
             <Box sx={{ display: "flex" }}>
@@ -498,14 +521,27 @@ export default function Guardians() {
                                     INVOICE VIEW
                                 </Typography>
                             </Stack>
-                            <div className="buycss" style={{ textAlign: "end" }}>
-                                <Link
-                                    href="/user/invoices/invoiceslist"
-                                    style={{ color: "#1A70C5", textDecoration: "none" }}
-                                >
-                                    <Button variant="contained" startIcon={<ArrowBackIcon />}> <b>Back To List</b></Button>
-                                </Link>
-                            </div>
+                            <Stack>
+                                <div className="cinvoice">
+                                    <div className="buycss" style={{ textAlign: "end", marginRight: "10px" }} >
+                                        <Link
+                                            href="/user/invoices/invoiceslist"
+                                            style={{ color: "#1A70C5", textDecoration: "none" }}
+                                        >
+                                            <Button variant="contained" startIcon={<ArrowBackIcon />}> <b>Back To List</b></Button>
+                                        </Link>
+                                    </div>
+                                    <div>
+                                        {invDetails && invDetails?.amount !== 0 ? (<div>
+                                            {invDetails.isRequested === 1 ? (<Button size="small" variant="contained" style={{ backgroundColor: "#D1D2D2", color: "whitesmoke" }} disabled sx={{ width: 135 }}
+                                            ><b>Requested</b></Button>) : (<Button size="small" variant="contained"
+                                                onClick={() => handleReqOpen()}
+                                            ><b>Credit Request</b></Button>)}
+                                        </div>) : (<Button disabled size="small" variant="contained"
+                                        ><b>Credit Request</b></Button>)}
+                                    </div>
+                                </div>
+                            </Stack>
                         </Stack>
                         {/*bread cump */}
                         <div className="midBar">
@@ -860,6 +896,13 @@ export default function Guardians() {
                     </DialogActions>
                 </BootstrapDialog>
             </div>
+            {
+                CreditReqFormOpen ? (
+                    <RequestFormCmp open={RequestFormCmp} reqDet={reqDet} closeDialog={closePoP} />
+                ) : (
+                    ""
+                )
+            }
         </>
     );
 }
