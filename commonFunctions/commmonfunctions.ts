@@ -1,6 +1,6 @@
 import axios from "axios";
 import jwt_decode from "jwt-decode";
-import { api_url, auth_token } from "../pages/api/api";
+import { api_url, auth_token } from "../pages/api/api"; 
 
 class CommonFunctions {
   //check login user
