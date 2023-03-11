@@ -38,7 +38,7 @@ import axios from "axios";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
-import { api_url, base_url, auth_token } from "../../api/api";
+import { api_url, base_url, auth_token } from "../../../helper/config";
 import moment from "moment";
 import Image from "next/image";
 import PopupState, {

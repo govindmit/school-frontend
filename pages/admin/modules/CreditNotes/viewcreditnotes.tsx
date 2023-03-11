@@ -19,7 +19,7 @@ import Link from "next/link";
 import React, { useEffect } from "react";
 import MiniDrawer from "../../../sidebar";
 import DeleteFormDialog from "./deletedialougebox";
-import { api_url, auth_token } from "../../../api/api";
+import { api_url, auth_token } from "../../../../helper/config";
 import { SubmitHandler, useForm } from "react-hook-form";
 import axios from "axios";
 import { toast } from "react-toastify";

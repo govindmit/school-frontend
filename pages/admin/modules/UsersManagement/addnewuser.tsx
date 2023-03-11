@@ -27,7 +27,7 @@ import "react-toastify/dist/ReactToastify.css";
 import styled from "@emotion/styled";
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
-import { api_url, auth_token } from "../../../api/api";
+import { api_url, auth_token } from "../../../../helper/config";
 import UserService from "../../../../commonFunctions/servives";
 import { useRouter } from "next/router";
 import AddRole from "./addrole";

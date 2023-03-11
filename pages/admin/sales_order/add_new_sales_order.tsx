@@ -24,7 +24,7 @@ import {
   InputAdornment,
 } from "@mui/material";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { api_url, auth_token } from "../../api/api";
+import { api_url, auth_token } from "../../../helper/config";
 import AddCustomer from "../../commoncmp/getCustomer";
 import AddActivity from "../../commoncmp/getActivity";
 import axios from "axios";

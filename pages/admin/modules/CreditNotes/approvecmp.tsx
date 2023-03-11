@@ -11,7 +11,7 @@ import {
 import axios from "axios";
 import * as React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { api_url, auth_token } from "../../../api/api";
+import { api_url, auth_token } from "../../../../helper/config";
 import { ToastContainer, toast } from "react-toastify";
 import { useRouter } from "next/router";
 import commmonfunctions from "../../../../commonFunctions/commmonfunctions";

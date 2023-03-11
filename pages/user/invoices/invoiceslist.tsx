@@ -53,7 +53,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import Paper from "@mui/material/Paper";
 import { useRouter } from "next/router";
 import commmonfunctions from "../../../commonFunctions/commmonfunctions";
-import { api_url, auth_token } from "../../api/api";
+import { api_url, auth_token } from "../../../helper/config";
 import MainFooter from "../../commoncmp/mainfooter";
 import PDFService from "../../../commonFunctions/invoicepdf"
 import { AddLogs } from "../../../helper/activityLogs";

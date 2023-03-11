@@ -1,6 +1,6 @@
 import jwt_decode from "jwt-decode";
 import axios from "axios";
-import { api_url, auth_token } from "../pages/api/api";
+import { api_url, auth_token } from "../helper/config";
 
 class UserService {
   //check security

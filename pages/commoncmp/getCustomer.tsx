@@ -1,7 +1,7 @@
 import { Autocomplete, Button, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
-import { api_url, auth_token } from "../api/api";
+import { api_url, auth_token } from "../../helper/config";
 
 export default function AddCustomerName({ Data, PId, pname }: { Data: any, PId: any, pname: any }) {
   const [users, setUsers] = useState<any>([]);

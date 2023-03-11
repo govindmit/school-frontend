@@ -8,7 +8,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Grid, InputLabel, OutlinedInput, Stack } from "@mui/material";
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
-import { api_url, auth_token } from "../../../api/api";
+import { api_url, auth_token } from "../../../../helper/config";
 import { ToastContainer, toast } from "react-toastify";
 import commmonfunctions from "../../../../commonFunctions/commmonfunctions";
 import { AddLogs } from "../../../../helper/activityLogs";

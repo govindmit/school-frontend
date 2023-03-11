@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import MiniDrawer from "../../sidebar";
 import axios from "axios";
 import TextField from "@mui/material/TextField";
-import { api_url, auth_token, base_url } from "../../api/api";
+import { api_url, auth_token, base_url } from "../../../helper/config";
 import moment from "moment";
 import Image from "next/image";
 import { useForm, SubmitHandler } from "react-hook-form";
