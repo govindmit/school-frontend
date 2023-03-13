@@ -19,16 +19,16 @@ import moment from "moment";
 import Box from "@mui/material/Box";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import MiniDrawer from "../sidebar";
-import { api_url, auth_token, base_url } from "../../helper/config";
+import MiniDrawer from "../../sidebar";
+import { api_url, auth_token, base_url } from "../../../helper/config";
 import jwt_decode from "jwt-decode";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useRouter } from "next/router";
-import commmonfunctions from "../../commonFunctions/commmonfunctions";
-import MainFooter from "../commoncmp/mainfooter";
+import commmonfunctions from "../../../commonFunctions/commmonfunctions";
+import MainFooter from "../../commoncmp/mainfooter";
 import Paper from "@mui/material/Paper";
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -36,10 +36,11 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import getwayService from "../../services/gatewayService";
-import Loader from "../commoncmp/myload";
+import getwayService from "../../../services/gatewayService";
+import Loader from "../../commoncmp/myload";
 import Modal from '@mui/material/Modal';
-import { AddLogs } from "../../helper/activityLogs";
+import Script from "next/script";
+import { AddLogs } from "../../../helper/activityLogs";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -147,21 +148,26 @@ export default function ActivityList() {
   const [userDetail, setUserDetail] = useState<any>([]);
   const [activityDetail, setActivityData] = useState<any>([]);
   const [creditAmount, setCreditAmount] = React.useState<any>("");
-  const [creditNoteId, setcreditNoteId] = React.useState<any>("");
+  const [creditNoteId, setcreditNoteId] = React.useState<any>(null);
   const [price, setPrice] = React.useState<any>("");
   const [activityId, setActivityId] = React.useState<any>("");
   const [paymentPayMethod, setPaymentPayMethod] = React.useState<any>("");
   const [orderId, setorderId] = React.useState("");
-  const [myload, setmyload] = useState(false);
+  const [myload, setmyload] = useState(false)
+ const [itemID, setItemId]= useState("");
+
   const [userUniqueId, setUserUniqId] = React.useState<any>();
 
   const [openThank, setOpenThank] = React.useState(false);
   const handleThanksOpen = () => setOpenThank(true);
   const handleThanksClose = () => setOpenThank(false);
 
+  const [ARInvoiceId,setARInvoiceId]= useState('');
+ 
   var Checkout: any;
   let creditBalance: any;
-
+  let sageintacctInvoiceID: any = "";
+  var sageintacctorderID : any = "" ;
   const handlePaymentName = (data: any) => {
     const Checkout: any = (window as any).Checkout;
     console.log("Checkout=>", Checkout);
@@ -208,19 +214,84 @@ export default function ActivityList() {
         Authorization: auth_token,
       },
     });
+    console.log("customer details =>",response.data.data[0]);
     const userData = response?.data?.data[0];
     setUserDetail(userData);
+    
 
   };
 
   useEffect(() => {
+      let search = router.query;
+      let amexOrderId = search.orderid;
+      let paymentMethod = search.paymentMethod;
+      let creditNoteId = search.creditNoteId;
+      let salseOrder = search.salseOrder ;
+   
     commmonfunctions.VerifyLoginUser().then(res => {
       setUserUniqId(res?.id)
     });
 
     fetchData();
     manageActivity();
-  }, []);
+    if(paymentMethod && amexOrderId){
+      console.log("order created");
+      buyActivity(amexOrderId,paymentMethod,creditNoteId,salseOrder);
+    }
+  }, [router.query]);
+
+  const buyActivity = async(amexOrderId:any,paymentMethod:any,creditNoteId:any,salseOrder:any)=>{
+    var generatedTransactionId = "";
+    const data = {orderId :amexOrderId}
+    var apiRequest = data;
+    var requestUrl = await getwayService.getRequestUrl("REST", apiRequest);
+    await getwayService.retriveOrder( requestUrl,async function (orderresult:any) {
+          console.log("order result =>",orderresult);
+          if(orderresult.status === 200){
+          const amextransactionData = orderresult.data
+          const transactionData = {
+          idForPayment:amexOrderId,
+          totalAmount:amextransactionData?.transaction[0].transaction.amount,
+          paidAmount:amextransactionData?.transaction[0].transaction.amount,
+          paymentMethod:paymentMethod,
+          amexorderId:amexOrderId,
+          sales_order_Id :salseOrder,
+          transactionId:amextransactionData?.transaction[0].transaction.id,
+          creditNotesId: creditNoteId
+        }
+          var ARRefrenceNumber =  "" ;
+           await getwayService.transactionDataSaveInDB(transactionData,async function (result: any) {
+           generatedTransactionId = result?.insetTransatction?.insertId
+            ARRefrenceNumber=  await getwayService.generateRefrenceNumber(generatedTransactionId);
+            console.log("ARRefrenceNumber =>",ARRefrenceNumber);
+            await getwayService.getARInoviceRecordNumber(amexOrderId,async function (ARRecordNumberResult:any) {
+            console.log("ARRecordNumberResult['RECORDNO'] =>",ARRecordNumberResult['RECORDNO']);
+            
+             const data ={
+              customerId: userDetail?.sageCustomerId,
+               amount: amextransactionData?.transaction[0].transaction.amount,
+               ARpaymentMethod: "EFT",
+               referenceNumber: ARRefrenceNumber,
+               ARinvoiceRecordNumber: ARRecordNumberResult['RECORDNO']
+             }
+             console.log("data for apply pay =>",data);
+             await getwayService.createAndApplyPaymentARInvoice(data,async function (result: any) {
+                //  toast.success(" payment Successfully !");
+              handleThanksOpen();
+              setTimeout(() => {
+                handleThanksClose();
+                document.location.href = `${process.env. NEXT_PUBLIC_AMEX_CUSTOMER_BUY_REDIRECT_URL}`;
+              }, 3000);
+              })
+            });
+          
+
+           });
+  
+        }
+        
+      });
+}
 
   //get activites
   const url = `${api_url}/getActivity`;
@@ -235,6 +306,8 @@ export default function ActivityList() {
         },
       });
       const json = await response.json();
+   
+
       setactivites(json.data);
       setmyload(false);
     } catch (error: any) {
@@ -260,11 +333,13 @@ export default function ActivityList() {
   };
 
   const handlePopupOpen = (item: any) => {
+    console.log("item =>",item);
     setActivityData(item)
     setActivityId(item?.id);
     setPrice(item?.price);
     getCustomerNotes(userDetail.id);
     handleClickOpen();
+    setItemId(item.Iid);
   }
 
   const insertRemainingNotesAmount = async () => {
@@ -301,7 +376,9 @@ export default function ActivityList() {
         },
       });
       const res = await response.json();
-      setcreditNoteId(res?.CreditRequestId)
+      const credinoteid = res.CreditRequestId ? res?.CreditRequestId : null
+      console.log("credinoteid =>",credinoteid);
+      setcreditNoteId(credinoteid)
       setCreditAmount(res?.creditBal);
     } catch (error: any) {
       console.log("error", error.message);
@@ -326,8 +403,7 @@ export default function ActivityList() {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     const Checkout: any = (window as any).Checkout
-    let sageintacctorderID: any = "";
-
+    
     if (userDetail?.id !== "" && activityId !== "") {
       setshowspinner(true);
       setBtnDisabled(true);
@@ -369,16 +445,17 @@ export default function ActivityList() {
                 idForPayment: data?.data?.sageIntacctorderID,
                 creditNotesId: creditNoteId,
               };
-              transactionSave(reqData1);
+              // transactionSave(reqData1);
               setshowspinner(false);
               setBtnDisabled(false);
+              // toast.success("Activity purchase Successfully !");
               AddLogs(userUniqueId,`Activity purchase id - (${(data?.data?.data?.insertId)})`);
               toast.success("Activity purchase Successfully !");
               setOpen(false);
-              handleThanksOpen();
-              setTimeout(() => {
-                handleThanksClose();
-              }, 3000);
+              // handleThanksOpen();
+              // setTimeout(() => {
+              //   handleThanksClose();
+              // }, 3000);
             }
           }).catch((error) => {
             // toast.error(error?.message);
@@ -425,16 +502,17 @@ export default function ActivityList() {
                 idForPayment: data?.data?.sageIntacctorderID,
                 creditNotesId: null,
               };
-              transactionSave(reqData1);
+              // transactionSave(reqData1);
               setshowspinner(false);
               setBtnDisabled(false);
+              // toast.success("Activity purchase Successfully !");
               AddLogs(userUniqueId,`Activity purchase id - (${(data?.data?.data?.insertId)})`);
               toast.success("Activity purchase Successfully !");
               setOpen(false);
-              handleThanksOpen();
-              setTimeout(() => {
-                handleThanksClose();
-              }, 3000);
+              // handleThanksOpen();
+              // setTimeout(() => {
+              //   handleThanksClose();
+              // }, 3000);
             }
           }).catch((error) => {
             // toast.error(error?.message);
@@ -448,25 +526,24 @@ export default function ActivityList() {
     }
 
     let orderamount = Check ? Math?.abs(price - creditBalance) : price;
-    console.log("orderamount =>", orderamount);
     // payment getway
     if (paymentPayMethod === "Amex" && orderamount > 0) {
-
+    
       if (price === 0) {
-        toast.error("amount will not be $0 for AMFX payment method");
+        toast.error("amount will not be $0 for AMEX payment method");
       } else {
+        await createInvoice();
         var requestData = {
           apiOperation: "CREATE_CHECKOUT_SESSION",
           order: {
-            id: sageintacctorderID,
+            id: sageintacctInvoiceID,
             amount: orderamount,
             currency: "QAR",
             description: "Orderd",
           },
           interaction: {
-            // "returnUrl":`${process.env.NEXT_PUBLIC_REDIRECT_URL}/?orderid=${orderId}&paymentMethod=${paymentMethod}`,
-            returnUrl: `${process.env.NEXT_PUBLIC_AMEX_SALES_ORDER_REDIRECT_URL}/?orderid=${sageintacctorderID}&paymentMethod=${paymentPayMethod}&creditNoteId=${creditNoteId}`,
-            cancelUrl: `${process.env.NEXT_PUBLIC_AMEX_SALES_ORDER_CANCEL_URL}`,
+            returnUrl: `${process.env.NEXT_PUBLIC_AMEX_CUSTOMER_BUY_REDIRECT_URL}/?orderid=${sageintacctInvoiceID}&salseOrder=${sageintacctorderID}&paymentMethod=${paymentPayMethod}&creditNoteId=${creditNoteId}`,
+            cancelUrl: `${process.env. NEXT_PUBLIC_AMEX_CUSTOMER_BUY_CANCEL_URL}`,
             operation: "PURCHASE",
             merchant: {
               name: "QATAR INTERNATIONAL SCHOOL - ONLINE 634",
@@ -480,8 +557,6 @@ export default function ActivityList() {
 
         await getwayService.getSession(requestData, async function (result: any) {
           if (result?.data?.result === "SUCCESS") {
-            // setSessionId(result?.data.session.id)
-            // setsuccessIndicator(result?.data.successIndicator);
             await Checkout.configure({
               session: {
                 id: result?.data.session.id
@@ -554,6 +629,49 @@ export default function ActivityList() {
     });
   };
 
+  const createInvoice = async()=>{
+    const dates = new Date();
+    const invoiceDate = moment(dates).format("DD/MM/YYYY");
+    const createdDate = moment(dates).format("DD/MM/YYYY");
+    const requestedData = {
+      itemId: [itemID],
+      quantity:['1'],
+      amount: price,
+      status: "paid",
+      createdDate: createdDate,
+      createdBy: userDetail.id,
+      invoiceDate: invoiceDate,
+      customerId: userDetail.id,
+      invoiceNo: keyGen(10),
+    };
+    console.log(requestedData, "requestedInvoice");
+    await axios({
+      method: "POST",
+      url: `${api_url}/createInvoice`,
+      data: requestedData,
+      headers: {
+        "content-type": "multipart/form-data",
+      },
+    })
+      .then((res) => {
+        if (!res) {
+          // toast.success("something wents wrong !");
+        } else {
+          console.log("res =>",res);
+          sageintacctInvoiceID = res?.data.sageIntacctInvoiceID
+          setARInvoiceId(res?.data.sageIntacctInvoiceID)
+          // toast.success("Invoice created Successfully !");
+         }
+      })
+      .catch((err) => {
+        if (err) {
+          console.log(err, "error");
+        }
+      });
+  }
+
+  
+
   let totalPrice =
     price === 0
       ? 0
@@ -571,6 +689,12 @@ console.log('@@@@@@@@@@@@@',filterActivity);
 
   return (
     <>
+        <Script
+        src="https://amexmena.gateway.mastercard.com/static/checkout/checkout.min.js"
+        data-error="errorCallback"
+        data-cancel="cancelCallback"
+        strategy="beforeInteractive"
+      ></Script>
       <Box sx={{ display: "flex" }}>
         <MiniDrawer />
         <Box component="main" sx={{ flexGrow: 1 }}>
