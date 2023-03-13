@@ -567,6 +567,8 @@ export default function ActivityList() {
         ? price
         : creditAmount;
 
+console.log('@@@@@@@@@@@@@',filterActivity);
+
   return (
     <>
       <Box sx={{ display: "flex" }}>
@@ -848,7 +850,7 @@ export default function ActivityList() {
                       })}
                   </Grid>
                 </Box>
-                {/* {activites === "" ? <h3>No Record found</h3> : ""} */}
+                {filterActivity?.length === 0 ? <h3>No Record found</h3> : ""}
                 <Stack
                   style={{
                     marginBottom: "10px",
