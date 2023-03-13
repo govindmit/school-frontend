@@ -62,12 +62,11 @@ export default function ViewCreditNotes(props: any) {
       }
     })
   }, []);
-  
+
   useEffect(() => {
     commmonfunctions.VerifyLoginUser().then(res => {
       setUserUniqId(res?.id)
     });
-
     fetchData();
   }, []);
 
@@ -130,7 +129,7 @@ export default function ViewCreditNotes(props: any) {
     })
       .then((data) => {
         if (data) {
-          AddLogs(userUniqueId,`Credit Notes Updated id - (${(props.id)})`);
+          AddLogs(userUniqueId, `Credit Notes Updated id - (${(props.id)})`);
           toast.success("Credit Notes Updated Successfully !");
           reset();
           setrejectOpen(false)
@@ -170,7 +169,6 @@ export default function ViewCreditNotes(props: any) {
   const closePoPapprove = (data: any) => {
     setapproveOpen(false);
   };
-
 
   return (
     <>
@@ -334,37 +332,38 @@ export default function ViewCreditNotes(props: any) {
                     </CardContent>
                   </Card>
                 </Grid>
-                <Grid item xs={12} md={12} style={{ marginTop: "20px" }}>
-                  <Card sx={{ minWidth: 275 }}>
-                    <CardContent>
-                      <Stack
-                        direction="row"
-                        alignItems="center"
-                        justifyContent="space-between"
-                        style={{ padding: "8px" }}
-                      >
-                        <Stack>
-                          <Typography
-                            variant="h5"
-                            gutterBottom
-                            style={{
-                              fontWeight: "bold",
-                              color: "#333333",
-                            }}
-                          >
-                            Note by Admin
-                          </Typography>
+                {creditNoteMsg.length > 1 ? (
+                  <Grid item xs={12} md={12} style={{ marginTop: "20px" }}>
+                    <Card sx={{ minWidth: 275 }}>
+                      <CardContent>
+                        <Stack
+                          direction="row"
+                          alignItems="center"
+                          justifyContent="space-between"
+                          style={{ padding: "8px" }}
+                        >
+                          <Stack>
+                            <Typography
+                              variant="h5"
+                              gutterBottom
+                              style={{
+                                fontWeight: "bold",
+                                color: "#333333",
+                              }}
+                            >
+                              Note by Admin
+                            </Typography>
+                          </Stack>
                         </Stack>
-                      </Stack>
-                      {
-                        creditNoteMsg.slice(1).map((data: any) => {
-                          return (<Typography style={{ padding: "8px" }}>{data.message}</Typography>)
-                        })
+                        {
+                          creditNoteMsg.slice(1).map((data: any) => {
+                            return (<Typography style={{ padding: "8px" }}>{data.message}</Typography>)
+                          })
 
-                      }
-                    </CardContent>
-                  </Card>
-                </Grid>
+                        }
+                      </CardContent>
+                    </Card>
+                  </Grid>) : ""}
               </Grid>
               <Grid item xs={8}>
                 <Grid item xs={12} md={12}>
@@ -505,7 +504,7 @@ export default function ViewCreditNotes(props: any) {
                 {approveOpen ? (<Grid item xs={12} md={12} style={{ marginTop: "20px" }}>
                   <Card sx={{ minWidth: 275 }}>
                     <ApproveCompForm id={props.id} closeDialog={closePoPapprove} roleid={roleid} custId={creditNoteDet?.customerId
-                    } creditReqId={creditNoteDet?.creditReqId} />
+                    } creditReqId={creditNoteDet?.creditReqId} invoiceId={creditNoteDet?.invoiceId} salesOrderid={creditNoteDet?.salesOrderid} approvedBy={userUniqueId} />
                   </Card>
                 </Grid>) : ""}
               </Grid>

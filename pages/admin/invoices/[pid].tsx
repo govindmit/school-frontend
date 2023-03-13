@@ -67,6 +67,8 @@ import commmonfunctions from "../../../commonFunctions/commmonfunctions";
 import MainFooter from "../../commoncmp/mainfooter";
 import PDFService from '../../../commonFunctions/invoicepdf';
 import { AddLogs } from "../../../helper/activityLogs";
+import ReceiptPDFService from "../../../commonFunctions/receiptInvoicepdf"
+import PaymentPopup from "../../commoncmp/paymentpopup";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -184,7 +186,9 @@ export default function Guardians() {
   const [finalAmountToPay, setFinalAmountToPay] = useState(0);
   const [isChecked, setIsChecked] = useState(false);
   const [customerID, setCustomerId] = useState(null);
-const [userUniqueId, setUserUniqId] = useState<any>();
+  const [userUniqueId, setUserUniqId] = useState<any>();
+  const [newPayOpen, setnewPayOpen] = useState(false);
+  const [custDt, setcustDt] = useState<any>([]);
   const [customerCreditNoteRemaingAmount, setCustomerCreditNoteRemaingAmount] = useState(0);
   var Checkout: any
 
@@ -576,7 +580,7 @@ const [userUniqueId, setUserUniqId] = useState<any>();
         .then((res) => {
           getUser();
           setNote("");
-          AddLogs(userUniqueId,`Payment Updated id - (${(invoiceId)})`);
+          AddLogs(userUniqueId, `Payment Updated id - (${(invoiceId)})`);
           toast.success("Payment Successfully !");
 
           setTimeout(() => {
@@ -620,7 +624,7 @@ const [userUniqueId, setUserUniqId] = useState<any>();
     })
       .then((data: any) => {
         if (data) {
-          AddLogs(userUniqueId,`Credit Balance debit by id - (${(reqData?.customerId)})`);
+          AddLogs(userUniqueId, `Credit Balance debit by id - (${(reqData?.customerId)})`);
           console.log("@@@@@@@@");
         }
       })
@@ -688,7 +692,7 @@ const [userUniqueId, setUserUniqId] = useState<any>();
       },
     })
       .then((res) => {
-        AddLogs(userUniqueId,`Delete invoice id - (${(id)})`);
+        AddLogs(userUniqueId, `Delete invoice id - (${(id)})`);
         getUser();
         toast.success("Deleted Successfully !");
 
@@ -709,7 +713,7 @@ const [userUniqueId, setUserUniqId] = useState<any>();
       },
     })
       .then((res) => {
-        AddLogs(userUniqueId,`Send Invoice Mail id - (${(invoiceId)})`);
+        AddLogs(userUniqueId, `Send Invoice Mail id - (${(invoiceId)})`);
         toast.success("Send Invoice Mail Successfully !");
         setShare(false);
       })
@@ -764,6 +768,20 @@ const [userUniqueId, setUserUniqId] = useState<any>();
   //generate pdf
   const generateSimplePDF = async (item: any) => {
     PDFService.generateSimplePDF(item);
+  };
+
+  //generate receipt
+  const ReceiptPdf = async (item: any, receipt_title: string) => {
+    ReceiptPDFService.ReceiptPDF(item, receipt_title);
+  }
+
+  //handle pay open 
+  const handlePayOpen = (item: any) => {
+    setnewPayOpen(true)
+    setcustDt(item);
+  }
+  const closePoP = (data: any) => {
+    setnewPayOpen(false);
   };
 
   return (
@@ -1149,6 +1167,15 @@ const [userUniqueId, setUserUniqId] = useState<any>();
 
                           <TableCell align="left" className="action-td">
                             <div className="btn">
+                              {item?.status === "paid" ? (<Button className="idiv">
+                                <Image
+                                  onClick={() => ReceiptPdf(item, "INVOICE")}
+                                  src="/file-text.png"
+                                  alt="Picture of the author"
+                                  width={35}
+                                  height={35}
+                                />
+                              </Button>) : ""}
                               {item.status !== "draft" ? (
                                 <Button className="idiv">
                                   <Image
@@ -1222,6 +1249,13 @@ const [userUniqueId, setUserUniqId] = useState<any>();
                                     height={35}
                                   />
                                 </Button>) : ""}
+
+                              <Button className="idiv" onClick={() => handlePayOpen(item)}>
+                                <div className="idiv">
+                                  pay
+                                </div>
+                              </Button>
+
                             </div>
                           </TableCell>
                         </TableRow>
@@ -1514,6 +1548,13 @@ const [userUniqueId, setUserUniqId] = useState<any>();
           <MainFooter />
         </Box>
       </Box>
+      {
+        newPayOpen ? (
+          <PaymentPopup open={newPayOpen} closeDialog={closePoP} custDt={custDt} invoiceStatus={invoiceStatus} />
+        ) : (
+          ""
+        )
+      }
     </>
   );
 }

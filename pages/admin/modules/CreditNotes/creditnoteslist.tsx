@@ -99,11 +99,12 @@ export default function CreditNotesList() {
     };
 
 
-    
     useEffect(() => {
         fetchData();
         getUser();
     }, []);
+
+
     //get credit notes
     const url = `${api_url}/getCreditNotes`;
     const fetchData = async () => {

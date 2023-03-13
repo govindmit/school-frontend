@@ -38,12 +38,18 @@ export default function ApproveCompForm({
   closeDialog,
   custId,
   creditReqId,
+  invoiceId,
+  salesOrderid,
+  approvedBy
 }: {
   id: any;
   roleid: any;
   closeDialog: any;
   custId: any;
   creditReqId: any;
+  invoiceId: any;
+  salesOrderid: any;
+  approvedBy: any
 }) {
   const router = useRouter();
   const {
@@ -52,7 +58,7 @@ export default function ApproveCompForm({
     reset,
     formState: { errors },
   } = useForm<FormValues>();
-  
+
   const [userUniqueId, setUserUniqId] = React.useState<any>();
 
   React.useEffect(() => {
@@ -60,8 +66,6 @@ export default function ApproveCompForm({
       setUserUniqId(res?.id)
     });
   }, []);
-
-
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     const reqData = {
@@ -72,6 +76,9 @@ export default function ApproveCompForm({
       amountMode: 1,
       creditRequestId: creditReqId,
       updatedBy: 1,
+      invoiceId: invoiceId,
+      salesOrderId: salesOrderid,
+      approvedBy: approvedBy
     };
     await axios({
       method: "put",
@@ -83,7 +90,7 @@ export default function ApproveCompForm({
     })
       .then((data) => {
         if (data) {
-          AddLogs(userUniqueId,`Edit Credit Notes id - (${(id)})`);
+          AddLogs(userUniqueId, `Edit Credit Notes id - (${(id)})`);
           toast.success("Credit Notes Updated Successfully !");
           reset();
           closeDialogs();

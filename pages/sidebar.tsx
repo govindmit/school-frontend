@@ -115,6 +115,7 @@ export default function MiniDrawer() {
   const [checkInvoices, setcheckInvoices] = React.useState<any>(false);
   const [checkActivity, setcheckActivity] = React.useState<any>(false);
   const [checkSalesInvoice, setcheckSalesInvoice] = React.useState<any>(false);
+  const [checkCreditNotes, setcheckCreditNotes] = React.useState<any>(false);
   const [checkComposer, setcheckComposer] = React.useState<any>(false);
   const [isActive, setIsActive] = useState(false);
   let path = router?.pathname;
@@ -149,6 +150,8 @@ export default function MiniDrawer() {
             setcheckComposer(true);
           } else if (dttt.user_permition[i].SalesInvoices) {
             setcheckSalesInvoice(true);
+          } else if (dttt.user_permition[i].CreditNote) {
+            setcheckCreditNotes(true);
           }
         }
       }
@@ -215,6 +218,7 @@ export default function MiniDrawer() {
     ? mngbackground
     : "";
   let userinvoicesColor = path.includes("user/invoices/") ? textcolor : "";
+
 
   return (
     <>
@@ -611,7 +615,7 @@ export default function MiniDrawer() {
             ) : (
               ""
             )}
-            {userdet?.roleId === 1 ? (
+            {checkCreditNotes === true || userdet?.roleId === 1 ? (
               <ListItem
                 className="sidebar-link"
                 disablePadding
