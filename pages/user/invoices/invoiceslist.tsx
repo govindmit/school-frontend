@@ -56,6 +56,7 @@ import commmonfunctions from "../../../commonFunctions/commmonfunctions";
 import { api_url, auth_token } from "../../../helper/config";
 import MainFooter from "../../commoncmp/mainfooter";
 import PDFService from "../../../commonFunctions/invoicepdf"
+import ReceiptPDFService from "../../../commonFunctions/receiptInvoicepdf"
 import { AddLogs } from "../../../helper/activityLogs";
 import RequestFormCmp from "../salesinvoices/requestFormCmp";
 
@@ -178,7 +179,7 @@ export default function UserInvoices() {
     const [showSuccess, setShowSuccess] = useState(false);
     const [customerID, setCustomerId] = useState(null);
     const [isChecked, setIsChecked] = useState(false);
-const [userUniqueId, setUserUniqId] = React.useState<any>();
+    const [userUniqueId, setUserUniqId] = React.useState<any>();
     const [customerCreditNoteRemaingAmount, setCustomerCreditNoteRemaingAmount] = useState(0);
     var Checkout: any
     const handleChanges = (event: React.SyntheticEvent, newValue: number) => {
@@ -204,7 +205,7 @@ const [userUniqueId, setUserUniqId] = React.useState<any>();
     useEffect(() => {
         let login_token: any;
         commmonfunctions.VerifyLoginUser().then(res => {
-      setUserUniqId(res?.id)
+            setUserUniqId(res?.id)
             if (res.exp * 1000 < Date.now()) {
                 localStorage.removeItem('QIS_loginToken');
             }
@@ -240,6 +241,8 @@ const [userUniqueId, setUserUniqId] = React.useState<any>();
             })
             .catch((err) => { });
     };
+
+    console.log(getInvoices);
 
     // pagination;
     const [row_per_page, set_row_per_page] = useState(5);
@@ -303,6 +306,11 @@ const [userUniqueId, setUserUniqId] = React.useState<any>();
     const generateSimplePDF = async (item: any) => {
         PDFService.generateSimplePDF(item);
     };
+
+    //generate receipt
+    const ReceiptPdf = async (item: any, receipt_title: string) => {
+        ReceiptPDFService.ReceiptPDF(item, receipt_title);
+    }
 
     // filter functionality
     const onSubmit: SubmitHandler<FormValues> = async (data: any) => {
@@ -557,7 +565,7 @@ const [userUniqueId, setUserUniqId] = React.useState<any>();
         })
             .then((data: any) => {
                 if (data) {
-                AddLogs(userUniqueId,`Debit amount id - (${(reqData?.customerId)})`);
+                    AddLogs(userUniqueId, `Debit amount id - (${(reqData?.customerId)})`);
                     console.log("@@@@@@@@");
                 }
             })
@@ -565,6 +573,7 @@ const [userUniqueId, setUserUniqId] = React.useState<any>();
                 console.log("error", error);
             });
     };
+    
     const updateInvoiceAfterPay = async (invoiceId: any) => {
         try {
             let requestedData = {
@@ -580,7 +589,7 @@ const [userUniqueId, setUserUniqId] = React.useState<any>();
             })
                 .then((res) => {
                     setNote("");
-                    AddLogs(userUniqueId,`Payment created id - (${(invoiceId)})`);
+                    AddLogs(userUniqueId, `Payment created id - (${(invoiceId)})`);
                     toast.success("Payment Successfully !");
                     setTimeout(() => {
                         handleCloses();
@@ -950,6 +959,15 @@ const [userUniqueId, setUserUniqId] = React.useState<any>();
                                                     )}</TableCell>
                                                     <TableCell align="left" className="action-td">
                                                         <div className="btn">
+                                                            {item?.status === "paid" ? (<Button className="idiv">
+                                                                <Image
+                                                                    onClick={() => ReceiptPdf(item, "INVOICE")}
+                                                                    src="/file-text.png"
+                                                                    alt="Picture of the author"
+                                                                    width={35}
+                                                                    height={35}
+                                                                />
+                                                            </Button>) : ""}
                                                             <Button className="idiv" >
                                                                 <Link
                                                                     href={`/user/invoices/viewinvoice/${item.invid}`}>

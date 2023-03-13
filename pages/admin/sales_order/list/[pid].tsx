@@ -48,6 +48,8 @@ import MainFooter from "../../../commoncmp/mainfooter";
 import getwayService from "../../../../services/gatewayService"
 import Alert from '@mui/material/Alert';
 import { AddLogs } from "../../../../helper/activityLogs";
+import ReceiptSalesPDFService from "../../../../commonFunctions/receptSalesOrder"
+import Image from "next/image";
 
 function a11yProps(index: number) {
   return {
@@ -132,7 +134,7 @@ export default function SalesOrderList() {
         setroleid(res.roleId);
         //router.push("/userprofile");
       } else if (res.roleId > 1) {
-        commmonfunctions.ManageActivity().then((res) => {
+        commmonfunctions.ManageSalesInvoices().then((res) => {
           if (!res) {
             router.push("/userprofile");
           } else {
@@ -284,7 +286,7 @@ export default function SalesOrderList() {
     })
       .then((data) => {
         toast.success("Sales Record delete Successfully !");
-        AddLogs(userUniqueId,`Delete sales order id - (${(deleteData.id)})`);
+        AddLogs(userUniqueId, `Delete sales order id - (${(deleteData.id)})`);
         handleClose();
         fetchData();
       })
@@ -348,6 +350,11 @@ export default function SalesOrderList() {
       textTransform: 'none',
     }),
   );
+
+  //generate receipt
+  const ReceiptPdf = async (item: any, receipt_title: string) => {
+    ReceiptSalesPDFService.ReceiptPDF(item, receipt_title);
+  }
 
   return (
     <>
@@ -566,6 +573,15 @@ export default function SalesOrderList() {
                                 spacing={1}
                                 className="action"
                               >
+                                <Button className="idiv" >
+                                  <Image
+                                    onClick={() => ReceiptPdf(item, "SALES INVOICE")}
+                                    src="/file-text.png"
+                                    alt="Picture of the author"
+                                    width={35}
+                                    height={35}
+                                  />
+                                </Button>
                                 {(custpermit && custpermit.canView === true) ||
                                   roleid === 1 ? (
                                   <IconButton className="action-view">

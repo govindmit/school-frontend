@@ -3,9 +3,9 @@ import { api_url } from "../helper/config";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 
-class PDFService {
+class ReceiptPDFService {
   // generate pdf
-  generateSimplePDF = async (item: any) => {
+  ReceiptPDF = async (item: any, receipt_title: string) => {
     let requested = {
       id: item.itemId,
     };
@@ -18,7 +18,6 @@ class PDFService {
       },
     })
       .then((res) => {
-        // setItem(res?.data.data);
         let items = res?.data.data;
         if (res) {
           setTimeout(() => {
@@ -40,22 +39,27 @@ class PDFService {
             doc.text("Email:  qisfinance@qis.org", 236, 32);
             doc.setFont("courier");
             doc.setFontSize(30);
-            doc.text("INVOICE", 120, 60);
-            doc.setFontSize(20);
-            doc.text("Family ID : ", 30, 90);
-            doc.text(`12`, 100, 90);
-            doc.text("Account Number : ", 30, 100);
-            doc.text("123", 100, 100);
-            doc.text("Invoice No : ", 180, 90);
-            doc.text(`${item.invoiceId}`, 240, 90);
-            doc.text("Date : ", 180, 100);
-            doc.text(`${item.invoiceDate}`, 220, 100);
-            const head = [["ITEM", "AMOUNT"]];
+            doc.text(`${receipt_title}`, 120, 60);
+
+            doc.setFontSize(15);
+            doc.text("Recept Number   : ", 30, 90);
+            doc.text(` RTC00000000123`, 85, 90);
+            doc.text("Tranaction Type : ", 30, 100);
+            doc.text(" Amex", 85, 100);
+            doc.text("Invoice Number  : ", 180, 90);
+            doc.text(`${item.invoiceId}`, 235, 90);
+            doc.text("Tranaction Date : ", 180, 100);
+            doc.text(`${item.invoiceDate}`, 235, 100);
+            doc.setFontSize(15);
+            doc.text("Tranaction Amount : ", 180, 110);
+            doc.text("$" + `${price}`, 242, 110);
+            const head = [["SL.No", "ITEM NAME", "AMOUNT(QAR)"]];
             var data: any = [];
             {
               items && items.length > 1
-                ? items.map((ticket: any) => {
+                ? items.map((ticket: any, key: any) => {
                     let ticketData = [
+                      ticket.id,
                       ticket.name,
                       ticket.price,
                       // called date-fns to format the date on the ticket
@@ -64,6 +68,7 @@ class PDFService {
                     data.push(ticketData);
                   })
                 : data.push([
+                    items && items[0]?.id,
                     items && items[0]?.name,
                     items && "$" + items[0]?.price,
                   ]);
@@ -76,9 +81,6 @@ class PDFService {
               tableWidth: 250,
               styles: { fontSize: 15 },
               columnStyles: { 0: { halign: "left" } },
-              headStyles: {
-                fillColor: [1, 1, 1],
-              },
               head: head,
               body: data,
               didDrawCell: (data: any) => {},
@@ -87,13 +89,12 @@ class PDFService {
               doc.setFontSize(20);
               doc.text("Grand Total : ", 200, 170);
               doc.setFontSize(15);
-              doc.text("$" + `${price}`, 260, 170);
+              doc.text("$" + `${price}`, 255, 170);
             } else {
               doc.setFontSize(20);
-              doc.text("Grand Total : ", 190, 170);
+              doc.text("Grand Total : ", 200, 170);
               doc.setFontSize(15);
-
-              doc.text("$" + `${price}`, 260, 170);
+              doc.text("$" + `${price}`, 255, 170);
             }
             doc.save("Document.pdf");
           }, 2000);
@@ -102,4 +103,4 @@ class PDFService {
       .catch((err) => {});
   };
 }
-export default new PDFService();
+export default new ReceiptPDFService();

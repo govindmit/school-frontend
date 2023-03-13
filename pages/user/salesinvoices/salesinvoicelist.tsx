@@ -33,6 +33,8 @@ import commmonfunctions from "../../../commonFunctions/commmonfunctions";
 import { api_url, auth_token } from "../../../helper/config";
 import MainFooter from "../../commoncmp/mainfooter";
 import RequestFormCmp from "./requestFormCmp";
+import Image from "next/image";
+import ReceiptSalesPDFService from "../../../commonFunctions/receptSalesOrder"
 
 const style = {
     color: "red",
@@ -86,6 +88,7 @@ export default function UserInvoices() {
         setValue(newValue);
     };
 
+
     // verify user login and previlegs
     useEffect(() => {
         let logintoken: any;
@@ -120,7 +123,7 @@ export default function UserInvoices() {
             },
         })
             .then((res) => {
-                setgetSalesInvoices(res?.data?.data);
+                setgetSalesInvoices(res?.data?.data.filter((a: any) => a.isRequested !== 2));
                 setsearchdata(res?.data?.data);
             })
             .catch((err) => {
@@ -173,6 +176,12 @@ export default function UserInvoices() {
         getSalesOrdersByUser(custid);
 
     };
+
+
+    //generate receipt
+    const ReceiptPdf = async (item: any, receipt_title: string) => {
+        ReceiptSalesPDFService.ReceiptPDF(item, receipt_title);
+    }
 
     return (
         <>
@@ -263,11 +272,11 @@ export default function UserInvoices() {
                                             <TableCell padding="checkbox">
                                                 <Checkbox />
                                             </TableCell>
-                                            <TableCell>SALES INVOICE ID</TableCell>
-                                            <TableCell>ACTIVITY</TableCell>
-                                            <TableCell>STATUS</TableCell>
-                                            <TableCell>AMOUNT</TableCell>
-                                            <TableCell className="action-th">ACTION</TableCell>
+                                            <TableCell width={300} >SALES INVOICE ID</TableCell>
+                                            <TableCell width={300}>ACTIVITY</TableCell>
+                                            <TableCell width={200}>STATUS</TableCell>
+                                            <TableCell width={200}>AMOUNT</TableCell>
+                                            <TableCell className="action-th" width={200}>ACTION</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
@@ -299,12 +308,23 @@ export default function UserInvoices() {
                                                         <b>${item.amount}.00</b>
                                                     </TableCell>
                                                     <TableCell align="left" className="action-td">
-                                                        {item?.amount !== 0 ? (<div className="btn">
-                                                            {item.isRequested === 1 ? (<Button size="small" variant="outlined" style={{ backgroundColor: "#D1D2D2", color: "whitesmoke" }} disabled sx={{ width: 135 }} ><b>Requested</b></Button>) : (<Button size="small" variant="outlined" onClick={() => handleClickOpen(item)} ><b>Credit Request</b></Button>)}
-                                                        </div>) : (<div className="btn">
-                                                            {(<Button size="small" variant="outlined" disabled style={{ backgroundColor: "#D1D2D2", color: "whitesmoke" }}><b>Credit Request</b></Button>)}
-                                                        </div>)}
-
+                                                        <div className="btn">
+                                                            {item?.amount !== 0 ? (<div className="btn">
+                                                                {item.isRequested === 1 ? (<Button size="small" variant="outlined" style={{ backgroundColor: "#D1D2D2", color: "whitesmoke" }} disabled sx={{ width: 135 }} ><b>Requested</b></Button>) : (<Button size="small" variant="outlined" onClick={() => handleClickOpen(item)} ><b>Credit Request</b></Button>)}
+                                                            </div>) : (<div className="btn">
+                                                                {(<Button size="small" variant="outlined" disabled style={{ backgroundColor: "#D1D2D2", color: "whitesmoke" }}><b>Credit Request</b></Button>)}
+                                                            </div>)}
+                                                            &nbsp;  &nbsp;
+                                                            <Button className="idiv" >
+                                                                <Image
+                                                                    onClick={() => ReceiptPdf(item, "SALES INVOICE")}
+                                                                    src="/file-text.png"
+                                                                    alt="Picture of the author"
+                                                                    width={35}
+                                                                    height={35}
+                                                                />
+                                                            </Button>
+                                                        </div>
                                                     </TableCell>
                                                 </TableRow>
                                             ))

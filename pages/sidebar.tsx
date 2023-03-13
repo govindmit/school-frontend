@@ -115,6 +115,7 @@ export default function MiniDrawer() {
   const [checkInvoices, setcheckInvoices] = React.useState<any>(false);
   const [checkActivity, setcheckActivity] = React.useState<any>(false);
   const [checkSalesInvoice, setcheckSalesInvoice] = React.useState<any>(false);
+  const [checkCreditNotes, setcheckCreditNotes] = React.useState<any>(false);
   const [checkComposer, setcheckComposer] = React.useState<any>(false);
   const [isActive, setIsActive] = useState(false);
   let path = router?.pathname;
@@ -149,6 +150,8 @@ export default function MiniDrawer() {
             setcheckComposer(true);
           } else if (dttt.user_permition[i].SalesInvoices) {
             setcheckSalesInvoice(true);
+          } else if (dttt.user_permition[i].CreditNote) {
+            setcheckCreditNotes(true);
           }
         }
       }
@@ -167,10 +170,8 @@ export default function MiniDrawer() {
   let setCreditReqBgColor = path.includes("creditrequest") ? mngbackground : "";
   let setCreditReqColor = path.includes("creditrequest") ? textcolor : "";
 
-  
   let setLogsBgColor = path.includes("activities_logs") ? mngbackground : "";
   let setLogsColor = path.includes("activities_logs") ? textcolor : "";
-
 
   let setDashboardBgColor = path.includes("dashboard") ? mngbackground : "";
   let setDashboardColor = path.includes("dashboard") ? textcolor : "";
@@ -210,7 +211,7 @@ export default function MiniDrawer() {
   let userinvoicesBgColor = path.includes("user/invoices/") ? mngbackground : "";
   let userinvoicesColor = path.includes("user/invoices/") ? textcolor : "";
 
-  
+
   return (
     <>
       <Head>
@@ -602,7 +603,7 @@ export default function MiniDrawer() {
             ) : (
               ""
             )}
-            {userdet?.roleId === 1 ? (
+            {checkCreditNotes === true || userdet?.roleId === 1 ? (
               <ListItem
                 className="sidebar-link"
                 disablePadding
@@ -637,7 +638,7 @@ export default function MiniDrawer() {
             ) : (
               ""
             )}
-   {userdet?.roleId === 1 ? (
+            {userdet?.roleId === 1 ? (
               <ListItem
                 className="sidebar-link"
                 disablePadding
@@ -807,7 +808,7 @@ export default function MiniDrawer() {
             ) : (
               ""
             )}
-              {userdet?.roleId === 1 ? (
+            {userdet?.roleId === 1 ? (
               <ListItem
                 className="sidebar-link"
                 disablePadding
