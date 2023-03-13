@@ -27,7 +27,7 @@ import { Grid, InputLabel, Stack } from "@mui/material";
 import Modal from "@mui/material/Modal";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import MiniDrawer from "../../../pages/sidebar";
+import MiniDrawer from "../../../sidebar";
 import axios from "axios";
 import Select from "@mui/material/Select";
 import moment from "moment";
@@ -46,17 +46,17 @@ import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Script from "next/script";
-import getwayService from "../../../services/gatewayService"
+import getwayService from "../../../../services/gatewayService"
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useForm, SubmitHandler } from "react-hook-form";
 import Paper from "@mui/material/Paper";
 import { useRouter } from "next/router";
-import commmonfunctions from "../../../commonFunctions/commmonfunctions";
-import { api_url, auth_token } from "../../api/hello";
-import MainFooter from "../../commoncmp/mainfooter";
-import PDFService from "../../../commonFunctions/invoicepdf"
-
+import commmonfunctions from "../../../../commonFunctions/commmonfunctions";
+import { api_url, auth_token } from "../../../api/hello";
+import MainFooter from "../../../commoncmp/mainfooter";
+import PDFService from "../../../../commonFunctions/invoicepdf"
+import jwt_decode from "jwt-decode";
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     "& .MuiDialogContent-root": {
         padding: theme.spacing(2),
@@ -187,7 +187,7 @@ export default function UserInvoices() {
     const [id, setId] = useState();
     const [dollerOpen, setDollerOpen] = useState(false);
     const [recievedPay, setRecieved] = useState<FormValues | any>([]);
-
+    const[sageCustomerId,setSageCustomerID]=useState('');
 
     const {
         register,
@@ -198,6 +198,7 @@ export default function UserInvoices() {
 
     // verify user login and previlegs
     useEffect(() => {
+        getDetailsOfCustomer();
         commmonfunctions.VerifyLoginUser().then(res => {
             if (res.exp * 1000 < Date.now()) {
                 localStorage.removeItem('QIS_loginToken');
@@ -209,7 +210,90 @@ export default function UserInvoices() {
                 Invoices(res.id);
             }
         });
+        
     }, []);
+
+    useEffect(() => {
+        let search = router.query;
+        let amexOrderId = search.orderid;
+        let paymentMethod = search.paymentMethod;
+        let creditRequestId = search.creditNoteId;
+        let customerid = search.customerID;
+        let remaingAmount = search.remaingAmount;
+        let DBInvoiceid = search.invoiceiddb;
+        if (paymentMethod && amexOrderId) {
+          console.log("order created");
+          buyActivity(amexOrderId, paymentMethod, creditRequestId,DBInvoiceid);
+        }
+      }, [router.query]);
+
+      const getDetailsOfCustomer = async () => {
+        let login_token: any;
+        login_token = localStorage.getItem("QIS_loginToken");
+        const decoded: any = jwt_decode(login_token);
+        let response = await axios.get(`${api_url}/getuserdetails/${decoded.id}`, {
+          headers: {
+            Authorization: auth_token,
+          },
+        });
+        const userData = response?.data?.data[0];
+        setSageCustomerID(userData.sageCustomerId)
+        
+    
+      };
+      const buyActivity = async(amexOrderId:any,paymentMethod:any,creditNoteId:any,DBInvoiceid:any)=>{
+        var generatedTransactionId = "";
+        const data = {orderId :amexOrderId}
+        var apiRequest = data;
+        var requestUrl = await getwayService.getRequestUrl("REST", apiRequest);
+        await getwayService.retriveOrder( requestUrl,async function (orderresult:any) {
+              console.log("order result =>",orderresult);
+              if(orderresult.status === 200){
+              const amextransactionData = orderresult.data
+              const transactionData = {
+              idForPayment:amexOrderId,
+              totalAmount:amextransactionData?.transaction[0].transaction.amount,
+              paidAmount:amextransactionData?.transaction[0].transaction.amount,
+              paymentMethod:paymentMethod,
+              amexorderId:amexOrderId,
+            
+              transactionId:amextransactionData?.transaction[0].transaction.id,
+              creditNotesId: creditNoteId
+            }
+              var ARRefrenceNumber =  "" ;
+               await getwayService.transactionDataSaveInDB(transactionData,async function (result: any) {
+               generatedTransactionId = result?.insetTransatction?.insertId
+                ARRefrenceNumber=  await getwayService.generateRefrenceNumber(generatedTransactionId);
+                console.log("ARRefrenceNumber =>",ARRefrenceNumber);
+                await getwayService.getARInoviceRecordNumber(amexOrderId,async function (ARRecordNumberResult:any) {
+                console.log("ARRecordNumberResult['RECORDNO'] =>",ARRecordNumberResult['RECORDNO']);
+                
+                 const data ={
+                  customerId: sageCustomerId,
+                   amount: amextransactionData?.transaction[0].transaction.amount,
+                   ARpaymentMethod: "EFT",
+                   referenceNumber: ARRefrenceNumber,
+                   ARinvoiceRecordNumber: ARRecordNumberResult['RECORDNO']
+                 }
+                 console.log("data for apply pay =>",data);
+                 await getwayService.createAndApplyPaymentARInvoice(data,async function (result: any) {
+                 await updateInvoiceAfterPay(DBInvoiceid)
+              
+                  setTimeout(() => {
+                     document.location.href = `${process.env.NEXT_PUBLIC_AMEX_CUSTOMER_PAY_INVOICE_CANCEL_URL}`;
+                  }, 3000);
+                  })
+                });
+    
+               });
+    
+            
+              
+            
+            }
+            
+          });
+    }
 
     //get invoices by user id
     const Invoices = async (id: number) => {
@@ -221,6 +305,7 @@ export default function UserInvoices() {
             },
         })
             .then((res) => {
+              
                 setgetInvoices(res?.data);
                 setInvoice(res?.data);
                 setsearchdata(res?.data);
@@ -315,6 +400,7 @@ export default function UserInvoices() {
             data: reqData,
         })
             .then((res) => {
+                console.log("invoice =>",res);
                 setgetInvoices(res?.data);
             })
             .catch((err) => { });
@@ -326,7 +412,7 @@ export default function UserInvoices() {
         setSort("ASC");
         setStatus("All");
         setStartDate(null);
-        setEndDate(null);
+        setEndDate(null);http://localhost:3000/user/invoices/invoiceslist?orderid=IN0082&paymentMethod=Amex&creditNoteId=null&remaingAmount=0&customerID=174&resultIndicator=143a3a0c8f104b2d&sessionVersion=5f6959f009&checkoutVersion=1.0.0
         setInvoiceId("");
         Invoices(custid);
     };
@@ -408,9 +494,8 @@ export default function UserInvoices() {
                         "description": "Orderd",
                     },
                     "interaction": {
-                        // "returnUrl":`${process.env.NEXT_PUBLIC_REDIRECT_URL}/?orderid=${orderId}&paymentMethod=${paymentMethod}`,
-                        "returnUrl": `${process.env.NEXT_PUBLIC_AMEX_INVOICE_REDIRECT_URL}/?orderid=${orderId}&paymentMethod=${paymentMethod}&creditNoteId=${creditNotesId}&remaingAmount=${applyCreditNoteAmount}&customerID=${customerID}`,
-                        "cancelUrl": `${process.env.NEXT_PUBLIC_AMEX_INVOICE_CANCEL_URL}`,
+                        "returnUrl": `${process.env.NEXT_PUBLIC_AMEX_CUSTOMER_PAY_INVOICE_REDIRECT_URL}/?orderid=${orderId}&paymentMethod=${paymentMethod}&creditNoteId=${creditNotesId}&invoiceiddb=${id}&remaingAmount=${applyCreditNoteAmount}&customerID=${customerID}`,
+                        "cancelUrl": `${process.env.NEXT_PUBLIC_AMEX_CUSTOMER_PAY_INVOICE_CANCEL_URL}`,
                         "operation": "PURCHASE",
                         "merchant": {
                             "name": "QATAR INTERNATIONAL SCHOOL - ONLINE 634",
@@ -423,9 +508,7 @@ export default function UserInvoices() {
                 }
                 await getwayService.getSession(requestData, async function (result: any) {
                     if (result?.data?.result === "SUCCESS") {
-                        // setSessionId(result?.data.session.id)
-                        // setsuccessIndicator(result?.data.successIndicator);
-                        await Checkout.configure({
+                      await Checkout.configure({
                             session: {
                                 id: result?.data.session.id
                             }
