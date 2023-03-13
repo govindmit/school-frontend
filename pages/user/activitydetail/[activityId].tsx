@@ -358,7 +358,7 @@ export default function Guardians() {
               handleThanksOpen();
               setTimeout(() => {
                 handleThanksClose();
-                router.push("/user/activities");
+                router.push("/user/activities/buy");
               }, 3000);
             }
           }).catch((error) => {
@@ -417,7 +417,7 @@ export default function Guardians() {
               handleThanksOpen();
               setTimeout(() => {
                 handleThanksClose();
-                router.push("/user/activities");
+                router.push("/user/activities/buy");
               }, 3000);
             }
           }).catch((error) => {
@@ -766,7 +766,7 @@ export default function Guardians() {
               </Stack>
               <div className="buycss" style={{ textAlign: "end" }}>
                 <Link
-                  href="/user/activities"
+                  href="/user/activities/buy"
                   style={{ color: "#1A70C5", textDecoration: "none" }}
                 >
                   <Button variant="contained" startIcon={<ArrowBackIcon />}> Back To List</Button>

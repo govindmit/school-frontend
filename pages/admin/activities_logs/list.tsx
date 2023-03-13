@@ -31,6 +31,7 @@ import {
   import { api_url, auth_token } from "../../../helper/config";
   import { ToastContainer, toast } from "react-toastify";
   import "react-toastify/dist/ReactToastify.css";
+  import axios from "axios";
   import { useRouter } from "next/router";
   import commmonfunctions from "../../../commonFunctions/commmonfunctions";
   import MainFooter from "../../commoncmp/mainfooter";
@@ -126,22 +127,18 @@ import {
     //get creditRequest
     const url = `${api_url}/getlogsactivity`;
     const fetchData = async () => {
-      try {
-        const response = await fetch(url, {
-          method: "POST",
-          headers: {
-            Authorization: auth_token,
-            "x-access-token": logintoken,
-          },
-        });
-        const json = await response.json();
-        setActivityLogs(json.data);
-        // setFullCreditRequest(json.data);
-        setsearchdata(json.data);
-        // setAll(json.data.length);
-      } catch (error: any) {
+      await axios({
+        method: "POST",
+        url: url,
+        headers: {
+          Authorization: auth_token,
+        },
+      }).then((res:any)=>{
+        setActivityLogs(res.data.data);
+        setsearchdata(res.data.data);
+      }).catch ((error: any) =>{
         console.log("error", error);
-      }
+      })
     };
     //searching
     const handleSearch = (e: any) => {

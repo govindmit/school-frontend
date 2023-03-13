@@ -17,6 +17,8 @@ import Head from "next/head";
 import AuthHeader from "../commoncmp/authheader";
 import AuthRightTemplate from "../commoncmp/authrighttemplate";
 import Footer from "../commoncmp/footer";
+import { AddLogs } from "../../helper/activityLogs";
+
 const theme = createTheme();
 
 const style = {
@@ -58,6 +60,7 @@ export default function ForgotPasswordPage() {
         if (data.status === 200) {
           setShowspinner(false);
           setBtnDisabled(false);
+          AddLogs(data?.data?.data[0]?.id,`Forgot password Link Send - (${(data?.data?.data[0]?.id)})`);
           setemailSuccess("Link Send Successfully Ckech Your Email ");
           reset();
           setTimeout(() => {
