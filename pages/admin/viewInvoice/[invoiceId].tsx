@@ -4,7 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
 import MiniDrawer from "../../sidebar";
 import axios from "axios";
-import { api_url, auth_token } from "../../api/hello";
+import { api_url, auth_token } from "../../../helper/config";
 import Image from "next/image";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
@@ -22,6 +22,8 @@ import { toast } from "react-toastify";
 import CloseIcon from "@mui/icons-material/Close";
 import moment from "moment";
 import getwayService from "../../../services/gatewayService"
+import commmonfunctions from "../../../commonFunctions/commmonfunctions";
+import { AddLogs } from "../../../helper/activityLogs";
 
 export interface DialogTitleProps {
     id: string;
@@ -94,10 +96,15 @@ export default function Guardians() {
     const [invoiceStatus, setInvoiceStatus] = useState('');
     const [customerID, setCustomerId] = useState(null);
     const [orderId, setorderId] = useState('');
+const [userUniqueId, setUserUniqId] = useState<any>();
     const [showSuccess, setShowSuccess] = useState(false);
     const [user, setUser] = useState<any>([]);
 
     useEffect(() => {
+        commmonfunctions.VerifyLoginUser().then(res => {
+            setUserUniqId(res?.id)
+          });
+          
         invoiceDataById();
         getItem();
     }, []);
@@ -355,6 +362,7 @@ export default function Guardians() {
     const transactionSaveInDB = async (data: any) => {
         getwayService.transactionDataSaveInDB(data, function (result: any) {
             setShowSuccess(true)
+            AddLogs(userUniqueId,`Transaction id - (${(data?.idForPayment)})`);
             setTimeout(callBack_func, 5000);
             function callBack_func() {
                 setShowSuccess(false)
@@ -379,8 +387,8 @@ export default function Guardians() {
                 .then((res) => {
                     getUser();
                     setNote("");
+                    AddLogs(userUniqueId,`Payment Successfully id - (${(invoiceId)})`);
                     toast.success("Payment Successfully !");
-
                     setTimeout(() => {
                         handleCloses();
                     }, 1000);
@@ -408,6 +416,7 @@ export default function Guardians() {
         })
             .then((data: any) => {
                 if (data) {
+                    AddLogs(userUniqueId,`Amount debit by id - (${(reqData?.customerId)})`);
                     console.log("@@@@@@@@");
                 }
             })

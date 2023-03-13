@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import MiniDrawer from "../../sidebar";
 import axios from "axios";
 import TextField from "@mui/material/TextField";
-import { api_url, auth_token, base_url } from "../../api/hello";
+import { api_url, auth_token, base_url } from "../../../helper/config";
 import moment from "moment";
 import Image from "next/image";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -27,7 +27,7 @@ import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import { Button, OutlinedInput } from "@mui/material";
 import Paper from "@mui/material/Paper";
-import AddCustomer from "../../customer/addNewCustomer";
+import AddCustomer from "../customer/addNewCustomer";
 import AddItem from "../additem";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -35,6 +35,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import commmonfunctions from "../../../commonFunctions/commmonfunctions";
+import { AddLogs } from "../../../helper/activityLogs";
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
     padding: theme.spacing(2),
@@ -118,6 +120,7 @@ export default function Guardians() {
   const [invoiceno, setInvoiceNo] = useState();
   const [invoice, setInvoice] = useState<FormValues | any>([]);
   const [item, setItem] = useState<FormValues | any>([]);
+const [userUniqueId, setUserUniqId] = useState<any>();
   const [product, setProduct] = useState<FormValues | any>([]);
   const [selected, setSelected] = useState<readonly string[]>([]);
   const {
@@ -126,6 +129,13 @@ export default function Guardians() {
     reset,
     formState: { errors },
   } = useForm<FormValues>();
+
+
+  useEffect(() => {
+    commmonfunctions.VerifyLoginUser().then(res => {
+      setUserUniqId(res?.id)
+    });
+  }, []);
 
   const router = useRouter();
   const { invoiceId } = router.query;
@@ -234,6 +244,7 @@ export default function Guardians() {
       },
     })
       .then((res) => {
+         AddLogs(userUniqueId,`Invoice updated id - (${(invoiceId)})`);
         toast.success("Invoice updated Successfully !");
         setTimeout(() => {
           router.push("/admin/invoices");
@@ -446,6 +457,7 @@ export default function Guardians() {
       },
     })
       .then((res) => {
+        AddLogs(userUniqueId,`Invoice updated id - (${(invoiceId)})`);
         toast.success("Invoice updated Successfully !");
         setTimeout(() => {
           router.push("/admin/invoices");

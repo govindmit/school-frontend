@@ -38,7 +38,7 @@ import axios from "axios";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
-import { api_url, base_url, auth_token } from "../../api/hello";
+import { api_url, base_url, auth_token } from "../../../helper/config";
 import moment from "moment";
 import Image from "next/image";
 import PopupState, {
@@ -66,6 +66,7 @@ import { useRouter } from "next/router";
 import commmonfunctions from "../../../commonFunctions/commmonfunctions";
 import MainFooter from "../../commoncmp/mainfooter";
 import PDFService from '../../../commonFunctions/invoicepdf';
+import { AddLogs } from "../../../helper/activityLogs";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -183,6 +184,7 @@ export default function Guardians() {
   const [finalAmountToPay, setFinalAmountToPay] = useState(0);
   const [isChecked, setIsChecked] = useState(false);
   const [customerID, setCustomerId] = useState(null);
+const [userUniqueId, setUserUniqId] = useState<any>();
   const [customerCreditNoteRemaingAmount, setCustomerCreditNoteRemaingAmount] = useState(0);
   var Checkout: any
 
@@ -193,6 +195,10 @@ export default function Guardians() {
     if (logintoken === undefined || logintoken === null) {
       router.push("/");
     }
+    commmonfunctions.VerifyLoginUser().then(res => {
+      setUserUniqId(res?.id)
+    });
+
     commmonfunctions.GivenPermition().then(res => {
       if (res.roleId == 1) {
         setroleid(res.roleId);
@@ -297,7 +303,6 @@ export default function Guardians() {
       .then((res) => {
         setUser(res?.data.data);
         setInvoice(res?.data.data);
-
         setsearchdata(res?.data.data);
       })
       .catch((err) => { });
@@ -571,6 +576,7 @@ export default function Guardians() {
         .then((res) => {
           getUser();
           setNote("");
+          AddLogs(userUniqueId,`Payment Updated id - (${(invoiceId)})`);
           toast.success("Payment Successfully !");
 
           setTimeout(() => {
@@ -597,7 +603,7 @@ export default function Guardians() {
     }
     return key;
   };
-  
+
   const insertRemainingNotesAmount = async (reqData: any) => {
     //  const reqData = {
     //   customerId: customerId,
@@ -614,6 +620,7 @@ export default function Guardians() {
     })
       .then((data: any) => {
         if (data) {
+          AddLogs(userUniqueId,`Credit Balance debit by id - (${(reqData?.customerId)})`);
           console.log("@@@@@@@@");
         }
       })
@@ -632,7 +639,6 @@ export default function Guardians() {
   const handleAll = () => {
     setDisable(false);
     setPaidDisable(false);
-
     getUser();
   };
   const handlePaid = () => {
@@ -682,6 +688,7 @@ export default function Guardians() {
       },
     })
       .then((res) => {
+        AddLogs(userUniqueId,`Delete invoice id - (${(id)})`);
         getUser();
         toast.success("Deleted Successfully !");
 
@@ -702,8 +709,8 @@ export default function Guardians() {
       },
     })
       .then((res) => {
+        AddLogs(userUniqueId,`Send Invoice Mail id - (${(invoiceId)})`);
         toast.success("Send Invoice Mail Successfully !");
-
         setShare(false);
       })
       .catch((err) => { });
@@ -1256,7 +1263,6 @@ export default function Guardians() {
                 </Stack>
               </TableContainer>
             </Card>
-
             <Modal
               open={share}
               onClose={handleEmailClose}

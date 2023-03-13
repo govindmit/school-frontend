@@ -1,8 +1,9 @@
 import axios from "axios";
 import jwt_decode from "jwt-decode";
-import { api_url, auth_token } from "../pages/api/hello";
+import { api_url, auth_token } from "../helper/config";
 
 class CommonFunctions {
+  //check login user
   VerifyLoginUser = async () => {
     let login_token: any;
     login_token = localStorage.getItem("QIS_loginToken");
@@ -34,7 +35,7 @@ class CommonFunctions {
         Authorization: auth_token,
       },
     });
-    const dt = response.data.data[0].userPrevilegs;
+    const dt = response?.data?.data[0]?.userPrevilegs;
     const dttt = JSON.parse(dt);
     const lgh = dttt.user_permition.length;
     for (var i = 0; i <= lgh - 1; i++) {
@@ -165,18 +166,19 @@ class CommonFunctions {
     return response.data.data[0];
   };
 
-  CallculateDashBoardData = async ()=>{
-    try{
+  //calculate dashboard data
+  CallculateDashBoardData = async () => {
+    try {
       let response = await axios.get(`${api_url}/dashboardData`, {
         headers: {
           Authorization: auth_token,
         },
       });
       return response.data;
-    }catch(error:any){
-      console.log("error => ",error.message);
+    } catch (error: any) {
+      console.log("error => ", error.message);
     }
-  }
+  };
 }
 
 export default new CommonFunctions();

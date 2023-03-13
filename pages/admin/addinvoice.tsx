@@ -18,7 +18,7 @@ import { useEffect, useState } from "react";
 import MiniDrawer from "../sidebar";
 import axios from "axios";
 import TextField from "@mui/material/TextField";
-import { api_url, auth_token, base_url } from "../api/hello";
+import { api_url, auth_token, base_url } from "../../helper/config";
 import moment from "moment";
 import Image from "next/image";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -31,7 +31,7 @@ import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import { Button, OutlinedInput } from "@mui/material";
 import Paper from "@mui/material/Paper";
-import AddCustomer from "../customer/addNewCustomer";
+import AddCustomer from "./customer/addNewCustomer";
 import AddItem from "./additem";
 import Link from "next/link";
 import DatePicker from "react-datepicker";
@@ -42,6 +42,8 @@ import { RiDeleteBin5Fill } from "react-icons/ri";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { CheckBox } from "@mui/icons-material";
 import Checkbox from "@mui/material/Checkbox";
+import commmonfunctions from "../../commonFunctions/commmonfunctions";
+import { AddLogs } from "../../helper/activityLogs";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -243,6 +245,7 @@ export default function Guardians() {
   const [item, setItem] = useState<FormValues | any>([]);
   const [product, setProduct] = useState<FormValues | any>([]);
   const [selected, setSelected] = useState<readonly string[]>([]);
+  const [userUniqueId, setUserUniqId] = useState<any>();
 
   const {
     register,
@@ -366,6 +369,7 @@ export default function Guardians() {
         if (!res) {
           toast.success("something wents wrong !");
         } else {
+          AddLogs(userUniqueId,`Invoice created id - (${(userID.id)})`);
           reset();
           toast.success("Invoice created Successfully !");
           setTimeout(() => {
@@ -393,10 +397,16 @@ export default function Guardians() {
       .then((res) => {
         setItem(res?.data.data);
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
   console.log(Dateerror, "Dateerror");
   useEffect(() => {
+     
+    commmonfunctions.VerifyLoginUser().then(res => {
+        setUserUniqId(res?.id)
+      });
+
+    // CheckSercurity();
     let cusId = localStorage.getItem("customerId");
     invoiceNo();
     // if (cusId) {
@@ -438,7 +448,7 @@ export default function Guardians() {
         setProduct(res?.data.data);
         handleCloses();
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
   var price = 0;
   for (let d of product) {
@@ -462,7 +472,7 @@ export default function Guardians() {
       .then((res) => {
         setUser(res?.data.data);
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
 
   const handleClickOpen = () => {
@@ -504,7 +514,7 @@ export default function Guardians() {
         setInvoiceNo(res?.data?.invoiceNo);
         // console.log(res, "response");
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
 
   const handleDraft = async () => {
@@ -546,6 +556,7 @@ export default function Guardians() {
         },
       })
         .then((res) => {
+          AddLogs(userUniqueId,`Invoice created id - (${(userID?.id)})`);
           toast.success("Invoice created Successfully !");
           setTimeout(() => {
             router.push("/admin/invoices");
@@ -776,12 +787,12 @@ export default function Guardians() {
                             )}
                           </Button>
                         }
-                        // {...register("Customername", {
-                        //   onChange: (event) => {
-                        //     setUserId(event);
-                        //   },
-                        //   required: true,
-                        // })}
+                      // {...register("Customername", {
+                      //   onChange: (event) => {
+                      //     setUserId(event);
+                      //   },
+                      //   required: true,
+                      // })}
                       />
                       <Typography style={style}>
                         <span>

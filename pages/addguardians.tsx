@@ -26,7 +26,7 @@ import { CleaningServices } from "@mui/icons-material";
 import { useRouter } from "next/router";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { json } from "stream/consumers";
-import { api_url, base_url } from "./api/hello";
+import { api_url, base_url } from "./../helper/config";
 
 export interface FormValues {
   append(arg0: string, firstname: String): unknown;

@@ -30,12 +30,9 @@ const DynamicComponentWithNoSSR = dynamic(() => import("../chart"), {
 
 export default function Dashboard(this: any) {
   const router = useRouter();
-  const [dashboardData,setDashBoardData]=React.useState<any>('');
+  const [dashboardData, setDashBoardData] = React.useState<any>('');
+
   React.useEffect(() => {
-    const logintoken = localStorage.getItem("QIS_loginToken");
-    if (logintoken === undefined || logintoken === null) {
-      router.push("/");
-    }
     commmonfunctions.VerifyLoginUser().then(res => {
       if (res.exp * 1000 < Date.now()) {
         localStorage.removeItem('QIS_loginToken');
@@ -43,38 +40,44 @@ export default function Dashboard(this: any) {
         router.push("/");
       }
     });
+    const logintoken = localStorage.getItem("QIS_loginToken");
+    if (logintoken === undefined || logintoken === null) {
+      router.push("/");
+    }
     commmonfunctions.GivenPermition().then(res => {
-      if (res.roleId == 1) {
+      if (res.roleId === 1) {
         //router.push("/userprofile");
-      } else if (res.roleId > 1) {
+      } else if (res.roleId > 1 && res.roleId !== 2) {
         commmonfunctions.ManageDashboard().then(res => {
           if (!res) {
             router.push("/userprofile");
           }
         })
+      } else {
+        router.push("/userprofile");
       }
     });
     getDashboardData();
   }, []);
 
-  const getDashboardData = async ()=>{
-    try{
+  const getDashboardData = async () => {
+    try {
       const dashBoardDataResponse = await commmonfunctions.CallculateDashBoardData();
-      console.log("dashBoardData =>",dashBoardDataResponse);
+      console.log("dashBoardData =>", dashBoardDataResponse);
       setDashBoardData(dashBoardDataResponse)
-    }catch(error:any){
-      console.log("error => ",error.message);
+    } catch (error: any) {
+      console.log("error => ", error.message);
     }
   }
-const sendViewAllCustomer = ()=>{
-  router.push("/customer/customerslist");
-}
-const sendViewCreditNote = ()=>{
-  router.push("/admin/creditnotes/creditnoteslist");
-}
-const viewCreditNoteById = (id:any)=>{
-  router.push(`/admin/creditnotes/viewcreditnotes/${id}`);
-}
+  const sendViewAllCustomer = () => {
+    router.push("/admin/customer/customerslist");
+  }
+  const sendViewCreditNote = () => {
+    router.push("/admin/creditnotes/creditnoteslist");
+  }
+  const viewCreditNoteById = (id: any) => {
+    router.push(`/admin/creditnotes/viewcreditnotes/${id}`);
+  }
   const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
     ...theme.typography.body2,
@@ -235,9 +238,9 @@ const viewCreditNoteById = (id:any)=>{
                                 <div className="Dcredit">
                                   <h3 className="lcr">Latest Credit Report</h3>
                                 </div>
-                                <Button className="dview" variant="text" onClick={()=>{sendViewCreditNote()}}>
-                            View All
-                          </Button>
+                                <Button className="dview" variant="text" onClick={() => { sendViewCreditNote() }}>
+                                  View All
+                                </Button>
                                 <Container>
                                   <Card className="box-show-no border-round">
                                     <TableContainer sx={{ minWidth: 800 }}>
@@ -254,58 +257,58 @@ const viewCreditNoteById = (id:any)=>{
                                             <TableCell>BALANCE</TableCell>
                                           </TableRow>
                                         </TableHead>
-                                        {dashboardData && dashboardData?.creditRequestData.map((creditRequest:any)=>{
+                                        {dashboardData && dashboardData?.creditRequestData.map((creditRequest: any) => {
                                           const date = creditRequest?.createdAt;
                                           const dateprint = date?.split(" ")[0]
-                                          return(
+                                          return (
                                             <TableBody>
-                                            <TableRow
-                                              hover
-                                              tabIndex={-1}
-                                              role="checkbox"
-                                            >
-                                              <TableCell padding="checkbox">
-                                                <Checkbox />
-                                              </TableCell>
-                                              <TableCell
-                                                component="th"
-                                                scope="row"
-                                                padding="none"
+                                              <TableRow
+                                                hover
+                                                tabIndex={-1}
+                                                role="checkbox"
                                               >
-                                                <TableCell style={{cursor:'pointer',color:'blue'}} align="left" onClick={()=>{viewCreditNoteById(creditRequest?.creditRequestId)}}>
-                                                  CRD-{creditRequest?.creditRequestId
-}
+                                                <TableCell padding="checkbox">
+                                                  <Checkbox />
                                                 </TableCell>
-                                              </TableCell>
-                                              <TableCell
-                                                className="dname"
-                                                align="left"
-                                              >
-                                                {creditRequest?.name}
-                                              </TableCell>
-                                              <TableCell
-                                                className="demail"
-                                                align="left"
-                                              >
-                                              {moment(dateprint, "YYYY/MM/DD").format("ll")}
-                                             
-                                              </TableCell>
-  
-                                              <TableCell
-                                                className="active"
-                                                align="left"
-                                              >
-                                                ${creditRequest?.requestedAmount}
-                                              </TableCell>
-  
-                                              <TableCell align="left">
-                                              ${creditRequest?.creditAmount}
-                                              </TableCell>
-                                            </TableRow>
-                                          </TableBody>
+                                                <TableCell
+                                                  component="th"
+                                                  scope="row"
+                                                  padding="none"
+                                                >
+                                                  <TableCell style={{ cursor: 'pointer', color: 'blue' }} align="left" onClick={() => { viewCreditNoteById(creditRequest?.creditRequestId) }}>
+                                                    CRD-{creditRequest?.creditRequestId
+                                                    }
+                                                  </TableCell>
+                                                </TableCell>
+                                                <TableCell
+                                                  className="dname"
+                                                  align="left"
+                                                >
+                                                  {creditRequest?.name}
+                                                </TableCell>
+                                                <TableCell
+                                                  className="demail"
+                                                  align="left"
+                                                >
+                                                  {moment(dateprint, "YYYY/MM/DD").format("ll")}
+
+                                                </TableCell>
+
+                                                <TableCell
+                                                  className="active"
+                                                  align="left"
+                                                >
+                                                  ${creditRequest?.requestedAmount}
+                                                </TableCell>
+
+                                                <TableCell align="left">
+                                                  ${creditRequest?.creditAmount}
+                                                </TableCell>
+                                              </TableRow>
+                                            </TableBody>
                                           )
                                         })}
-                                       
+
                                         {/* <TableBody>
                                           <TableRow
                                             hover
@@ -621,37 +624,37 @@ const viewCreditNoteById = (id:any)=>{
                       <Item className="box-shadow padding-le-ri-zero">
                         <div className="Dcredit">
                           <h3 className="lcr">Latest Users</h3>
-                          <Button className="dview" variant="text" onClick={()=>{sendViewAllCustomer()}}>
+                          <Button className="dview" variant="text" onClick={() => { sendViewAllCustomer() }}>
                             View All
                           </Button>
                         </div>
                         <div className="padding-22">
-                        {dashboardData && dashboardData?.leatestCustomer.map((customer:any)=>{
-                                          return(
-                                            <div className="Ddiv1">
-                                            <div id="dimage">
-                                              <Avatar
-                                                alt="Remy Sharp"
-                                                src="/image.png"
-                                                sx={{ width: 50, height: 50 }}
-                                              />
-                                            </div>
-                
-                                            <div id="dinfo">
-                                              <div className="diinfo">
-                                                <span className="dname">{customer?.name}</span>{" "}
-                                                <span className="email">
-                                                  {customer?.email1}
-                                                </span>
-                                              </div>
-                                            </div>
-                
-                                            <div id="dstatus">
-                                              <span className="dactive" style={{color:customer?.status === 0 ? "rgb(2 197 9)":"red"}}>{customer?.status === 0 ? "Active" : "InActive"}</span>
-                                            </div>
-                                          </div>
-                                          )
-                                        })}
+                          {dashboardData && dashboardData?.leatestCustomer.map((customer: any) => {
+                            return (
+                              <div className="Ddiv1">
+                                <div id="dimage">
+                                  <Avatar
+                                    alt="Remy Sharp"
+                                    src="/image.png"
+                                    sx={{ width: 50, height: 50 }}
+                                  />
+                                </div>
+
+                                <div id="dinfo">
+                                  <div className="diinfo">
+                                    <span className="dname">{customer?.name}</span>{" "}
+                                    <span className="email">
+                                      {customer?.email1}
+                                    </span>
+                                  </div>
+                                </div>
+
+                                <div id="dstatus">
+                                  <span className="dactive" style={{ color: customer?.status === 0 ? "rgb(2 197 9)" : "red" }}>{customer?.status === 0 ? "Active" : "InActive"}</span>
+                                </div>
+                              </div>
+                            )
+                          })}
                           {/* <div className="Ddiv1">
                             <div id="dimage">
                               <Avatar

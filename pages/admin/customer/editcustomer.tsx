@@ -23,13 +23,15 @@ import {
   Stack,
 } from "@mui/material";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { api_url, auth_token } from "../api/hello";
-import AddCustomerCmp from "../commoncmp/addCustomerCmp";
+import { api_url, auth_token } from "../../../helper/config";
+import AddCustomerCmp from "../../commoncmp/addCustomerCmp";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import CloseIcon from "@mui/icons-material/Close";
 import styled from "@emotion/styled";
+import commmonfunctions from "../../../commonFunctions/commmonfunctions";
+import { AddLogs } from "../../../helper/activityLogs";
 const style = {
   color: "red",
   fontSize: "12px",
@@ -140,6 +142,7 @@ export default function EditCustomer({
   const [agegrp, setagegrp] = React.useState<any>("");
   const [custType, setcustType] = React.useState<any>("");
   const [custAdd, setcustAdd] = React.useState<any>("");
+const [userUniqueId, setUserUniqId] = React.useState<any>();
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setselValue(newValue);
   };
@@ -160,6 +163,14 @@ export default function EditCustomer({
     };
   }
 
+  React.useEffect(() => {
+    commmonfunctions.VerifyLoginUser().then(res => {
+      setUserUniqId(res?.id)
+    });
+  }, []);
+
+
+  
   React.useEffect(() => {
     getType();
     getUserDet();
@@ -284,6 +295,7 @@ export default function EditCustomer({
         if (data.status === 200) {
           setshowspinner(false);
           setBtnDisabled(false);
+          AddLogs(userUniqueId,`Customer Updated By id - (${(id)})`);
           toast.success("Customer Updated Successfully !");
           setTimeout(() => {
             setOpen(false);

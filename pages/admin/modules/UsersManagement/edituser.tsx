@@ -21,16 +21,18 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import MiniDrawer from "../../sidebar";
+import MiniDrawer from "../../../sidebar";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import styled from "@emotion/styled";
-import UserService from '../../../commonFunctions/servives'
+import UserService from '../../../../commonFunctions/servives'
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
-import { api_url, auth_token } from "../../api/hello";
+import { api_url, auth_token } from "../../../../helper/config";
 import { useRouter } from "next/router";
-import MainFooter from "../../commoncmp/mainfooter";
+import MainFooter from "../../../commoncmp/mainfooter";
+import { AddLogs } from "../../../../helper/activityLogs";
+import commmonfunctions from "../../../../commonFunctions/commmonfunctions";
 const Item = styled(Paper)(({ theme }) => ({
     p: 10,
 }));
@@ -53,6 +55,7 @@ export default function EditUser(props: any) {
     const [spinner, setshowspinner] = React.useState(false);
     const [btnDisabled, setBtnDisabled] = React.useState(false);
     const [roles, setroles] = React.useState<any>([])
+const [userUniqueId, setUserUniqId] = React.useState<any>();
     const [rolestatus, setrolestatus] = React.useState<any>("");
     let permitions: { Dashboard?: any; Invoices?: any; SalesInvoices?: any; Activites?: any; Customers?: any; Cumposers?: any; CreditNote?: any; UserManagement?: any; }[] = [];
     const [onDashboard, setonDashboard] = React.useState(false);
@@ -160,6 +163,9 @@ export default function EditUser(props: any) {
     console.log(permitions);
 
     useEffect(() => {
+        commmonfunctions.VerifyLoginUser().then(res => {
+            setUserUniqId(res?.id)
+          });
         //get roles
         UserService.GetRoles().then(response => setroles(response));
         //get user det
@@ -288,11 +294,12 @@ export default function EditUser(props: any) {
         })
             .then((data: any) => {
                 if (data) {
+                    AddLogs(userUniqueId,`User updated id - (${(props.id)})`);
                     toast.success("User updated successfully!");
                     setshowspinner(false);
                     setBtnDisabled(false);
                     setTimeout(() => {
-                        router.push("/usermanagement/users");
+                        router.push("/admin/usermanagement/users");
                     }, 2000);
                 }
             })
@@ -321,7 +328,7 @@ export default function EditUser(props: any) {
                                         <Link
                                             key="1"
                                             color="inherit"
-                                            href="/usermanagement/users"
+                                            href="/admin/usermanagement/users"
                                             style={{ color: "#1A70C5", textDecoration: "none" }}
                                         >
                                             Home

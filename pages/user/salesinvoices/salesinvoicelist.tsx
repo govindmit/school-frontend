@@ -30,7 +30,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
 import commmonfunctions from "../../../commonFunctions/commmonfunctions";
-import { api_url, auth_token } from "../../api/hello";
+import { api_url, auth_token } from "../../../helper/config";
 import MainFooter from "../../commoncmp/mainfooter";
 import RequestFormCmp from "./requestFormCmp";
 
@@ -88,15 +88,24 @@ export default function UserInvoices() {
 
     // verify user login and previlegs
     useEffect(() => {
+        let logintoken: any;
         commmonfunctions.VerifyLoginUser().then(res => {
             if (res.exp * 1000 < Date.now()) {
                 localStorage.removeItem('QIS_loginToken');
-                localStorage.removeItem('QIS_User');
-                router.push("/");
             }
             if (res && res?.id) {
                 setcustid(res?.id);
                 getSalesOrdersByUser(res.id);
+            }
+        });
+        logintoken = localStorage.getItem("QIS_loginToken");
+        if (logintoken === undefined || logintoken === null) {
+            router.push("/");
+        }
+        commmonfunctions.GivenPermition().then((res) => {
+            if (res.roleId === 2) {
+            } else {
+                router.push("/");
             }
         });
     }, []);
@@ -291,9 +300,9 @@ export default function UserInvoices() {
                                                     </TableCell>
                                                     <TableCell align="left" className="action-td">
                                                         {item?.amount !== 0 ? (<div className="btn">
-                                                            {item.isRequested === 1 ? (<Button size="small" variant="outlined" style={{ backgroundColor: "#D1D2D2", color: "whitesmoke" }} disabled sx={{ width: 135 }} ><b>Requested</b></Button>) : (<Button size="small" variant="outlined" onClick={() => handleClickOpen(item)} ><b>Create Request</b></Button>)}
+                                                            {item.isRequested === 1 ? (<Button size="small" variant="outlined" style={{ backgroundColor: "#D1D2D2", color: "whitesmoke" }} disabled sx={{ width: 135 }} ><b>Requested</b></Button>) : (<Button size="small" variant="outlined" onClick={() => handleClickOpen(item)} ><b>Credit Request</b></Button>)}
                                                         </div>) : (<div className="btn">
-                                                            {(<Button size="small" variant="outlined" disabled style={{ backgroundColor: "#D1D2D2", color: "whitesmoke" }}><b>Create Request</b></Button>)}
+                                                            {(<Button size="small" variant="outlined" disabled style={{ backgroundColor: "#D1D2D2", color: "whitesmoke" }}><b>Credit Request</b></Button>)}
                                                         </div>)}
 
                                                     </TableCell>

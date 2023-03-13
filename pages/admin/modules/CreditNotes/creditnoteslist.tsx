@@ -34,7 +34,7 @@ import axios from "axios";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
-import { api_url, auth_token } from "../../../api/hello";
+import { api_url, auth_token } from "../../../../helper/config";
 import MiniDrawer from "../../../sidebar";
 import DeleteFormDialog from "./deletedialougebox";
 import DatePicker from "react-datepicker";
@@ -97,6 +97,9 @@ export default function CreditNotesList() {
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
+
+
+    
     useEffect(() => {
         fetchData();
         getUser();
@@ -592,6 +595,9 @@ export default function CreditNotesList() {
                                                 <Typography width={150}>INVOICE ID</Typography>
                                             </TableCell>
                                             <TableCell>
+                                                <Typography width={150}>Is RELATED</Typography>
+                                            </TableCell>
+                                            <TableCell>
                                                 <Typography>ACTION</Typography>
                                             </TableCell>
                                         </TableRow>
@@ -617,6 +623,7 @@ export default function CreditNotesList() {
                                                             (<span style={{ color: "#02C509", fontWeight: "bold" }}>Approved</span>) : item?.status === 2 ? (<span style={{ color: "#FF4026", fontWeight: "bold" }}>Reject</span>) : item?.status === 3 ? (<span style={{ color: "#FF4026", fontWeight: "bold" }}>Deleted</span>) : item?.status === 4 ? (<span style={{ color: "#FF4026", fontWeight: "bold" }}>Appr By Admin</span>) : ""}</TableCell>
                                                         <TableCell align="left">${item.amount}</TableCell>
                                                         <TableCell align="left">INV-{item.id}</TableCell>
+                                                        <TableCell align="left"> {item?.invoiceId > 0 ? (<span style={{ color: "#3366ff" }}><b>Invoice Related</b></span>) : item?.salesOrderId > 0 ? (<span style={{ color: "#006600" }}><b>Activity Related</b></span>) : ""}</TableCell>
                                                         <TableCell align="left">
                                                             <Stack
                                                                 direction="row"

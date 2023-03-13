@@ -22,7 +22,7 @@ import MiniDrawer from "../../../sidebar";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
-import { api_url, auth_token } from "../../../api/hello";
+import { api_url, auth_token } from "../../../../helper/config";
 import moment from "moment";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import MainFooter from "../../../commoncmp/mainfooter";

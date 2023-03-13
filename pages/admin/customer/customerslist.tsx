@@ -25,11 +25,12 @@ import {
   Pagination,
   Tabs,
   Tab,
+  Modal,
 } from "@mui/material";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import MiniDrawer from "../sidebar";
-import { api_url, auth_token } from "../api/hello";
+import MiniDrawer from "../../sidebar";
+import { api_url, auth_token } from "../../../helper/config";
 import { BiFilterAlt, BiShow } from "react-icons/bi";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
@@ -37,16 +38,19 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBin5Fill } from "react-icons/ri";
-import ConfirmBox from "../commoncmp/confirmbox";
+import ConfirmBox from "../../commoncmp/confirmbox";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AddCustomer from "./addNewCustomer";
 import EditCustomer from "./editcustomer";
 import { useRouter } from "next/router";
 import { CSVDownload } from "react-csv";
-import Loader from "../commoncmp/myload";
-import commmonfunctions from "../../commonFunctions/commmonfunctions";
-import MainFooter from "../commoncmp/mainfooter";
+import Loader from "../../commoncmp/myload";
+import commmonfunctions from "../../../commonFunctions/commmonfunctions";
+import MainFooter from "../../commoncmp/mainfooter";
+import { AddLogs } from "../../../helper/activityLogs";
+import Image from "next/image";
+import { BsTelegram } from "react-icons/bs";
 
 function a11yProps(index: number) {
   return {
@@ -87,8 +91,21 @@ type FormValues = {
   ParentId: string;
 };
 
+const style = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
+
 export default function CustomerList() {
   const [users, setUsers] = useState<any>([]);
+  const [UserId, setUserId] = useState(0);
   const [custtype, setcusttype] = useState<any>([]);
   const [tabFilterData, settabFilterData] = useState<any>([]);
   const [All, setAll] = useState(0);
@@ -111,7 +128,9 @@ export default function CustomerList() {
   const [checked, setChecked] = React.useState(false);
   const [OpenCSV, setOpenCSV] = React.useState(false);
   const [custpermit, setcustpermit] = useState<any>([]);
+const [userUniqueId, setUserUniqId] = React.useState<any>();
   const [roleid, setroleid] = useState(0);
+  const [share, setShare] = useState(false);
   const { register, handleSubmit } = useForm<FormValues>();
   const router = useRouter();
 
@@ -127,22 +146,23 @@ export default function CustomerList() {
   // verify user login and previlegs
   let logintoken: any;
   React.useEffect(() => {
-    logintoken = localStorage.getItem("QIS_loginToken");
-    if (logintoken === undefined || logintoken === null) {
-      router.push("/");
-    }
     commmonfunctions.VerifyLoginUser().then(res => {
+      setUserUniqId(res?.id)
       if (res.exp * 1000 < Date.now()) {
         localStorage.removeItem('QIS_loginToken');
         localStorage.removeItem('QIS_User');
         router.push("/");
       }
     });
+    logintoken = localStorage.getItem("QIS_loginToken");
+    if (logintoken === undefined || logintoken === null) {
+      router.push("/");
+    }
     commmonfunctions.GivenPermition().then(res => {
       if (res.roleId == 1) {
         setroleid(res.roleId);
         //router.push("/userprofile");
-      } else if (res.roleId > 1) {
+      } else if (res.roleId > 1 && res.roleId !== 2) {
         commmonfunctions.ManageCustomers().then(res => {
           if (!res) {
             router.push("/userprofile");
@@ -150,6 +170,8 @@ export default function CustomerList() {
             setcustpermit(res);
           }
         })
+      } else {
+        router.push("/userprofile");
       }
     })
   }, []);
@@ -301,6 +323,7 @@ export default function CustomerList() {
       },
     })
       .then((data) => {
+        AddLogs(userUniqueId,`Delete User id - (${(deleteData.id)})`);
         toast.success("User Deleted Successfully !");
         setdeleteConfirmBoxOpen(false);
         getUser();
@@ -342,6 +365,31 @@ export default function CustomerList() {
     setUsers(Inact);
   }
 
+  //send email functionality
+  function handleShare(id: any) {
+    setUserId(id);
+    setShare(true);
+  }
+  const handleEmailClose = () => setShare(false);
+  // send email func
+  const handleSend = async () => {
+    await axios({
+      method: "POST",
+      url: `${api_url}/sendUserEmail`,
+      headers: {
+        Authorization: auth_token,
+      },
+    })
+      .then((res) => {
+        toast.success(" Mail Send Successfully !");
+        setShare(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error(" Internal Server Error !");
+      });
+  };
+
   //check uncheck functionality
   const [userinfo, setUserInfo] = useState<any>({
     id: [],
@@ -370,7 +418,6 @@ export default function CustomerList() {
 
   // console.log(checked);
   // console.log(userinfo.id);
-
 
   // Export to CSV
   const [mydata, setmydata] = useState<any>("")
@@ -441,6 +488,7 @@ export default function CustomerList() {
     { label: "Customer Type ", key: "CustomerType" },
     { label: "status", key: "status" },
   ];
+
 
   return (
     <>
@@ -908,7 +956,7 @@ export default function CustomerList() {
                                 {dataitem.phone1}
                               </TableCell>
                               <TableCell align="left">
-                                {dataitem.phone2}
+                                {dataitem.phone2 === 0 ? "" : dataitem.phone2}
                               </TableCell>
                               <TableCell align="left">
                                 <Stack
@@ -919,7 +967,7 @@ export default function CustomerList() {
                                   {custpermit && custpermit.canView === true || roleid === 1 ? (
                                     <IconButton className="action-view">
                                       <Link
-                                        href={`/customer/viewcustomer/${dataitem.id}`}
+                                        href={`/admin/customer/viewcustomer/${dataitem.id}`}
                                         style={{
                                           color: "#26CEB3",
                                         }}
@@ -936,6 +984,16 @@ export default function CustomerList() {
                                     <FiEdit />
                                   </IconButton>)
                                     : ""}
+                                  {custpermit && custpermit.canEdit === true || roleid === 1 ? (
+                                    <Button className="idiv">
+                                      <Image
+                                        onClick={() => handleShare(dataitem.id)}
+                                        src="/share.svg"
+                                        alt="Picture of the author"
+                                        width={35}
+                                        height={35}
+                                      />
+                                    </Button>) : ""}
                                   {custpermit && custpermit.canDelete === true || roleid === 1 ? (<IconButton
                                     className="action-delete"
                                     style={{ color: "#F95A37" }}
@@ -1008,6 +1066,39 @@ export default function CustomerList() {
         title={deleteData?.name}
         deleteFunction={deleteUser}
       />
+      <Modal
+        open={share}
+        onClose={handleEmailClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style} className="ISBOX popup send">
+          <div className="Isend">
+            <div>
+              <h3 className="ehead">Send Document</h3>
+            </div>
+            <div className="Isend">
+              <h3 className="eshead">
+                How would you like to deliver this document to the
+                customer?
+              </h3>
+            </div>
+          </div>
+          <div className="sendEmailBox">
+            <div>
+              <Box>
+                <BsTelegram
+                  onClick={handleSend}
+                  className="telegram"
+                ></BsTelegram>
+              </Box>
+            </div>
+            <div>
+              <h3>Email</h3>
+            </div>
+          </div>
+        </Box>
+      </Modal>
       <ToastContainer />
     </>
   );

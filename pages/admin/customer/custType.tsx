@@ -27,21 +27,22 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import MiniDrawer from "../sidebar";
+import MiniDrawer from "../../sidebar";
 import axios from "axios";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { api_url, auth_token } from "../api/hello";
-import ConfirmBox from "../commoncmp/confirmbox";
+import { api_url, auth_token } from "../../../helper/config";
+import ConfirmBox from "../../commoncmp/confirmbox";
 import styled from "@emotion/styled";
 import { GridCloseIcon } from "@mui/x-data-grid";
 import { useForm, SubmitHandler } from "react-hook-form";
 import EditType from "./editType";
-import commmonfunctions from "../../commonFunctions/commmonfunctions";
+import commmonfunctions from "../../../commonFunctions/commmonfunctions";
 import { useRouter } from "next/router";
-import MainFooter from "../commoncmp/mainfooter";
+import MainFooter from "../../commoncmp/mainfooter";
+import { AddLogs } from "../../../helper/activityLogs";
 
 const style = {
   color: "red",
@@ -100,6 +101,7 @@ export default function CustomerTypeList() {
   const [editid, seteditid] = useState<any>(0);
   const [custpermit, setcustpermit] = useState<any>([]);
   const [roleid, setroleid] = useState(0);
+const [userUniqueId, setUserUniqId] = React.useState<any>();
   const router = useRouter();
 
   const {
@@ -133,11 +135,19 @@ export default function CustomerTypeList() {
 
   // verify user login and previlegs
   let logintoken: any;
+
+
+
+
   React.useEffect(() => {
     logintoken = localStorage.getItem("QIS_loginToken");
     if (logintoken === undefined || logintoken === null) {
       router.push("/");
     }
+    commmonfunctions.VerifyLoginUser().then(res => {
+      setUserUniqId(res?.id)
+    });
+
     commmonfunctions.GivenPermition().then(res => {
       if (res.roleId == 1) {
         setroleid(res.roleId);
@@ -205,6 +215,7 @@ export default function CustomerTypeList() {
       },
     })
       .then((data) => {
+        AddLogs(userUniqueId,`Delete Customer Type id - (${(deleteData.id)})`);
         toast.success("Customer Type Deleted Successfully !");
         setdeleteConfirmBoxOpen(false);
         getType();
@@ -230,6 +241,7 @@ export default function CustomerTypeList() {
     })
       .then((data) => {
         if (data.status === 201) {
+          // console.log('@@@@@@@@',data);
           toast.success("Customer Type Added Successfully !");
           setshowspinner(false);
           setBtnDisabled(false);

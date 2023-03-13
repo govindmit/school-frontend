@@ -24,7 +24,7 @@ import MiniDrawer from "../sidebar";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
-import { api_url, auth_token } from "../api/hello";
+import { api_url, auth_token } from "../../helper/config";
 import MainFooter from "../commoncmp/mainfooter";
 import moment from "moment";
 import axios from "axios";
@@ -38,6 +38,8 @@ import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { useForm, SubmitHandler } from "react-hook-form";
+import commmonfunctions from "../../commonFunctions/commmonfunctions";
+import { AddLogs } from "../../helper/activityLogs";
 
 const style = {
   color: "red",
@@ -80,6 +82,7 @@ type FormValues = {
   state: string;
   postalcode: number;
 };
+
 export interface DialogTitleProps {
   id: string;
   children?: React.ReactNode;
@@ -88,7 +91,6 @@ export interface DialogTitleProps {
 
 function BootstrapDialogTitle(props: DialogTitleProps) {
   const { children, onClose, ...other } = props;
-
   return (
     <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
       {children}
@@ -152,6 +154,7 @@ export default function ViewCustomer() {
   const [open, setOpen] = React.useState(false);
   const [purchasedActivity, setPurchasedActivity] = React.useState<any>([]);
   const [dueAmount, setDueAmount] = React.useState([]);
+  const [userUniqueId, setUserUniqId] = React.useState<any>();
 
   const router = useRouter();
 
@@ -171,7 +174,22 @@ export default function ViewCustomer() {
 
   const verifyLoginUser = async () => {
     let login_token: any;
+    commmonfunctions.VerifyLoginUser().then(res => {
+      if (res.exp * 1000 < Date.now()) {
+        localStorage.removeItem('QIS_loginToken');
+        router.push("/");
+      }
+    });
     login_token = localStorage.getItem("QIS_loginToken");
+    if (login_token === undefined || login_token === null) {
+      router.push("/");
+    }
+    commmonfunctions.GivenPermition().then(res => {
+      if (res.roleId !== 2) {
+        router.push("/");
+      }
+    });
+
     const decoded: any = jwt_decode(login_token);
     setCustomerId(decoded?.id);
     fetchBallance(decoded?.id);
@@ -272,6 +290,7 @@ export default function ViewCustomer() {
         if (data.status === 200) {
           setshowspinner(false);
           setBtnDisabled(false);
+          AddLogs(userUniqueId,`Customer Detail Updated id - (${(customerId)})`);
           toast.success("Customer Detail Updated Successfully !");
           reset();
           setTimeout(() => {
@@ -306,6 +325,11 @@ export default function ViewCustomer() {
   };
 
   useEffect(() => {
+
+    commmonfunctions.VerifyLoginUser().then(res => {
+      setUserUniqId(res?.id)
+    });
+
     verifyLoginUser();
   }, [customerId]);
 

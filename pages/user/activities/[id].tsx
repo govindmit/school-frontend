@@ -20,7 +20,7 @@ import Box from "@mui/material/Box";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import MiniDrawer from "../../sidebar";
-import { api_url, auth_token, base_url } from "../../api/hello";
+import { api_url, auth_token, base_url } from "../../../helper/config";
 import jwt_decode from "jwt-decode";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
@@ -40,6 +40,8 @@ import getwayService from "../../../services/gatewayService";
 import Loader from "../../commoncmp/myload";
 import Modal from '@mui/material/Modal';
 import Script from "next/script";
+import { AddLogs } from "../../../helper/activityLogs";
+
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
     padding: theme.spacing(2),
@@ -153,6 +155,9 @@ export default function ActivityList() {
   const [orderId, setorderId] = React.useState("");
   const [myload, setmyload] = useState(false)
  const [itemID, setItemId]= useState("");
+
+  const [userUniqueId, setUserUniqId] = React.useState<any>();
+
   const [openThank, setOpenThank] = React.useState(false);
   const handleThanksOpen = () => setOpenThank(true);
   const handleThanksClose = () => setOpenThank(false);
@@ -183,22 +188,19 @@ export default function ActivityList() {
   let logintoken: any;
   const router = useRouter();
   React.useEffect(() => {
+    commmonfunctions.VerifyLoginUser().then(res => {
+      if (res.exp * 1000 < Date.now()) {
+        localStorage.removeItem('QIS_loginToken');
+      }
+    });
     logintoken = localStorage.getItem("QIS_loginToken");
     if (logintoken === undefined || logintoken === null) {
       router.push("/");
     }
-
     commmonfunctions.GivenPermition().then((res) => {
-      if (res.roleId == 1) {
-        //router.push("/userprofile");
-      } else if (res.roleId > 1) {
-        // commmonfunctions.ManageActivity().then((res) => {
-        //   if (!res) {
-        // router.push("/userprofile");
-        //   } else {
-        //     console.log('@@@@@@@@@@',res);
-        //   }
-        // });
+      if (res.roleId === 2) {
+      } else {
+        router.push("/");
       }
     });
   }, []);
@@ -226,6 +228,10 @@ export default function ActivityList() {
       let creditNoteId = search.creditNoteId;
       let salseOrder = search.salseOrder ;
    
+    commmonfunctions.VerifyLoginUser().then(res => {
+      setUserUniqId(res?.id)
+    });
+
     fetchData();
     manageActivity();
     if(paymentMethod && amexOrderId){
@@ -352,6 +358,7 @@ export default function ActivityList() {
     })
       .then((data: any) => {
         if (data) {
+          AddLogs(userUniqueId,`Amount debit id - (${(userDetail?.id)})`);
           console.log("@@@@@@@@");
         }
       })
@@ -434,7 +441,7 @@ export default function ActivityList() {
                 transactionId: `case-${unique} `,
                 amexorderId: data?.data?.sageIntacctorderID,
                 paymentMethod:
-                  paymentPayMethod === "" ? "Cash" : paymentPayMethod,
+                paymentPayMethod === "" ? "Cash" : paymentPayMethod,
                 idForPayment: data?.data?.sageIntacctorderID,
                 creditNotesId: creditNoteId,
               };
@@ -442,6 +449,8 @@ export default function ActivityList() {
               setshowspinner(false);
               setBtnDisabled(false);
               // toast.success("Activity purchase Successfully !");
+              AddLogs(userUniqueId,`Activity purchase id - (${(data?.data?.data?.insertId)})`);
+              toast.success("Activity purchase Successfully !");
               setOpen(false);
               // handleThanksOpen();
               // setTimeout(() => {
@@ -497,6 +506,8 @@ export default function ActivityList() {
               setshowspinner(false);
               setBtnDisabled(false);
               // toast.success("Activity purchase Successfully !");
+              AddLogs(userUniqueId,`Activity purchase id - (${(data?.data?.data?.insertId)})`);
+              toast.success("Activity purchase Successfully !");
               setOpen(false);
               // handleThanksOpen();
               // setTimeout(() => {
@@ -611,6 +622,7 @@ export default function ActivityList() {
         Authorization: auth_token,
       },
     }).then((result: any) => {
+      AddLogs(userUniqueId,`Transaction id - (${(data?.idForPayment)})`);
       console.log("transaction ");
     }).catch((error: any) => {
       console.log("error =>", error);
@@ -924,11 +936,11 @@ export default function ActivityList() {
                               <span style={{ display: "flex" }}>
                                 <span style={{ position: "absolute" }}>
                                   <h4 className="h4heading">Start Date</h4>
-                                  <p className="actpara paradate"> {moment(startDate).format("MMM DD, YYYY")}</p>
+                                  <p className="actpara paradate"> {moment(startDate,"YYYY.MM.DD").format("MMM DD, YYYY")}</p>
                                 </span>
                                 <span>
                                   <h4 className="h4heading headingmargin">End Date</h4>
-                                  <p className="actpara headingmargin paradate1">{moment(endDate).format("MMM DD, YYYY")}</p>
+                                  <p className="actpara headingmargin paradate1">{moment(endDate,"YYYY.MM.DD").format("MMM DD, YYYY")}</p>
                                 </span>
                               </span>
                               <h4 className="h4heading">Amount</h4>

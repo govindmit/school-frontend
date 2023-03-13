@@ -17,7 +17,9 @@ import styled from "@emotion/styled";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import CloseIcon from "@mui/icons-material/Close";
-import { api_url, auth_token } from "../../api/hello";
+import { api_url, auth_token } from "../../../helper/config";
+import commmonfunctions from "../../../commonFunctions/commmonfunctions";
+import { AddLogs } from "../../../helper/activityLogs";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
@@ -77,10 +79,13 @@ export default function RequestFormCmp({
         formState: { errors },
     } = useForm<FormValues>();
 
+    const [userUniqueId, setUserUniqId] = React.useState<any>();
+
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
         const reqData = {
             userId: reqDet?.userId
-            , salesOrderId: reqDet?.id,
+            , salesOrderId: reqDet?.id === undefined ? 0 : reqDet?.id,
+            invoiceId: reqDet?.invoiceId === undefined ? 0 : reqDet?.invoiceId,
             activityId: reqDet?.activityId
             , status: 0, amount: reqDet?.amount
             , message: data.message,
@@ -96,6 +101,7 @@ export default function RequestFormCmp({
         })
             .then((res) => {
                 if (res) {
+                    AddLogs(userUniqueId,`Credit Request Created id - (${(reqDet?.userId)})`);
                     toast.success("Credit Request Created Successful !");
                     reset();
                     closeDialogs();
@@ -106,6 +112,13 @@ export default function RequestFormCmp({
                 console.log("error", error);
             });
     };
+    
+    React.useEffect(() => {
+        commmonfunctions.VerifyLoginUser().then(res => {
+          setUserUniqId(res?.id)
+        });
+      }, []);
+    
 
     const closeDialogs = () => {
         closeDialog(false);
@@ -129,7 +142,7 @@ export default function RequestFormCmp({
                             <Stack style={{ marginTop: "8px" }}>
                                 <Grid container spacing={2}>
                                     <Stack spacing={1} paddingLeft={"20px"}>
-                                        <Typography variant="h5" style={{ color: "#26CEB3" }}>INV-000{reqDet?.id}</Typography>
+                                        <Typography variant="h5" style={{ color: "#26CEB3" }}>INV-000{reqDet?.id || reqDet?.invoiceId}</Typography>
                                     </Stack>
                                 </Grid>
                             </Stack>

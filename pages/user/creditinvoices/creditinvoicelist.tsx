@@ -31,7 +31,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
 import commmonfunctions from "../../../commonFunctions/commmonfunctions";
-import { api_url, auth_token } from "../../api/hello";
+import { api_url, auth_token } from "../../../helper/config";
 import MainFooter from "../../commoncmp/mainfooter";
 
 function a11yProps(index: number) {
@@ -73,6 +73,7 @@ export default function UserInvoices() {
         setValue(newValue);
     };
     const router = useRouter();
+    let logintoken: any;
 
     // verify user login and previlegs
     useEffect(() => {
@@ -85,6 +86,16 @@ export default function UserInvoices() {
             if (res && res?.id) {
                 setcustid(res?.id);
                 GetCreditReqByUser(res.id);
+            }
+        });
+        logintoken = localStorage.getItem("QIS_loginToken");
+        if (logintoken === undefined || logintoken === null) {
+            router.push("/");
+        }
+        commmonfunctions.GivenPermition().then((res) => {
+            if (res.roleId === 2) {
+            } else {
+                router.push("/");
             }
         });
     }, []);
@@ -159,6 +170,8 @@ export default function UserInvoices() {
             setgetCreditReq(dtd);
         }
     };
+
+    console.log(getCreditReq);
 
     return (
         <>
@@ -267,7 +280,8 @@ export default function UserInvoices() {
                                                 <Checkbox />
                                             </TableCell>
                                             <TableCell>ID</TableCell>
-                                            <TableCell>ACTIVITY</TableCell>
+                                            <TableCell>ACTIVITY / ITEM</TableCell>
+                                            <TableCell>Is RELATED</TableCell>
                                             <TableCell>STATUS</TableCell>
                                             <TableCell>AMOUNT</TableCell>
                                             <TableCell>INVOICE ID</TableCell>
@@ -292,8 +306,13 @@ export default function UserInvoices() {
                                                         </TableCell>
                                                     </TableCell>
                                                     <TableCell align="left">
-                                                        {item?.name
-                                                        }
+                                                        {item?.name !== null ? item?.name : item?.item_name !== null ? item?.item_name : ""}
+                                                    </TableCell>
+                                                    <TableCell align="left">
+                                                        <Typography
+                                                        >
+                                                            {item?.invoiceId > 0 ? (<span style={{ color: "#3366ff" }}><b>Invoice Related</b></span>) : item?.salesOrderId > 0 ? (<span style={{ color: "#006600" }}><b>Activity Related</b></span>) : ""}
+                                                        </Typography>
                                                     </TableCell>
                                                     <TableCell align="left">{item?.status === 0 ? (<span style={{ color: "#FF4026", fontWeight: "bold" }}>Pending</span>) : item?.status === 4 ?
                                                         (<span style={{ color: "#02C509", fontWeight: "bold" }}>Approved</span>) : item?.status === 2 ?

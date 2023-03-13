@@ -16,13 +16,14 @@ import {
 import Link from "next/link";
 import React, { useEffect } from "react";
 import MiniDrawer from "../../../sidebar";
-import { api_url, auth_token } from "../../../api/hello";
+import { api_url, auth_token } from "../../../../helper/config";
 import { useRouter } from "next/router";
 import MainFooter from "../../../commoncmp/mainfooter";
 import moment from "moment";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import RequestFormCmp from "../requestFormCmp";
 import { ToastContainer } from "react-toastify";
+import commmonfunctions from "../../../../commonFunctions/commmonfunctions";
 
 
 export default function ViewCreditNotes(props: any) {
@@ -34,10 +35,21 @@ export default function ViewCreditNotes(props: any) {
     // verify user login and previlegs
     let logintoken: any;
     useEffect(() => {
+        commmonfunctions.VerifyLoginUser().then(res => {
+            if (res.exp * 1000 < Date.now()) {
+                localStorage.removeItem('QIS_loginToken');
+            }
+        });
         logintoken = localStorage.getItem("QIS_loginToken");
         if (logintoken === undefined || logintoken === null) {
             router.push("/");
         }
+        commmonfunctions.GivenPermition().then((res) => {
+            if (res.roleId === 2) {
+            } else {
+                router.push("/");
+            }
+        });
         fetchData();
     }, []);
 
@@ -126,10 +138,10 @@ export default function ViewCreditNotes(props: any) {
                                                 onClick={() => handleClickOpen()}
                                             ><b>Requested</b></Button>) : (<Button size="small" variant="contained"
                                                 onClick={() => handleClickOpen()}
-                                            ><b>Create Request</b></Button>)}
+                                            ><b>Credit Request</b></Button>)}
 
                                         </div>) : (<Button disabled size="small" variant="contained"
-                                        ><b>Create Request</b></Button>)}
+                                        ><b>Credit Request</b></Button>)}
                                     </div>
                                 </div>
                             </Stack>
