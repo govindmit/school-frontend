@@ -18,7 +18,7 @@ import "react-toastify/dist/ReactToastify.css";
 import styled from "@emotion/styled";
 import { GridCloseIcon } from "@mui/x-data-grid";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { api_url, auth_token } from "../../../api/api";
+import { api_url, auth_token } from "../../../../helper/config";
 import { AddLogs } from "../../../../helper/activityLogs";
 import commmonfunctions from "../../../../commonFunctions/commmonfunctions";
 

@@ -38,7 +38,7 @@ import {
 import "react-quill/dist/quill.snow.css";
 
 import { useRouter } from "next/router";
-import { api_url, auth_token } from "../../api/api";
+import { api_url, auth_token } from "../../../helper/config";
 import "react-toastify/dist/ReactToastify.css";
 import { GridCloseIcon } from "@mui/x-data-grid";
 import DatePicker from "react-datepicker";

@@ -28,7 +28,7 @@ import Box from "@mui/material/Box";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import MiniDrawer from "../../sidebar";
-import { api_url, auth_token } from "../../api/api";
+import { api_url, auth_token } from "../../../helper/config";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";

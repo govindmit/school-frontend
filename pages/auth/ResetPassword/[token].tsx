@@ -18,7 +18,7 @@ import { BiArrowBack } from "react-icons/bi";
 import Head from "next/head";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import { api_url, auth_token } from "../../api/api";
+import { api_url, auth_token } from "../../../helper/config";
 import AuthHeader from "../../commoncmp/authheader";
 import AuthRightTemplate from "../../commoncmp/authrighttemplate";
 import Footer from "../../commoncmp/footer";

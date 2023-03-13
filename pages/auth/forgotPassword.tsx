@@ -9,7 +9,7 @@ import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Link from "next/link";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { api_url, auth_token } from "../api/api";
+import { api_url, auth_token } from "../../helper/config"; 
 import axios from "axios";
 import { Alert, CircularProgress, Stack } from "@mui/material";
 import { BiArrowBack } from "react-icons/bi";

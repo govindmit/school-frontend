@@ -28,7 +28,7 @@ import styled from "@emotion/styled";
 import UserService from '../../../../commonFunctions/servives'
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "axios";
-import { api_url, auth_token } from "../../../api/api";
+import { api_url, auth_token } from "../../../../helper/config";
 import { useRouter } from "next/router";
 import MainFooter from "../../../commoncmp/mainfooter";
 import { AddLogs } from "../../../../helper/activityLogs";

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { api_url } from "../pages/api/api";
+import { api_url } from "../helper/config";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 
