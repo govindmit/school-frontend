@@ -167,10 +167,8 @@ export default function MiniDrawer() {
   let setCreditReqBgColor = path.includes("creditrequest") ? mngbackground : "";
   let setCreditReqColor = path.includes("creditrequest") ? textcolor : "";
 
-  
   let setLogsBgColor = path.includes("activities_logs") ? mngbackground : "";
   let setLogsColor = path.includes("activities_logs") ? textcolor : "";
-
 
   let setDashboardBgColor = path.includes("dashboard") ? mngbackground : "";
   let setDashboardColor = path.includes("dashboard") ? textcolor : "";
@@ -189,6 +187,9 @@ export default function MiniDrawer() {
   let setComposerBgColor = path.includes("composer") ? mngbackground : "";
   let setComposerColor = path.includes("composer") ? textcolor : "";
 
+  let setReportsBgColor = path.includes("reports") ? mngbackground : "";
+  let setReportsColor = path.includes("reports") ? textcolor : "";
+
   let setLogoutBgColor = path.includes("logout") ? mngbackground : "";
   let setLogoutColor = path.includes("logout") ? textcolor : "";
 
@@ -200,17 +201,21 @@ export default function MiniDrawer() {
   let setActivitiesBgColor = path.includes("activities") ? mngbackground : "";
   let setActivitiesColor = path.includes("activities") ? textcolor : "";
 
-  let setsalesinvoiceBgColor = path.includes("salesinvoices") ? mngbackground : "";
+  let setsalesinvoiceBgColor = path.includes("salesinvoices")
+    ? mngbackground
+    : "";
   let setsalesinvoiceColor = path.includes("salesinvoices") ? textcolor : "";
 
-  let setcreditinvoiceBgColor = path.includes("creditinvoices") ? mngbackground : "";
+  let setcreditinvoiceBgColor = path.includes("creditinvoices")
+    ? mngbackground
+    : "";
   let setcreditinvoiceColor = path.includes("creditinvoices") ? textcolor : "";
 
-
-  let userinvoicesBgColor = path.includes("user/invoices/") ? mngbackground : "";
+  let userinvoicesBgColor = path.includes("user/invoices/")
+    ? mngbackground
+    : "";
   let userinvoicesColor = path.includes("user/invoices/") ? textcolor : "";
 
-  
   return (
     <>
       <Head>
@@ -260,7 +265,7 @@ export default function MiniDrawer() {
                   className="sidebar-link"
                   disablePadding
                   sx={{ display: "block" }}
-                // onClick={() => router.push("/activites/activitylist")}
+                  // onClick={() => router.push("/activites/activitylist")}
                 >
                   <ListItemButton
                     sx={{
@@ -282,7 +287,7 @@ export default function MiniDrawer() {
                   className="sidebar-link"
                   disablePadding
                   sx={{ display: "block" }}
-                // onClick={() => router.push("/activites/activitylist")}
+                  // onClick={() => router.push("/activites/activitylist")}
                 >
                   <ListItemButton
                     sx={{
@@ -380,7 +385,9 @@ export default function MiniDrawer() {
                 className="sidebar-link"
                 disablePadding
                 sx={{ display: "block" }}
-                onClick={() => router.push("/user/salesinvoices/salesinvoicelist")}
+                onClick={() =>
+                  router.push("/user/salesinvoices/salesinvoicelist")
+                }
               >
                 <ListItemButton
                   sx={{
@@ -413,7 +420,9 @@ export default function MiniDrawer() {
                 className="sidebar-link"
                 disablePadding
                 sx={{ display: "block" }}
-                onClick={() => router.push("/user/creditinvoices/creditinvoicelist")}
+                onClick={() =>
+                  router.push("/user/creditinvoices/creditinvoicelist")
+                }
               >
                 <ListItemButton
                   sx={{
@@ -637,14 +646,12 @@ export default function MiniDrawer() {
             ) : (
               ""
             )}
-   {userdet?.roleId === 1 ? (
+            {userdet?.roleId === 1 ? (
               <ListItem
                 className="sidebar-link"
                 disablePadding
                 sx={{ display: "block" }}
-                onClick={() =>
-                  router.push("/admin/creditrequest/list")
-                }
+                onClick={() => router.push("/admin/creditrequest/list")}
               >
                 <ListItemButton
                   sx={{
@@ -745,7 +752,7 @@ export default function MiniDrawer() {
                 className="sidebar-link"
                 disablePadding
                 sx={{ display: "block" }}
-                onClick={() => router.push("/usermanagement/users")}
+                onClick={() => router.push("/admin/usermanagement/users")}
               >
                 <ListItemButton
                   sx={{
@@ -800,21 +807,54 @@ export default function MiniDrawer() {
                   <ListItemText
                     primary="Composer"
                     sx={{ opacity: open ? 1 : 0 }}
-                  //onClick={() => router.push("/logout")}
+                    //onClick={() => router.push("/logout")}
                   />
                 </ListItemButton>
               </ListItem>
             ) : (
               ""
             )}
-              {userdet?.roleId === 1 ? (
+
+            {userdet?.roleId === 1 ? (
               <ListItem
                 className="sidebar-link"
                 disablePadding
                 sx={{ display: "block" }}
-                onClick={() =>
-                  router.push("/admin/activities_logs/list")
-                }
+                onClick={() => router.push("/admin/reports/list")}
+              >
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: open ? "initial" : "center",
+                    px: 2.5,
+                    background: setReportsBgColor,
+                    color: setReportsColor,
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : "auto",
+                      justifyContent: "center",
+                    }}
+                  ></ListItemIcon>
+                  <TimelineOutlinedIcon />
+                  <ListItemText
+                    primary="Reports"
+                    sx={{ opacity: open ? 1 : 0 }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            ) : (
+              ""
+            )}
+
+            {userdet?.roleId === 1 ? (
+              <ListItem
+                className="sidebar-link"
+                disablePadding
+                sx={{ display: "block" }}
+                onClick={() => router.push("/admin/activities_logs/list")}
               >
                 <ListItemButton
                   sx={{
@@ -846,7 +886,7 @@ export default function MiniDrawer() {
               className="sidebar-link"
               disablePadding
               sx={{ display: "block" }}
-            // onClick={() => router.push("/activites/activitylist")}
+              // onClick={() => router.push("/activites/activitylist")}
             >
               <ListItemButton
                 sx={{
@@ -877,7 +917,7 @@ export default function MiniDrawer() {
                 className="sidebar-link"
                 disablePadding
                 sx={{ display: "block" }}
-              // onClick={() => router.push("/activites/activitylist")}
+                // onClick={() => router.push("/activites/activitylist")}
               >
                 <ListItemButton
                   sx={{

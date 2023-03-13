@@ -1,6 +1,7 @@
 import { Autocomplete, Button, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { api_url, auth_token } from "../../helper/config";
+import moment from "moment";
 export default function AddActivity({ Data, PId, pname }: any) {
   const [users, setUsers] = useState<any>([]);
   const [opens, setOpens] = React.useState(false);
@@ -10,6 +11,8 @@ export default function AddActivity({ Data, PId, pname }: any) {
   useEffect(() => {
     getUser();
   }, []);
+  let todayDatee=new Date();
+  const todayDate = moment(todayDatee,"DD MM YYYY").format("YYYY.MM.DD");
 
   const getUser = async () => {
     const url = `${api_url}/getActivity`;
@@ -21,7 +24,10 @@ export default function AddActivity({ Data, PId, pname }: any) {
         },
       });
       const res = await response.json();
-      setUsers(res.data);
+      let newData = res.data.filter((ea:any)=>{
+      return ea.startDate >= todayDate
+    })
+      setUsers(newData);
     } catch (error) {
       console.log("error", error);
     }
