@@ -29,7 +29,9 @@ class getwayService {
     url : url,
     headers: { 
       'Authorization': `Basic ${AMEX_TOKEN}`, 
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      "Access-Control-Allow-Origin": "*"
+     
     },
     data : data
   };
@@ -53,7 +55,8 @@ class getwayService {
       // url:'https://amexmena.gateway.mastercard.com/api/rest/version/62/merchant/TEST9767612138/order/EnXt3SGpT2',
       url:url,
       headers: { 
-        'Authorization': `Basic ${config.AMEX_TOKEN}`
+        'Authorization': `Basic ${config.AMEX_TOKEN}`,
+        "Access-Control-Allow-Origin": "*"
       }
     };
     console.log(configData,"configData");
@@ -206,7 +209,7 @@ transactionDataSaveInDB = async (data:any,callback:any) =>{
   
   axios(configData)
   .then(function (response) {
-    console.log(JSON.stringify(response.data));
+    // console.log(JSON.stringify(response.data));
     return callback(response.data);
   })
   .catch(function (error) {
@@ -219,6 +222,84 @@ transactionDataSaveInDB = async (data:any,callback:any) =>{
 throwUnsupportedProtocolException = async() =>{
   throw "Unsupported API protocol!";
 }
+
+createAndApplyPaymentARInvoice = async(data:any,callback:any)=>{
+  try{
+   
+    // var data = JSON.stringify({
+    //   "customerId": "10381",
+    //   "amount": 100,
+    //   "ARpaymentMethod": "EFT",
+    //   "referenceNumber": "RTC-000000002",
+    //   "ARinvoiceRecordNumber": 1352
+    // });
+    var requestData = JSON.stringify(data);
+    var configData = {
+      method: 'post',
+      // url: 'http://localhost:5003/api/AccountsReceivable/applyPayment',
+      url: `${config.DB_BASE_URL}/AccountsReceivable/applyPayment`,
+      headers: { 
+        'Content-Type': 'application/json'
+      },
+      data : requestData
+    };
+
+    await axios(configData)
+    .then(function (response:any) {
+      console.log(JSON.stringify(response.data));
+      return callback(response.data);
+    })
+    .catch(function (error:any) {
+      console.log(error);
+      return callback(error);
+    });
+
+  }catch(error){
+    console.log("error =>",error);
+  }
+}
+
+getARInoviceRecordNumber = async(sageIntacctARInvoiceID:any,callback:any)=>{
+  try{
+      console.log("sageIntacctARInvoiceID =>",sageIntacctARInvoiceID);
+      var data = JSON.stringify({
+        arInvoiceId: sageIntacctARInvoiceID
+      });
+      console.log("data =>",data);
+
+      var configData = {
+        method: 'post',
+        // url: 'http://localhost:5003/api/AccountsReceivable/getARInvoiceRecordNo',
+        url: `${config.DB_BASE_URL}/AccountsReceivable/getARInvoiceRecordNo`,
+        headers: { 
+          'Content-Type': 'application/json'
+        },
+        data : data
+      };
+
+    await axios(configData)
+      .then(function (response:any) {
+        console.log(JSON.stringify(response.data));
+         return callback(response.data) ;
+      })
+      .catch(function (error:any) {
+        console.log(error);
+        return callback(error) ;
+      });
+
+  }catch(error){
+    console.log("Error =>",error);
+  }
+}
+
+generateRefrenceNumber = (DBTransactionId : any)=>{
+ let gId = `${DBTransactionId?.toString()}`;    
+  let tempRef = "RCT-000000000";
+  let refrenceNumber = tempRef.slice(0,-gId.length);
+  let finalGeneratedRefrenceNumber = refrenceNumber+gId ;
+  console.log("finalGeneratedRefrenceNumber =>",finalGeneratedRefrenceNumber);
+  return finalGeneratedRefrenceNumber
+};
 
 }
 function getApiBaseURL (gatewayHost:any, apiProtocol:any){

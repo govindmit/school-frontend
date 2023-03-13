@@ -525,7 +525,7 @@ export default function Guardians() {
                                 <div className="cinvoice">
                                     <div className="buycss" style={{ textAlign: "end", marginRight: "10px" }} >
                                         <Link
-                                            href="/user/invoices/invoiceslist"
+                                            href="/user/invoices/invoiceslist/ci"
                                             style={{ color: "#1A70C5", textDecoration: "none" }}
                                         >
                                             <Button variant="contained" startIcon={<ArrowBackIcon />}> <b>Back To List</b></Button>
