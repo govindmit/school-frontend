@@ -138,20 +138,20 @@ export default function CustomerTypeList() {
     if (logintoken === undefined || logintoken === null) {
       router.push("/");
     }
-    commmonfunctions.GivenPermition().then(res => {
+    commmonfunctions.GivenPermition().then((res) => {
       if (res.roleId == 1) {
         setroleid(res.roleId);
         //router.push("/userprofile");
       } else if (res.roleId > 1) {
-        commmonfunctions.ManageCustomers().then(res => {
+        commmonfunctions.ManageCustomers().then((res) => {
           if (!res) {
             router.push("/userprofile");
           } else {
             setcustpermit(res);
           }
-        })
+        });
       }
-    })
+    });
   }, []);
 
   //get customers type
@@ -172,7 +172,6 @@ export default function CustomerTypeList() {
       console.log("error", error);
     }
   };
-
 
   // apply searching
   const handleSearch = (e: any) => {
@@ -287,7 +286,7 @@ export default function CustomerTypeList() {
                   CUSTOMER TYPE
                 </Typography>
               </Stack>
-              {custpermit && custpermit.canAdd === true || roleid === 1 ? (
+              {(custpermit && custpermit.canAdd === true) || roleid === 1 ? (
                 <Button
                   className="button-new"
                   variant="contained"
@@ -296,7 +295,10 @@ export default function CustomerTypeList() {
                   onClick={handleTypeOpen}
                 >
                   New Customer Type
-                </Button>) : ""}
+                </Button>
+              ) : (
+                ""
+              )}
             </Stack>
             {/*bread cump */}
             <Card
@@ -332,7 +334,7 @@ export default function CustomerTypeList() {
                         placeholder="Search..."
                         size="small"
                         value={searchquery}
-                        type="search..."
+                        type="search"
                         onInput={(e) => handleSearch(e)}
                       />
                     </FormControl>
@@ -381,7 +383,8 @@ export default function CustomerTypeList() {
                               direction="row"
                               spacing={1}
                             >
-                              {custpermit && custpermit.canEdit === true || roleid === 1 ? (
+                              {(custpermit && custpermit.canEdit === true) ||
+                              roleid === 1 ? (
                                 <IconButton
                                   className="action-edit"
                                   onClick={() =>
@@ -389,15 +392,22 @@ export default function CustomerTypeList() {
                                   }
                                 >
                                   <FiEdit />
-                                </IconButton>) : ""}
-                              {custpermit && custpermit.canDelete === true || roleid === 1 ? (
+                                </IconButton>
+                              ) : (
+                                ""
+                              )}
+                              {(custpermit && custpermit.canDelete === true) ||
+                              roleid === 1 ? (
                                 <IconButton
                                   className="action-delete"
                                   style={{ color: "#F95A37" }}
                                   onClick={() => openDelete(item)}
                                 >
                                   <RiDeleteBin5Fill />
-                                </IconButton>) : ""}
+                                </IconButton>
+                              ) : (
+                                ""
+                              )}
                             </Stack>
                           </TableCell>
                         </TableRow>
@@ -448,14 +458,18 @@ export default function CustomerTypeList() {
                         size="small"
                         {...register("name", {
                           required: true,
-                          validate: (value) => { return !!value.trim() }
+                          validate: (value) => {
+                            return !!value.trim();
+                          },
                         })}
                       />
                       {errors.name?.type === "required" && (
                         <span style={style}>Field is Required *</span>
                       )}
                       {errors.name?.type === "validate" && (
-                        <span style={style}>Customer Type can't be blank *</span>
+                        <span style={style}>
+                          Customer Type can't be blank *
+                        </span>
                       )}
                     </Stack>
                   </Grid>

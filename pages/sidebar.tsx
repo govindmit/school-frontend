@@ -192,17 +192,21 @@ export default function MiniDrawer() {
   let setActivitiesBgColor = path.includes("activities") ? mngbackground : "";
   let setActivitiesColor = path.includes("activities") ? textcolor : "";
 
-  let setsalesinvoiceBgColor = path.includes("salesinvoices") ? mngbackground : "";
+  let setsalesinvoiceBgColor = path.includes("salesinvoices")
+    ? mngbackground
+    : "";
   let setsalesinvoiceColor = path.includes("salesinvoices") ? textcolor : "";
 
-  let setcreditinvoiceBgColor = path.includes("creditinvoices") ? mngbackground : "";
+  let setcreditinvoiceBgColor = path.includes("creditinvoices")
+    ? mngbackground
+    : "";
   let setcreditinvoiceColor = path.includes("creditinvoices") ? textcolor : "";
 
-
-  let userinvoicesBgColor = path.includes("user/invoices/") ? mngbackground : "";
+  let userinvoicesBgColor = path.includes("user/invoices/")
+    ? mngbackground
+    : "";
   let userinvoicesColor = path.includes("user/invoices/") ? textcolor : "";
 
-  
   return (
     <>
       <Head>
@@ -252,7 +256,7 @@ export default function MiniDrawer() {
                   className="sidebar-link"
                   disablePadding
                   sx={{ display: "block" }}
-                // onClick={() => router.push("/activites/activitylist")}
+                  // onClick={() => router.push("/activites/activitylist")}
                 >
                   <ListItemButton
                     sx={{
@@ -274,7 +278,7 @@ export default function MiniDrawer() {
                   className="sidebar-link"
                   disablePadding
                   sx={{ display: "block" }}
-                // onClick={() => router.push("/activites/activitylist")}
+                  // onClick={() => router.push("/activites/activitylist")}
                 >
                   <ListItemButton
                     sx={{
@@ -372,7 +376,9 @@ export default function MiniDrawer() {
                 className="sidebar-link"
                 disablePadding
                 sx={{ display: "block" }}
-                onClick={() => router.push("/user/salesinvoices/salesinvoicelist")}
+                onClick={() =>
+                  router.push("/user/salesinvoices/salesinvoicelist")
+                }
               >
                 <ListItemButton
                   sx={{
@@ -405,7 +411,9 @@ export default function MiniDrawer() {
                 className="sidebar-link"
                 disablePadding
                 sx={{ display: "block" }}
-                onClick={() => router.push("/user/creditinvoices/creditinvoicelist")}
+                onClick={() =>
+                  router.push("/user/creditinvoices/creditinvoicelist")
+                }
               >
                 <ListItemButton
                   sx={{
@@ -759,7 +767,7 @@ export default function MiniDrawer() {
                   <ListItemText
                     primary="Composer"
                     sx={{ opacity: open ? 1 : 0 }}
-                  //onClick={() => router.push("/logout")}
+                    //onClick={() => router.push("/logout")}
                   />
                 </ListItemButton>
               </ListItem>
@@ -771,7 +779,7 @@ export default function MiniDrawer() {
               className="sidebar-link"
               disablePadding
               sx={{ display: "block" }}
-            // onClick={() => router.push("/activites/activitylist")}
+              // onClick={() => router.push("/activites/activitylist")}
             >
               <ListItemButton
                 sx={{
@@ -797,40 +805,6 @@ export default function MiniDrawer() {
                 />
               </ListItemButton>
             </ListItem>
-            {userdet?.roleId === 1 ? (
-              <ListItem
-                className="sidebar-link"
-                disablePadding
-                sx={{ display: "block" }}
-              // onClick={() => router.push("/activites/activitylist")}
-              >
-                <ListItemButton
-                  sx={{
-                    minHeight: 48,
-                    justifyContent: open ? "initial" : "center",
-                    px: 2.5,
-                    background: setProfileBgColor,
-                    color: setProfileColor,
-                  }}
-                >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      mr: open ? 3 : "auto",
-                      justifyContent: "center",
-                    }}
-                  ></ListItemIcon>
-                  <PeopleAltOutlinedIcon />
-                  <ListItemText
-                    primary="Profile"
-                    sx={{ opacity: open ? 1 : 0 }}
-                    onClick={() => router.push("/userprofile")}
-                  />
-                </ListItemButton>
-              </ListItem>
-            ) : (
-              ""
-            )}
           </List>
         </Drawer>
         <Divider />

@@ -495,7 +495,7 @@ export default function Composer() {
                     <Stack style={{}} className="padding-top-0">
                       <Grid container spacing={2}>
                         <Grid item xs={4} md={4}>
-                          <Stack spacing={1}>
+                          <Stack spacing={1} className="customer-name">
                             <InputLabel htmlFor="name">as Type</InputLabel>
                             <FormControl fullWidth>
                               <Select
@@ -524,7 +524,7 @@ export default function Composer() {
                     <Stack style={{}} className="padding-top-0">
                       <Grid container spacing={2}>
                         <Grid item xs={4} md={4}>
-                          <Stack spacing={1}>
+                          <Stack spacing={1} className="customer-name">
                             <InputLabel htmlFor="name">Age Group</InputLabel>
                             <FormControl fullWidth>
                               <Select

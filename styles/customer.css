@@ -133,12 +133,17 @@ footer.footermain {
   display: inline-flex;
   align-items: center;
 }
+
+.pending-invoice .MuiBox-root {
+  padding: 0;
+}
 p.pendingcss {
   font-size: smaller;
-  margin-left: 25px;
+  margin-left: 0px;
   font-weight: 500;
   margin-top: 1;
   color: #0ce1e1;
+  padding: 0 8px;
 }
 h4.h4heading {
   text-align: left;
@@ -177,18 +182,79 @@ p.actpara {
   text-transform: none !important;
   color: #ffffff !important;
   font-weight: 700 !important;
-  width:80px !important;
+  width: 80px !important;
 }
 
-.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation1.cardcss.css-1sir9cm-MuiPaper-root{
+.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation1.cardcss.css-1sir9cm-MuiPaper-root {
   background: #f5f5f5 !important;
   box-shadow: none !important;
 }
-.btnCustomerdetailPay{
+.btnCustomerdetailPay {
   height: 36px !important;
   font-size: 13px !important;
   text-transform: none !important;
   color: #ffffff !important;
   font-weight: 700 !important;
   width: 100px !important;
+}
+
+.MuiTable-root thead th:last-child {
+  width: 150px;
+}
+
+#profileImage.customer-profile {
+  width: 110px;
+  height: 110px;
+  line-height: 110px;
+}
+.composer-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.composer-top > div {
+  width: 33.33%;
+}
+
+.composer-top > div div {
+  width: 100%;
+  flex: 0 0 100%;
+  max-width: 100%;
+  padding-left: 0 !important;
+  margin: 0;
+  right: 0 !important;
+}
+
+.composer-top > div div button {
+  float: right;
+}
+
+.composer-top > p {
+  margin-top: 66px;
+}
+
+.composer-top > div div label {
+  margin-bottom: 13px;
+}
+
+.composer-top .MuiOutlinedInput-notchedOutline {
+  height: 50px;
+  top: 0;
+}
+
+.composer-top > div div.customer-name div {
+  height: 50px;
+  padding: 0 !important;
+}
+
+input[type="search"] + fieldset.MuiOutlinedInput-notchedOutline {
+  top: 0 !important;
+}
+
+.composer-top
+  > div
+  .MuiSvgIcon-root.MuiSvgIcon-fontSizeMedium.MuiSelect-icon.MuiSelect-iconOutlined {
+  top: 11px !important;
+  right: 2px;
 }

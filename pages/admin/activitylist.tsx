@@ -53,8 +53,8 @@ function a11yProps(index: number) {
 }
 interface StyledTabProps {
   label: string;
-  onClick:any;
-  className?:any;
+  onClick: any;
+  className?: any;
 }
 
 //pagination function
@@ -239,7 +239,6 @@ export default function ActivityList() {
   const current = activity?.filter((a: any) => a?.startDate === todayDate);
   const allListData = activity?.filter((a: any) => a);
 
-
   //pagination
   const [row_per_page, set_row_per_page] = useState(5);
   function handlerowchange(e: any) {
@@ -331,42 +330,42 @@ export default function ActivityList() {
 
   const handleUpcoming = () => {
     setActiveTab("upcoming");
-    if(DATA?.currentPage === 1){
+    if (DATA?.currentPage === 1) {
       setactivites(upcoming);
-    }else{
+    } else {
       setactivites(upcoming);
-      handlePageChange("",1)
-   }
+      handlePageChange("", 1);
+    }
   };
 
   const handleAll = () => {
-    if(DATA?.currentPage === 1){
+    if (DATA?.currentPage === 1) {
       setactivites(allListData);
-    }else{
-      handlePageChange("",1);
+    } else {
+      handlePageChange("", 1);
       setactivites(allListData);
-   }
+    }
   };
 
   const handlePast = () => {
     setActiveTab("past");
-    if(DATA?.currentPage === 1){
+    if (DATA?.currentPage === 1) {
       setactivites(past);
       // handlePageChange("",1)
-    }else{
+    } else {
       setactivites(past);
-       handlePageChange("",1)
+      handlePageChange("", 1);
     }
   };
 
   const handleCurrent = () => {
     setActiveTab("current");
-    if(DATA?.currentPage === 1){
+    if (DATA?.currentPage === 1) {
       setactivites(current);
-    }else{
+    } else {
       setactivites(current);
-      handlePageChange("",1)
-   }
+      handlePageChange("", 1);
+    }
   };
 
   const style1 = {
@@ -381,11 +380,11 @@ export default function ActivityList() {
     boxShadow: 24,
     // p: 4,
   };
-  const AntTab = styled((props: StyledTabProps) => <Tab disableRipple {...props} />)(
-    ({ theme:any }) => ({
-      textTransform: 'none',
-    }),
-  );
+  const AntTab = styled((props: StyledTabProps) => (
+    <Tab disableRipple {...props} />
+  ))(({ theme: any }) => ({
+    textTransform: "none",
+  }));
 
   return (
     <>
@@ -468,9 +467,10 @@ export default function ActivityList() {
                 </Typography>
               </Stack>
               {(custpermit && custpermit.canAdd === true) || roleid === 1 ? (
-                    <Link href="/admin/addactivity" 
-                    style={{ color: "#1A70C5", textDecoration: "none" }}
-                    >
+                <Link
+                  href="/admin/addactivity"
+                  style={{ color: "#1A70C5", textDecoration: "none" }}
+                >
                   <Button
                     className="button-new"
                     variant="contained"
@@ -678,7 +678,7 @@ export default function ActivityList() {
                         placeholder="Search..."
                         size="small"
                         value={searchquery}
-                        type="search..."
+                        type="search"
                         onInput={(e) => handleSearch(e)}
                       />
                     </FormControl>
@@ -895,7 +895,7 @@ export default function ActivityList() {
               </TableContainer>
             </Card>
           </div>
-          <MainFooter/>
+          <MainFooter />
         </Box>
       </Box>
       <ToastContainer />

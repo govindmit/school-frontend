@@ -55,9 +55,9 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import Alert from '@mui/material/Alert';
+import Alert from "@mui/material/Alert";
 import Script from "next/script";
-import getwayService from "../../../services/gatewayService"
+import getwayService from "../../../services/gatewayService";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -65,7 +65,7 @@ import Paper from "@mui/material/Paper";
 import { useRouter } from "next/router";
 import commmonfunctions from "../../../commonFunctions/commmonfunctions";
 import MainFooter from "../../commoncmp/mainfooter";
-import PDFService from '../../../commonFunctions/invoicepdf';
+import PDFService from "../../../commonFunctions/invoicepdf";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -172,19 +172,22 @@ export default function Guardians() {
   const [custpermit, setcustpermit] = useState<any>([]);
   const [roleid, setroleid] = useState(0);
   const router = useRouter();
-  const [orderId, setorderId] = useState('');
+  const [orderId, setorderId] = useState("");
   const [InvoiceAmount, setInvoiceAmount] = useState(0);
-  const [invoiceStatus, setInvoiceStatus] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('Cash');
+  const [invoiceStatus, setInvoiceStatus] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("Cash");
   const [showSuccess, setShowSuccess] = useState(false);
-  const [customerTotalCreditNoteBalance, setCustomerTotalCreditNoteBalance] = useState(0);
-  const [customerCreditNoteRequestId, setCustomerCreditNoteRequestId] = useState(null);
+  const [customerTotalCreditNoteBalance, setCustomerTotalCreditNoteBalance] =
+    useState(0);
+  const [customerCreditNoteRequestId, setCustomerCreditNoteRequestId] =
+    useState(null);
   const [applyCreditNoteAmount, setApplyCreditNoteAmount] = useState(0);
   const [finalAmountToPay, setFinalAmountToPay] = useState(0);
   const [isChecked, setIsChecked] = useState(false);
   const [customerID, setCustomerId] = useState(null);
-  const [customerCreditNoteRemaingAmount, setCustomerCreditNoteRemaingAmount] = useState(0);
-  var Checkout: any
+  const [customerCreditNoteRemaingAmount, setCustomerCreditNoteRemaingAmount] =
+    useState(0);
+  var Checkout: any;
 
   // verify user login and previlegs
   let logintoken: any;
@@ -193,20 +196,20 @@ export default function Guardians() {
     if (logintoken === undefined || logintoken === null) {
       router.push("/");
     }
-    commmonfunctions.GivenPermition().then(res => {
+    commmonfunctions.GivenPermition().then((res) => {
       if (res.roleId == 1) {
         setroleid(res.roleId);
         //router.push("/userprofile");
       } else if (res.roleId > 1) {
-        commmonfunctions.ManageInvoices().then(res => {
+        commmonfunctions.ManageInvoices().then((res) => {
           if (!res) {
             router.push("/userprofile");
           } else {
             setcustpermit(res);
           }
-        })
+        });
       }
-    })
+    });
   }, []);
 
   const handleClickOpen = (item: any) => {
@@ -236,9 +239,8 @@ export default function Guardians() {
       });
       const res = await response.json();
       console.log("CreditRequestId =>", res);
-      setCustomerCreditNoteRequestId(res?.CreditRequestId)
+      setCustomerCreditNoteRequestId(res?.CreditRequestId);
       setCustomerTotalCreditNoteBalance(res?.creditBal);
-
     } catch (error: any) {
       console.log("error", error.message);
     }
@@ -248,11 +250,20 @@ export default function Guardians() {
     console.log("event =>", e.target.checked);
     setIsChecked(e.target.checked);
     if (e.target.checked === true) {
-      let applyCreditNoteAmout = customerTotalCreditNoteBalance > InvoiceAmount ? InvoiceAmount : customerTotalCreditNoteBalance;
-      let creditNoteRemaingAmount = customerTotalCreditNoteBalance > InvoiceAmount ? customerTotalCreditNoteBalance - InvoiceAmount : 0;
+      let applyCreditNoteAmout =
+        customerTotalCreditNoteBalance > InvoiceAmount
+          ? InvoiceAmount
+          : customerTotalCreditNoteBalance;
+      let creditNoteRemaingAmount =
+        customerTotalCreditNoteBalance > InvoiceAmount
+          ? customerTotalCreditNoteBalance - InvoiceAmount
+          : 0;
       setApplyCreditNoteAmount(applyCreditNoteAmout);
-      let actualPay = customerTotalCreditNoteBalance > InvoiceAmount ? 0 : InvoiceAmount - customerTotalCreditNoteBalance;
-      setFinalAmountToPay(actualPay)
+      let actualPay =
+        customerTotalCreditNoteBalance > InvoiceAmount
+          ? 0
+          : InvoiceAmount - customerTotalCreditNoteBalance;
+      setFinalAmountToPay(actualPay);
 
       console.log("creditNoteRemaingAmount =>", creditNoteRemaingAmount);
       setCustomerCreditNoteRemaingAmount(creditNoteRemaingAmount);
@@ -261,7 +272,7 @@ export default function Guardians() {
       setFinalAmountToPay(InvoiceAmount);
       setCustomerCreditNoteRequestId(null);
     }
-  }
+  };
 
   const handleCloses = () => {
     setDollerOpen(false);
@@ -300,7 +311,7 @@ export default function Guardians() {
 
         setsearchdata(res?.data.data);
       })
-      .catch((err) => { });
+      .catch((err) => {});
   };
 
   function BootstrapDialogTitle(props: DialogTitleProps) {
@@ -364,7 +375,7 @@ export default function Guardians() {
         // reset();
         setUserId("");
       })
-      .catch((err) => { });
+      .catch((err) => {});
   };
 
   const handleReset = () => {
@@ -398,14 +409,18 @@ export default function Guardians() {
     }
     getUser();
   }, [router.query]);
-  const orderPlaced = async (amexOrderId: any, paymentMethod: any, creditRequestId: any) => {
-    const data = { orderId: amexOrderId }
+  const orderPlaced = async (
+    amexOrderId: any,
+    paymentMethod: any,
+    creditRequestId: any
+  ) => {
+    const data = { orderId: amexOrderId };
     var apiRequest = data;
     var requestUrl = await getwayService.getRequestUrl("REST", apiRequest);
     getwayService.retriveOrder(requestUrl, async function (orderresult: any) {
       console.log("order result =>", orderresult);
       if (orderresult.status === 200) {
-        const amextransactionData = orderresult.data
+        const amextransactionData = orderresult.data;
         const transactionData = {
           idForPayment: amexOrderId,
           totalAmount: amextransactionData?.transaction[0].transaction.amount,
@@ -413,94 +428,108 @@ export default function Guardians() {
           paymentMethod: paymentMethod,
           amexorderId: amexOrderId,
           transactionId: amextransactionData?.transaction[0].transaction.id,
-          creditNotesId: creditRequestId ? creditRequestId : null
-        }
+          creditNotesId: creditRequestId ? creditRequestId : null,
+        };
         console.log("transactionData", transactionData);
         await transactionSaveInDB(transactionData);
         //  await updateInvoiceAfterPay(amexOrderId)
       }
-
     });
-  }
+  };
 
   const transactionSaveInDB = async (data: any) => {
     getwayService.transactionDataSaveInDB(data, function (result: any) {
       console.log("final result =>", result);
-      setShowSuccess(true)
+      setShowSuccess(true);
       setTimeout(callBack_func, 5000);
       function callBack_func() {
-        setShowSuccess(false)
+        setShowSuccess(false);
         document.location.href = `${process.env.NEXT_PUBLIC_AMEX_INVOICE_REDIRECT_URL}`;
       }
-
     });
-  }
+  };
 
   const handleCancel = () => {
     handleClose();
   };
 
-
   const handleCreate = async (id: any) => {
     // console.log(process.env.NEXT_PUBLIC_REDIRECT_URL,"Checkout =>",(window as any).Checkout);
-    const Checkout: any = (window as any).Checkout
-    const creditNotesId = isChecked ? customerCreditNoteRequestId : null
-    console.log("payment method => ", paymentMethod, "isChcked =>", isChecked, "finaltopay =>", finalAmountToPay);
+    const Checkout: any = (window as any).Checkout;
+    const creditNotesId = isChecked ? customerCreditNoteRequestId : null;
+    console.log(
+      "payment method => ",
+      paymentMethod,
+      "isChcked =>",
+      isChecked,
+      "finaltopay =>",
+      finalAmountToPay
+    );
     if (paymentMethod === "Amex" && finalAmountToPay > 0) {
       if (finalAmountToPay === 0) {
         toast.error("amount will not be $0 for Amex payment method");
-      } if (invoiceStatus === "draft") {
-        toast.error("Invoice has status with Draft,Only Pending invoice Can Pay ");
       }
-      else {
-        console.log(customerID, "customerId", applyCreditNoteAmount, "=======> ", creditNotesId);
+      if (invoiceStatus === "draft") {
+        toast.error(
+          "Invoice has status with Draft,Only Pending invoice Can Pay "
+        );
+      } else {
+        console.log(
+          customerID,
+          "customerId",
+          applyCreditNoteAmount,
+          "=======> ",
+          creditNotesId
+        );
         var requestData = {
-          "apiOperation": "CREATE_CHECKOUT_SESSION",
-          "order": {
-            "id": orderId,
-            "amount": finalAmountToPay,
-            "currency": "QAR",
-            "description": "Orderd",
+          apiOperation: "CREATE_CHECKOUT_SESSION",
+          order: {
+            id: orderId,
+            amount: finalAmountToPay,
+            currency: "QAR",
+            description: "Orderd",
           },
-          "interaction": {
+          interaction: {
             // "returnUrl":`${process.env.NEXT_PUBLIC_REDIRECT_URL}/?orderid=${orderId}&paymentMethod=${paymentMethod}`,
-            "returnUrl": `${process.env.NEXT_PUBLIC_AMEX_INVOICE_REDIRECT_URL}/?orderid=${orderId}&paymentMethod=${paymentMethod}&creditNoteId=${creditNotesId}&remaingAmount=${applyCreditNoteAmount}&customerID=${customerID}`,
-            "cancelUrl": `${process.env.NEXT_PUBLIC_AMEX_INVOICE_CANCEL_URL}`,
-            "operation": "PURCHASE",
-            "merchant": {
-              "name": "QATAR INTERNATIONAL SCHOOL - ONLINE 634",
-              "address": {
-                "line1": "200 Sample St",
-                "line2": "1234 Example Town"
-              }
+            returnUrl: `${process.env.NEXT_PUBLIC_AMEX_INVOICE_REDIRECT_URL}/?orderid=${orderId}&paymentMethod=${paymentMethod}&creditNoteId=${creditNotesId}&remaingAmount=${applyCreditNoteAmount}&customerID=${customerID}`,
+            cancelUrl: `${process.env.NEXT_PUBLIC_AMEX_INVOICE_CANCEL_URL}`,
+            operation: "PURCHASE",
+            merchant: {
+              name: "QATAR INTERNATIONAL SCHOOL - ONLINE 634",
+              address: {
+                line1: "200 Sample St",
+                line2: "1234 Example Town",
+              },
+            },
+          },
+        };
+        await getwayService.getSession(
+          requestData,
+          async function (result: any) {
+            if (result?.data?.result === "SUCCESS") {
+              // setSessionId(result?.data.session.id)
+              // setsuccessIndicator(result?.data.successIndicator);
+              await Checkout.configure({
+                session: {
+                  id: result?.data.session.id,
+                },
+              });
+              await Checkout.showPaymentPage();
             }
           }
-        }
-        await getwayService.getSession(requestData, async function (result: any) {
-          if (result?.data?.result === "SUCCESS") {
-            // setSessionId(result?.data.session.id)
-            // setsuccessIndicator(result?.data.successIndicator);
-            await Checkout.configure({
-              session: {
-                id: result?.data.session.id
-              }
-            });
-            await Checkout.showPaymentPage();
-          }
-        })
+        );
       }
     }
     if (paymentMethod === "Cash") {
       try {
-
         const dataforRemaingAmount: any = {
           customerId: customerID,
           Amount: applyCreditNoteAmount,
           amountMode: 0,
-        }
+        };
 
         const rendomTransactionId = keyGen(5);
-        let amount = finalAmountToPay > 0 ? finalAmountToPay : InvoiceAmount
+        let amount = finalAmountToPay > 0 ? finalAmountToPay : InvoiceAmount;
         let reqData = {
           totalAmount: amount,
           paidAmount: amount,
@@ -508,25 +537,24 @@ export default function Guardians() {
           amexorderId: orderId,
           paymentMethod: "Cash",
           idForPayment: orderId,
-          creditNotesId: customerCreditNoteRequestId
+          creditNotesId: customerCreditNoteRequestId,
         };
 
         await transactionSaveInDB(reqData);
         await insertRemainingNotesAmount(dataforRemaingAmount);
-        await updateInvoiceAfterPay(id)
+        await updateInvoiceAfterPay(id);
         handleCloses();
       } catch (error: any) {
         console.log("Error ", error.message);
       }
     }
     if (paymentMethod === "Amex" && finalAmountToPay === 0) {
-
       try {
         const dataforRemaingAmount: any = {
           customerId: customerID,
           Amount: applyCreditNoteAmount,
           amountMode: 0,
-        }
+        };
         const rendomTransactionId = keyGen(5);
         let reqData = {
           totalAmount: finalAmountToPay,
@@ -535,25 +563,28 @@ export default function Guardians() {
           amexorderId: orderId,
           paymentMethod: "Cash",
           idForPayment: orderId,
-          creditNotesId: customerCreditNoteRequestId
+          creditNotesId: customerCreditNoteRequestId,
         };
         await transactionSaveInDB(reqData);
         await insertRemainingNotesAmount(dataforRemaingAmount);
-        await updateInvoiceAfterPay(id)
+        await updateInvoiceAfterPay(id);
         handleCloses();
       } catch (error: any) {
         console.log("Error ", error.message);
       }
     }
     if (paymentMethod === "QPay") {
-      toast.info(`As of Now This payment method is not supported ${paymentMethod} !`);
+      toast.info(
+        `As of Now This payment method is not supported ${paymentMethod} !`
+      );
     }
 
     if (paymentMethod === "CBQ") {
-      toast.info(`As of Now This payment method is not supported ${paymentMethod} !`);
+      toast.info(
+        `As of Now This payment method is not supported ${paymentMethod} !`
+      );
     }
-
-  }
+  };
 
   const updateInvoiceAfterPay = async (invoiceId: any) => {
     try {
@@ -577,11 +608,11 @@ export default function Guardians() {
             handleCloses();
           }, 1000);
         })
-        .catch((err) => { });
+        .catch((err) => {});
     } catch (error: any) {
       console.log("error => ", error.message);
     }
-  }
+  };
 
   const keyGen = (keyLength: any) => {
     var i,
@@ -597,7 +628,7 @@ export default function Guardians() {
     }
     return key;
   };
-  
+
   const insertRemainingNotesAmount = async (reqData: any) => {
     //  const reqData = {
     //   customerId: customerId,
@@ -667,7 +698,6 @@ export default function Guardians() {
     setValue(newValue);
   };
 
-
   //handle delete
   const handledelete = async () => {
     let reqData = {
@@ -689,7 +719,7 @@ export default function Guardians() {
           handleClose();
         }, 2000);
       })
-      .catch((err) => { });
+      .catch((err) => {});
   };
 
   // send email func
@@ -706,7 +736,7 @@ export default function Guardians() {
 
         setShare(false);
       })
-      .catch((err) => { });
+      .catch((err) => {});
   };
 
   const handleShare = async (item: any) => {
@@ -761,11 +791,14 @@ export default function Guardians() {
 
   return (
     <>
-      <Script src="https://amexmena.gateway.mastercard.com/static/checkout/checkout.min.js"
+      <Script
+        src="https://amexmena.gateway.mastercard.com/static/checkout/checkout.min.js"
         data-error="errorCallback"
         data-cancel="cancelCallback"
         strategy="beforeInteractive"
-      > </Script>
+      >
+        {" "}
+      </Script>
       <Box sx={{ display: "flex" }}>
         <MiniDrawer />
 
@@ -805,21 +838,35 @@ export default function Guardians() {
                 >
                   INVOICES
                 </Typography>
-                {showSuccess && <Alert style={{ width: '50%', height: 50, marginLeft: 430, marginTop: "-50px" }} severity="success">Thanks You ! Payment Recieved</Alert>
-                }
+                {showSuccess && (
+                  <Alert
+                    style={{
+                      width: "50%",
+                      height: 50,
+                      marginLeft: 430,
+                      marginTop: "-50px",
+                    }}
+                    severity="success"
+                  >
+                    Thanks You ! Payment Recieved
+                  </Alert>
+                )}
               </Stack>
-              {custpermit && custpermit.canAdd === true || roleid === 1 ? (
+              {(custpermit && custpermit.canAdd === true) || roleid === 1 ? (
                 <Link href="/admin/addinvoice">
                   <Button
                     className="button-new"
                     variant="contained"
                     size="small"
                     sx={{ width: 150 }}
-                  // onClick={handleNewCustomerOpen}
+                    // onClick={handleNewCustomerOpen}
                   >
                     New Invoice
                   </Button>
-                </Link>) : ""}
+                </Link>
+              ) : (
+                ""
+              )}
             </Stack>
             <Card
               style={{ margin: "10px", padding: "15px" }}
@@ -1030,7 +1077,7 @@ export default function Guardians() {
                                         <Button
                                           onClick={handleReset}
                                           variant="contained"
-                                        // type="submit"
+                                          // type="submit"
                                         >
                                           reset Filter
                                         </Button>
@@ -1082,7 +1129,7 @@ export default function Guardians() {
                       <OutlinedInput
                         onChange={(e) => searchItems(e)}
                         id="name"
-                        type="text"
+                        type="search"
                         name="name"
                         placeholder="Search"
                       />
@@ -1140,7 +1187,7 @@ export default function Guardians() {
 
                           <TableCell align="left">$ {item.amount}.00</TableCell>
 
-                          <TableCell align="left" className="action-td">
+                          <TableCell align="left" className="action-td action">
                             <div className="btn">
                               {item.status !== "draft" ? (
                                 <Button className="idiv">
@@ -1179,42 +1226,48 @@ export default function Guardians() {
                               )}
 
                               {item.status !== "draft" ? (
-                                <Button className="idiv" >
-                                  <div className="idiv">
-                                    <Image
-                                      onClick={() => handleClickOpen(item)}
-                                      src="/doller.svg"
-                                      alt="Picture of the author"
-                                      width={35}
-                                      height={35}
-                                    />
-                                  </div>
+                                <Button className="idiv doller">
+                                  <Image
+                                    onClick={() => handleClickOpen(item)}
+                                    src="/doller.svg"
+                                    alt="Picture of the author"
+                                    width={35}
+                                    height={35}
+                                  />
                                 </Button>
                               ) : (
                                 ""
                               )}
 
-                              {item.status === "draft" ? (<Button className="idiv">
-                                <Link href={`/admin/editInvoice/${item.id}`}>
-                                  <Image
-                                    src="/edit.svg"
-                                    alt="Picture of the author"
-                                    width={35}
-                                    height={35}
-                                  />
-                                </Link>
-                              </Button>) : ""}
-
-                              {custpermit && custpermit.canDelete === true || roleid === 1 ? (
+                              {item.status === "draft" ? (
                                 <Button className="idiv">
-                                  <Image
+                                  <Link href={`/admin/editInvoice/${item.id}`}>
+                                    <Image
+                                      src="/edit.svg"
+                                      alt="Picture of the author"
+                                      width={35}
+                                      height={35}
+                                    />
+                                  </Link>
+                                </Button>
+                              ) : (
+                                ""
+                              )}
+
+                              {(custpermit && custpermit.canDelete === true) ||
+                              roleid === 1 ? (
+                                <Button className="idiv">
+                                  <IconButton
+                                    className="action-delete"
+                                    style={{ color: "#F95A37" }}
                                     onClick={() => handleOpen(item.id)}
-                                    src="/deleteicon.svg"
-                                    alt="Picture of the author"
-                                    width={35}
-                                    height={35}
-                                  />
-                                </Button>) : ""}
+                                  >
+                                    <RiDeleteBin5Fill />
+                                  </IconButton>
+                                </Button>
+                              ) : (
+                                ""
+                              )}
                             </div>
                           </TableCell>
                         </TableRow>
@@ -1377,19 +1430,19 @@ export default function Guardians() {
                         <Grid item xs={12} md={6}>
                           <Stack spacing={1}>
                             <InputLabel htmlFor="name">
-                              Payment  Method <span className="err_str">*</span>
+                              Payment Method <span className="err_str">*</span>
                             </InputLabel>
                             <Select
                               labelId="demo-select-small"
                               id="demo-select-small"
                               defaultValue="Cash"
                               size="small"
-                              onChange={(e) => { setPaymentMethod(e.target.value) }}
+                              onChange={(e) => {
+                                setPaymentMethod(e.target.value);
+                              }}
                             >
                               <MenuItem value="All"></MenuItem>
-                              <MenuItem value="CBQ">
-                                CBQ
-                              </MenuItem>
+                              <MenuItem value="CBQ">CBQ</MenuItem>
                               <MenuItem value="QPay">QPay</MenuItem>
                               <MenuItem value="Amex">AMEX</MenuItem>
                               <MenuItem value="Cash">Cash</MenuItem>
@@ -1455,14 +1508,18 @@ export default function Guardians() {
                     <Stack style={{ marginTop: "20px" }}>
                       <Grid container spacing={2}>
                         <Grid item xs={12} md={12}>
-
-                          {customerTotalCreditNoteBalance != 0 && <>
-                            <Checkbox
-                              onChange={(e) => { handleCheckBoxClick(e) }}
-                              className="checkbox132"
-                            />
-                            Want to use credit balance :${customerTotalCreditNoteBalance}.00
-                          </>}
+                          {customerTotalCreditNoteBalance != 0 && (
+                            <>
+                              <Checkbox
+                                onChange={(e) => {
+                                  handleCheckBoxClick(e);
+                                }}
+                                className="checkbox132"
+                              />
+                              Want to use credit balance :$
+                              {customerTotalCreditNoteBalance}.00
+                            </>
+                          )}
 
                           <div>
                             <h5 className="apply">Apply Payment</h5>
@@ -1471,17 +1528,18 @@ export default function Guardians() {
                             <InputLabel htmlFor="name"></InputLabel>
                             <p>Sales invoice amount : ${InvoiceAmount}.00 </p>
                           </Stack>
-                          <Stack spacing={1} >
+                          <Stack spacing={1}>
                             <InputLabel htmlFor="name"></InputLabel>
                             <div className="iadiv">
-                              <div className="hh red">Total Credit Balance:</div>
+                              <div className="hh red">
+                                Total Credit Balance:
+                              </div>
                               <div> ${applyCreditNoteAmount}.00 </div>
                             </div>
                           </Stack>
                           <Stack spacing={1}>
                             <InputLabel htmlFor="name"></InputLabel>
                             <p> Total amount :${finalAmountToPay}.00 </p>
-
                           </Stack>
                         </Grid>
                       </Grid>

@@ -233,7 +233,6 @@ export default function ViewCustomer() {
     });
     const res = await response.json();
     setGetinvoice(res);
-
   };
 
   const {
@@ -317,15 +316,15 @@ export default function ViewCustomer() {
 
   const handleInvoiceListView = () => {
     router.push("/user/invoices/invoiceslist");
-  }
+  };
 
   const handleCreditNotesList = () => {
     router.push("/user/creditinvoices/creditinvoicelist");
-  }
+  };
 
   const handleActivityList = () => {
     router.push("/user/salesinvoices/salesinvoicelist");
-  }
+  };
 
   //handle view less
   function handleViewLess() {
@@ -333,11 +332,9 @@ export default function ViewCustomer() {
     setbtnahow(false);
   }
 
-
-  let invoiceDue = invoiceData && invoiceData.reduce(
-    (sum: any, item: any) => sum + item?.amount,
-    0
-  )
+  let invoiceDue =
+    invoiceData &&
+    invoiceData.reduce((sum: any, item: any) => sum + item?.amount, 0);
 
   return (
     <>
@@ -402,14 +399,22 @@ export default function ViewCustomer() {
                         <Typography
                           variant="h3"
                           gutterBottom
-                          style={{ fontWeight: "bold", color: "#333333" }}
+                          style={{
+                            fontWeight: "bold",
+                            color: "#333333",
+                            fontSize: "20px",
+                          }}
                         >
                           Profile
                         </Typography>
                       </Stack>
                       <Stack>
                         <Typography
-                          style={{ color: "#1A70C5", cursor: "pointer" }}
+                          style={{
+                            color: "#1A70C5",
+                            cursor: "pointer",
+                            fontSize: "15px",
+                          }}
                           onClick={() => handleEditCustomerOpen(customerId)}
                         >
                           <b>EDIT</b>
@@ -418,7 +423,7 @@ export default function ViewCustomer() {
                     </Stack>
                     <Stack style={{ padding: "8px" }}>
                       <Box sx={{ display: "flex" }}>
-                        <div id="profileImage">
+                        <div id="profileImage" className="customer-profile">
                           <span id="fullName">
                             {" "}
                             {userDet &&
@@ -445,8 +450,13 @@ export default function ViewCustomer() {
                         </CardContent>
                       </Box>
                     </Stack>
-                    <Stack style={{ padding: "8px" }} className="text-grey">
-                      <Typography>Address:</Typography>
+                    <Stack
+                      style={{ padding: "8px", fontSize: "16px" }}
+                      className="text-grey"
+                    >
+                      <Typography>
+                        <b>Address:</b>
+                      </Typography>
                       <span>
                         {useraddr && useraddr?.add1 === ""
                           ? ""
@@ -464,12 +474,20 @@ export default function ViewCustomer() {
                           : useraddr && useraddr?.postalcode}
                       </span>
                     </Stack>
-                    <Stack style={{ padding: "8px" }}>
+                    <Stack
+                      style={{
+                        padding: "8px",
+                        fontSize: "16px",
+                        color: "rgba(0,0,0,0.6)",
+                      }}
+                    >
                       <Typography>
-                        Created :{" "}
+                        <b> Created :</b>{" "}
                         {userDet?.createdAt === null
                           ? ""
-                          : moment(userDet?.createdAt, "YYYY-MM-DD").format("MMM DD, YYYY")}
+                          : moment(userDet?.createdAt, "YYYY-MM-DD").format(
+                              "MMM DD, YYYY"
+                            )}
                       </Typography>
                     </Stack>
                   </CardContent>
@@ -498,16 +516,32 @@ export default function ViewCustomer() {
                           </Typography>
                         </Stack>
                       </Stack>
-                      <Table style={{ marginTop: "1px" }}>
-                        <TableBody>
-                          <TableRow hover tabIndex={-1}>
-                            <TableCell align="left">Invoice Due: ${invoiceDue && invoiceDue}</TableCell>
-                            <TableCell align="left">
-                              Credit Balance: ${creditball && creditball}
-                            </TableCell>
-                          </TableRow>
-                        </TableBody>
-                      </Table>
+                      <Stack
+                        style={{
+                          marginTop: "1px",
+                          display: "flex",
+                          flexDirection: "unset",
+                          alignItems: "center",
+                          color: "rgba(0,0,0,0.6)",
+                        }}
+                      >
+                        <div
+                          style={{
+                            padding: "8px",
+                            fontSize: "18px",
+                          }}
+                        >
+                          <span style={{ fontSize: "18px" }}>
+                            Invoice Due:{" "}
+                            <span style={{ color: "#26CEB3" }}>
+                              ${invoiceDue && invoiceDue}{" "}
+                            </span>
+                          </span>
+                        </div>
+                        <div style={{ marginLeft: "50px", fontSize: "18px" }}>
+                          Credit Balance: ${creditball && creditball}
+                        </div>
+                      </Stack>
                     </CardContent>
                   </Card>
                 </Grid>
@@ -544,19 +578,25 @@ export default function ViewCustomer() {
                           ) : (
                             <Typography
                               style={{ color: "#1A70C5", cursor: "pointer" }}
-                            // onClick={handleViewLess}
+                              // onClick={handleViewLess}
                             >
                               <b>VIEW LESS</b>
                             </Typography>
                           )}
                         </Stack>
                       </Stack>
-                      <Box sx={{ width: "100%" }}>
+                      <Box sx={{ width: "100%" }} className="pending-invoice">
                         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
                           <p className="pendingcss">PENDING INVOICES</p>
                         </Box>
                         <TabPanel value={value} index={0}>
-                          <Table style={{ marginTop: "1px" }}>
+                          <Table
+                            className="table-box"
+                            style={{
+                              marginTop: "25px",
+                              border: "1px solid #ccc",
+                            }}
+                          >
                             <TableHead>
                               <TableRow>
                                 <TableCell>
@@ -574,30 +614,31 @@ export default function ViewCustomer() {
                               </TableRow>
                             </TableHead>
                             {invoiceData?.length > 0 ? (
-                              invoiceData.slice(0, totalinv)
-                                .map((item: any) => (
-                                  item.status === "pending" ?
-                                    <TableBody>
-                                      <TableRow hover tabIndex={-1}>
-                                        <TableCell align="left">
-                                          {item.invoiceId}
-                                        </TableCell>
-                                        <TableCell align="left">
-                                          {item?.invoiceDate}
-                                          {/* {moment(item?.invoiceDate).format("MMM DD,YYYY")} */}
-                                        </TableCell>
-                                        <TableCell align="left">
-                                          {item.status === "pending"
-                                            ? "PENDING"
-                                            : item.status}
-                                        </TableCell>
-                                        <TableCell align="left">
-                                          $ {item.amount}
-                                        </TableCell>
-                                      </TableRow>
-                                    </TableBody>
-                                    : ""
-                                ))
+                              invoiceData.slice(0, totalinv).map((item: any) =>
+                                item.status === "pending" ? (
+                                  <TableBody>
+                                    <TableRow hover tabIndex={-1}>
+                                      <TableCell align="left">
+                                        {item.invoiceId}
+                                      </TableCell>
+                                      <TableCell align="left">
+                                        {item?.invoiceDate}
+                                        {/* {moment(item?.invoiceDate).format("MMM DD,YYYY")} */}
+                                      </TableCell>
+                                      <TableCell align="left">
+                                        {item.status === "pending"
+                                          ? "PENDING"
+                                          : item.status}
+                                      </TableCell>
+                                      <TableCell align="left">
+                                        $ {item.amount}
+                                      </TableCell>
+                                    </TableRow>
+                                  </TableBody>
+                                ) : (
+                                  ""
+                                )
+                              )
                             ) : (
                               <h3>No record found</h3>
                             )}
@@ -673,10 +714,10 @@ export default function ViewCustomer() {
                                   {item?.status === 1
                                     ? "APPROVED"
                                     : item?.status === 2
-                                      ? "UNAPRROVED"
-                                      : item?.status === 3
-                                        ? "REJECTED"
-                                        : item?.statuS}
+                                    ? "UNAPRROVED"
+                                    : item?.status === 3
+                                    ? "REJECTED"
+                                    : item?.statuS}
                                 </TableCell>
                                 <TableCell align="left">
                                   $ {item?.amount}
@@ -743,24 +784,26 @@ export default function ViewCustomer() {
                         </TableHead>
                         <TableBody>
                           {purchasedActivity?.length > 0 ? (
-                            purchasedActivity?.slice(0, totalinv).map((item: any) => (
-                              <TableRow hover tabIndex={-1}>
-                                <TableCell align="left">
-                                  {item?.activity_name}
-                                </TableCell>
-                                <TableCell align="left">
-                                  {moment(item?.createDate).format(
-                                    "MMM DD,YYYY"
-                                  )}
-                                </TableCell>
-                                <TableCell align="left">
-                                  {item?.sales_status === 0 ? "PAID" : ""}
-                                </TableCell>
-                                <TableCell align="left">
-                                  $ {item?.activity_price}
-                                </TableCell>
-                              </TableRow>
-                            ))
+                            purchasedActivity
+                              ?.slice(0, totalinv)
+                              .map((item: any) => (
+                                <TableRow hover tabIndex={-1}>
+                                  <TableCell align="left">
+                                    {item?.activity_name}
+                                  </TableCell>
+                                  <TableCell align="left">
+                                    {moment(item?.createDate).format(
+                                      "MMM DD,YYYY"
+                                    )}
+                                  </TableCell>
+                                  <TableCell align="left">
+                                    {item?.sales_status === 0 ? "PAID" : ""}
+                                  </TableCell>
+                                  <TableCell align="left">
+                                    $ {item?.activity_price}
+                                  </TableCell>
+                                </TableRow>
+                              ))
                           ) : (
                             <h3>No record found</h3>
                           )}
@@ -916,7 +959,6 @@ export default function ViewCustomer() {
                             fullWidth
                             size="small"
                             {...register("city")}
-
                           />
                         </Stack>
                       </Grid>
@@ -931,7 +973,6 @@ export default function ViewCustomer() {
                             fullWidth
                             size="small"
                             {...register("state")}
-
                           />
                         </Stack>
                       </Grid>

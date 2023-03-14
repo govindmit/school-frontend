@@ -135,7 +135,7 @@ fieldset .MuiOutlinedInput-notchedOutline {
 #demo-simple-select {
   height: 50px !important;
   border-radius: 5px;
-  padding: 0 31px !important;
+  padding: 0 15px !important;
   line-height: 50px;
 }
 
@@ -309,10 +309,11 @@ body .guardianBar {
   margin-right: 8px;
   /* fill: #7d86a5; */
 }
-.mainbgcss .css-1yafa72-MuiButtonBase-root-MuiListItemButton-root:hover {
+.mainbgcss ul.MuiList-root li .MuiButtonBase-root:hover {
   -webkit-text-decoration: none;
   text-decoration: none;
-  background-color: #4e8cc9 !important;
+  background-color: #1976d2 !important;
+  color: #fff;
 }
 .sidebar-link > div {
   display: flex;
@@ -329,6 +330,17 @@ body .button-new {
   font-weight: 500;
 }
 
+.mainbgcss ul li {
+  margin-bottom: 7px;
+}
+
+#container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 .text-grey {
   color: rgba(0, 0, 0, 0.6) !important;
 }
@@ -343,6 +355,7 @@ body h4.MuiTypography-h4 {
   color: #333333;
   font-weight: bold;
   text-transform: capitalize;
+  margin-bottom: 7px;
 }
 
 .filter-list > div {

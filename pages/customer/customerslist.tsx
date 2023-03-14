@@ -131,27 +131,27 @@ export default function CustomerList() {
     if (logintoken === undefined || logintoken === null) {
       router.push("/");
     }
-    commmonfunctions.VerifyLoginUser().then(res => {
+    commmonfunctions.VerifyLoginUser().then((res) => {
       if (res.exp * 1000 < Date.now()) {
-        localStorage.removeItem('QIS_loginToken');
-        localStorage.removeItem('QIS_User');
+        localStorage.removeItem("QIS_loginToken");
+        localStorage.removeItem("QIS_User");
         router.push("/");
       }
     });
-    commmonfunctions.GivenPermition().then(res => {
+    commmonfunctions.GivenPermition().then((res) => {
       if (res.roleId == 1) {
         setroleid(res.roleId);
         //router.push("/userprofile");
       } else if (res.roleId > 1) {
-        commmonfunctions.ManageCustomers().then(res => {
+        commmonfunctions.ManageCustomers().then((res) => {
           if (!res) {
             router.push("/userprofile");
           } else {
             setcustpermit(res);
           }
-        })
+        });
       }
-    })
+    });
   }, []);
 
   //get customers(users) list
@@ -166,16 +166,31 @@ export default function CustomerList() {
         },
       });
       const res = await response.json();
-      setUsers(res.data.filter((dt: any) => dt.customerId !== null && dt.roleId === 2));
-      settabFilterData(res.data.filter((dt: any) => dt.customerId !== null && dt.roleId === 2))
-      setsearchdata(res.data.filter((dt: any) => dt.customerId !== null && dt.roleId === 2));
-      setAll(res.data.filter((dt: any) => dt.customerId !== null && dt.roleId === 2).length);
-      setparentId(res.data.filter((dt: any) => dt.GeneratedParentId !== null && dt.roleId === 2));
+      setUsers(
+        res.data.filter((dt: any) => dt.customerId !== null && dt.roleId === 2)
+      );
+      settabFilterData(
+        res.data.filter((dt: any) => dt.customerId !== null && dt.roleId === 2)
+      );
+      setsearchdata(
+        res.data.filter((dt: any) => dt.customerId !== null && dt.roleId === 2)
+      );
+      setAll(
+        res.data.filter((dt: any) => dt.customerId !== null && dt.roleId === 2)
+          .length
+      );
+      setparentId(
+        res.data.filter(
+          (dt: any) => dt.GeneratedParentId !== null && dt.roleId === 2
+        )
+      );
       const activeUser = res.data.filter(
-        (dt: any) => dt.status === 1 && dt.customerId !== null && dt.roleId === 2
+        (dt: any) =>
+          dt.status === 1 && dt.customerId !== null && dt.roleId === 2
       ).length;
       const inactiveUser = res.data.filter(
-        (dt: any) => dt.status === 0 && dt.customerId !== null && dt.roleId === 2
+        (dt: any) =>
+          dt.status === 0 && dt.customerId !== null && dt.roleId === 2
       ).length;
       setactive(activeUser);
       setinActive(inactiveUser);
@@ -224,7 +239,11 @@ export default function CustomerList() {
     })
       .then((res) => {
         if (res.status === 200) {
-          setUsers(res.data.data.filter((dt: any) => dt.customerId !== null && dt.roleId === 2));
+          setUsers(
+            res.data.data.filter(
+              (dt: any) => dt.customerId !== null && dt.roleId === 2
+            )
+          );
         }
       })
       .catch((error) => {
@@ -353,8 +372,7 @@ export default function CustomerList() {
       setUserInfo({
         id: [...id, value],
       });
-    }
-    else {
+    } else {
       setUserInfo({
         id: id.filter((e: any) => e !== value),
       });
@@ -363,7 +381,7 @@ export default function CustomerList() {
 
   function handleCheck(e: any) {
     var isChecked = e.target.checked;
-    setChecked(isChecked)
+    setChecked(isChecked);
     // var item = e.target.value;
     // console.log(item);
   }
@@ -371,15 +389,20 @@ export default function CustomerList() {
   // console.log(checked);
   // console.log(userinfo.id);
 
-
   // Export to CSV
-  const [mydata, setmydata] = useState<any>("")
-  const [myload, setmyload] = useState(false)
+  const [mydata, setmydata] = useState<any>("");
+  const [myload, setmyload] = useState(false);
   function ExportCSV() {
     let datas: {
-      name: string; email1: string; email2: string;
-      phone1: number; phone2: number, CustomerType: string;
-      contactName: string; printUs: string, status: string
+      name: string;
+      email1: string;
+      email2: string;
+      phone1: number;
+      phone2: number;
+      CustomerType: string;
+      contactName: string;
+      printUs: string;
+      status: string;
     }[] = [];
     if (userinfo.id.length > 0) {
       const ids = userinfo.id.join(",");
@@ -407,16 +430,16 @@ export default function CustomerList() {
                 CustomerType: item.CustomerType,
                 contactName: item.contactName,
                 printUs: item.printUs,
-                status: item.status === 1 ? "Active" : "InActive"
-              })
-            })
+                status: item.status === 1 ? "Active" : "InActive",
+              });
+            });
             setmydata(datas);
             setOpenCSV(true);
             setTimeout(() => {
               setOpenCSV(false);
               setUserInfo({
-                id: []
-              })
+                id: [],
+              });
             }, 1000);
           }
         } catch (error) {
@@ -426,7 +449,7 @@ export default function CustomerList() {
       getUserByMultipleids();
     } else {
       toast.error("Please Select Atleast One Customer !", {
-        position: toast.POSITION.TOP_CENTER
+        position: toast.POSITION.TOP_CENTER,
       });
     }
   }
@@ -444,7 +467,11 @@ export default function CustomerList() {
 
   return (
     <>
-      {OpenCSV && mydata.length > 0 ? <CSVDownload data={mydata} headers={headers} /> : ""}
+      {OpenCSV && mydata.length > 0 ? (
+        <CSVDownload data={mydata} headers={headers} />
+      ) : (
+        ""
+      )}
       <Box sx={{ display: "flex" }}>
         <MiniDrawer />
         <Box component="main" sx={{ flexGrow: 1 }}>
@@ -485,15 +512,19 @@ export default function CustomerList() {
                   CUSTOMERS
                 </Typography>
               </Stack>
-              {custpermit && custpermit.canAdd === true || roleid === 1 ? (<Button
-                className="button-new"
-                variant="contained"
-                size="small"
-                sx={{ width: 150 }}
-                onClick={handleNewCustomerOpen}
-              >
-                <b>New Customer</b>
-              </Button>) : ""}
+              {(custpermit && custpermit.canAdd === true) || roleid === 1 ? (
+                <Button
+                  className="button-new"
+                  variant="contained"
+                  size="small"
+                  sx={{ width: 150 }}
+                  onClick={handleNewCustomerOpen}
+                >
+                  <b>New Customer</b>
+                </Button>
+              ) : (
+                ""
+              )}
             </Stack>
             {/*bread cump */}
             <Card
@@ -807,14 +838,16 @@ export default function CustomerList() {
                         placeholder="Search..."
                         size="small"
                         value={searchquery}
-                        type="search..."
+                        type="search"
                         onInput={(e) => handleSearch(e)}
                       />
                     </FormControl>
                   </Stack>
                 </Stack>
                 {/*bread cump */}
-                {myload ? <Loader /> :
+                {myload ? (
+                  <Loader />
+                ) : (
                   <Table style={{ marginTop: "20px" }}>
                     <TableHead>
                       <TableRow>
@@ -869,7 +902,8 @@ export default function CustomerList() {
                             >
                               <TableCell padding="checkbox">
                                 <Checkbox
-                                  onChange={handleChanges} value={dataitem.id}
+                                  onChange={handleChanges}
+                                  value={dataitem.id}
                                   //checked={checked}
                                   id={`check` + key}
                                 />
@@ -877,7 +911,9 @@ export default function CustomerList() {
                               <TableCell align="left">
                                 {dataitem.customerId}
                               </TableCell>
-                              <TableCell align="left">{dataitem.name}</TableCell>
+                              <TableCell align="left">
+                                {dataitem.name}
+                              </TableCell>
                               <TableCell align="left">
                                 <a href="">{dataitem.email1}</a>
                               </TableCell>
@@ -894,7 +930,9 @@ export default function CustomerList() {
                               </TableCell>
                               <TableCell align="left">
                                 {dataitem.status === 1 ? (
-                                  <span style={{ color: "#02C509" }}>ACTIVE</span>
+                                  <span style={{ color: "#02C509" }}>
+                                    ACTIVE
+                                  </span>
                                 ) : (
                                   <span style={{ color: "#FF4026" }}>
                                     INACTIVE
@@ -916,7 +954,9 @@ export default function CustomerList() {
                                   direction="row"
                                   spacing={1}
                                 >
-                                  {custpermit && custpermit.canView === true || roleid === 1 ? (
+                                  {(custpermit &&
+                                    custpermit.canView === true) ||
+                                  roleid === 1 ? (
                                     <IconButton className="action-view">
                                       <Link
                                         href={`/customer/viewcustomer/${dataitem.id}`}
@@ -926,31 +966,45 @@ export default function CustomerList() {
                                       >
                                         <BiShow />
                                       </Link>
-                                    </IconButton>) : ""}
-                                  {custpermit && custpermit.canEdit === true || roleid === 1 ? (<IconButton
-                                    className="action-edit"
-                                    onClick={() =>
-                                      handleEditCustomerOpen(dataitem.id)
-                                    }
-                                  >
-                                    <FiEdit />
-                                  </IconButton>)
-                                    : ""}
-                                  {custpermit && custpermit.canDelete === true || roleid === 1 ? (<IconButton
-                                    className="action-delete"
-                                    style={{ color: "#F95A37" }}
-                                    onClick={() => openDelete(dataitem)}
-                                  >
-                                    <RiDeleteBin5Fill />
-                                  </IconButton>) : ""}
-
+                                    </IconButton>
+                                  ) : (
+                                    ""
+                                  )}
+                                  {(custpermit &&
+                                    custpermit.canEdit === true) ||
+                                  roleid === 1 ? (
+                                    <IconButton
+                                      className="action-edit"
+                                      onClick={() =>
+                                        handleEditCustomerOpen(dataitem.id)
+                                      }
+                                    >
+                                      <FiEdit />
+                                    </IconButton>
+                                  ) : (
+                                    ""
+                                  )}
+                                  {(custpermit &&
+                                    custpermit.canDelete === true) ||
+                                  roleid === 1 ? (
+                                    <IconButton
+                                      className="action-delete"
+                                      style={{ color: "#F95A37" }}
+                                      onClick={() => openDelete(dataitem)}
+                                    >
+                                      <RiDeleteBin5Fill />
+                                    </IconButton>
+                                  ) : (
+                                    ""
+                                  )}
                                 </Stack>
                               </TableCell>
                             </TableRow>
                           );
                         })}
                     </TableBody>
-                  </Table>}
+                  </Table>
+                )}
                 {users == "" ? <h3>No Record found</h3> : ""}
                 <Stack
                   style={{ marginBottom: "10px", marginTop: "10px" }}
@@ -984,24 +1038,20 @@ export default function CustomerList() {
           <MainFooter />
         </Box>
       </Box>
-      {
-        newCustOpen ? (
-          <AddCustomer open={newCustOpen} closeDialog={closePoP} />
-        ) : (
-          ""
-        )
-      }
-      {
-        editCustOpen ? (
-          <EditCustomer
-            id={editid}
-            open={editCustOpen}
-            closeDialogedit={closeEditPoP}
-          />
-        ) : (
-          ""
-        )
-      }
+      {newCustOpen ? (
+        <AddCustomer open={newCustOpen} closeDialog={closePoP} />
+      ) : (
+        ""
+      )}
+      {editCustOpen ? (
+        <EditCustomer
+          id={editid}
+          open={editCustOpen}
+          closeDialogedit={closeEditPoP}
+        />
+      ) : (
+        ""
+      )}
       <ConfirmBox
         open={deleteConfirmBoxOpen}
         closeDialog={() => setdeleteConfirmBoxOpen(false)}
